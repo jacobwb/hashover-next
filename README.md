@@ -1,4 +1,4 @@
-HashOver 1.0
+HashOver 2.0 (development)
 ========
 
 <b>HashOver</b> is a PHP comment system intended as a replacement for services like Disqus. HashOver is free and open source software, under the <a href="http://www.gnu.org/licenses/agpl.html" target="_blank">GNU Affero General Public License</a>. HashOver adds a "comment section" to any website, by placing a few simple lines of JavaScript or PHP to the source code of any webpage. HashOver is a self-hosted system and allows completely anonymous comments to be posted, the only required information is the comment itself.
@@ -41,10 +41,28 @@ HashOver 1.0
 			</td>
 		</tr>
 	</tbody>
-</table><br>
+</table>
 
 <b>Information and Documentation:</b><hr>
 http://tildehash.com/?page=hashover
+
+<b>Focus of this release:</b><hr>
+HashOver <a href="https://github.com/jacobwb/hashover" target="_blank">version 1.0</a> consists of code written by <a href="http://tildehash.com/?page=author" target="blank">one person</a> over the course of five years, come March the 29th 2014. Moreover, HashOver was my first serious use of JavaScript and my first PHP project of such complexity. Those two facts should trigger obvious concerns about HashOver's performance, efficiency, and security. With that in mind, version 2.0 will be the next release, and will focus on improving nothing but the following areas.
+<ul>
+	<li>Security</li>
+	<li>Performance</li>
+	<li>Code efficiency</li>
+	<li>Deployment</li>
+	<li>Data storage format</li>
+	<li>Backwards and forwards compatibility</li>
+	<li>Operating system support</li>
+	<li>Aesthetics and graphics</li>
+	<li>Graphic scalability on (<i style="font-family: monospace;">X<sup style="font-size: 10px;">i</sup></i>)HDPI displays</li>
+	<li>Code readability</li>
+	<li>Bug fixes</li>
+</ul>
+		
+This means the possibility of new features in version 2.0 is next to null, and contributions via GitHub and/or e-mail that add new features will be rejected, at least for the time being. Improvements to existing functionality and aesthetics will be accepted. New features will be accepted and available in version 2.x releases.
 
 <b>Contributing:</b><hr>
 When sending a "Pull Request", committing code, or otherwise sending, submitting, or transmitting code in any other way, please assign your contribution's copyright to "Jacob Barkdull", and place a GNU Affero General Public License or any compatible license notice at the top of the code, if one isn't already present. This gives me necessary rights to distribute your contribution in HashOver under the GNU Affero General Public License. If you assign yourself as copyright holder, or as a secondary copyright holder, your contribution will be rejected.
