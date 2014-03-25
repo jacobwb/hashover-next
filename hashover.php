@@ -33,34 +33,6 @@
 	//
 	//--------------------
 	//
-	// Installation:
-	//
-	//	1. Download this file: http://tildehash.com/hashover.zip
-	//	2. Extract the archive to your website's highest level, typically "/".
-	//	3. Give all the files permissions "0755" (readable & executable by all).
-	//	3. Give "comment/pages" directory permission "0777" (readable, writable & executable by all).
-	//	7. Add the following HTML tags to pages that are to have comments:
-	//
-	//	   <script type="text/javascript" src="/hashover.php"></script>
-	//	   <noscript>You must have JavaScript enabled to use the comments.</noscript>
-	//
-	//	   Optionally, you may set the "display" URL query to the page filename to 
-	//	   display only a comment count, ex. "state-of-firefox-4-0-on-gnu-linux-html" 
-	//	   will display something like "6 Comments (9 counting replies)".
-	//
-	//	   You may also use the following JavaScript tag with any or all of 
-	//	   the following variables to change the comment system's behavior:
-	//
-	//	   <script type="text/javascript">
-	//	   	var rows="4";			// Sets "Comments" field height
-	//	   	var name_on="no";		// Disables "Name" field
-	//	   	var passwd_on="no";		// Disables "Password" field
-	//	   	var email_on="no";		// Disables "E-mail" field
-	//	   	var sites_on="no";		// Disables "Website" field
-	//	   </script>
-	//
-	//--------------------
-	//
 	// Change Log:
 	//
 	//	Please record your modifications to code:
