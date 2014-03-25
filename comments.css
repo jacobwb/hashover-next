@@ -1,0 +1,628 @@
+#hashover,
+#sort_div {
+	clear: both;
+}
+
+#hashover form,
+#hashover .cmtdiv form {
+	display: block;
+}
+
+#hashover .cmtdiv form {
+	margin-top: 6px;
+	clear: both;
+}
+
+#hashover form div.cmtbox {
+	margin-left: 65px;
+	padding: 6px 8px 8px 8px;
+}
+
+#hashover form input,
+#hashover form textarea,
+#hashover form table input {
+	padding: 2px;
+	background-color: #FAFAFA;
+	font-size: 13px;
+	font-family: "Arial","Helvetica","FreeSans",sans-serif;
+	color: #222222;
+	border: 1px solid #808080;
+	outline-offset: none;
+	outline: -webkit-focus-ring-color none;
+}
+
+#hashover form input,
+#hashover form textarea,
+#hashover form table input,
+#hashover .cmtdiv label {
+	transition: all 120ms linear 0ms;
+	-moz-transition: all 120ms ease 0ms;
+	-webkit-transition: all 120ms ease 0ms;
+	-o-transition: all 120ms ease 0ms;
+}
+
+#hashover form input,
+#hashover form textarea,
+#hashover form table input,
+#hashover .cmtdiv pre,
+#hashover .cmtdiv code,
+#hashover .cmtdiv label {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-o-box-sizing: border-box;
+}
+
+#hashover form input,
+#hashover form table input,
+#hashover form div.cmtbox,
+#hashover .cmtbubble,
+#hashover .cmtdiv input.delete,
+#hashover img,
+#hashover .cmtdiv pre,
+#hashover .cmtdiv code,
+#hashover .cmtnumber a,
+#hashover .cmtdiv .optionbuttons a,
+#hashover .cmtdiv label,
+#hashover .cmtfont#message {
+	border-radius: 5px 5px 5px 5px;
+	-moz-border-radius: 5px 5px 5px 5px;
+	-webkit-border-radius: 5px 5px 5px 5px;
+	-o-border-radius: 5px 5px 5px 5px;
+}
+
+#hashover #requiredFields {
+	display: none;
+}
+
+#hashover form div textarea {
+	width: 100%;
+	margin-bottom: 0px ! important;
+	padding: 5px 5px 8px 5px;
+	vertical-align: top;
+	border-radius: 5px 5px 0px 0px;
+	-moz-border-radius: 5px 5px 0px 0px;
+	-webkit-border-radius: 5px 5px 0px 0px;
+	-o-border-radius: 5px 5px 0px 0px;
+	resize: vertical;
+}
+
+#hashover form input.post_cmt {
+	border-top: none;
+	margin-top: 0px ! important;
+	border-radius: 0px 0px 5px 5px;
+	-moz-border-radius: 0px 0px 5px 5px;
+	-webkit-border-radius: 0px 0px 5px 5px;
+	-o-border-radius: 0px 0px 5px 5px;
+	padding: 6px 4px 6px 4px;
+}
+
+#hashover input.post_cmt:hover {
+	background-color: #F0F0F0 ! important;
+	cursor: pointer;
+}
+
+#hashover input.post_cmt:focus {
+	background-color: #E8E8E8 ! important;
+	border-color: #000000 ! important;
+}
+
+#hashover textarea:hover, 
+#hashover input:hover {
+	background-color: #FCFCFC ! important;
+	border-color: #000000 ! important;
+}
+
+#hashover textarea:hover {
+	border-color: #909090;
+}
+
+#hashover textarea:focus,
+#hashover input:focus {
+	background-color: #FCFCFC;
+	border-color: #0055FF ! important;
+}
+
+#hashover textarea:focus,
+#hashover input[type="text"]:focus,
+#hashover input[type="password"]:focus {
+	box-shadow: 0px 0px 2px rgba(85, 255, 255, 0.8) ! important;
+	-moz-box-shadow: 0px 0px 2px rgba(85, 255, 255, 0.8) ! important;
+	-webkit-box-shadow: 0px 0px 2px rgba(85, 255, 255, 0.8) ! important;
+	-o-box-shadow: 0px 0px 2px rgba(85, 255, 255, 0.8) ! important;
+}
+
+#hashover form table input {
+	width: 100%;
+	height: 32px;
+	font-size: 14px;
+	padding-left: 28px;
+	padding-right: 6px;
+	background-position: left center;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	color: #808080;
+}
+
+#hashover form table input:focus {
+	color: #222222;
+}
+
+#hashover table tbody tr td {
+	padding: 2px 3px 6px 3px;
+	line-height: 16px;
+}
+
+#hashover .cmtdiv table tbody tr td[rowspan="2"] {
+	padding: 0px 8px 0px 0px ! important;
+}
+
+#hashover .cmtdiv table tbody tr td[rowspan="2"] img {
+	border: none;
+}
+
+#hashover table tbody tr td:first-child {
+	padding: 2px 3px 6px 0px;
+}
+
+#hashover .cmtdiv table tbody tr:nth-child(1) td:nth-child(2) {
+	padding-left: 0px;
+}
+
+#hashover table tbody tr td:nth-last-child(1) {
+	padding: 2px 0px 6px 3px;
+}
+
+#hashover table tbody tr td:first-child:nth-last-child(1) {
+	padding: 2px 0px 6px 0px;
+}
+
+#hashover input.opt-name {
+	background-image: url('/hashover/images/name.png');
+}
+
+#hashover input.opt-password {
+	background-image: url('/hashover/images/password.png');
+}
+
+#hashover input.opt-login {
+	width: 36px;
+	background-image: url('/hashover/images/login.png');
+	background-position: center center;
+	cursor: pointer;
+}
+
+#hashover input.opt-email {
+	background-image: url('/hashover/images/email.png');
+}
+
+#hashover input.opt-website {
+	background-image: url('/hashover/images/website.png');
+}
+
+#hashover .cmtdiv table tbody tr td,
+#hashover .cmtdiv table tbody tr td:nth-last-child(1),
+#hashover .cmtdiv table tbody tr td:first-child:nth-last-child(1) {
+	padding-bottom: 2px;
+}
+
+#hashover select {
+	height: 24px;
+	padding: 1px;
+}
+
+#hashover .cmtdiv .cmtopts span.cmtbuttons {
+	color: transparent;
+	font-size: 0px;
+}
+
+#hashover .cmtdiv .cmtopts span.cmtbuttons a {
+	display: inline-block;
+	border-top: 1px solid #C1C1C1;
+	border-left: 1px solid #C1C1C1;
+	height: 25px;
+	width: 31px;
+	background-color: #ECEEFF;
+	margin: 0px;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	color: transparent;
+	font-size: 0px;
+	overflow: hidden ! important;
+	transition: background 140ms linear 0ms;
+	-moz-transition: background 140ms linear 0ms;
+	-webkit-transition: background 140ms linear 0ms;
+	-o-transition: background 140ms linear 0ms;
+}
+
+#hashover .cmtdiv .cmtopts span.cmtbuttons a:first-child {
+	border-top-left-radius: 6px;
+}
+
+#hashover .cmtdiv .cmtopts span.cmtbuttons a:hover {
+	background-color: #E4E6F6;
+}
+
+#hashover .cmtdiv .cmtopts span.cmtbuttons a.like:active {
+	background-image: url('/hashover/images/liked.png');
+	background-color: #FFDDDB;
+}
+
+#hashover .cmtdiv .cmtopts span.cmtbuttons a.liked:active {
+	background-image: url('/hashover/images/like.png');
+	background-color: #DBDBDB;
+}
+
+#hashover a.like {
+	background-image: url('/hashover/images/like.png');
+}
+
+#hashover a.liked {
+	background-image: url('/hashover/images/liked.png');
+}
+
+#hashover a.edit {
+	background-image: url('/hashover/images/edit.png');
+}
+
+#hashover a.has-email {
+	background-image: url('/hashover/images/has-email.png');
+}
+
+#hashover a.no-email {
+	background-image: url('/hashover/images/no-email.png');
+}
+
+#hashover a.has-email,
+#hashover a.no-email {
+	width: 33px ! important;
+}
+
+#hashover hr {
+	border: 0px;
+	height: 1px;
+	background-color: #808080;
+	margin-top: 0px;
+	margin-bottom: 5px;
+	clear: both;
+}
+
+#hashover input::-moz-focus-inner {
+	border: 0px;
+}
+
+#hashover .cmtdiv {
+	clear: both;
+}
+
+#hashover a, #hashover a:link {
+	text-decoration: none;
+	color: #0000CC;
+	outline: none;
+}
+
+#hashover a:visited {
+	color: #00268F;
+}
+
+#hashover a:hover {
+	text-decoration: underline;
+	text-shadow: 0px 0px 3px #8CF5FF;
+	cursor: pointer;
+	color: #005EFF;
+}
+
+#hashover form div.cmtbox,
+#hashover .cmtbubble {
+	overflow: hidden;
+	background-color: #F6F8FF;
+	border: 1px solid #808080 ! important;
+	text-align: left;
+	height: auto;
+	width: auto;
+}
+
+#hashover form div.cmtbox,
+#hashover .cmtdiv .cmtbubble {
+	margin-left: 64px;
+}
+
+#hashover .cmtdiv.reply .cmtbubble {
+	margin-left: 49px;
+}
+
+#hashover .cmtdiv .cmtbubble .cmtdata {
+	padding: 0px 10px 0px 10px;
+	line-height: 1.4em;
+}
+
+#hashover .cmtdiv .cmtbubble .cmtdata img {
+	max-width: 100%;
+	max-height: 640px;
+	cursor: pointer;
+}
+
+#hashover .cmtdiv.reply .cmtbubble .cmtdata {
+	padding: 0px 8px 0px 8px;
+}
+
+#hashover .cmtdiv hr {
+	background-color: #C1C1C1;
+	margin: 0px;
+}
+
+#hashover .cmtdiv table {
+	padding: 0px 6px 0px 5px;
+	margin: 5px 0px 5px 0px;
+}
+
+#hashover .cmtdiv table tbody tr td {
+	line-height: normal;
+}
+
+#hashover .cmtdiv input,
+#hashover .cmtdiv .optionbuttons a,
+#hashover .cmtdiv label {
+	font-size: 11px ! important;
+}
+
+#hashover .cmtdiv input.post_cmt {
+	margin: 0px;
+	border: none;
+	margin-top: 0px ! important;
+	background-color: #F0F0F0;
+}
+
+#hashover .cmtdiv input.post_cmt:hover {
+	background-color: #E9E9E9 ! important;
+	cursor: pointer;
+}
+
+#hashover .cmtdiv input.post_cmt:focus {
+	background-color: #E5E5E5 ! important;
+}
+
+#hashover .cmtdiv input[type="button"],
+#hashover .cmtdiv input.delete[type="submit"],
+#hashover .cmtdiv .optionbuttons a,
+#hashover .cmtdiv label {
+	display: inline-block;
+	border: 1px solid transparent ! important;
+	background: transparent ! important;
+	padding: 3px 4px 3px 4px ! important;
+	margin-bottom: 5px;
+}
+
+#hashover .cmtdiv label {
+	padding: 2px 5px 0px 1px ! important;
+}
+
+#hashover .cmtdiv .optionbuttons a {
+	padding: 3px 6px 3px 6px ! important;
+	color: #222222;
+}
+
+#hashover .cmtdiv input[type="button"]:hover,
+#hashover .cmtdiv .optionbuttons a:hover,
+#hashover .cmtdiv label:hover {
+	border-color: #C1C1C1 ! important;
+	background-color: #ECEEFF ! important;
+	text-shadow: none;
+	cursor: pointer;
+	text-decoration: none;
+	color: #222222;
+}
+
+#hashover .cmtdiv .options {
+	display: block;
+	overflow: hidden;
+	width: 100%;
+	background-color: #F0F0F0;
+	transition: all 0.15s linear 0ms;
+	-moz-transition: all 0.15s linear 0ms;
+	-webkit-transition: all 0.15s linear 0ms;
+	-o-transition: all 0.15s linear 0ms;
+}
+
+#hashover .cmtdiv table input {
+	margin: 2px 0px 2px 0px;
+	height: 26px;
+}
+
+#hashover .cmtdiv textarea {
+	margin: 0px ! important;
+	border-left: none ! important;
+	border-right: none ! important;
+	border-color: #C1C1C1;
+	border-radius: 0px ! important;
+	-moz-border-radius: 0px ! important;
+	-webkit-border-radius: 0px ! important;
+	-o-border-radius: 0px ! important;
+}
+
+#hashover .cmtfont {
+	font-size: 16px;
+	display: inline-block;
+	padding-top: 2px;
+}
+
+#hashover .cmtdiv .cmtfont {
+	display: inline-block;
+	clear: right;
+}
+
+#hashover .cmtdiv form .cmtfont {
+	padding-left: 8px;
+}
+
+#hashover .cmtdiv .optionbuttons {
+	float: right;
+	padding: 0px 5px 0px 0px ! important;
+}
+
+#hashover .cmtdiv .cmtheader {
+	line-height: normal;
+	padding: 8px 10px 10px 10px;
+	margin-bottom: 10px;
+	overflow: hidden;
+}
+
+#hashover .cmtdiv.reply .cmtheader {
+	padding: 8px 8px 6px 8px;
+}
+
+#hashover .cmtdiv .cmtheader .cmtfont {
+	font-size: 20px;
+}
+
+#hashover .cmtdiv.reply .cmtheader .cmtfont {
+	font-size: 16px;
+	margin-top: -1px;
+}
+
+#hashover .cmtdiv .cmtheader .cmtfont.at {
+	color: #00268F;
+}
+
+#hashover .cmtnumber img,
+#hashover .cmtnumber a {
+	display: inline-block;
+	width: 45px;
+	height: 45px;
+	border: 1px solid #808080;
+	vertical-align: top;
+	background-color: rgba(255, 255, 255, 0.8);
+	font-size: 18px;
+	text-align: center;
+	line-height: 45px;
+	text-shadow: none;
+	font-weight: bold;
+	color: #808080;
+}
+
+#hashover .cmtdiv.reply .cmtnumber img,
+#hashover .cmtdiv.reply .cmtnumber a {
+	width: 35px;
+	height: 35px;
+	line-height: 35px;
+	font-size: 15px;
+}
+
+#hashover .cmtnumber {
+	display: inline-block;
+	padding-right: 19px;
+	float: left;
+	margin-right: -1px;
+	background-image: url('/hashover/images/bubble-tick.png');
+	background-position: right center;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+}
+
+#hashover .cmtdiv.reply .cmtnumber {
+	padding-right: 13px;
+	background-image: url('/hashover/images/bubble-tick-reply.png');
+}
+
+#hashover .cmtdiv pre,
+#hashover .cmtdiv code {
+	width: 100%;
+	max-height: 200px;
+	display: inline-block;
+	overflow: auto;
+	border: 1px solid #C1C1C1;
+	background-color: #F5F5F5;
+	white-space: pre;
+	padding: 5px;
+	margin: 0px;
+}
+
+#hashover .cmtdiv blockquote,
+#hashover .cmtdiv ol,
+#hashover .cmtdiv ul {
+	padding-left: 10px;
+	margin: 0px 20px 8px 20px;
+}
+
+#hashover .cmtdiv blockquote {
+	border-left: 3px solid rgba(0,0,0,0.3);
+}
+
+#hashover .cmtdiv .cmtdate {
+	display: inline-block;
+	margin-top: 3px;
+	color: #606060 ! important;
+}
+
+#hashover .cmtdiv .cmtdate {
+	margin-top: 4px;
+}
+
+#hashover .cmtdiv .cmtdate a,
+#hashover .cmtdiv .cmtdate span {
+	text-shadow: none ! important;
+	color: #606060 ! important;
+}
+
+#hashover .cmtdiv .cmtopts {
+	padding-left: 10px;
+	margin-top: -4px;
+	overflow: hidden;
+	width: auto;
+	clear: both;
+}
+
+#hashover .cmtdiv.reply .cmtopts {
+	padding-left: 8px;
+	margin-top: -7px;
+}
+
+#hashover label input[type="checkbox"] {
+	vertical-align: middle;
+	margin-top: 1px;
+	margin-bottom: 2px;
+}
+
+#hashover .cmtdiv .optionbuttons input.delete:hover,
+#hashover .cmtdiv .optionbuttons input.delete:focus {
+	border: 1px solid #BB0000 ! important;
+	background-color: #FF0000 ! important;
+	color: #FCFCFC ! important;
+	cursor: pointer;
+
+}
+
+#hashover .cmtdiv input.delete:focus {
+	box-shadow: 0px 0px 3px #FF5555 ! important;
+	-moz-box-shadow: 0px 0px 3px #FF5555 ! important;
+	-webkit-box-shadow: 0px 0px 3px #FF5555 ! important;
+	-o-box-shadow: 0px 0px 3px #FF5555 ! important;
+}
+
+#hashover .cmtdiv .cmtnote.cmtfont {
+	font-size: 16px;
+	display: inline-block;
+	position: relative;
+	top: 12px;
+	left: 10px;
+	vertical-align: top;
+	color: #FF0000;
+}
+
+#hashover > .cmtfont:nth-child(3) {
+	margin-bottom: 0px;
+	display: inline-block;
+	width: 100%;
+	padding-bottom: 8px;
+	border-bottom: 1px dashed rgb(190, 190, 190);
+}
+
+#hashover .cmtfont#message {
+	display: block;
+	margin-top: 6px;
+	padding: 6px;
+	text-align: center;
+	background-color: rgba(210, 210, 255, 0.5);
+	border: 1px solid #AAAAFF;
+}
