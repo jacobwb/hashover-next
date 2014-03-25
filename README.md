@@ -8,7 +8,7 @@ HashOver 1.0
 	<tbody>
 		<tr>
 			<td width="38%">
-				<ul style="margin-top: 0px;">
+				<ul>
 					<li>Restricted use of HTML tags</li>
 					<li>Display externally hosted images</li>
 					<li>Five comment sorting methods</li>
@@ -18,19 +18,19 @@ HashOver 1.0
 					<li>Notification emails</li>
 				</ul>
 			</td>
-			<td width="35%">
-				<ul style="margin-top: 0px;">
+			<td width="33%">
+				<ul>
 					<li>Threaded replies</li>
 					<li>Avatar icons</li>
-					<li>Comment editing and deletion</li>
+					<li>Comment editing &amp; deletion</li>
 					<li>Comment RSS feeds</li>
 					<li>Likes</li>
 					<li>Popular comments</li>
 					<li>Comment layout templates</li>
 				</ul>
 			</td>
-			<td valign="top" width="26%">
-				<ul style="margin-top: 0px;">
+			<td valign="top" width="28%">
+				<ul>
 					<li>Administration</li>
 					<li>Automatic URL links</li>
 					<li>Customizable HTML</li>
