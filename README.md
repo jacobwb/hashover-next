@@ -47,7 +47,9 @@ HashOver 2.0 (development)
 http://tildehash.com/?page=hashover
 
 <b>Focus of this release:</b><hr>
-HashOver <a href="https://github.com/jacobwb/hashover" target="_blank">version 1.0</a> consists of code written by <a href="http://tildehash.com/?page=author" target="blank">one person</a> over the course of five years, come March the 29th 2014. Moreover, HashOver was my first serious use of JavaScript and my first PHP project of such complexity. Those two facts should trigger obvious concerns about HashOver's performance, efficiency, and security. With that in mind, version 2.0 will be the next release, and will focus on improving nothing but the following areas.
+HashOver <a href="https://github.com/jacobwb/hashover" target="_blank">version 1.0</a> consists of code written by <a href="http://tildehash.com/?page=author" target="blank">one person</a> over the course of five years, come March the 29th 2014. Moreover, HashOver was my first serious use of JavaScript and my first PHP project of such complexity. Those two facts should trigger obvious concerns about HashOver's performance, efficiency, and security.
+
+With that in mind, version 2.0 will be the next release, and will focus on improving nothing but the following areas.
 <ul>
 	<li>Security</li>
 	<li>Performance</li>
