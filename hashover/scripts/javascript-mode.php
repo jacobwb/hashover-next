@@ -493,7 +493,7 @@ function sort_comments(method) {
 
 	// Display comments, if there are no comments display a note
 	if (!empty($show_cmt)) {
-		echo jsAddSlashes('<span class="cmtsort";">\n' . $text['sort'] . ': <select name="sort" size="1" onChange="sort_comments(this.value); return false;">\n');
+		echo jsAddSlashes('<span class="cmtsort">\n' . $text['sort'] . ': <select name="sort" size="1" onChange="sort_comments(this.value); return false;">\n');
 		echo jsAddSlashes('<option value="ascending">' . $text['sort_ascend'] . '</option>\n');
 		echo jsAddSlashes('<option value="descending">' . $text['sort_descend'] . '</option>\n');
 		echo jsAddSlashes('<option value="byname">' . $text['sort_byname'] . '</option>\n');
