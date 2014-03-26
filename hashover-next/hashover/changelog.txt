@@ -1,0 +1,829 @@
+Changes by Jacob Barkdull 2013-08-29
+-------------------------------------------------------------------------------
+Official mark of version 1.0!
+
+All necessary files (source code and images) are now available via:
+
+	ZIP archive: http://tildehash.com/hashover.zip
+	GitHub: https://github.com/jacobwb/hashover
+
+Please commit your changes to GitHub and make sure to read the GitHub page 
+carefully for coding guidelines and copyright information.
+
+Added new comment sorting feature with five sorting methods:
+
+	In Order
+	In Reverse Order
+	By Commenter
+	By Date (newest first)
+	By Likes
+
+Locale support, only three languages supported right now: English, Spanish, 
+and Japanese. More languages will be added, those three are simply the ones 
+of which I have at least some knowledge. More, further, and better translations 
+are welcome and appreciated.
+
+Individual IP addresses can now be blocked by adding them one per line to a 
+file called "blocklist.txt" in the "hashover" directory. In addition to that, 
+if the variable "$spam_IP_check" is set to 'php', 'javascript', or 'both' a 
+visitor's IP address will be checked against stopforumspam.com's database.
+
+E-mail notifications per comment can now be disabled by unchecking the 
+"Subscribe" checkbox in the "Edit Comment" form.
+
+Added administration support for deletion and editing of all comments. Just 
+set the "$admin_nickname" and "$admin_password" variables in the "secrets.php" 
+file to appropriate values. Read the "IMPORTANT" notice carefully.
+
+Many, many major changes to accommodate said and following changes.
+The script has been split into multiple files in "hashover/scripts" directory.
+Removed all JavaScript from PHP-mode (except code for liking a comment).
+"Reply" and "Edit" forms are now part of the dynamically generated HTML.
+
+Added "Login" button. It simply sets the necessary cookies that allow users to 
+edit, delete, and (un)subscribe to/from email notifications.
+
+Removed Jeremiah Stoddard as secondary copyright holder since his 
+contributions are no longer present in the current codebase, or rather, the 
+codebase has changed enough that he would have no legal precedent to claim 
+ownership any longer. Not that I expect any trouble.
+
+Fixed bug that caused a comment to become uneditable after you post another 
+comment with a different e-mail address as the last. Cause: conditions to 
+display the "Edit" link were based on a name+e-mail+password scheme.
+
+Renamed "comments.php" to "hashover.php".
+Renamed "comments" directory to "hashover".
+Moved code for automatic links and embedded images out of "write_comments.php"
+Avatar icons that fail to load now get same style as when icons are disabled.
+Temporarily disabled Identi.ca avatar support (see avatars.php) for why.
+Added "reply" to "cmtdiv" CSS class elements to control how replies look.
+Added "nickname" and "likes" to RSS feeds for use as API.
+Removed name and horizontal row from RSS descriptions.
+Now checks PHP version, fails if not 5.3.3 or higher.
+Improved how comment deletion notices are handled.
+Changed format of changelog.
+Minor CSS changes.
+Minor bug fixes.
+
+
+Changes by Jacob Barkdull 2013-03-31
+-------------------------------------------------------------------------------
+RSS feed items now sorted by creation date in file, instead of filemtime.
+
+
+Changes by Jacob Barkdull 2013-03-20
+-------------------------------------------------------------------------------
+External image URLs have to be wrapped in [img] and [/img] tags to appear.
+Removed insecure "e" modifier from all preg_replace operations.
+Improved how HTML tags are handled, including <code> escaping.
+
+Bug fixed: URLs to image files automatically link again.
+Bug fixed: User input of "\n" no longer phased in JavaScript.
+
+
+Changes by Jacob Barkdull 2013-03-18
+-------------------------------------------------------------------------------
+Fixed bug causing "@username@identica" names to loss "@identica" when editing.
+Fixed bug causing all "@" symbols to be removed from names.
+
+Major changes to how HTML output is handled, most HTML has been moved 
+into "/comments/templates/default.html", allowing for multiple comment 
+styles and easy customization of HTML output and overall layout.
+
+
+Changes by Jacob Barkdull 2013-02-08
+-------------------------------------------------------------------------------
+Added code to display external images.
+"comments.css" link tag no longer added to head if one already exists.
+Now escaping single quotes instead of double quotes in JavaScript output.
+"avatars.php" no longer uses cURL.
+Optimized JavaScript output.
+Redesigned comment layout.
+Many CSS changes.
+
+
+Changes by Jacob Barkdull 2012-12-03
+-------------------------------------------------------------------------------
+Applied patch by Solomon Peachy
+
+
+Changes by Jacob Barkdull 2012-10-29
+-------------------------------------------------------------------------------
+Changed script execution time into JavaScript comment.
+Fixed bug allowing external script usage via "canon_url".
+
+
+Changes by Jacob Barkdull 2012-10-07
+-------------------------------------------------------------------------------
+Many minor bug fixes.
+Many major CSS changes.
+Code clean-up, some variable name changes.
+Avatar icon URLs added to RSS feed, allowing RSS feeds to act as an API.
+Major "Edit" form redesign, editing "Name", "E-mail" and "Website" now allowed.
+Comments only containing newlines and/or spaces are now treated as empty.
+Now removing trailing newlines and spaces from comments before writing.
+RSS feed "link" element now automatically added to page head element.
+Fixed bug causing trailing newline when editing a comment.
+Twitter/Identi.ca at-handles no longer part of name links.
+Improved "<code>" tag method HTML character escaping.
+CSS added to style "<pre>" and "<code>" tags.
+
+Fixed bug causing "GET" requests to affect the file including "comments.php". 
+
+	Explanation:
+
+		File "phphome.php" includes "comments.php", like this:
+			<?php $mode = 'php'; include("comments.php"); ?>
+
+		Someone visits "phphome.php?rss=http://website.com/", the 
+		RSS feed XML would be output on "phphome.php". Similar was 
+		true for "phphome.php?count_link=http://website.com/".
+
+Added loop to remove unwanted URL queries from comment directory names.
+
+	Explanation:
+
+		Add unwanted URL queries, one per line, to a file called 
+		"ignore_queries.txt" under the "comments" directory.
+
+		Adding just a query name without a value will remove the 
+		query from comment directory names no matter what its value 
+		is. Adding a query name with a value (name=value) will only 
+		remove that specific query with that specific value from 
+		comment directory names.
+
+Content no longer written to document using JavaScript "document.write".
+
+	Explanation:
+
+		All content is now placed into the new "show_cmt" variable 
+		and then written via "getElementById("hashover").innerHTML". 
+		This allows the script to be deferrable (JavaScript 'defer' 
+		tag), which means the script executes after the page is done 
+		loading; a desirable behavior for some use cases.
+
+
+Changes by Jacob Barkdull 2012-10-06
+-------------------------------------------------------------------------------
+Major redesign of reply form and "Like", "Edit", and "Reply" buttons.
+XML files no longer double read in RSS feed function.
+Many CSS changes and minor bug fixes.
+Fixed cookie path problem.
+Added "Unlike" feature.
+
+
+Changes by Jacob Barkdull 2012-09-25
+-------------------------------------------------------------------------------
+Avatar icon in form no longer shown if "sites_on" variable set to "no".
+Fixed bug where avatar icon in form remains when all optional fields disabled.
+"Options" button no longer shown with all optional fields disabled.
+Changed "&&" and "||" to "and" and "or", respectively.
+"cmtform" element classes changes to "hashover".
+Other minor bug fixes.
+Many CSS changes.
+
+
+Changes by Jacob Barkdull 2012-07-15
+-------------------------------------------------------------------------------
+Cleaned up code to get page URL.
+Added error message to "mkdir()".
+Fixed comment deletion notice bug.
+Improved error message of include of "secrets.php".
+Added link relation to the "Source Code" link.
+Added and changed some code comments.
+Moved a few ifs and functions around.
+Changed some error messages.
+
+
+Changes by Jacob Barkdull 2012-07-12
+-------------------------------------------------------------------------------
+Applied patches by InaTux Computers. No changelog, so I'll do my best 
+to list what has been changed.
+
+	Comment replies no longer stored in sub-directories, now stored in 
+	the same directory and named as <parent comment>-<reply number(s)>.
+
+	Rationale: Solves a permissions bug where sub-directories aren't 
+		   owned by a user who has permission to write to them.
+
+		   Only a single directory is read. Making it faster.
+
+		   Generating permalinks is as simple as:
+		   #c<preg_replace('/-/', 'r', basename($file, '.xml'))>
+
+		   Easier to read a comments tread via filenames.
+
+	Comment threads now stored in "/comments/pages/<page URL>".
+	Separated like functionality into "like.php" script.
+	Many, many minor changes to accommodate said and following changes.
+
+	Many "\n" newlines replaced with "PHP_EOL". This helps JavaScript 
+	and HTML output look the same across different server platforms.
+
+	"like.php", "avatars.php" and "secrets.php" moved into new 
+	"scripts" directory. All images moved into new "images" directory.
+
+	Fixed bug causing "Like" link to only be displayed when an 
+	"E-mail Address" cookie is set. Anyone who hadn't commented yet 
+	couldn't see the "Like" link.
+
+	Renamed a few variables.
+	Added a few code comments.
+	Replaced "$fsroot_dir" variable with "chdir()".
+	All mentions of "comments.php" in actual code removed.
+	Separated "Default Settings" variables from URL cleaning code.
+	Moved "Default Settings" variables back to the top of the code.
+	Added more robust handling of "secrets.php" file inclusion.
+	Added error message upon failed "secrets.php" file inclusion.
+	Updated list of files to download in installation note.
+	Spaced out some code structure for better readability.
+	Separated deletion notice out into new "deletion_notice" function.
+	Reworked handling of deleted comments.
+
+	"All that, and a toilet!"
+
+
+Changes by Jacob Barkdull 2012-07-04
+-------------------------------------------------------------------------------
+Fixed bug that made only alphanumeric comments possible (うぐぅ).
+Fixed bug causing corrupt permalinks in RSS feeds.
+Changed display of count link to "Post Comment" if there are no comments.
+Removed full XML file server-side locations from "Like" links.
+Removed unnecessary second "str_replace()" from "$clean_data" variable.
+Changed reply button tooltips to better reflect status of e-mail subscription.
+The "Edit" link is now shown for multiple users of the same computer.
+Added Twitter/Identi.ca profile linking back in (doesn't check for profile)
+Added tooltips to "Like" and "Edit" links.
+Added CSS class attributes to "Like" and "Edit" links.
+Added switch to turn off IP address storage.
+Improved e-mail notifications.
+Improved automatic links.
+Fixed "Like" bugs.
+
+Comment count no longer innerHTML'd into "cmtcount" identified HTML 
+element if there are no comments.
+
+Improved how comment and reply fields get their default text,
+and how the script ignores and JavaScript handles them.
+
+CSS changes.
+
+
+Changes by Jacob Barkdull 2012-07-01
+-------------------------------------------------------------------------------
+Changed "Like", "Edit", and "Reply" buttons into links, as well as 
+many code adjustments to accommodate said change.
+
+Separated avatar functionality into "avatars.php" to decrease load time.
+Checkmark icons beside "Reply" now handled by CSS (revert to element classes).
+Added "Canonical URL" feature, the necessary form fields and code.
+Added optional left-aligned comment indention via "$indention" variable.
+Removed deprecated "edit" and "like" CSS element classes.
+Removed unnecessary span tags and their IDs.
+Page URLs no longer truncate at first ampersand.
+Improved how the script gets the page URL.
+Changed `$_GET["display"]` to `$_GET["count_link"]`.
+Changed `$_SERVER["SERVER_NAME"]` to "$domain".
+Changed how count link is handled (now uses full URL.)
+Changed look of password field and delete button when editing a comment.
+Changed many variable names (either spaced them out or renamed them.)
+Moved and condensed a lot of code related to page URL and mode switch.
+Added execution time to footer (it's temporary, helps me improve load time.)
+Added various error messages.
+Fixed referer checking.
+CSS changes.
+
+
+Changes by Jacob Barkdull 2012-06-29
+-------------------------------------------------------------------------------
+Added checkmark icon beside "Reply" to indicate presence of notification 
+email. Removed "Reply", "Edit", and "Like" CSS hoverover background colors.
+
+Changed Twitter/Identi.ca @handles character limit to from 20 to 29
+because the 20 limit is hit to easily with an optional @identica.
+
+Nickname now links to Twitter/Identi.ca profile if an @username(@identica)
+is used as Nickname and no Website is given.
+
+Twitter and Identi.ca avatars now fallback on Gravatar
+(Twitter's default egg graphic will no longer show up).
+
+Fix spelling error, "avatar" misspelled as "avartar".
+CSS changes.
+
+
+Changes by Jacob Barkdull 2012-06-27
+-------------------------------------------------------------------------------
+Applied patch by Solomon Peachy.
+Changed field JavaScript "onfocus" and "onblur" coloring to CSS ":focus".
+Replaced background style on each form input field with class tag.
+Removed checkmark beside names to deter implying Twitter account verification.
+Added CSS colors and HTML tooltips to indicate presence of notification email.
+Improved handling of reply and edit forms.
+Added link to archives.
+CSS changes.
+
+
+Changes by Jacob Barkdull 2012-06-27
+-------------------------------------------------------------------------------
+Now removing "@identica" from names.
+Changed Twitter/Identi.ca linking to avatar icon instead of Nickname.
+Fixed bug causing URLs surrounded in spaces to fail to auto-link.
+
+
+Changes by Jacob Barkdull 2012-06-22
+-------------------------------------------------------------------------------
+CSS changes that improves use on mobile devices.
+
+Fixed bug causing "E-mail Address" to be written to comment file 
+when a blank e-mail address is given.
+
+Fixed bug causing failed Twitter/Identi.ca at-handle profile 
+linking if Website field is blank.
+
+
+Changes by Jacob Barkdull 2012-06-18
+-------------------------------------------------------------------------------
+Minor changes to PHP, CSS, and mobile handling.
+Now using local image file as default avatar instead of Gravatar's.
+
+Now Twitter/Identi.ca avatars will be used if a Twitter/Identi.ca 
+profile URL is used as Website.
+
+
+Changes by Jacob Barkdull 2012-06-10
+-------------------------------------------------------------------------------
+Twitter avatars will now be displayed if an @username is used as Nickname, 
+Identi.ca avatars will be displayed if an @username@identica is used.
+
+Names link to Twitter/Identi.ca profiles if @username(@identica) is used.
+Fixed blank passwords being written to comment file as MD5'd "Password".
+Other minor bug fixes & code changes.
+
+
+Changes by Jacob Barkdull 2012-06-08
+-------------------------------------------------------------------------------
+Now on page load a "cmtcount" identified HTML element will receive the 
+comment count as content. Example: "<span id="cmtcount"></span> Comments".
+Useful to make a comment "widget"/"badge"/"button" thing.
+
+
+Changes by Jacob Barkdull 2012-06-04
+-------------------------------------------------------------------------------
+"comments.css" StyleSheet tag now automatically added to page head tag.
+Updated installation instructions.
+Added tooltips to form fields.
+
+
+Changes by Jacob Barkdull 2012-05-29
+-------------------------------------------------------------------------------
+Added Gravatar icons to the main comment form and reply forms.
+
+Major form redesign and layout, temporary values describe the various fields, 
+along with image icons to the left of each field.
+
+Updated CSS.
+
+
+Changes by Jacob Barkdull 2012-05-26
+-------------------------------------------------------------------------------
+Fixed bug causing escaped HTML tags to become part of automatic links, 
+which caused problems when the accepted tags were converted back.
+
+
+Changes by Jacob Barkdull 2012-05-14
+-------------------------------------------------------------------------------
+Improved "Most Popular Comment(s)" feature.
+Fixed "kickback" fragment identifiers when deleting comments.
+Added "$popular" variable as popularity-via-likes threshold.
+Fixed bug causing conflicts between innerHTML actions.
+Now comment dates are removed when replying/editing.
+
+Now the "Edit" button only shows if the e-mail cookie and 
+e-mail address in the comment file match.
+
+
+Changes by Jacob Barkdull 2012-05-12
+-------------------------------------------------------------------------------
+Added "Like" feature.
+Start of "Most Popular Comment(s)" feature.
+Setting up for sorting.
+Renamed HTML IDs for clarity.
+
+Separated HTML tag output from "read_comments" function
+into new "parse_comments" function.
+
+
+Changes by Jacob Barkdull 2012-05-09
+-------------------------------------------------------------------------------
+Fixed comment count in RSS feeds.
+
+-------------------------------------------------------------------------------
+Changes by Jacob Barkdull 2012-05-05
+
+Fixed HTML tag output in notification e-mails.
+Removed ASCII carriage returns ("\r") in notification e-mails.
+
+Fixed encryption bug causing mismatched passwords, corrupt email
+addresses and false/failed notification deliveries.
+
+
+Changes by Jacob Barkdull 2012-05-04
+-------------------------------------------------------------------------------
+Reworked handling of deleted comments.
+Reply directories are now deleted when they're empty.
+Changed how comments are counted.
+Changed how comment files get their numbers.
+Fixed bug causing escaped HTML in automatic links.
+Changed comment file format to XML (ask if you want the converter).
+Other minor bug fixes and changes.
+
+
+Changes by Jacob Barkdull 2012-05-01
+-------------------------------------------------------------------------------
+Renamed 'key.php' file to 'secrets.php'.
+Moved "enotify" variable into 'secrets.php' file.
+Improved how PHP source code is handled.
+Fixed display of JavaScript source code.
+Other bug fixes.
+
+
+Changes by Jacob Barkdull 2012-04-19
+-------------------------------------------------------------------------------
+Major rewrite of JavaScript and HTML output.
+Improved JavaScript/PHP mode switch.
+
+
+Changes by Jacob Barkdull 2012-04-16
+-------------------------------------------------------------------------------
+Start of switch functionality between mostly-PHP and JavaScript+PHP modes.
+Changed appropriate HTML tag ID attributes to CLASS attributes.
+
+
+Changes by Jacob Barkdull 2012-04-12
+-------------------------------------------------------------------------------
+Minor changes to the display count functionality.
+
+
+Changes by Jacob Barkdull 2012-02-19
+-------------------------------------------------------------------------------
+Improved comment requirement indication.
+Improved form top/bottom position HTML tag layout.
+Added RSS feed image link to the right of the comment count.
+Changed default comment form text to indicate which fields are required.
+
+
+Changes by Jacob Barkdull 2012-02-02
+-------------------------------------------------------------------------------
+Improved comment sub-directory naming scheme.
+Deleted message no longer written to deleted comments.
+Removed function "make_directories".
+Changed permalink naming scheme.
+Cleaned code.
+
+
+Changes by Jacob Barkdull 2012-30-01
+-------------------------------------------------------------------------------
+Added "Tread" links pointing to parent comments beside comment dates.
+Improved HTML tag layout and CSS style for Webkit browsers.
+Optimized JavaScript output for faster loading.
+
+
+Changes by Jacob Barkdull 2012-28-01
+-------------------------------------------------------------------------------
+Added optional shorter comment date format.
+Added subtle way to identify commenters whom will receive email notifications.
+Improved HTML tag layout and CSS style for slightly better scalability.
+Improved HTML cleanup and automatic tag closing ("cleantags" function).
+Renamed "endtags" function to "cleantags".
+
+
+Changes by Jacob Barkdull 2012-25-01
+-------------------------------------------------------------------------------
+Optional Gravatar avatar icon integration.
+Improved HTML tag layout.
+Improved CSS style.
+
+
+Changes by Jacob Barkdull 2012-24-01
+-------------------------------------------------------------------------------
+Beginning of comment editing feature.
+Changed "Reply To Comment" and "Delete" links into buttons.
+Added confirmation popup to delete button.
+Moved delete button to under "Edit".
+Cleaned up JavaScript code.
+Minor CSS changes.
+Bug fixes.
+
+
+Changes by Jacob Barkdull 2012-17-01
+-------------------------------------------------------------------------------
+Beginning of RSS feed feature.
+
+
+Changes by Jacob Barkdull 2012-16-01
+-------------------------------------------------------------------------------
+Fixed bug that allowed anyone to delete any file with 0777 permissions.
+Fixed bug that allowed anyone to delete any comment, using a single password.
+Reply email notifications now include original comment under "In reply to:".
+Removed encrypted emails and passwords from JavaScript output.
+General code clean up and other minor bug fixes.
+
+
+Changes by Jacob Barkdull 2011-24-10
+-------------------------------------------------------------------------------
+Fixed link to comment in notification emails.
+
+
+Changes by Jacob Barkdull 2011-05-10
+-------------------------------------------------------------------------------
+Added step about the system's CSS to installation note.
+Added basic style to the HTML output as fallback.
+Fixed bug that disabled automatic hyperlinks.
+Fixed "style" tags.
+
+
+Changes by Jacob Barkdull 2011-29-09
+-------------------------------------------------------------------------------
+Changed how comment directories are named, filename now includes full path.
+Made the links to "Source Code" and "JavaScript" point to local server.
+Added "link" query to use with "display" query.
+Changed how the "display" query is handled.
+
+
+Changes by Jacob Barkdull 2011-26-09
+-------------------------------------------------------------------------------
+Added "pagetitle" variable as a toggle for whether page title is shown or not.
+Added two steps about creating the "comments" directory to installation note.
+Changed line 59 (now line 61) to run `$_SERVER["PHP_SELF"]` through basename.
+Other minor changes.
+
+
+Changes by Jacob Barkdull 2011-11-09
+-------------------------------------------------------------------------------
+Changed how the comment count's plurals are handled.
+Changed how displaying source code is handled.
+Added `header("Content-type: text/javascript");` at line 53.
+Added a link to the JavaScript output at the end of the comments.
+Changed Copyright and installation note(s).
+Changed how referring URLs are handled.
+PHP and JavaScript documentation.
+Cleaned up code.
+
+
+Changes by Jacob Barkdull 2011-25-08
+-------------------------------------------------------------------------------
+Replaced deprecated function "eregi_replace()" with "preg_replace()".
+Improved how accepted HTML tags are handled.
+Added code to escape HTML tags inside <code> tags.
+Added <code> tag to accepted HTML.
+Fixed serious bugs.
+
+
+Changes by Jacob Barkdull 2011-21-08
+-------------------------------------------------------------------------------
+Added the "endtags" function for counting the number of open and closing HTML 
+tags, if the number of open and closing HTML tags aren't the same it adds as 
+many closing tags as necessary for each to the end of the file. Ensuring that 
+tags left unclosed by a commenter won't affect the rest of the page. The 
+function only closes accepted HTML tags, as that's all that's necessary.
+
+Fixed a bug that caused the "Options" link to be displayed even when 
+the options were displayed or were never hidden upon first time use 
+or due to disabled/unaccepted cookies.
+
+
+Changes by Jacob Barkdull 2011-20-08
+-------------------------------------------------------------------------------
+Fixed a bug that allowed anyone to use a blank password to delete any comment 
+if a password wasn't given when the target comment was posted (thanks "Outis").
+
+Added code to display a "Delete" link on comments only if a password was given 
+when the comment was posted. Subsequently added necessary JavaScript code.
+
+Added ID tags to HTML elements for better control of style.
+Renamed "comment_form2" as "reply_form".
+Adjusted indention, x2 the padding.
+
+
+Changes by Jacob Barkdull 2011-19-08
+-------------------------------------------------------------------------------
+Added AGPL notice to JavaScript output. The JavaScript is now Free Software.
+Changed comments' flat text file format.
+Removed all HTML elements from comment files.
+Removed all code for writing HTML elements to comment files.
+Added code to add HTML elements to JavaScript output.
+Added "LOCK_EX" to "file_put_contents" functions.
+Improved how Line Feeds and Carriage Returns are handled.
+Passwords are now saved as a MD5 hash to prevent malicious use by webmasters.
+Fixed JavaScript output indention.
+Cleaned up code.
+Added comments.
+
+
+Changes by Jacob Barkdull 2011-15-03
+-------------------------------------------------------------------------------
+Shortened the names of some variables.
+Changed HTML ID tags to more general names.
+Added HTML ID tags to multiple HTML elements to allow more control over style.
+Moved HTML elements around to complement the CSS changes.
+Cleaned up code.
+
+
+Changes by Jacob Barkdull 2010-21-10
+-------------------------------------------------------------------------------
+Changed "Post a Comment" to include page title, automatically by default or 
+by specifying the title in the <script> tag via the "pagetitle" URL query.
+
+Fixed a bug that caused a blank name if the "Website" field was disabled.
+
+Fixed a bug that caused a message "You will not receive notification of 
+replies to your comment without supplying an e-mail" to appear even if the 
+"Email" field is disabled.
+
+Now if all fields are disabled the "Options" link displays a message reading: 
+"All Additional Options Disabled."
+
+
+Changes by Jacob Barkdull 2010-12-10
+-------------------------------------------------------------------------------
+Fixed a bug that caused JavaScript syntax errors if an encrypted password 
+contained a quote.
+
+
+Changes by Jacob Barkdull 2010-12-10
+-------------------------------------------------------------------------------
+Changed code indention from spaced to tabbed.
+Changed "Name" field to "Nickname".
+Changed "Password (?)" field to "Password (Optional)".
+
+Moved password field so as to appear right after the "Nickname" field, this 
+way web browsers will store the "Name" field as username and the "Password" 
+field as password, as opposed to "Website" being stored as the username.
+
+Delete field is now auto-filled.
+
+
+Changes by Jacob Barkdull 2010-12-03
+-------------------------------------------------------------------------------
+Merged the two occurring RecursiveDirectoryIterator classes. This should 
+make the comment system slightly more efficient as it will no longer read 
+the "/comments" directory twice.
+
+Renamed the password input fields' names stored in each comment file to fix 
+a bug where the decrypted password would be saved to the comment file.
+
+Renamed the "count_comments" function to "read_comments".
+
+
+Changes by Jacob Barkdull 2010-11-24
+-------------------------------------------------------------------------------
+Added functionality to display only the comment count by setting the 
+"display" URL query to the page filename.
+
+Added information about said functionality to the installation note.
+
+
+Changes by Jacob Barkdull 2010-11-06 to 2010-11-10
+-------------------------------------------------------------------------------
+Altered the "count_comments" function to use RecursiveDirectoryIterator and 
+merged Jeremiah Stoddard's modifications with the "count_comments" function.
+
+Added functionality to show a "This file has been deleted" note on first 
+replies and all underlying replies. In other words the deleted comment 
+recreation with a notice of deletion is now recursive.
+
+Altered design implementations, like "Delete" comes before "Reply to Comments",
+"if($file->isFile())" is now "if(is_file($file))", individual padding on 
+comments, "Delete" link is now red, number of comments is displayed as:
+"Showing 3 Comments (8 counting replies)" for example.
+
+Fixed serious bugs.
+
+
+Changes by Jeremiah Stoddard 2010-11-06
+-------------------------------------------------------------------------------
+Altered the unlink line to replace the file contents with the note
+"This file has been deleted."
+
+Altered the readfile() in line 334 to make a comparison to that note and 
+skip the reply/delete links if file contents match the note.
+
+Modified the script to find missing files and recreate them.
+
+
+Changes by Jacob Barkdull 2010-11-06
+-------------------------------------------------------------------------------
+Beginning of comment deletion functionality.
+
+Added JavaScript function to display "Options" such as Name, Email, 
+Website, etc., when replying.
+
+Added a Password field, used to shore an encrypted password in each 
+comment file for later use, such as deleting a comment.
+
+
+Changes by Jacob Barkdull 2010-11-05
+-------------------------------------------------------------------------------
+Made referrer checking stricter to avoid obscure directories created under 
+"/comments" via external usage. This happened on Google search cache and 
+other external websites that could remotely use the comment system by simply 
+including "tildehash.com" in the page name or as a URL query.
+
+
+Changes by Jacob Barkdull 2010-11-04
+-------------------------------------------------------------------------------
+Added "<s>", "<ul>", "<ol>", "<li>", and "<blockquote>" as supported HTML.
+Now removing second queries from referring URLs.
+
+
+Changes by Jacob Barkdull 2010-11-03
+-------------------------------------------------------------------------------
+Fixed a bug that caused pages with URLs that contain numbers to include the 
+numbers in the permalink.
+
+Fixed a bug that caused the first comment's first reply to have the same 
+permalink number as the 11th comment (1/1.txt = 11 & 11.txt = 11).
+
+Moved the reply link out of the "data" variable and into the "read_comments" 
+function, a reply link will no longer be written to each comment file.
+
+Made some small layout changes.
+
+
+Changes by Jacob Barkdull 2010-10-23
+-------------------------------------------------------------------------------
+Added a warning message when a comment is posted without an email address.
+Added a <noscript> tag to the installation code.
+
+
+Changes by Jacob Barkdull 2010-09-10
+-------------------------------------------------------------------------------
+I'm sort of confused about the comment counting method used for displaying a 
+message when a comment has been deleted. There was (is?) a bug that caused it 
+to display a "Comment Deleted" message after replies. I believe I've fixed 
+this by adding the "deletedcomment" variable back in.
+
+
+Changes by Jacob Barkdull 2010-09-07
+-------------------------------------------------------------------------------
+Added encryption method for encrypting emails stored in comments; these emails 
+are used for notifying a commenter of replies to his/her comment(s).
+
+Added necessary form fields and code for storing encrypted emails and sending 
+mail to commenter when another commenter replies to his/her comment(s).
+
+
+Changes by Jacob Barkdull 2010-07-29
+-------------------------------------------------------------------------------
+Now we strip "../" from $_POST["reply_to"] thus "sanitizing" the value before 
+using it. This helps prevent malicious usage (thanks mysterious 89.248.91.145.)
+
+Added additional JavaScript functions for disabling comments, displaying 
+comment form on bottom, setting "Comments" field height, disabling "Name" 
+field, disabling "E-mail" field, and disabling "Website" field.
+
+$deletedcount removed, $commentcount now used for tracking deleted comments.
+
+
+Changes by Jacob Barkdull 2010-07-28
+-------------------------------------------------------------------------------
+Added if statement to mail() so that if the email given is the same as the 
+email used for notification it won't send mail to the notification email.
+
+
+Changes by Jacob Barkdull 2010-07-24
+-------------------------------------------------------------------------------
+Made the reply link trigger a JavaScript function that replaces it with a 
+form to post a reply. This form also only shows the "Name", "E-mail 
+Address", and "Website" fields if they don't have content from previous 
+usage of the comments in the last month. 
+
+Changed BBCode to normal HTML.
+
+
+Changes by Jacob Barkdull 2010-07-22
+-------------------------------------------------------------------------------
+Added left padding to replies as indention, and added a closing div tag so 
+that each reply is in its own div. Permalinks are now based on file 
+basenames+subdirectory names.
+
+
+Changes by Jeremiah Stoddard 2010-07-22
+-------------------------------------------------------------------------------
+Beginnings of a reply system. Need to indent replies. Also, the anchors now 
+need to take into account the directory structure: basename("$dir/$file", 
+".txt") alone is not sufficient enough to remain unique.
+
+
+Changes by Jeremiah Stoddard 2010-07-21
+-------------------------------------------------------------------------------
+Removed line: header("Content-type: text/javascript"); from near the end of 
+script (former line 172) as output already sent by former line 101: 
+document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"post\">\n");
+
+Added brief installation note
+
+Added additional comments throughout code
+
