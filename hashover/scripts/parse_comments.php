@@ -194,7 +194,7 @@
 					$variable .= "\t\t" . 'avatar: \'' . addcslashes($avatar_icon, "'") . '\',' . PHP_EOL;
 					$variable .= "\t\t" . 'indent: \'' . (($indention == 'right') ? '16px ' . $indent . 'px 12px 0px' : '16px 0px 12px ' . $indent . 'px') . '\',' . PHP_EOL;
 					$variable .= "\t\t" . 'name: \'' . addcslashes('<b class="cmtfont' . $name_class . '" id="opt-name-' . $permalink . '">' . $variable_name . '</b>', "'") . '\',' . PHP_EOL;
-					$variable .= (preg_match("/r/", $permalink)) ? "\t\t" . 'thread: \'' . addcslashes('<a href="#' . preg_replace('/^(.*)r.*$/', '\\1', $permalink) . '" title="' . $text['thread_tip'] . '" style="float: right;">' . $text['thread'] . '</a>', "'") . '\',' . PHP_EOL : '';
+					$variable .= (preg_match("/r/", $permalink)) ? "\t\t" . 'thread: \'' . addcslashes('<a href="#' . preg_replace('/^(.*)r.*$/', '\\1', $permalink) . '" title="' . $text['thread_tip'] . '" class="topthread;">' . $text['thread'] . '</a>', "'") . '\',' . PHP_EOL : '';
 					$variable .= "\t\t" . 'date: \'' . addcslashes('<a href="#' . str_replace('_pop', '', $permalink) . '" title="Permalink">' . $cmt_date . '</a>', "'") . '\',' . PHP_EOL;
 					$variable .= ($read_cmt['likes'] > '0') ? "\t\t" . 'likes: \'' . $read_cmt['likes'] . ' Like' . (($read_cmt['likes'] != '1') ? 's' : '') . '\',' . PHP_EOL : '';
 					$variable .= "\t\t" . 'sort_name: \'' . addcslashes($read_cmt->name, "'") . '\',' . PHP_EOL;
