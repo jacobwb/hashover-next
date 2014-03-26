@@ -380,7 +380,7 @@ function sort_comments(method) {
 	echo "\t" . 'document.write("<div id=\"hashover\"></div>\n");' . PHP_EOL;
 	echo '}' . PHP_EOL . PHP_EOL;
 
-	echo jsAddSlashes('<a name="comments"></a><br><b class="cmtfont">' . $text['post_cmt'] . $js_title . ':</b>');
+	echo jsAddSlashes('<a name="comments"></a><br><b class="cmtfont cmtposttitle">' . $text['post_cmt'] . $js_title . ':</b>');
 
 	if (isset($_COOKIE['message']) and !empty($_COOKIE['message'])) {
 		echo jsAddSlashes('<b id="message" class="cmtfont">' . $_COOKIE['message'] . '</b><br><br>\n');
