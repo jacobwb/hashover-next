@@ -37,25 +37,29 @@
 
 <div id="hashover">
 	<a name="comments"></a><br>
-	<b class="cmtfont"><?php echo $text['post_cmt'] . $js_title; ?>:</b>
+	<b class="hashover-post-comment"><?php echo $text['post_cmt'] . $js_title; ?>:</b>
 <?php
 	if (isset($_COOKIE['message']) and !empty($_COOKIE['message'])) {
-		echo "\t" . '<b id="message" class="cmtfont">' . $_COOKIE['message'] . '</b><br><br>' . PHP_EOL;
+		echo "\t" . '<b id="hashover-message" class="hashover-title">' . $_COOKIE['message'] . '</b><br><br>' . PHP_EOL;
 	} else {
 		echo "\t" . '<br><br>' . PHP_EOL;
 	}
 ?>
 
 	<form name="comment_form" action="/hashover.php" method="post">
-		<span class="cmtnumber"><?php
-			if (isset($_COOKIE['name']) and preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $_COOKIE['name'])) {
-				echo '<img align="left" width="' . $icon_size . '" height="' . $icon_size . '" src="' . $script = $root_dir . 'scripts/avatars.php?username=' . $_COOKIE['name'] . '&email=' . md5(strtolower(trim($_COOKIE['email']))) . '">';
+		<span class="hashover-avatar"><?php
+			if ($icons == 'yes') {
+				if (isset($_COOKIE['name']) and preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $_COOKIE['name'])) {
+					echo '<img align="left" width="' . $icon_size . '" height="' . $icon_size . '" src="' . $script = $root_dir . 'scripts/avatars.php?username=' . $_COOKIE['name'] . '&email=' . md5(strtolower(trim($_COOKIE['email']))) . '">';
+				} else {
+					echo '<img align="left" width="' . $icon_size . '" height="' . $icon_size . '" src="' . $script = (isset($_COOKIE['email'])) ? 'http://gravatar.com/avatar/' . md5(strtolower(trim($_COOKIE['email']))) . '?d=http://' . $domain . $root_dir . 'images/avatar.png&s=' . $icon_size . '&r=pg">' : $root_dir . 'images/avatar.png">';
+				}
 			} else {
-				echo '<img align="left" width="' . $icon_size . '" height="' . $icon_size . '" src="' . $script = (isset($_COOKIE['email'])) ? 'http://gravatar.com/avatar/' . md5(strtolower(trim($_COOKIE['email']))) . '?d=http://' . $domain . $root_dir . 'images/avatar.png&s=' . $icon_size . '&r=pg">' : $root_dir . 'images/avatar.png">';
+				echo "\t" . jsAddSlashes('<span title="Permalink">#' . $cmt_count . '</span>');
 			}
 		?></span>
 
-		<div class="cmtbox" align="center">
+		<div class="hashover-balloon" align="center">
 			<table width="100%" cellpadding="0" cellspacing="0">
 				<tbody>
 					<tr>
@@ -64,14 +68,14 @@
 	// Display name input tag if told to
 	if ($name_on == 'yes') {
 		echo "\t\t\t\t\t\t" . '<td align="right">' . PHP_EOL;
-		echo "\t\t\t\t\t\t\t" . '<input type="text" name="name" title="' . $text['nickname_tip'] . '" maxlength="30" class="opt-name" value="' . ((isset($_COOKIE['name'])) ? $_COOKIE['name'] : '') . '" placeholder="' . $text['nickname'] . '">' . PHP_EOL;
+		echo "\t\t\t\t\t\t\t" . '<input type="text" name="name" title="' . $text['nickname_tip'] . '" maxlength="30" class="hashover-name-input" value="' . ((isset($_COOKIE['name'])) ? $_COOKIE['name'] : '') . '" placeholder="' . $text['nickname'] . '">' . PHP_EOL;
 		echo "\t\t\t\t\t\t" . '</td>' . PHP_EOL;
 	}
 
 	// Display password input tag if told to
 	if ($passwd_on == 'yes') {
 		echo "\t\t\t\t\t\t" . '<td align="right">' . PHP_EOL;
-		echo "\t\t\t\t\t\t\t" . '<input name="password" title="' . $text['password_tip'] . '" class="opt-password" type="password" value="' . ((isset($_COOKIE['password']) and !empty($_COOKIE['password'])) ? $_COOKIE['password'] : '') . '" placeholder="' . $text['password'] . '">' . PHP_EOL;
+		echo "\t\t\t\t\t\t\t" . '<input name="password" title="' . $text['password_tip'] . '" class="hashover-password-input" type="password" value="' . ((isset($_COOKIE['password']) and !empty($_COOKIE['password'])) ? $_COOKIE['password'] : '') . '" placeholder="' . $text['password'] . '">' . PHP_EOL;
 		echo "\t\t\t\t\t\t" . '</td>' . PHP_EOL;
 	}
 
@@ -79,7 +83,7 @@
 	if ($is_mobile == 'yes') {
 		if ($name_on == 'yes' and $passwd_on == 'yes') {
 			echo "\t\t\t\t\t\t" . '<td width="1%" align="right">' . PHP_EOL;
-			echo "\t\t\t\t\t\t\t" . '<input name="login" title="Login (optional)" class="opt-login" type="submit" value="">' . PHP_EOL;
+			echo "\t\t\t\t\t\t\t" . '<input name="login" title="Login (optional)" class="hashover-login-input" type="submit" value="">' . PHP_EOL;
 			echo "\t\t\t\t\t\t" . '</td>' . PHP_EOL;
 		}
 
@@ -90,21 +94,21 @@
 	// Display email input tag if told to
 	if ($email_on == 'yes') {
 		echo "\t\t\t\t\t\t" . '<td align="right">' . PHP_EOL;
-		echo "\t\t\t\t\t\t\t" . '<input type="text" name="email" title="' . $text['email'] . '" class="opt-email" value="' . ((isset($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '" placeholder="' . $text['email'] . '">' . PHP_EOL;
+		echo "\t\t\t\t\t\t\t" . '<input type="text" name="email" title="' . $text['email'] . '" class="hashover-email-input" value="' . ((isset($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '" placeholder="' . $text['email'] . '">' . PHP_EOL;
 		echo "\t\t\t\t\t\t" . '</td>' . PHP_EOL;
 	}
 
 	// Display website input tag if told to
 	if ($sites_on == 'yes') {
 		echo "\t\t\t\t\t\t" . '<td' . (($is_mobile == 'yes') ? ' colspan="2"' : '') . ' align="right">' . PHP_EOL;
-		echo "\t\t\t\t\t\t\t" . '<input type="text" name="website" title="' . $text['website'] . '" class="opt-website" value="' . ((isset($_COOKIE['website'])) ? $_COOKIE['website'] : '') . '" placeholder="' . $text['website'] . '">' . PHP_EOL;
+		echo "\t\t\t\t\t\t\t" . '<input type="text" name="website" title="' . $text['website'] . '" class="hashover-website-input" value="' . ((isset($_COOKIE['website'])) ? $_COOKIE['website'] : '') . '" placeholder="' . $text['website'] . '">' . PHP_EOL;
 		echo "\t\t\t\t\t\t" . '</td>' . PHP_EOL;
 	}
 
 	if ($is_mobile != 'yes') {
 		if ($name_on == 'yes' and $passwd_on == 'yes') {
 			echo "\t\t\t\t\t\t" . '<td width="1%" align="right">' . PHP_EOL;
-			echo "\t\t\t\t\t\t\t" . '<input name="login" title="Login (optional)" class="opt-login" type="submit" value="">' . PHP_EOL;
+			echo "\t\t\t\t\t\t\t" . '<input name="login" title="Login (optional)" class="hashover-login-input" type="submit" value="">' . PHP_EOL;
 			echo "\t\t\t\t\t\t" . '</td>' . PHP_EOL;
 		}
 	}
@@ -123,7 +127,7 @@
 
 	$replyborder = (isset($_COOKIE['success']) and $_COOKIE['success'] == "no") ? ' border: 2px solid #FF0000 !important; -moz-border-radius: 5px 5px 0px 0px; border-radius: 5px 5px 0px 0px;' : '';
 	echo "\t\t\t" . '<textarea rows="' . $rows . '" cols="63" name="comment" style="width: 100%;' . $replyborder . '" title="' . $text['cmt_tip'] . '" placeholder="' . $text['comment_form'] . '"></textarea><br>' . PHP_EOL;
-	echo "\t\t\t" . '<input class="post_cmt" type="submit" value="' . $text['post_button'] . '" style="width: 100%;"><br>' . PHP_EOL;
+	echo "\t\t\t" . '<input class="post-comment" type="submit" value="' . $text['post_button'] . '" style="width: 100%;"><br>' . PHP_EOL;
 	if (isset($_GET['canon_url']) or isset($canon_url)) echo "\t\t\t\t\t" . '<input type="hidden" name="canon_url" value="' . $page_url . '">' . PHP_EOL;
 	if (isset($_COOKIE['replied'])) echo "\t\t\t\t\t" . '<input type="hidden" name="reply_to" value="' . $_COOKIE['replied'] . '">' . PHP_EOL;
 	echo "\t\t" . '</div>' . PHP_EOL;
@@ -151,7 +155,7 @@
 					$template_replace['edit_link'] = (isset($comments["$array"]['edit_link'])) ? $comments["$array"]['edit_link'] : '';
 					$template_replace['reply_link'] = $comments["$array"]['reply_link'];
 				} else {
-					$template_replace['cmtopts_style'] = ' style="display: none;"';
+					$template_replace['hashover_footer_style'] = ' style="display: none;"';
 				}
 
 				// Load HTML template
@@ -168,15 +172,15 @@
 						$return_form = '';
 
 						if (in_array('hashover_reply=' . $template_replace['permalink'], $ref_queries)) {
-							$return_form .= PHP_EOL . '<span class="optionbuttons" style="float: right;">' . PHP_EOL;
+							$return_form .= PHP_EOL . '<span class="hashover-form-buttons" style="float: right;">' . PHP_EOL;
 							$return_form .= "\t" . '<a href="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '#' . $template_replace['permalink'] . '">' . $text['cancel'] . '</a>' . PHP_EOL;
 							$return_form .= '</span>' . PHP_EOL;
-							$return_form .= '<b class="cmtfont">' . $text['reply_to_cmt'] . '</b>' . PHP_EOL;
+							$return_form .= '<b class="hashover-title">' . $text['reply_to_cmt'] . '</b>' . PHP_EOL;
 							$return_form .= '<span class="options" id="options-' . $template_replace['permalink'] . '"><hr style="clear: both;">' . PHP_EOL;
 							$return_form .= "\t" . '<table width="100%" cellpadding="0" cellspacing="0" align="center">' . PHP_EOL;
 							$return_form .= "\t\t" . '<tbody>' . PHP_EOL . "\t\t\t" . '<tr>' . PHP_EOL;
 
-							if ($name_on == 'yes') {
+							if ($icons == 'yes' and $name_on == 'yes') {
 								$return_form .= "\t\t\t\t" . '<td width="1%" rowspan="2">' . PHP_EOL;
 
 								if (isset($_COOKIE['name']) and preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $_COOKIE['name'])) {
@@ -191,13 +195,13 @@
 
 							if ($name_on == 'yes') {
 								$return_form .= "\t\t\t\t" . '<td align="right">' . PHP_EOL;
-								$return_form .= "\t\t\t\t\t" . '<input type="text" name="name" title="' . $text['nickname_tip'] . '" class="opt-name" value="' . ((isset($_COOKIE['name'])) ? $_COOKIE['name'] : '') . '" placeholder="' . $text['nickname'] . '" maxlength="30">' . PHP_EOL;
+								$return_form .= "\t\t\t\t\t" . '<input type="text" name="name" title="' . $text['nickname_tip'] . '" class="hashover-name-input" value="' . ((isset($_COOKIE['name'])) ? $_COOKIE['name'] : '') . '" placeholder="' . $text['nickname'] . '" maxlength="30">' . PHP_EOL;
 								$return_form .= "\t\t\t\t" . '</td>' . PHP_EOL;
 							}
 
 							if ($passwd_on == 'yes') {
 								$return_form .= "\t\t\t\t" . '<td align="right">' . PHP_EOL;
-								$return_form .= "\t\t\t\t\t" . '<input name="password" title="' . $text['password_tip'] . '" class="opt-password" type="password" value="' . ((isset($_COOKIE['password']) and !empty($_COOKIE['password'])) ? $_COOKIE['password'] : '') . '" placeholder="' . $text['password'] . '">' . PHP_EOL;
+								$return_form .= "\t\t\t\t\t" . '<input name="password" title="' . $text['password_tip'] . '" class="hashover-password-input" type="password" value="' . ((isset($_COOKIE['password']) and !empty($_COOKIE['password'])) ? $_COOKIE['password'] : '') . '" placeholder="' . $text['password'] . '">' . PHP_EOL;
 								$return_form .= "\t\t\t\t" . '</td>' . PHP_EOL;
 							}
 
@@ -207,52 +211,57 @@
 
 							if ($email_on == 'yes') {
 								$return_form .= "\t\t\t\t" . '<td align="right">' . PHP_EOL;
-								$return_form .= "\t\t\t\t\t" . '<input type="text" name="email" title="' . $text['email'] . '" class="opt-email" value="' . ((isset($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '" placeholder="' . $text['email'] . '">' . PHP_EOL;
+								$return_form .= "\t\t\t\t\t" . '<input type="text" name="email" title="' . $text['email'] . '" class="hashover-email-input" value="' . ((isset($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '" placeholder="' . $text['email'] . '">' . PHP_EOL;
 								$return_form .= "\t\t\t\t" . '</td>' . PHP_EOL;
 							}
 
 							if ($sites_on == 'yes') {
 								$return_form .= "\t\t\t\t" . '<td align="right">' . PHP_EOL;
-								$return_form .= "\t\t\t\t\t" . '<input type="text" name="website" title="' . $text['website'] . '" class="opt-website" value="' . ((isset($_COOKIE['website'])) ? $_COOKIE['website'] : '') . '" placeholder="' . $text['website'] . '">' . PHP_EOL;
+								$return_form .= "\t\t\t\t\t" . '<input type="text" name="website" title="' . $text['website'] . '" class="hashover-website-input" value="' . ((isset($_COOKIE['website'])) ? $_COOKIE['website'] : '') . '" placeholder="' . $text['website'] . '">' . PHP_EOL;
 								$return_form .= "\t\t\t\t" . '</td>' . PHP_EOL;
 							}
 
 							$return_form .= "\t\t\t" . '</tr>' . PHP_EOL . "\t\t" . '</tbody>' . PHP_EOL . "\t" . '</table>' . PHP_EOL . '</span>' . PHP_EOL . '<center>' . PHP_EOL;
 							$return_form .= "\t" . '<textarea rows="6" cols="62" name="comment" style="width: 100%;" title="' . $text['cmt_tip'] . '" placeholder="' . $text['comment_form'] . '"></textarea><br>' . PHP_EOL;
-							$return_form .= "\t" . '<input class="post_cmt" type="submit" value="' . $text['post_button'] . '" style="width: 100%;">' . PHP_EOL;
+							$return_form .= "\t" . '<input class="post-comment" type="submit" value="' . $text['post_button'] . '" style="width: 100%;">' . PHP_EOL;
 							$return_form .= (isset($_GET['canon_url']) or isset($canon_url)) ? "\t" . '<input type="hidden" name="canon_url" value="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '">' . PHP_EOL : '';
 							$return_form .= "\t" . '<input type="hidden" name="cmtfile" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $template_replace['permalink']) . '">' . PHP_EOL;
 							$return_form .= "\t" . '<input type="hidden" name="reply_to" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $template_replace['permalink']) . '">' . PHP_EOL;
 							$return_form .= '</center>';
 						} else {
 							if (in_array('hashover_edit=' . $template_replace['permalink'], $ref_queries)) {
-								$return_form .= PHP_EOL . '<span class="optionbuttons" style="float: right;">' . PHP_EOL;
+								$return_form .= PHP_EOL . '<span class="hashover-form-buttons" style="float: right;">' . PHP_EOL;
 								$return_form .= "\t" . '<input type="submit" name="edit" value="." style="display: none;">';
-								$return_form .= "\t" . '<input type="submit" name="delete" class="delete" value="' . $text['delete'] . '">' . PHP_EOL;
+								$return_form .= "\t" . '<input type="submit" name="delete" class="hashover-delete" value="' . $text['delete'] . '">' . PHP_EOL;
 								$return_form .= "\t" . '<label for="notify" title="' . $text['subscribe_tip'] . '">' . PHP_EOL;
 								$return_form .= "\t\t" . '<input type="checkbox"' . (($notifications != 'no') ? ' checked="true"' : '') . ' id="notify" name="notify"> ' . $text['subscribe'] . PHP_EOL;
 								$return_form .= "\t" . '</label>' . PHP_EOL;
 								$return_form .= "\t" . '<a href="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '#' . $template_replace['permalink'] . '">' . $text['cancel'] . '</a>' . PHP_EOL;
 								$return_form .= '</span>' . PHP_EOL;
-								$return_form .= '<b class="cmtfont">' . $text['edit_cmt'] . '</b>' . PHP_EOL;
+								$return_form .= '<b class="hashover-title">' . $text['edit_cmt'] . '</b>' . PHP_EOL;
 								$return_form .= '<span class="options"><hr style="clear: both;">' . PHP_EOL;
 								$return_form .= "\t" . '<table width="100%" cellpadding="0" cellspacing="0" align="center">' . PHP_EOL;
-								$return_form .= "\t\t" . '<tbody>' . PHP_EOL . "\t\t\t" . '<tr>' . PHP_EOL . "\t\t\t\t" . '<td width="1%" rowspan="2">' . PHP_EOL;
+								$return_form .= "\t\t" . '<tbody>' . PHP_EOL . "\t\t\t" . '<tr>' . PHP_EOL;
 
-								if (isset($_COOKIE['name']) and preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $_COOKIE['name'])) {
-									$return_form .= "\t\t\t\t\t" . '<img align="left" width="34" height="34" src="' . $root_dir . 'scripts/avatars.php?username=' . $_COOKIE['name'] . '&email=' . md5(strtolower(trim($_COOKIE['email']))) . '">';
-								} else {
-									$return_form .= "\t\t\t\t\t" . '<img align="left" width="34" height="34" src="';
-									$return_form .= (isset($_COOKIE['email'])) ? 'http://gravatar.com/avatar/' . md5(strtolower(trim($_COOKIE['email']))) . '?d=http://' . $domain . $root_dir . 'images/avatar.png&s=34&r=pg">' : $root_dir . 'images/avatar.png">' . PHP_EOL;
+								if ($icons == 'yes') {
+									$return_form .= "\t\t\t\t" . '<td width="1%" rowspan="2">' . PHP_EOL;
+
+									if (isset($_COOKIE['name']) and preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $_COOKIE['name'])) {
+										$return_form .= "\t\t\t\t\t" . '<img align="left" width="34" height="34" src="' . $root_dir . 'scripts/avatars.php?username=' . $_COOKIE['name'] . '&email=' . md5(strtolower(trim($_COOKIE['email']))) . '">';
+									} else {
+										$return_form .= "\t\t\t\t\t" . '<img align="left" width="34" height="34" src="';
+										$return_form .= (isset($_COOKIE['email'])) ? 'http://gravatar.com/avatar/' . md5(strtolower(trim($_COOKIE['email']))) . '?d=http://' . $domain . $root_dir . 'images/avatar.png&s=34&r=pg">' : $root_dir . 'images/avatar.png">' . PHP_EOL;
+									}
+
+									$return_form .= "\t\t\t\t" . '</td>' . PHP_EOL;
 								}
+
+								$return_form .= "\t\t\t\t" . '<td align="right">' . PHP_EOL;
+								$return_form .= "\t\t\t\t\t" . '<input type="text" name="name" title="' . $text['nickname_tip'] . '" class="hashover-name-input" value="' . ((isset($_COOKIE['name'])) ? $_COOKIE['name'] : '') . '" placeholder="' . $text['nickname'] . '" maxlength="30">' . PHP_EOL;
 								$return_form .= "\t\t\t\t" . '</td>' . PHP_EOL;
 
 								$return_form .= "\t\t\t\t" . '<td align="right">' . PHP_EOL;
-								$return_form .= "\t\t\t\t\t" . '<input type="text" name="name" title="' . $text['nickname_tip'] . '" class="opt-name" value="' . ((isset($_COOKIE['name'])) ? $_COOKIE['name'] : '') . '" placeholder="' . $text['nickname'] . '" maxlength="30">' . PHP_EOL;
-								$return_form .= "\t\t\t\t" . '</td>' . PHP_EOL;
-
-								$return_form .= "\t\t\t\t" . '<td align="right">' . PHP_EOL;
-								$return_form .= "\t\t\t\t\t" . '<input name="password" title="' . $text['password_tip'] . '" class="opt-password" type="password" value="' . ((isset($_COOKIE['password']) and !empty($_COOKIE['password'])) ? $_COOKIE['password'] : '') . '" placeholder="' . $text['password'] . '">' . PHP_EOL;
+								$return_form .= "\t\t\t\t\t" . '<input name="password" title="' . $text['password_tip'] . '" class="hashover-password-input" type="password" value="' . ((isset($_COOKIE['password']) and !empty($_COOKIE['password'])) ? $_COOKIE['password'] : '') . '" placeholder="' . $text['password'] . '">' . PHP_EOL;
 								$return_form .= "\t\t\t\t" . '</td>' . PHP_EOL;
 
 								if ($is_mobile == 'yes') {
@@ -260,11 +269,11 @@
 								}
 
 								$return_form .= "\t\t\t\t" . '<td align="right">' . PHP_EOL;
-								$return_form .= "\t\t\t\t\t" . '<input type="text" name="email" title="' . $text['email'] . '" class="opt-email" value="' . ((isset($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '" placeholder="' . $text['email'] . '">' . PHP_EOL;
+								$return_form .= "\t\t\t\t\t" . '<input type="text" name="email" title="' . $text['email'] . '" class="hashover-email-input" value="' . ((isset($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '" placeholder="' . $text['email'] . '">' . PHP_EOL;
 								$return_form .= "\t\t\t\t" . '</td>' . PHP_EOL;
 
 								$return_form .= "\t\t\t\t" . '<td align="right">' . PHP_EOL;
-								$return_form .= "\t\t\t\t\t" . '<input type="text" name="website" title="' . $text['website'] . '" class="opt-website" value="' . ((isset($_COOKIE['website'])) ? $_COOKIE['website'] : '') . '" placeholder="' . $text['website'] . '">' . PHP_EOL;
+								$return_form .= "\t\t\t\t\t" . '<input type="text" name="website" title="' . $text['website'] . '" class="hashover-website-input" value="' . ((isset($_COOKIE['website'])) ? $_COOKIE['website'] : '') . '" placeholder="' . $text['website'] . '">' . PHP_EOL;
 								$return_form .= "\t\t\t\t" . '</td>' . PHP_EOL;
 
 								// Clean HTML in comment
@@ -276,7 +285,7 @@
 
 								$return_form .= "\t\t\t" . '</tr>' . PHP_EOL . "\t\t" . '</tbody>' . PHP_EOL . "\t" . '</table>' . PHP_EOL . '</span>' . PHP_EOL . '<center>' . PHP_EOL;
 								$return_form .= "\t" . '<textarea rows="10" cols="62" name="comment" style="width: 100%;" title="' . $text['cmt_tip'] . '" placeholder="' . $text['reply_form'] . '">' . $template_replace['comment'] . '</textarea><br>' . PHP_EOL;
-								$return_form .= "\t" . '<input class="post_cmt" type="submit" name="edit" value="' . $text['save_edit'] . '" style="width: 100%;">' . PHP_EOL;
+								$return_form .= "\t" . '<input class="post-comment" type="submit" name="edit" value="' . $text['save_edit'] . '" style="width: 100%;">' . PHP_EOL;
 								$return_form .= "\t" . '<input type="hidden" name="cmtfile" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $template_replace['permalink']) . '">' . PHP_EOL;
 								$return_form .= (isset($_GET['canon_url']) or isset($canon_url)) ? "\t" . '<input type="hidden" name="canon_url" value="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '">' . PHP_EOL : '';
 								$return_form .= '</center>';
@@ -297,7 +306,7 @@
 
 	// Display most popular comments
 	if (!empty($top_likes)) {
-		echo "\t" . '<br><b class="cmtfont">' . $text['popular_cmts'] . ' Comment' . ((count($top_likes) != '1') ? 's' : '') . ':</b>' . PHP_EOL;
+		echo "\t" . '<br><b class="hashover-title">' . $text['popular_cmts'] . ' Comment' . ((count($top_likes) != '1') ? 's' : '') . ':</b>' . PHP_EOL;
 		$variable = '';
 
 		foreach ($top_likes as $file) {
@@ -308,16 +317,16 @@
 	}
 
 	// Display comment count
-	echo "\t" . '<br><b class="cmtfont">' . $text['showing_cmts'] . ' ' . $script = ($cmt_count == "1") ? '0 Comments:</b>' . PHP_EOL : display_count() . ':</b>' . PHP_EOL;
+	echo "\t" . '<br><b class="hashover-count">' . $text['showing_cmts'] . ' ' . $script = ($cmt_count == "1") ? '0 Comments:</b>' . PHP_EOL : display_count() . ':</b>' . PHP_EOL;
 
 	// Display comments, if there are no comments display a note
 	if (!empty($show_cmt)) {
 		parse_template($show_cmt, $total_count);
 	} else {
-		echo "\t" . '<div style="margin: 16px 0px 12px 0px;" class="cmtdiv">' . PHP_EOL;
-		echo "\t\t" . '<span class="cmtnumber"><img width="' . $icon_size . '" height="' . $icon_size . '" src="/hashover/images/first-comment.png"></span>' . PHP_EOL;
-		echo "\t\t" . '<div style="height: ' . $icon_size . 'px;" class="cmtbubble">' . PHP_EOL;
-		echo "\t\t\t" . '<b class="cmtnote cmtfont" style="color: #000000;">Be the first to comment!</b>' . PHP_EOL;
+		echo "\t" . '<div style="margin: 16px 0px 12px 0px;" class="hashover-comment">' . PHP_EOL;
+		echo "\t\t" . '<span class="hashover-avatar"><img width="' . $icon_size . '" height="' . $icon_size . '" src="/hashover/images/first-comment.png"></span>' . PHP_EOL;
+		echo "\t\t" . '<div style="height: ' . $icon_size . 'px;" class="hashover-balloon">' . PHP_EOL;
+		echo "\t\t\t" . '<b class="hashover-first hashover-title" style="color: #000000;">Be the first to comment!</b>' . PHP_EOL;
 		echo "\t\t" . '</div>' . PHP_EOL;
 		echo "\t" . '</div>' . PHP_EOL;
 	}
@@ -356,33 +365,33 @@
 
 
 // Function to like a comment
-function like(c, f) {
+function hashover-like(c, f) {
 	// Load "like.php"
 	var like = new XMLHttpRequest();
 	like.open('GET', '<?php echo $root_dir . 'scripts/like.php?like=' . $ref_path; ?>/' + f);
 	like.send();
 
 	// Get number of likes
-	if (document.getElementById('likes-' + c).innerHTML != '') {
-		var likes = parseInt(document.getElementById('likes-' + c).innerHTML.replace(/[^0-9]/g, ''));
+	if (document.getElementById('hashover-likes-' + c).innerHTML != '') {
+		var likes = parseInt(document.getElementById('hashover-likes-' + c).innerHTML.replace(/[^0-9]/g, ''));
 	} else {
 		var likes = parseInt(0);
 	}
 
 	// Change "Like" button title and class; Increase likes
-	if (document.getElementById('like-' + c).className == 'like') {
-		document.getElementById('like-' + c).className = 'liked';
-		document.getElementById('like-' + c).title = '<?php echo addcslashes($text['liked_cmt'], "'"); ?>';
+	if (document.getElementById('hashover-like-' + c).className == 'hashover-like') {
+		document.getElementById('hashover-like-' + c).className = 'hashover-liked';
+		document.getElementById('hashover-like-' + c).title = '<?php echo addcslashes($text['liked_cmt'], "'"); ?>';
 		likes++;
 	} else {
-		document.getElementById('like-' + c).className = 'like';
-		document.getElementById('like-' + c).title = '<?php echo addcslashes($text['like_cmt'], "'"); ?>';
+		document.getElementById('hashover-like-' + c).className = 'hashover-like';
+		document.getElementById('hashover-like-' + c).title = '<?php echo addcslashes($text['like_cmt'], "'"); ?>';
 		likes--;
 	}
 
 	// Change number of likes
 	var like_count = (likes != 1) ? likes + ' Likes' : likes + ' Like';
-	document.getElementById('likes-' + c).innerHTML = (likes > 0) ? '<b>' + like_count + '</b>' : '';
+	document.getElementById('hashover-likes-' + c).innerHTML = (likes > 0) ? '<b>' + like_count + '</b>' : '';
 }
 </script>
 

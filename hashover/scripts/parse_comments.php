@@ -49,12 +49,12 @@
 
 				if (empty($read_cmt->website)) {
 					if (preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $read_cmt->name)) {
-						$variable_name = $name_at . '<a id="opt-website-' . $permalink . '" href="http://' . ((!preg_match('/@identica/i', $read_cmt->name)) ? 'twitter.com/' : 'identi.ca/') . str_replace(array('@identica', '@'), '', $read_cmt->name) . '" target="_blank">' . preg_replace('/^@(.*?)$/', '\\1', str_replace('@identica', '<span style="display: none;">@identica</span>', $read_cmt->name)) . '</a>';
+						$variable_name = $name_at . '<a id="hashover-website-' . $permalink . '" href="http://' . ((!preg_match('/@identica/i', $read_cmt->name)) ? 'twitter.com/' : 'identi.ca/') . str_replace(array('@identica', '@'), '', $read_cmt->name) . '" target="_blank">' . preg_replace('/^@(.*?)$/', '\\1', str_replace('@identica', '<span style="display: none;">@identica</span>', $read_cmt->name)) . '</a>';
 					} else {
 						$variable_name = preg_replace('/^@(.*?)$/', '\\1', str_replace('@identica', '<span style="display: none;">@identica</span>', $read_cmt->name));
 					}
 				} else {
-					$variable_name = $name_at . '<a id="opt-website-' . $permalink . '" href="' . $read_cmt->website . '" target="_blank">' . preg_replace('/^@(.*?)$/', '\\1', str_replace('@identica', '<span style="display: none;">@identica</span>', $read_cmt->name)) . '</a>';
+					$variable_name = $name_at . '<a id="hashover-website-' . $permalink . '" href="' . $read_cmt->website . '" target="_blank">' . preg_replace('/^@(.*?)$/', '\\1', str_replace('@identica', '<span style="display: none;">@identica</span>', $read_cmt->name)) . '</a>';
 				}
 
 				// Format date and time
@@ -109,30 +109,30 @@
 
 				// Setup "Like" link
 				if (!isset($_COOKIE[$like_cookie])) {
-					$like_onclick = 'like(\'' . $permalink . '\', \'' . basename($file, '.xml') . '\'); ';
+					$like_onclick = 'hashover_like(\'' . $permalink . '\', \'' . basename($file, '.xml') . '\'); ';
 					$like_title = $text['like_cmt'];
-					$like_class = 'like';
+					$like_class = 'hashover-like';
 				} else {
 					if ($_COOKIE[$like_cookie] == 'liked') {
-						$like_onclick = 'like(\'' . $permalink . '\', \'' . basename($file, '.xml') . '\'); ';
+						$like_onclick = 'hashover_like(\'' . $permalink . '\', \'' . basename($file, '.xml') . '\'); ';
 						$like_title = $text['liked_cmt'];
-						$like_class = 'liked';
+						$like_class = 'hashover-liked';
 					} else {
-						$like_onclick = 'like(\'' . $permalink . '\', \'' . basename($file, '.xml') . '\'); ';
+						$like_onclick = 'hashover_like(\'' . $permalink . '\', \'' . basename($file, '.xml') . '\'); ';
 						$like_title = $text['like_cmt'];
-						$like_class = 'like';
+						$like_class = 'hashover-like';
 					}
 				}
 
 				// Define "Reply" link with appropriate tooltip
 				if (!empty($read_cmt->email) and $read_cmt['notifications'] == 'yes') {
 					if (isset($_COOKIE['email']) and encrypt($_COOKIE['email']) == $read_cmt->email) {
-						$email_indicator = $text['op_cmt_note'] . '" class="no-email"';
+						$email_indicator = $text['op_cmt_note'] . '" class="hashover-no-email"';
 					} else{
-						$email_indicator = $read_cmt->name . ' ' . $text['subbed_note'] . '" class="has-email"';
+						$email_indicator = $read_cmt->name . ' ' . $text['subbed_note'] . '" class="hashover-has-email"';
 					}
 				} else {
-					$email_indicator = $read_cmt->name . ' ' . $text['unsubbed_note'] . '" class="no-email"';
+					$email_indicator = $read_cmt->name . ' ' . $text['unsubbed_note'] . '" class="hashover-no-email"';
 				}
 
 				// Add HTML anchor tag to URLs
@@ -158,10 +158,10 @@
 
 					// Add keys to comments object
 					$variable["$array_count"]['avatar'] = $avatar_icon;
-					$variable["$array_count"]['cmtclass'] = ((preg_match('/r/', $permalink)) ? 'cmtdiv reply' : 'cmtdiv');
+					$variable["$array_count"]['cmtclass'] = ((preg_match('/r/', $permalink)) ? 'hashover-comment reply' : 'hashover-comment');
 					$variable["$array_count"]['indent'] = (($indention == 'right') ? '16px ' . $indent . 'px 12px 0px' : '16px 0px 12px ' . $indent . 'px');
-					$variable["$array_count"]['name'] = '<b class="cmtfont' . $name_class . '" id="opt-name-' . $permalink . '">' . $variable_name . '</b>';
-					if (preg_match("/r/", $permalink)) $variable["$array_count"]['thread'] = '<a href="#' . preg_replace('/^(.*)r.*$/', '\\1', $permalink) . '" title="' . $text['thread_tip'] . '" class="cmttopthread">' . $text['thread'] . '</a>';
+					$variable["$array_count"]['name'] = '<b class="hashover-name' . $name_class . '" id="hashover-name-' . $permalink . '">' . $variable_name . '</b>';
+					if (preg_match("/r/", $permalink)) $variable["$array_count"]['thread'] = '<a href="#' . preg_replace('/^(.*)r.*$/', '\\1', $permalink) . '" title="' . $text['thread_tip'] . '" class="hashover-thread-link">' . $text['thread'] . '</a>';
 					$variable["$array_count"]['date'] = '<a href="#' . str_replace('_pop', '', $permalink) . '" title="Permalink">' . $cmt_date . '</a>';
 					if ($read_cmt['likes'] > '0') $variable["$array_count"]['likes'] = $read_cmt['likes'] . ' Like' . (($read_cmt['likes'] != '1') ? 's' : '');
 					$variable["$array_count"]['sort_name'] = $read_cmt->name;
@@ -172,14 +172,14 @@
 					// Define "Like" link for everyone except original poster
 					if (!isset($_COOKIE[$edit_cookie]) or $_COOKIE[$edit_cookie] != hash('ripemd160', $read_cmt->name . $read_cmt->passwd)) {
 						if (!isset($_COOKIE['email']) or encrypt($_COOKIE['email']) != $read_cmt->email) {
-							$variable["$array_count"]['like_link'] = '<a href="#" id="like-' . $permalink . '" onClick="' . $like_onclick . 'return false;" title="' . $like_title . '" class="' . $like_class . '">Like</a>';
+							$variable["$array_count"]['like_link'] = '<a href="#" id="hashover-like-' . $permalink . '" onClick="' . $like_onclick . 'return false;" title="' . $like_title . '" class="' . $like_class . '">Like</a>';
 						}
 					}
 
 					// Define "Edit" link if proper login cookie set
 					if ((isset($_COOKIE[$edit_cookie]) and $_COOKIE[$edit_cookie] == hash('ripemd160', $read_cmt->name . $read_cmt->passwd)) or (isset($_COOKIE['name']) && isset($_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))]) and $_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))] == hash('ripemd160', $admin_nickname . md5(encrypt($admin_password))))) {
 						if (!empty($read_cmt->passwd) or $_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))] == hash('ripemd160', $admin_nickname . md5(encrypt($admin_password)))) {
-							$variable["$array_count"]['edit_link'] = '<a href="?hashover_edit=' . $permalink . '#' . $permalink . '" title="' . $text['edit_your_cmt'] . '" class="edit">Edit</a>';
+							$variable["$array_count"]['edit_link'] = '<a href="?hashover_edit=' . $permalink . '#' . $permalink . '" title="' . $text['edit_your_cmt'] . '" class="hashover-edit">Edit</a>';
 						}
 					}
 
@@ -190,11 +190,11 @@
 					// Add keys to comments object
 					$variable .= "\t" . '{' . PHP_EOL;
 					$variable .= "\t\t" . 'permalink: \'' . $permalink . '\',' . PHP_EOL;
-					$variable .= "\t\t" . 'cmtclass: \'' . ((preg_match('/r/', $permalink)) ? 'cmtdiv reply' : 'cmtdiv') . '\',' . PHP_EOL;
+					$variable .= "\t\t" . 'cmtclass: \'' . ((preg_match('/r/', $permalink)) ? 'hashover-comment reply' : 'hashover-comment') . '\',' . PHP_EOL;
 					$variable .= "\t\t" . 'avatar: \'' . addcslashes($avatar_icon, "'") . '\',' . PHP_EOL;
 					$variable .= "\t\t" . 'indent: \'' . (($indention == 'right') ? '16px ' . $indent . 'px 12px 0px' : '16px 0px 12px ' . $indent . 'px') . '\',' . PHP_EOL;
-					$variable .= "\t\t" . 'name: \'' . addcslashes('<b class="cmtfont' . $name_class . '" id="opt-name-' . $permalink . '">' . $variable_name . '</b>', "'") . '\',' . PHP_EOL;
-					$variable .= (preg_match("/r/", $permalink)) ? "\t\t" . 'thread: \'' . addcslashes('<a href="#' . preg_replace('/^(.*)r.*$/', '\\1', $permalink) . '" title="' . $text['thread_tip'] . '" class="cmttopthread">' . $text['thread'] . '</a>', "'") . '\',' . PHP_EOL : '';
+					$variable .= "\t\t" . 'name: \'' . addcslashes('<b class="hashover-name' . $name_class . '" id="hashover-name-' . $permalink . '">' . $variable_name . '</b>', "'") . '\',' . PHP_EOL;
+					$variable .= (preg_match("/r/", $permalink)) ? "\t\t" . 'thread: \'' . addcslashes('<a href="#' . preg_replace('/^(.*)r.*$/', '\\1', $permalink) . '" title="' . $text['thread_tip'] . '" class="hashover-thread-link">' . $text['thread'] . '</a>', "'") . '\',' . PHP_EOL : '';
 					$variable .= "\t\t" . 'date: \'' . addcslashes('<a href="#' . str_replace('_pop', '', $permalink) . '" title="Permalink">' . $cmt_date . '</a>', "'") . '\',' . PHP_EOL;
 					$variable .= ($read_cmt['likes'] > '0') ? "\t\t" . 'likes: \'' . $read_cmt['likes'] . ' Like' . (($read_cmt['likes'] != '1') ? 's' : '') . '\',' . PHP_EOL : '';
 					$variable .= "\t\t" . 'sort_name: \'' . addcslashes($read_cmt->name, "'") . '\',' . PHP_EOL;
@@ -204,16 +204,16 @@
 					// Define "Like" link for everyone except original poster
 					if (!isset($_COOKIE[$edit_cookie]) or $_COOKIE[$edit_cookie] != hash('ripemd160', $read_cmt->name . $read_cmt->passwd)) {
 						if (!isset($_COOKIE['email']) or encrypt($_COOKIE['email']) != $read_cmt->email) {
-							$variable .= "\t\t" . 'like_link: \'' . addcslashes('<a href="#" id="like-' . $permalink . '" onClick="' . $like_onclick . 'return false;" title="' . $like_title . '" class="' . $like_class . '">Like</a>', "'") . '\',' . PHP_EOL;
+							$variable .= "\t\t" . 'like_link: \'' . addcslashes('<a href="#" id="hashover-like-' . $permalink . '" onClick="' . $like_onclick . 'return false;" title="' . $like_title . '" class="' . $like_class . '">Like</a>', "'") . '\',' . PHP_EOL;
 						}
 					}
 
 					// Define "Edit" link if proper login cookie set
 					if ((isset($_COOKIE[$edit_cookie]) and $_COOKIE[$edit_cookie] == hash('ripemd160', $read_cmt->name . $read_cmt->passwd)) or (isset($_COOKIE['name']) && isset($_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))]) and $_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))] == hash('ripemd160', $admin_nickname . md5(encrypt($admin_password))))) {
-						$variable .= "\t\t" . 'edit_link: \'' . ((!empty($read_cmt->passwd) or $_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))] == hash('ripemd160', $admin_nickname . md5(encrypt($admin_password)))) ? addcslashes('<a href="#" onClick="editcmt(\'' . $permalink . '\', \'' . basename($file, '.xml') . '\', \'' . (($read_cmt['notifications'] != 'no') ? '1' : '0') . '\'); return false;" title="' . $text['edit_your_cmt'] . '" class="edit">Edit</a>', "'") : '') . '\',' . PHP_EOL;
+						$variable .= "\t\t" . 'edit_link: \'' . ((!empty($read_cmt->passwd) or $_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))] == hash('ripemd160', $admin_nickname . md5(encrypt($admin_password)))) ? addcslashes('<a href="#" onClick="hashover_edit(\'' . $permalink . '\', \'' . basename($file, '.xml') . '\', \'' . (($read_cmt['notifications'] != 'no') ? '1' : '0') . '\'); return false;" title="' . $text['edit_your_cmt'] . '" class="hashover-edit">Edit</a>', "'") : '') . '\',' . PHP_EOL;
 					}
 
-					$variable .= "\t\t" . 'reply_link: \'' . addcslashes('<a href="#" onClick="reply(\'' . $permalink . '\', \'' . basename($file, '.xml') . '\'); return false;" title="' . $text['reply_to_cmt'] . ' - ' . $email_indicator . '>Reply</a>', "'") . '\',' . PHP_EOL;
+					$variable .= "\t\t" . 'reply_link: \'' . addcslashes('<a href="#" onClick="hashover_reply(\'' . $permalink . '\', \'' . basename($file, '.xml') . '\'); return false;" title="' . $text['reply_to_cmt'] . ' - ' . $email_indicator . '>Reply</a>', "'") . '\',' . PHP_EOL;
 					$variable .= "\t\t" . 'comment: \'' . addcslashes($clean_code, "'") . '\'' . PHP_EOL;
 					$variable .= "\t" . '},' . PHP_EOL . PHP_EOL;
 				}

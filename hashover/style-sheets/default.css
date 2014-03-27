@@ -4,18 +4,13 @@
 }
 
 #hashover form,
-#hashover .cmtdiv form {
+#hashover .hashover-comment form {
 	display: block;
 }
 
-#hashover .cmtdiv form {
+#hashover .hashover-comment form {
 	margin-top: 6px;
 	clear: both;
-}
-
-#hashover form div.cmtbox {
-	margin-left: 65px;
-	padding: 6px 8px 8px 8px;
 }
 
 #hashover form input,
@@ -34,7 +29,7 @@
 #hashover form input,
 #hashover form textarea,
 #hashover form table input,
-#hashover .cmtdiv label {
+#hashover .hashover-comment label {
 	transition: all 120ms linear 0ms;
 	-moz-transition: all 120ms ease 0ms;
 	-webkit-transition: all 120ms ease 0ms;
@@ -44,9 +39,9 @@
 #hashover form input,
 #hashover form textarea,
 #hashover form table input,
-#hashover .cmtdiv pre,
-#hashover .cmtdiv code,
-#hashover .cmtdiv label {
+#hashover .hashover-comment pre,
+#hashover .hashover-comment code,
+#hashover .hashover-comment label {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -55,16 +50,16 @@
 
 #hashover form input,
 #hashover form table input,
-#hashover form div.cmtbox,
-#hashover .cmtbubble,
-#hashover .cmtdiv input.delete,
+#hashover .hashover-balloon,
+#hashover .hashover-comment input.hashover-delete,
 #hashover img,
-#hashover .cmtdiv pre,
-#hashover .cmtdiv code,
-#hashover .cmtnumber a,
-#hashover .cmtdiv .optionbuttons a,
-#hashover .cmtdiv label,
-#hashover .cmtfont#message {
+#hashover .hashover-comment pre,
+#hashover .hashover-comment code,
+#hashover .hashover-avatar span,
+#hashover .hashover-avatar a,
+#hashover .hashover-comment .hashover-form-buttons a,
+#hashover .hashover-comment label,
+#hashover .hashover-title#hashover-message {
 	border-radius: 5px 5px 5px 5px;
 	-moz-border-radius: 5px 5px 5px 5px;
 	-webkit-border-radius: 5px 5px 5px 5px;
@@ -87,7 +82,7 @@
 	resize: vertical;
 }
 
-#hashover form input.post_cmt {
+#hashover form input.post-comment {
 	border-top: none;
 	margin-top: 0px ! important;
 	border-radius: 0px 0px 5px 5px;
@@ -97,12 +92,12 @@
 	padding: 6px 4px 6px 4px;
 }
 
-#hashover input.post_cmt:hover {
+#hashover input.post-comment:hover {
 	background-color: #F0F0F0 ! important;
 	cursor: pointer;
 }
 
-#hashover input.post_cmt:focus {
+#hashover input.post-comment:focus {
 	background-color: #E8E8E8 ! important;
 	border-color: #000000 ! important;
 }
@@ -153,11 +148,15 @@
 	line-height: 16px;
 }
 
-#hashover .cmtdiv table tbody tr td[rowspan="2"] {
+#hashover .hashover-sort {
+	float:right;
+}
+
+#hashover .hashover-comment table tbody tr td[rowspan="2"] {
 	padding: 0px 8px 0px 0px ! important;
 }
 
-#hashover .cmtdiv table tbody tr td[rowspan="2"] img {
+#hashover .hashover-comment table tbody tr td[rowspan="2"] img {
 	border: none;
 }
 
@@ -165,7 +164,7 @@
 	padding: 2px 3px 6px 0px;
 }
 
-#hashover .cmtdiv table tbody tr:nth-child(1) td:nth-child(2) {
+#hashover .hashover-comment table tbody tr:nth-child(1) td:nth-child(2) {
 	padding-left: 0px;
 }
 
@@ -177,32 +176,32 @@
 	padding: 2px 0px 6px 0px;
 }
 
-#hashover input.opt-name {
+#hashover input.hashover-name-input {
 	background-image: url('/hashover/images/name.png');
 }
 
-#hashover input.opt-password {
+#hashover input.hashover-password-input {
 	background-image: url('/hashover/images/password.png');
 }
 
-#hashover input.opt-login {
+#hashover input.hashover-login-input {
 	width: 36px;
 	background-image: url('/hashover/images/login.png');
 	background-position: center center;
 	cursor: pointer;
 }
 
-#hashover input.opt-email {
+#hashover input.hashover-email-input {
 	background-image: url('/hashover/images/email.png');
 }
 
-#hashover input.opt-website {
+#hashover input.hashover-website-input {
 	background-image: url('/hashover/images/website.png');
 }
 
-#hashover .cmtdiv table tbody tr td,
-#hashover .cmtdiv table tbody tr td:nth-last-child(1),
-#hashover .cmtdiv table tbody tr td:first-child:nth-last-child(1) {
+#hashover .hashover-comment table tbody tr td,
+#hashover .hashover-comment table tbody tr td:nth-last-child(1),
+#hashover .hashover-comment table tbody tr td:first-child:nth-last-child(1) {
 	padding-bottom: 2px;
 }
 
@@ -211,12 +210,12 @@
 	padding: 1px;
 }
 
-#hashover .cmtdiv .cmtopts span.cmtbuttons {
+#hashover .hashover-comment .hashover-footer span.hashover-buttons {
 	color: transparent;
 	font-size: 0px;
 }
 
-#hashover .cmtdiv .cmtopts span.cmtbuttons a {
+#hashover .hashover-comment .hashover-footer span.hashover-buttons a {
 	display: inline-block;
 	border-top: 1px solid #C1C1C1;
 	border-left: 1px solid #C1C1C1;
@@ -236,46 +235,46 @@
 	-o-transition: background 140ms linear 0ms;
 }
 
-#hashover .cmtdiv .cmtopts span.cmtbuttons a:first-child {
+#hashover .hashover-comment .hashover-footer span.hashover-buttons a:first-child {
 	border-top-left-radius: 6px;
 }
 
-#hashover .cmtdiv .cmtopts span.cmtbuttons a:hover {
+#hashover .hashover-comment .hashover-footer span.hashover-buttons a:hover {
 	background-color: #E4E6F6;
 }
 
-#hashover .cmtdiv .cmtopts span.cmtbuttons a.like:active {
+#hashover .hashover-comment .hashover-footer span.hashover-buttons a.like:active {
 	background-image: url('/hashover/images/liked.png');
 	background-color: #FFDDDB;
 }
 
-#hashover .cmtdiv .cmtopts span.cmtbuttons a.liked:active {
+#hashover .hashover-comment .hashover-footer span.hashover-buttons a.liked:active {
 	background-image: url('/hashover/images/like.png');
 	background-color: #DBDBDB;
 }
 
-#hashover a.like {
+#hashover a.hashover-like {
 	background-image: url('/hashover/images/like.png');
 }
 
-#hashover a.liked {
+#hashover a.hashover-liked {
 	background-image: url('/hashover/images/liked.png');
 }
 
-#hashover a.edit {
+#hashover a.hashover-edit {
 	background-image: url('/hashover/images/edit.png');
 }
 
-#hashover a.has-email {
+#hashover a.hashover-has-email {
 	background-image: url('/hashover/images/has-email.png');
 }
 
-#hashover a.no-email {
+#hashover a.hashover-no-email {
 	background-image: url('/hashover/images/no-email.png');
 }
 
-#hashover a.has-email,
-#hashover a.no-email {
+#hashover a.hashover-has-email,
+#hashover a.hashover-no-email {
 	width: 33px ! important;
 }
 
@@ -292,7 +291,7 @@
 	border: 0px;
 }
 
-#hashover .cmtdiv {
+#hashover .hashover-comment {
 	clear: both;
 }
 
@@ -313,9 +312,10 @@
 	color: #005EFF;
 }
 
-#hashover form div.cmtbox,
-#hashover .cmtbubble {
+#hashover .hashover-balloon {
 	overflow: hidden;
+	margin-left: 65px;
+	padding: 6px 8px 8px 8px;
 	background-color: #F6F8FF;
 	border: 1px solid #808080 ! important;
 	text-align: left;
@@ -323,70 +323,70 @@
 	width: auto;
 }
 
-#hashover form div.cmtbox,
-#hashover .cmtdiv .cmtbubble {
+#hashover .hashover-comment .hashover-balloon {
 	margin-left: 64px;
+	padding: 0px;
 }
 
-#hashover .cmtdiv.reply .cmtbubble {
+#hashover .hashover-comment.reply .hashover-balloon {
 	margin-left: 49px;
 }
 
-#hashover .cmtdiv .cmtbubble .cmtdata {
+#hashover .hashover-comment .hashover-content {
 	padding: 0px 10px 0px 10px;
 	line-height: 1.4em;
 }
 
-#hashover .cmtdiv .cmtbubble .cmtdata img {
+#hashover .hashover-comment .hashover-content img {
 	max-width: 100%;
 	max-height: 640px;
 	cursor: pointer;
 }
 
-#hashover .cmtdiv.reply .cmtbubble .cmtdata {
+#hashover .hashover-comment.reply .hashover-content {
 	padding: 0px 8px 0px 8px;
 }
 
-#hashover .cmtdiv hr {
+#hashover .hashover-comment hr {
 	background-color: #C1C1C1;
 	margin: 0px;
 }
 
-#hashover .cmtdiv table {
+#hashover .hashover-comment table {
 	padding: 0px 6px 0px 5px;
 	margin: 5px 0px 5px 0px;
 }
 
-#hashover .cmtdiv table tbody tr td {
+#hashover .hashover-comment table tbody tr td {
 	line-height: normal;
 }
 
-#hashover .cmtdiv input,
-#hashover .cmtdiv .optionbuttons a,
-#hashover .cmtdiv label {
+#hashover .hashover-comment input,
+#hashover .hashover-comment .hashover-form-buttons a,
+#hashover .hashover-comment label {
 	font-size: 11px ! important;
 }
 
-#hashover .cmtdiv input.post_cmt {
+#hashover .hashover-comment input.post-comment {
 	margin: 0px;
 	border: none;
 	margin-top: 0px ! important;
 	background-color: #F0F0F0;
 }
 
-#hashover .cmtdiv input.post_cmt:hover {
+#hashover .hashover-comment input.post-comment:hover {
 	background-color: #E9E9E9 ! important;
 	cursor: pointer;
 }
 
-#hashover .cmtdiv input.post_cmt:focus {
+#hashover .hashover-comment input.post-comment:focus {
 	background-color: #E5E5E5 ! important;
 }
 
-#hashover .cmtdiv input[type="button"],
-#hashover .cmtdiv input.delete[type="submit"],
-#hashover .cmtdiv .optionbuttons a,
-#hashover .cmtdiv label {
+#hashover .hashover-comment input[type="button"],
+#hashover .hashover-comment input.hashover-delete[type="submit"],
+#hashover .hashover-comment .hashover-form-buttons a,
+#hashover .hashover-comment label {
 	display: inline-block;
 	border: 1px solid transparent ! important;
 	background: transparent ! important;
@@ -394,18 +394,18 @@
 	margin-bottom: 5px;
 }
 
-#hashover .cmtdiv label {
+#hashover .hashover-comment label {
 	padding: 2px 5px 0px 1px ! important;
 }
 
-#hashover .cmtdiv .optionbuttons a {
+#hashover .hashover-comment .hashover-form-buttons a {
 	padding: 3px 6px 3px 6px ! important;
 	color: #222222;
 }
 
-#hashover .cmtdiv input[type="button"]:hover,
-#hashover .cmtdiv .optionbuttons a:hover,
-#hashover .cmtdiv label:hover {
+#hashover .hashover-comment input[type="button"]:hover,
+#hashover .hashover-comment .hashover-form-buttons a:hover,
+#hashover .hashover-comment label:hover {
 	border-color: #C1C1C1 ! important;
 	background-color: #ECEEFF ! important;
 	text-shadow: none;
@@ -414,7 +414,7 @@
 	color: #222222;
 }
 
-#hashover .cmtdiv .options {
+#hashover .hashover-comment .options {
 	display: block;
 	overflow: hidden;
 	width: 100%;
@@ -425,12 +425,12 @@
 	-o-transition: all 0.15s linear 0ms;
 }
 
-#hashover .cmtdiv table input {
+#hashover .hashover-comment table input {
 	margin: 2px 0px 2px 0px;
 	height: 26px;
 }
 
-#hashover .cmtdiv textarea {
+#hashover .hashover-comment textarea {
 	margin: 0px ! important;
 	border-left: none ! important;
 	border-right: none ! important;
@@ -441,56 +441,68 @@
 	-o-border-radius: 0px ! important;
 }
 
-#hashover .cmtfont {
+#hashover .hashover-post-comment,
+#hashover .hashover-title,
+#hashover .hashover-count,
+#hashover .hashover-comment .hashover-name {
 	font-size: 16px;
 	display: inline-block;
 	padding-top: 2px;
 }
 
-#hashover .cmtdiv .cmtfont {
+#hashover .hashover-post-comment {
+	margin-bottom: 0px;
+	display: inline-block;
+	width: 100%;
+	padding-bottom: 8px;
+	border-bottom: 1px dashed rgb(190, 190, 190);
+}
+
+#hashover .hashover-comment .hashover-name {
+	font-size: 20px;
+}
+
+#hashover .hashover-comment.reply .hashover-name {
+	font-size: 16px;
+	margin-top: -1px;
+}
+
+#hashover .hashover-comment .hashover-name.at {
+	color: #00268F;
+}
+
+#hashover .hashover-comment .hashover-title {
 	display: inline-block;
 	clear: right;
 }
 
-#hashover .cmtdiv form .cmtfont {
+#hashover .hashover-comment form .hashover-title {
 	padding-left: 8px;
 }
 
-#hashover .cmtdiv .optionbuttons {
+#hashover .hashover-comment .hashover-form-buttons {
 	float: right;
 	padding: 0px 5px 0px 0px ! important;
 }
 
-#hashover .cmtdiv .cmtheader {
+#hashover .hashover-comment .hashover-header {
 	line-height: normal;
 	padding: 8px 10px 10px 10px;
 	margin-bottom: 10px;
 	overflow: hidden;
 }
 
-#hashover .cmtdiv.reply .cmtheader {
+#hashover .hashover-comment.reply .hashover-header {
 	padding: 8px 8px 6px 8px;
 }
 
-#hashover .cmtdiv .cmtheader .cmtfont {
-	font-size: 20px;
-}
-
-#hashover .cmtdiv.reply .cmtheader .cmtfont {
-	font-size: 16px;
-	margin-top: -1px;
-}
-
-#hashover .cmtdiv .cmtheader .cmtfont.at {
-	color: #00268F;
-}
-
-#hashover .cmttopthread {
+#hashover .hashover-thread-link {
 	float: right;
 }
 
-#hashover .cmtnumber img,
-#hashover .cmtnumber a {
+#hashover .hashover-avatar span,
+#hashover .hashover-avatar img,
+#hashover .hashover-avatar a {
 	display: inline-block;
 	width: 45px;
 	height: 45px;
@@ -505,15 +517,15 @@
 	color: #808080;
 }
 
-#hashover .cmtdiv.reply .cmtnumber img,
-#hashover .cmtdiv.reply .cmtnumber a {
+#hashover .hashover-comment.reply .hashover-avatar img,
+#hashover .hashover-comment.reply .hashover-avatar a {
 	width: 35px;
 	height: 35px;
 	line-height: 35px;
 	font-size: 15px;
 }
 
-#hashover .cmtnumber {
+#hashover .hashover-avatar {
 	display: inline-block;
 	padding-right: 19px;
 	float: left;
@@ -524,13 +536,13 @@
 	background-attachment: scroll;
 }
 
-#hashover .cmtdiv.reply .cmtnumber {
+#hashover .hashover-comment.reply .hashover-avatar {
 	padding-right: 13px;
 	background-image: url('/hashover/images/bubble-tick-reply.png');
 }
 
-#hashover .cmtdiv pre,
-#hashover .cmtdiv code {
+#hashover .hashover-comment pre,
+#hashover .hashover-comment code {
 	width: 100%;
 	max-height: 200px;
 	display: inline-block;
@@ -542,34 +554,34 @@
 	margin: 0px;
 }
 
-#hashover .cmtdiv blockquote,
-#hashover .cmtdiv ol,
-#hashover .cmtdiv ul {
+#hashover .hashover-comment blockquote,
+#hashover .hashover-comment ol,
+#hashover .hashover-comment ul {
 	padding-left: 10px;
 	margin: 0px 20px 8px 20px;
 }
 
-#hashover .cmtdiv blockquote {
+#hashover .hashover-comment blockquote {
 	border-left: 3px solid rgba(0,0,0,0.3);
 }
 
-#hashover .cmtdiv .cmtdate {
+#hashover .hashover-comment .hashover-date {
 	display: inline-block;
 	margin-top: 3px;
 	color: #606060 ! important;
 }
 
-#hashover .cmtdiv .cmtdate {
+#hashover .hashover-comment .hashover-date {
 	margin-top: 4px;
 }
 
-#hashover .cmtdiv .cmtdate a,
-#hashover .cmtdiv .cmtdate span {
+#hashover .hashover-comment .hashover-date a,
+#hashover .hashover-comment .hashover-date span {
 	text-shadow: none ! important;
 	color: #606060 ! important;
 }
 
-#hashover .cmtdiv .cmtopts {
+#hashover .hashover-comment .hashover-footer {
 	padding-left: 10px;
 	margin-top: -4px;
 	overflow: hidden;
@@ -577,7 +589,7 @@
 	clear: both;
 }
 
-#hashover .cmtdiv.reply .cmtopts {
+#hashover .hashover-comment.reply .hashover-footer {
 	padding-left: 8px;
 	margin-top: -7px;
 }
@@ -588,8 +600,8 @@
 	margin-bottom: 2px;
 }
 
-#hashover .cmtdiv .optionbuttons input.delete:hover,
-#hashover .cmtdiv .optionbuttons input.delete:focus {
+#hashover .hashover-comment .hashover-form-buttons input.hashover-delete:hover,
+#hashover .hashover-comment .hashover-form-buttons input.hashover-delete:focus {
 	border: 1px solid #BB0000 ! important;
 	background-color: #FF0000 ! important;
 	color: #FCFCFC ! important;
@@ -597,14 +609,14 @@
 
 }
 
-#hashover .cmtdiv input.delete:focus {
+#hashover .hashover-comment input.hashover-delete:focus {
 	box-shadow: 0px 0px 3px #FF5555 ! important;
 	-moz-box-shadow: 0px 0px 3px #FF5555 ! important;
 	-webkit-box-shadow: 0px 0px 3px #FF5555 ! important;
 	-o-box-shadow: 0px 0px 3px #FF5555 ! important;
 }
 
-#hashover .cmtdiv .cmtnote.cmtfont {
+#hashover .hashover-comment .hashover-first.hashover-title {
 	font-size: 16px;
 	display: inline-block;
 	position: relative;
@@ -614,23 +626,11 @@
 	color: #FF0000;
 }
 
-#hashover > .cmtfont:nth-child(3) {
-	margin-bottom: 0px;
-	display: inline-block;
-	width: 100%;
-	padding-bottom: 8px;
-	border-bottom: 1px dashed rgb(190, 190, 190);
-}
-
-#hashover .cmtfont#message {
+#hashover .hashover-title#hashover-message {
 	display: block;
 	margin-top: 6px;
 	padding: 6px;
 	text-align: center;
 	background-color: rgba(210, 210, 255, 0.5);
 	border: 1px solid #AAAAFF;
-}
-
-#hashover .cmtsort {
-	float:right;
 }

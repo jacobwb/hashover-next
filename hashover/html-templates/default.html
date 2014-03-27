@@ -1,16 +1,16 @@
 <a name="' + permalink + '"></a>
 <div style="margin: ' + indent + '; clear: both;" class="' + cmtclass + '">
-	<span class="cmtnumber">' + avatar + '</span>
-	<div class="cmtbubble">
-		<div class="cmtheader">' + name + ' ' + thread + '</div>
-		<div id="cmtdata-' + permalink + '" class="cmtdata">' + comment + '</div><br>
-		<form name="reply_form-' + permalink + '" id="reply_form-' + permalink + '" method="post" action="/hashover.php">
-			<div id="cmtforms-' + permalink + '" align="left">' + form + '</div>
+	<span class="hashover-avatar">' + avatar + '</span>
+	<div class="hashover-balloon">
+		<div class="hashover-header">' + name + ' ' + thread + '</div>
+		<div id="hashover-content-' + permalink + '" class="hashover-content">' + comment + '</div><br>
+		<form name="reply_form-' + permalink + '" id="hashover-reply-form-' + permalink + '" method="post" action="/hashover.php">
+			<div id="hashover-forms-' + permalink + '" align="left">' + form + '</div>
 		</form>
 
-		<div id="cmtopts-' + permalink + '" class="cmtopts"' + cmtopts_style + '>
-			<span class="cmtdate">' + date + '&nbsp; <span id="likes-' + permalink + '">' + likes + '</span></span>
-			<span class="cmtbuttons" style="float: right;">' + like_link + ' ' + edit_link + ' ' + reply_link + '</span>
+		<div id="hashover-footer-' + permalink + '" class="hashover-footer"' + hashover_footer_style + '>
+			<span class="hashover-date">' + date + '&nbsp; <span id="hashover-likes-' + permalink + '">' + likes + '</span></span>
+			<span class="hashover-buttons" style="float: right;">' + like_link + ' ' + edit_link + ' ' + reply_link + '</span>
 		</div>
 	</div>
 </div>
