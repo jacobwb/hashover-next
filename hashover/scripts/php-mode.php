@@ -28,7 +28,7 @@
 	$sites_on	= 'yes';
 	$passwd_on	= 'yes';
 
-	if ($page_title = 'yes') {
+	if ($page_title == 'yes') {
 		$js_title = '<script type="text/javascript">if (document.title != "") { document.write(" on \"" + document.title + "\"") };</script>';
 		$js_title = (isset($_GET['pagetitle'])) ? ' on "' . $_GET['pagetitle'] . '"' : $js_title;
 	}
