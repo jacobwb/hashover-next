@@ -1,6 +1,9 @@
 Changes by Jacob Barkdull 2014-03-27
 -------------------------------------------------------------------------------
-Many CSS changes to facilitate theming.
+When "$icons" variable is set to "no", an avatar icon no longer shows in reply 
+and edit forms. In the primary form a comment number is displayed instead.
+
+Many CSS changes to facilitate theming, like comment count and page title.
 Many JavaScript changes to accommodate CSS changes.
 
 
