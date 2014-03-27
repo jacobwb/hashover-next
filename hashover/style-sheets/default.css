@@ -630,6 +630,7 @@
 	background-color: rgba(210, 210, 255, 0.5);
 	border: 1px solid #AAAAFF;
 }
-#hashover cmtsort {
+
+#hashover .cmtsort {
 	float:right;
 }
