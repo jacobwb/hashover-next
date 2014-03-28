@@ -217,10 +217,12 @@ function hashover_like(c, f) {
 	if (document.getElementById('hashover-like-' + c).className == 'hashover-like') {
 		document.getElementById('hashover-like-' + c).className = 'hashover-liked';
 		document.getElementById('hashover-like-' + c).title = '<?php echo addcslashes($text['liked_cmt'], "'"); ?>';
+		document.getElementById('hashover-like-' + c).innerHTML = '<?php echo $text['liked']; ?>';
 		likes++;
 	} else {
 		document.getElementById('hashover-like-' + c).className = 'hashover-like';
 		document.getElementById('hashover-like-' + c).title = '<?php echo addcslashes($text['like_cmt'], "'"); ?>';
+		document.getElementById('hashover-like-' + c).innerHTML = '<?php echo $text['like']; ?>';
 		likes--;
 	}
 
