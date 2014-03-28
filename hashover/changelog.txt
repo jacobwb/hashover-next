@@ -1,3 +1,10 @@
+Changes by Jacob Barkdull 2014-03-28
+-------------------------------------------------------------------------------
+"Like" links now change to "Liked" when clicked.
+Added language locales for like, edit, and reply links.
+Minor language locale improvement.
+
+
 Changes by Jacob Barkdull 2014-03-27
 -------------------------------------------------------------------------------
 When "$icons" variable is set to "no", an avatar icon no longer shows in reply 
@@ -835,4 +842,3 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
-
