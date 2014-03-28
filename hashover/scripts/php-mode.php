@@ -365,7 +365,7 @@
 
 
 // Function to like a comment
-function hashover-like(c, f) {
+function hashover_like(c, f) {
 	// Load "like.php"
 	var like = new XMLHttpRequest();
 	like.open('GET', '<?php echo $root_dir . 'scripts/like.php?like=' . $ref_path; ?>/' + f);
@@ -382,10 +382,12 @@ function hashover-like(c, f) {
 	if (document.getElementById('hashover-like-' + c).className == 'hashover-like') {
 		document.getElementById('hashover-like-' + c).className = 'hashover-liked';
 		document.getElementById('hashover-like-' + c).title = '<?php echo addcslashes($text['liked_cmt'], "'"); ?>';
+		document.getElementById('hashover-like-' + c).innerHTML = '<?php echo $text['liked']; ?>';
 		likes++;
 	} else {
 		document.getElementById('hashover-like-' + c).className = 'hashover-like';
 		document.getElementById('hashover-like-' + c).title = '<?php echo addcslashes($text['like_cmt'], "'"); ?>';
+		document.getElementById('hashover-like-' + c).innerHTML = '<?php echo $text['like']; ?>';
 		likes--;
 	}
 
