@@ -12,7 +12,7 @@
 	clear: both;
 }
 
-#hashover .hashover-columns {
+#hashover .hashover-inputs {
 	display: table;
 	width: 100%;
 }
@@ -42,7 +42,7 @@
 
 #hashover form input,
 #hashover form textarea,
-#hashover form .hashover-columns input {
+#hashover form .hashover-inputs input {
 	padding: 2px;
 	background-color: #FAFAFA;
 	font-size: 13px;
@@ -55,7 +55,7 @@
 
 #hashover form input,
 #hashover form textarea,
-#hashover form .hashover-columns input,
+#hashover form .hashover-inputs input,
 #hashover .hashover-comment label {
 	transition: all 120ms linear 0ms;
 	-moz-transition: all 120ms ease 0ms;
@@ -65,7 +65,7 @@
 
 #hashover form input,
 #hashover form textarea,
-#hashover form .hashover-columns input,
+#hashover form .hashover-inputs input,
 #hashover .hashover-comment pre,
 #hashover .hashover-comment code,
 #hashover .hashover-comment label {
@@ -76,7 +76,7 @@
 }
 
 #hashover form input,
-#hashover form .hashover-columns input,
+#hashover form .hashover-inputs input,
 #hashover .hashover-balloon,
 #hashover .hashover-comment input.hashover-delete,
 #hashover img,
@@ -155,7 +155,7 @@
 	-o-box-shadow: 0px 0px 2px rgba(85, 255, 255, 0.8) ! important;
 }
 
-#hashover form .hashover-columns input {
+#hashover form .hashover-inputs input {
 	width: 100%;
 	height: 32px;
 	font-size: 14px;
@@ -167,20 +167,20 @@
 	color: #808080;
 }
 
-#hashover form .hashover-columns input:focus {
+#hashover form .hashover-inputs input:focus {
 	color: #222222;
 }
 
-#hashover .hashover-columns > * {
+#hashover .hashover-inputs > * {
 	padding: 2px 3px 6px 3px;
 	line-height: 16px;
 }
 
-#hashover .hashover-columns > :first-child {
+#hashover .hashover-inputs > :first-child {
 	padding-left: 0px;
 }
 
-#hashover .hashover-columns > :nth-last-child(1) {
+#hashover .hashover-inputs > :nth-last-child(1) {
 	padding-right: 0px;
 }
 
@@ -206,7 +206,7 @@
 	background-image: url('/hashover/images/website.png');
 }
 
-#hashover .hashover-comment .hashover-columns {
+#hashover .hashover-comment .hashover-inputs {
 	padding-bottom: 2px;
 }
 
@@ -354,19 +354,19 @@
 	margin: 0px;
 }
 
-#hashover .hashover-comment .hashover-columns {
+#hashover .hashover-comment .hashover-inputs {
 	margin: 6px 0px 4px 0px;
 }
 
-#hashover .hashover-comment .hashover-columns > * {
+#hashover .hashover-comment .hashover-inputs > * {
 	padding: 0px 2px 0px 2px;
 }
 
-#hashover .hashover-comment .hashover-columns > :first-child {
+#hashover .hashover-comment .hashover-inputs > :first-child {
 	padding-left: 5px;
 }
 
-#hashover .hashover-comment .hashover-columns > :nth-last-child(1) {
+#hashover .hashover-comment .hashover-inputs > :nth-last-child(1) {
 	padding-right: 5px;
 }
 
@@ -428,7 +428,7 @@
 	-o-transition: all 0.15s linear 0ms;
 }
 
-#hashover .hashover-comment .hashover-columns input {
+#hashover .hashover-comment .hashover-inputs input {
 	height: 34px;
 }
 
