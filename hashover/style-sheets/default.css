@@ -17,11 +17,7 @@
 	width: 100%;
 }
 
-#hashover .hashover-avatar-image,
-#hashover .hashover-name-input,
-#hashover .hashover-password-input,
-#hashover .hashover-email-input,
-#hashover .hashover-website-input {
+#hashover .hashover-inputs > * {
 	display: table-cell;
 	vertical-align: middle;
 }
