@@ -17,22 +17,26 @@
 	width: 100%;
 }
 
-#hashover .hashover-cell,
-#hashover .hashover-cell.hashover-avatar-cell img {
+#hashover .hashover-avatar-image,
+#hashover .hashover-name-input,
+#hashover .hashover-password-input,
+#hashover .hashover-email-input,
+#hashover .hashover-website-input {
+	display: table-cell;
 	vertical-align: middle;
 }
 
-#hashover .hashover-cell {
-	display: table-cell;
+#hashover .hashover-avatar-image img {
+	vertical-align: middle;
 }
 
-#hashover .hashover-cell.hashover-avatar-cell {
+#hashover .hashover-avatar-image {
 	width: 1%;
 	padding-right: 10px;
 }
 
-#hashover .hashover-cell.hashover-login,
-#hashover .hashover-cell .hashover-login-input {
+#hashover .hashover-login-input,
+#hashover .hashover-login-input input {
 	width: 36px;
 }
 
@@ -167,57 +171,47 @@
 	color: #222222;
 }
 
-#hashover .hashover-columns .hashover-cell {
+#hashover .hashover-columns > * {
 	padding: 2px 3px 6px 3px;
 	line-height: 16px;
 }
 
-#hashover .hashover-sort {
-	float:right;
-}
-
-#hashover .hashover-columns .hashover-cell:first-child {
-	padding: 2px 3px 6px 0px;
-}
-
-#hashover .hashover-comment .hashover-columns:nth-child(1) .hashover-cell:nth-child(2) {
+#hashover .hashover-columns > :first-child {
 	padding-left: 0px;
 }
 
-#hashover .hashover-columns .hashover-cell:nth-last-child(1) {
-	padding: 2px 0px 6px 3px;
+#hashover .hashover-columns > :nth-last-child(1) {
+	padding-right: 0px;
 }
 
-#hashover .hashover-columns .hashover-cell:first-child:nth-last-child(1) {
-	padding: 2px 0px 6px 0px;
-}
-
-#hashover input.hashover-name-input {
+#hashover .hashover-name-input input {
 	background-image: url('/hashover/images/name.png');
 }
 
-#hashover input.hashover-password-input {
+#hashover .hashover-password-input input {
 	background-image: url('/hashover/images/password.png');
 }
 
-#hashover input.hashover-login-input {
+#hashover .hashover-login-input input {
 	background-image: url('/hashover/images/login.png');
 	background-position: center center ! important;
 	cursor: pointer;
 }
 
-#hashover input.hashover-email-input {
+#hashover .hashover-email-input input {
 	background-image: url('/hashover/images/email.png');
 }
 
-#hashover input.hashover-website-input {
+#hashover .hashover-website-input input {
 	background-image: url('/hashover/images/website.png');
 }
 
-#hashover .hashover-comment .hashover-columns .hashover-cell,
-#hashover .hashover-comment .hashover-columns .hashover-cell:nth-last-child(1),
-#hashover .hashover-comment .hashover-columns .hashover-cell:first-child:nth-last-child(1) {
+#hashover .hashover-comment .hashover-columns {
 	padding-bottom: 2px;
+}
+
+#hashover .hashover-sort {
+	float:right;
 }
 
 #hashover select {
@@ -361,19 +355,19 @@
 }
 
 #hashover .hashover-comment .hashover-columns {
-	margin: 4px 0px 4px 0px;
+	margin: 6px 0px 4px 0px;
 }
 
-#hashover .hashover-comment .hashover-columns .hashover-cell:first-child {
+#hashover .hashover-comment .hashover-columns > * {
+	padding: 0px 2px 0px 2px;
+}
+
+#hashover .hashover-comment .hashover-columns > :first-child {
 	padding-left: 5px;
 }
 
-#hashover .hashover-comment .hashover-columns .hashover-cell:nth-last-child(1) {
+#hashover .hashover-comment .hashover-columns > :nth-last-child(1) {
 	padding-right: 5px;
-}
-
-#hashover .hashover-comment .hashover-columns .hashover-cell {
-	line-height: normal;
 }
 
 #hashover .hashover-comment input.post-comment {
