@@ -1,5 +1,4 @@
-#hashover,
-#sort_div {
+#hashover, #sort_div {
 	clear: both;
 }
 
@@ -13,9 +12,33 @@
 	clear: both;
 }
 
+#hashover .hashover-columns {
+	display: table;
+	width: 100%;
+}
+
+#hashover .hashover-cell,
+#hashover .hashover-cell.hashover-avatar-cell img {
+	vertical-align: middle;
+}
+
+#hashover .hashover-cell {
+	display: table-cell;
+}
+
+#hashover .hashover-cell.hashover-avatar-cell {
+	width: 1%;
+	padding-right: 10px;
+}
+
+#hashover .hashover-cell.hashover-login,
+#hashover .hashover-cell .hashover-login-input {
+	width: 36px;
+}
+
 #hashover form input,
 #hashover form textarea,
-#hashover form table input {
+#hashover form .hashover-columns input {
 	padding: 2px;
 	background-color: #FAFAFA;
 	font-size: 13px;
@@ -28,7 +51,7 @@
 
 #hashover form input,
 #hashover form textarea,
-#hashover form table input,
+#hashover form .hashover-columns input,
 #hashover .hashover-comment label {
 	transition: all 120ms linear 0ms;
 	-moz-transition: all 120ms ease 0ms;
@@ -38,7 +61,7 @@
 
 #hashover form input,
 #hashover form textarea,
-#hashover form table input,
+#hashover form .hashover-columns input,
 #hashover .hashover-comment pre,
 #hashover .hashover-comment code,
 #hashover .hashover-comment label {
@@ -49,7 +72,7 @@
 }
 
 #hashover form input,
-#hashover form table input,
+#hashover form .hashover-columns input,
 #hashover .hashover-balloon,
 #hashover .hashover-comment input.hashover-delete,
 #hashover img,
@@ -58,6 +81,7 @@
 #hashover .hashover-avatar span,
 #hashover .hashover-avatar a,
 #hashover .hashover-comment .hashover-form-buttons a,
+#hashover .hashover-comment .hashover-footer .hashover-buttons a,
 #hashover .hashover-comment label,
 #hashover .hashover-title#hashover-message {
 	border-radius: 5px 5px 5px 5px;
@@ -127,7 +151,7 @@
 	-o-box-shadow: 0px 0px 2px rgba(85, 255, 255, 0.8) ! important;
 }
 
-#hashover form table input {
+#hashover form .hashover-columns input {
 	width: 100%;
 	height: 32px;
 	font-size: 14px;
@@ -139,11 +163,11 @@
 	color: #808080;
 }
 
-#hashover form table input:focus {
+#hashover form .hashover-columns input:focus {
 	color: #222222;
 }
 
-#hashover table tbody tr td {
+#hashover .hashover-columns .hashover-cell {
 	padding: 2px 3px 6px 3px;
 	line-height: 16px;
 }
@@ -152,27 +176,19 @@
 	float:right;
 }
 
-#hashover .hashover-comment table tbody tr td[rowspan="2"] {
-	padding: 0px 8px 0px 0px ! important;
-}
-
-#hashover .hashover-comment table tbody tr td[rowspan="2"] img {
-	border: none;
-}
-
-#hashover table tbody tr td:first-child {
+#hashover .hashover-columns .hashover-cell:first-child {
 	padding: 2px 3px 6px 0px;
 }
 
-#hashover .hashover-comment table tbody tr:nth-child(1) td:nth-child(2) {
+#hashover .hashover-comment .hashover-columns:nth-child(1) .hashover-cell:nth-child(2) {
 	padding-left: 0px;
 }
 
-#hashover table tbody tr td:nth-last-child(1) {
+#hashover .hashover-columns .hashover-cell:nth-last-child(1) {
 	padding: 2px 0px 6px 3px;
 }
 
-#hashover table tbody tr td:first-child:nth-last-child(1) {
+#hashover .hashover-columns .hashover-cell:first-child:nth-last-child(1) {
 	padding: 2px 0px 6px 0px;
 }
 
@@ -185,9 +201,8 @@
 }
 
 #hashover input.hashover-login-input {
-	width: 36px;
 	background-image: url('/hashover/images/login.png');
-	background-position: center center;
+	background-position: center center ! important;
 	cursor: pointer;
 }
 
@@ -199,9 +214,9 @@
 	background-image: url('/hashover/images/website.png');
 }
 
-#hashover .hashover-comment table tbody tr td,
-#hashover .hashover-comment table tbody tr td:nth-last-child(1),
-#hashover .hashover-comment table tbody tr td:first-child:nth-last-child(1) {
+#hashover .hashover-comment .hashover-columns .hashover-cell,
+#hashover .hashover-comment .hashover-columns .hashover-cell:nth-last-child(1),
+#hashover .hashover-comment .hashover-columns .hashover-cell:first-child:nth-last-child(1) {
 	padding-bottom: 2px;
 }
 
@@ -210,18 +225,15 @@
 	padding: 1px;
 }
 
-#hashover .hashover-comment .hashover-footer span.hashover-buttons {
-	color: transparent;
-	font-size: 0px;
+#hashover .hashover-comment .hashover-footer .hashover-buttons {
+	float: right;
 }
 
-#hashover .hashover-comment .hashover-footer span.hashover-buttons a {
+#hashover .hashover-comment .hashover-footer .hashover-buttons a {
 	display: inline-block;
-	border-top: 1px solid #C1C1C1;
-	border-left: 1px solid #C1C1C1;
-	height: 25px;
-	width: 31px;
-	background-color: #ECEEFF;
+	vertical-align: middle;
+	height: 26px;
+	width: 29px;
 	margin: 0px;
 	background-position: center center;
 	background-repeat: no-repeat;
@@ -235,22 +247,18 @@
 	-o-transition: background 140ms linear 0ms;
 }
 
-#hashover .hashover-comment .hashover-footer span.hashover-buttons a:first-child {
-	border-top-left-radius: 6px;
+#hashover .hashover-comment .hashover-footer .hashover-buttons a:hover {
+	background-color: rgba(128, 128, 128, 0.2);
 }
 
-#hashover .hashover-comment .hashover-footer span.hashover-buttons a:hover {
-	background-color: #E4E6F6;
-}
-
-#hashover .hashover-comment .hashover-footer span.hashover-buttons a.like:active {
+#hashover .hashover-comment .hashover-footer .hashover-buttons a.hashover-like:active {
 	background-image: url('/hashover/images/liked.png');
 	background-color: #FFDDDB;
 }
 
-#hashover .hashover-comment .hashover-footer span.hashover-buttons a.liked:active {
+#hashover .hashover-comment .hashover-footer .hashover-buttons a.hashover-liked:active {
 	background-image: url('/hashover/images/like.png');
-	background-color: #DBDBDB;
+	background-color: rgba(128, 128, 128, 0.1);
 }
 
 #hashover a.hashover-like {
@@ -316,7 +324,7 @@
 	overflow: hidden;
 	margin-left: 65px;
 	padding: 6px 8px 8px 8px;
-	background-color: #F6F8FF;
+	background-color: #F7F9FF;
 	border: 1px solid #808080 ! important;
 	text-align: left;
 	height: auto;
@@ -352,19 +360,20 @@
 	margin: 0px;
 }
 
-#hashover .hashover-comment table {
-	padding: 0px 6px 0px 5px;
-	margin: 5px 0px 5px 0px;
+#hashover .hashover-comment .hashover-columns {
+	margin: 4px 0px 4px 0px;
 }
 
-#hashover .hashover-comment table tbody tr td {
+#hashover .hashover-comment .hashover-columns .hashover-cell:first-child {
+	padding-left: 5px;
+}
+
+#hashover .hashover-comment .hashover-columns .hashover-cell:nth-last-child(1) {
+	padding-right: 5px;
+}
+
+#hashover .hashover-comment .hashover-columns .hashover-cell {
 	line-height: normal;
-}
-
-#hashover .hashover-comment input,
-#hashover .hashover-comment .hashover-form-buttons a,
-#hashover .hashover-comment label {
-	font-size: 11px ! important;
 }
 
 #hashover .hashover-comment input.post-comment {
@@ -395,7 +404,7 @@
 }
 
 #hashover .hashover-comment label {
-	padding: 2px 5px 0px 1px ! important;
+	padding: 3px 5px 1px 1px ! important;
 }
 
 #hashover .hashover-comment .hashover-form-buttons a {
@@ -425,9 +434,8 @@
 	-o-transition: all 0.15s linear 0ms;
 }
 
-#hashover .hashover-comment table input {
-	margin: 2px 0px 2px 0px;
-	height: 26px;
+#hashover .hashover-comment .hashover-columns input {
+	height: 34px;
 }
 
 #hashover .hashover-comment textarea {
@@ -567,31 +575,32 @@
 
 #hashover .hashover-comment .hashover-date {
 	display: inline-block;
-	margin-top: 3px;
-	color: #606060 ! important;
-}
-
-#hashover .hashover-comment .hashover-date {
-	margin-top: 4px;
+	margin-top: 6px;
 }
 
 #hashover .hashover-comment .hashover-date a,
+#hashover .hashover-comment .hashover-date a:visited,
 #hashover .hashover-comment .hashover-date span {
-	text-shadow: none ! important;
-	color: #606060 ! important;
+	text-shadow: none;
+	color: #606060;
+}
+
+
+#hashover .hashover-comment .hashover-date a:hover,
+#hashover .hashover-comment .hashover-date a:active {
+	color: #101010;
 }
 
 #hashover .hashover-comment .hashover-footer {
-	padding-left: 10px;
-	margin-top: -4px;
-	overflow: hidden;
+	padding: 4px 4px 4px 10px;
 	width: auto;
 	clear: both;
+	overflow: hidden;
+	background-color: rgba(128, 128, 128, 0.1);
 }
 
 #hashover .hashover-comment.reply .hashover-footer {
-	padding-left: 8px;
-	margin-top: -7px;
+	margin-top: -3px;
 }
 
 #hashover label input[type="checkbox"] {
