@@ -26,13 +26,13 @@
 	vertical-align: middle;
 }
 
-#hashover .hashover-avatar-image img {
-	vertical-align: middle;
-}
-
 #hashover .hashover-avatar-image {
 	width: 1%;
 	padding-right: 10px;
+}
+
+#hashover .hashover-avatar-image img {
+	vertical-align: middle;
 }
 
 #hashover .hashover-login-input,
