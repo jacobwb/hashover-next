@@ -67,7 +67,7 @@
 		?></span>
 
 		<div class="hashover-balloon" align="center">
-			<div class="hashover-columns">
+			<div class="hashover-inputs">
 <?php
 
 	// Display name input tag if told to
@@ -93,7 +93,7 @@
 		}
 
 		echo "\t\t\t\t" . '</div>' . PHP_EOL;
-		echo "\t\t\t\t" . '<div class="hashover-columns">' . PHP_EOL;
+		echo "\t\t\t\t" . '<div class="hashover-inputs">' . PHP_EOL;
 	}
 
 	// Display email input tag if told to
@@ -179,7 +179,7 @@
 							$return_form .= '</span>' . PHP_EOL;
 							$return_form .= '<b class="hashover-title">' . $text['reply_to_cmt'] . '</b>' . PHP_EOL;
 							$return_form .= '<span class="options" id="options-' . $template_replace['permalink'] . '"><hr style="clear: both;">' . PHP_EOL;
-							$return_form .= "\t" . '<div class="hashover-columns">' . PHP_EOL;
+							$return_form .= "\t" . '<div class="hashover-inputs">' . PHP_EOL;
 
 							if ($icons == 'yes' and $name_on == 'yes') {
 								$return_form .= "\t\t" . '<div class="hashover-avatar-image">' . PHP_EOL . "\t\t" . $form_avatar . PHP_EOL . '</div>' . PHP_EOL;
@@ -198,7 +198,7 @@
 							}
 
 							if ($is_mobile == 'yes') {
-								$return_form .= "\t" . '</tr>' . PHP_EOL . "\t\t\t" . '<tr>' . PHP_EOL;
+								$return_form .= "\t" . '</div>' . PHP_EOL . "\t" . '<div class="hashover-inputs">' . PHP_EOL;
 							}
 
 							if ($email_on == 'yes') {
@@ -232,7 +232,7 @@
 								$return_form .= '</span>' . PHP_EOL;
 								$return_form .= '<b class="hashover-title">' . $text['edit_cmt'] . '</b>' . PHP_EOL;
 								$return_form .= '<span class="options"><hr style="clear: both;">' . PHP_EOL;
-								$return_form .= "\t" . '<div class="hashover-columns">' . PHP_EOL;
+								$return_form .= "\t" . '<div class="hashover-inputs">' . PHP_EOL;
 
 								if ($icons == 'yes') {
 									$return_form .= "\t\t" . '<div class="hashover-avatar-image">' . PHP_EOL . "\t\t" . $form_avatar . PHP_EOL . '</div>' . PHP_EOL;
@@ -247,7 +247,7 @@
 								$return_form .= "\t\t" . '</div>' . PHP_EOL;
 
 								if ($is_mobile == 'yes') {
-									$return_form .= "\t" . '</tr>' . PHP_EOL . "\t\t\t" . '<tr>' . PHP_EOL;
+									$return_form .= "\t" . '</div>' . PHP_EOL . "\t" . '<div class="hashover-inputs">' . PHP_EOL;
 								}
 
 								$return_form .= "\t\t" . '<div class="hashover-email-input">' . PHP_EOL;

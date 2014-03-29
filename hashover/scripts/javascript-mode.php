@@ -99,7 +99,7 @@ function hashover_reply(r, f) {
 	reply_form += '</span>\n';
 	reply_form += '<b class="hashover-title"><?php echo $text['reply_to_cmt']; ?></b>\n';
 	reply_form += '<span<?php echo (isset($_COOKIE['name']) and !empty($_COOKIE['name'])) ? ' style="max-height: 0px;"' : ''; ?> class="options" id="options-' + r + '"><hr style="clear: both;">\n';
-	reply_form += '<div class="hashover-columns">\n';
+	reply_form += '<div class="hashover-inputs">\n';
 
 <?php
 	if ($icons == 'yes') {
@@ -118,7 +118,7 @@ function hashover_reply(r, f) {
 
 <?php
 	if ($is_mobile == 'yes') {
-		echo "\t" . 'reply_form += \'</div>\n<div class="hashover-columns">\n\';' . PHP_EOL . PHP_EOL;
+		echo "\t" . 'reply_form += \'</div>\n<div class="hashover-inputs">\n\';' . PHP_EOL . PHP_EOL;
 	}
 ?>
 	if (email_on == 'yes') {
@@ -160,7 +160,7 @@ function hashover_edit(e, f, s) {
 	edit_form += '</span>\n';
 	edit_form += '<b class="hashover-title"><?php echo $text['edit_cmt']; ?></b>\n';
 	edit_form += '<span class="options"><hr style="clear: both;">\n';
-	edit_form += '<div class="hashover-columns">\n';
+	edit_form += '<div class="hashover-inputs">\n';
 <?php
 	if ($icons == 'yes') {
 		echo "\t" . 'edit_form += \'<div class="hashover-avatar-image">' . $form_avatar . '</div>\n\';' . PHP_EOL;
@@ -170,7 +170,7 @@ function hashover_edit(e, f, s) {
 	edit_form += '<div class="hashover-password-input"><input type="<?php echo (isset($_COOKIE['password']) and !empty($_COOKIE['password'])) ? 'password" value="' . $_COOKIE['password'] : 'text" value="' . $text['password']; ?>" name="password" title="<?php echo $text['password_tip']; ?>" onFocus="this.value=(this.value == \'<?php echo $text['password']; ?>\') ? \'\' : this.value; this.type=\'password\';" onBlur="this.value=(this.value == \'\') ? \'<?php echo $text['password']; ?>\' : this.value; this.type=(this.value == \'<?php echo $text['password']; ?>\') ? \'text\' : \'password\';"></div>\n';
 <?php
 	if ($is_mobile == 'yes') {
-		echo "\t" . 'edit_form += \'</div>\n<div class="hashover-columns">\n\';' . PHP_EOL;
+		echo "\t" . 'edit_form += \'</div>\n<div class="hashover-inputs">\n\';' . PHP_EOL;
 	}
 ?>
 	edit_form += '<div class="hashover-email-input"><input type="text" name="email" title="<?php echo $text['email']; ?>" value="<?php echo (isset($_COOKIE['email'])) ? $_COOKIE['email'] : $text['email']; ?>" onFocus="this.value=(this.value == \'<?php echo $text['email']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value == \'\') ? \'<?php echo $text['email']; ?>\' : this.value;"></div>\n';
@@ -401,7 +401,7 @@ function sort_comments(method) {
 
 	echo jsAddSlashes('</span>\n');
 	echo jsAddSlashes('<div class="hashover-balloon">\n');
-	echo jsAddSlashes('<div class="hashover-columns">\n');
+	echo jsAddSlashes('<div class="hashover-inputs">\n');
 
 	// Display name input tag if told to
 	echo 'if (name_on == \'yes\') {' . PHP_EOL;
@@ -424,7 +424,7 @@ function sort_comments(method) {
 		echo "\t" . jsAddSlashes('<input name="login" title="Login (optional)" type="submit" value="">\n');
 		echo "\t" . jsAddSlashes('</div>\n');
 		echo '}' . PHP_EOL . PHP_EOL;
-		echo jsAddSlashes('</div>\n<div class="hashover-columns">\n');
+		echo jsAddSlashes('</div>\n<div class="hashover-inputs">\n');
 	}
 
 	// Display email input tag if told to
