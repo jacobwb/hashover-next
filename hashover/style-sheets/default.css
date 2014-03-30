@@ -391,7 +391,7 @@
 }
 
 #hashover .hashover-comment label {
-	padding: 3px 5px 1px 1px ! important;
+	padding: 3px 5px 2px 1px ! important;
 }
 
 #hashover .hashover-comment .hashover-form-buttons a {
@@ -593,7 +593,7 @@
 #hashover label input[type="checkbox"] {
 	vertical-align: middle;
 	margin-top: 1px;
-	margin-bottom: 2px;
+	margin-bottom: 1px;
 }
 
 #hashover .hashover-comment .hashover-form-buttons input.hashover-delete:hover,
