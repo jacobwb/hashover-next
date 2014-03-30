@@ -20,6 +20,8 @@
 #hashover .hashover-inputs > * {
 	display: table-cell;
 	vertical-align: middle;
+	padding: 2px 3px 6px 3px;
+	line-height: 16px;
 }
 
 #hashover .hashover-avatar-image {
@@ -165,11 +167,6 @@
 
 #hashover form .hashover-inputs input:focus {
 	color: #222222;
-}
-
-#hashover .hashover-inputs > * {
-	padding: 2px 3px 6px 3px;
-	line-height: 16px;
 }
 
 #hashover .hashover-inputs > :first-child {
