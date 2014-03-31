@@ -387,7 +387,6 @@
 	border: 1px solid transparent ! important;
 	background: transparent ! important;
 	padding: 3px 4px 3px 4px ! important;
-	margin-bottom: 5px;
 }
 
 #hashover .hashover-comment label {
@@ -476,8 +475,11 @@
 }
 
 #hashover .hashover-comment .hashover-form-buttons {
+	display: inline-block;
 	float: right;
 	padding: 0px 5px 0px 0px ! important;
+	margin-top: -1px;
+	margin-bottom: 6px;
 }
 
 #hashover .hashover-comment .hashover-header {
