@@ -86,12 +86,13 @@ if (document.getElementById('cmtcount') != null) {
 
 // Displays reply form
 function hashover_reply(r, f) {
-	var reply_form = '\n<b class="hashover-title"><?php echo $text['reply_to_cmt']; ?></b>\n<span class="hashover-form-buttons">\n';
+	var reply_form = '\n<b class="hashover-title"><?php echo $text['reply_to_cmt']; ?></b>\n';
+	reply_form += '<span class="hashover-form-buttons">\n';
 
 <?php
 	if (isset($_COOKIE['name']) and !empty($_COOKIE['name'])) {
 		echo "\t" . 'if (name_on == \'yes\' || email_on == \'yes\' || passwd_on == \'yes\' || sites_on == \'yes\') {' . PHP_EOL;
-		echo "\t\t" . 'reply_form += \'<input type="button" value="&#x25BC; ' . $text['options'] . '" onClick="hashover_showoptions(\\\'\' + r + \'\\\'); this.value = (this.value == \\\'&#x25BC; ' . $text['options'] . '\\\') ? \\\'&#x25B2; ' . $text['options'] . '\\\' : \\\'&#x25BC; ' . $text['options'] . '\\\'; return false;">\n\';' . PHP_EOL;
+		echo "\t\t" . 'reply_form += \'<input type="button" value="\u25BC ' . $text['options'] . '" onClick="hashover_showoptions(\\\'\' + r + \'\\\', this); return false;">\n\';' . PHP_EOL;
 		echo "\t" . '}' . PHP_EOL . PHP_EOL;
 	}
 ?>
@@ -149,7 +150,8 @@ function hashover_edit(e, f, s) {
 	var cmtdata = document.getElementById('hashover-content-' + e).innerHTML.replace(/<br>/gi, '\n').replace(/<\/?a(\s+.*?>|>)/gi, '').replace(/<img.*?title="(.*?)".*?>/gi, '[img]$1[/img]').replace(/^\s+|\s+$/g, '').replace('<code style="white-space: pre;">', '<code>');
 	var website = (document.getElementById('hashover-website-' + e) != undefined) ? document.getElementById('hashover-website-' + e).href : '<?php echo $text['website']; ?>';
 
-	var edit_form = '\n<span class="hashover-form-buttons">\n';
+	var edit_form = '\n<b class="hashover-title"><?php echo $text['edit_cmt']; ?></b>\n';
+	edit_form += '<span class="hashover-form-buttons">\n';
 	edit_form += '<input type="submit" name="edit" value="." style="display: none;">';
 	edit_form += '<input type="submit" name="delete" class="hashover-delete" value="<?php echo $text['delete']; ?>" onClick="return hashover_deletion_warning();">\n';
 	edit_form += '<label for="notify" title="<?php echo $text['subscribe_tip']; ?>">\n';
@@ -157,7 +159,6 @@ function hashover_edit(e, f, s) {
 	edit_form += '</label>\n';
 	edit_form += '<input type="button" value="<?php echo $text['cancel']; ?>" onClick="hashover_cancel(\'' + e + '\'); return false;">\n';
 	edit_form += '</span>\n';
-	edit_form += '<b class="hashover-title"><?php echo $text['edit_cmt']; ?></b>\n';
 	edit_form += '<span class="options"><hr style="clear: both;">\n';
 	edit_form += '<div class="hashover-inputs">\n';
 <?php
@@ -230,12 +231,14 @@ function hashover_like(c, f) {
 }
 
 // Displays options
-function hashover_showoptions(r) {
+function hashover_showoptions(r, b) {
 	if (name_on == 'yes' || email_on == 'yes' || passwd_on == 'yes' || sites_on == 'yes') {
 		if (document.getElementById('options-' + r).style.maxHeight != '200px') {
 			document.getElementById('options-' + r).style.maxHeight = '200px';
+			b.value = '\u25B2 <?php echo $text['options']; ?>';
 		} else {
 			document.getElementById('options-' + r).style.maxHeight = '0px';
+			b.value = '\u25BC <?php echo $text['options']; ?>';
 		}
 	}
 
