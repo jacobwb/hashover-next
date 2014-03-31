@@ -86,8 +86,7 @@ if (document.getElementById('cmtcount') != null) {
 
 // Displays reply form
 function hashover_reply(r, f) {
-	var reply_form = '\n<b class="hashover-title"><?php echo $text['reply_to_cmt']; ?></b>\n';
-	reply_form += '<span class="hashover-form-buttons">\n';
+	var reply_form = '\n<span class="hashover-form-buttons">\n';
 
 <?php
 	if (isset($_COOKIE['name']) and !empty($_COOKIE['name'])) {
@@ -98,6 +97,7 @@ function hashover_reply(r, f) {
 ?>
 	reply_form += '<input type="button" value="<?php echo $text['cancel']; ?>" onClick="hashover_cancel(\'' + r + '\'); return false;">\n';
 	reply_form += '</span>\n';
+	reply_form += '<b class="hashover-title"><?php echo $text['reply_to_cmt']; ?></b>\n';
 	reply_form += '<span<?php echo (isset($_COOKIE['name']) and !empty($_COOKIE['name'])) ? ' style="max-height: 0px;"' : ''; ?> class="options" id="options-' + r + '"><hr style="clear: both;">\n';
 	reply_form += '<div class="hashover-inputs">\n';
 
@@ -150,8 +150,7 @@ function hashover_edit(e, f, s) {
 	var cmtdata = document.getElementById('hashover-content-' + e).innerHTML.replace(/<br>/gi, '\n').replace(/<\/?a(\s+.*?>|>)/gi, '').replace(/<img.*?title="(.*?)".*?>/gi, '[img]$1[/img]').replace(/^\s+|\s+$/g, '').replace('<code style="white-space: pre;">', '<code>');
 	var website = (document.getElementById('hashover-website-' + e) != undefined) ? document.getElementById('hashover-website-' + e).href : '<?php echo $text['website']; ?>';
 
-	var edit_form = '\n<b class="hashover-title"><?php echo $text['edit_cmt']; ?></b>\n';
-	edit_form += '<span class="hashover-form-buttons">\n';
+	var edit_form = '\n<span class="hashover-form-buttons">\n';
 	edit_form += '<input type="submit" name="edit" value="." style="display: none;">';
 	edit_form += '<input type="submit" name="delete" class="hashover-delete" value="<?php echo $text['delete']; ?>" onClick="return hashover_deletion_warning();">\n';
 	edit_form += '<label for="notify" title="<?php echo $text['subscribe_tip']; ?>">\n';
@@ -159,6 +158,7 @@ function hashover_edit(e, f, s) {
 	edit_form += '</label>\n';
 	edit_form += '<input type="button" value="<?php echo $text['cancel']; ?>" onClick="hashover_cancel(\'' + e + '\'); return false;">\n';
 	edit_form += '</span>\n';
+	edit_form += '<b class="hashover-title"><?php echo $text['edit_cmt']; ?></b>\n';
 	edit_form += '<span class="options"><hr style="clear: both;">\n';
 	edit_form += '<div class="hashover-inputs">\n';
 <?php
