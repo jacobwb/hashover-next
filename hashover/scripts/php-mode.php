@@ -174,10 +174,10 @@
 						$return_form = '';
 
 						if (in_array('hashover_reply=' . $template_replace['permalink'], $ref_queries)) {
-							$return_form .= PHP_EOL . '<span class="hashover-form-buttons" style="float: right;">' . PHP_EOL;
+							$return_form .= PHP_EOL . '<b class="hashover-title">' . $text['reply_to_cmt'] . '</b>' . PHP_EOL;
+							$return_form .= '<span class="hashover-form-buttons" style="float: right;">' . PHP_EOL;
 							$return_form .= "\t" . '<a href="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '#' . $template_replace['permalink'] . '">' . $text['cancel'] . '</a>' . PHP_EOL;
 							$return_form .= '</span>' . PHP_EOL;
-							$return_form .= '<b class="hashover-title">' . $text['reply_to_cmt'] . '</b>' . PHP_EOL;
 							$return_form .= '<span class="options" id="options-' . $template_replace['permalink'] . '"><hr style="clear: both;">' . PHP_EOL;
 							$return_form .= "\t" . '<div class="hashover-inputs">' . PHP_EOL;
 
@@ -222,7 +222,8 @@
 							$return_form .= '</center>';
 						} else {
 							if (in_array('hashover_edit=' . $template_replace['permalink'], $ref_queries)) {
-								$return_form .= PHP_EOL . '<span class="hashover-form-buttons" style="float: right;">' . PHP_EOL;
+								$return_form .= PHP_EOL . '<b class="hashover-title">' . $text['edit_cmt'] . '</b>' . PHP_EOL;
+								$return_form .= '<span class="hashover-form-buttons" style="float: right;">' . PHP_EOL;
 								$return_form .= "\t" . '<input type="submit" name="edit" value="." style="display: none;">';
 								$return_form .= "\t" . '<input type="submit" name="delete" class="hashover-delete" value="' . $text['delete'] . '">' . PHP_EOL;
 								$return_form .= "\t" . '<label for="notify" title="' . $text['subscribe_tip'] . '">' . PHP_EOL;
@@ -230,7 +231,6 @@
 								$return_form .= "\t" . '</label>' . PHP_EOL;
 								$return_form .= "\t" . '<a href="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '#' . $template_replace['permalink'] . '">' . $text['cancel'] . '</a>' . PHP_EOL;
 								$return_form .= '</span>' . PHP_EOL;
-								$return_form .= '<b class="hashover-title">' . $text['edit_cmt'] . '</b>' . PHP_EOL;
 								$return_form .= '<span class="options"><hr style="clear: both;">' . PHP_EOL;
 								$return_form .= "\t" . '<div class="hashover-inputs">' . PHP_EOL;
 
