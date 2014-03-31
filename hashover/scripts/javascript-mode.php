@@ -86,7 +86,7 @@ if (document.getElementById('cmtcount') != null) {
 
 // Displays reply form
 function hashover_reply(r, f) {
-	var reply_form = '\n<span class="hashover-form-buttons">\n';
+	var reply_form = '\n<b class="hashover-title"><?php echo $text['reply_to_cmt']; ?></b>\n<span class="hashover-form-buttons">\n';
 
 <?php
 	if (isset($_COOKIE['name']) and !empty($_COOKIE['name'])) {
@@ -97,7 +97,6 @@ function hashover_reply(r, f) {
 ?>
 	reply_form += '<input type="button" value="<?php echo $text['cancel']; ?>" onClick="hashover_cancel(\'' + r + '\'); return false;">\n';
 	reply_form += '</span>\n';
-	reply_form += '<b class="hashover-title"><?php echo $text['reply_to_cmt']; ?></b>\n';
 	reply_form += '<span<?php echo (isset($_COOKIE['name']) and !empty($_COOKIE['name'])) ? ' style="max-height: 0px;"' : ''; ?> class="options" id="options-' + r + '"><hr style="clear: both;">\n';
 	reply_form += '<div class="hashover-inputs">\n';
 
