@@ -86,7 +86,8 @@ if (document.getElementById('cmtcount') != null) {
 
 // Displays reply form
 function hashover_reply(r, f) {
-	var reply_form = '\n<span class="hashover-form-buttons">\n';
+	var reply_form = '\n<b class="hashover-title"><?php echo $text['reply_to_cmt']; ?></b>\n';
+	reply_form += '<span class="hashover-form-buttons">\n';
 
 <?php
 	if (isset($_COOKIE['name']) and !empty($_COOKIE['name'])) {
@@ -97,8 +98,7 @@ function hashover_reply(r, f) {
 ?>
 	reply_form += '<input type="button" value="<?php echo $text['cancel']; ?>" onClick="hashover_cancel(\'' + r + '\'); return false;">\n';
 	reply_form += '</span>\n';
-	reply_form += '<b class="hashover-title"><?php echo $text['reply_to_cmt']; ?></b>\n';
-	reply_form += '<span<?php echo (isset($_COOKIE['name']) and !empty($_COOKIE['name'])) ? ' style="max-height: 0px;"' : ''; ?> class="options" id="options-' + r + '"><hr style="clear: both;">\n';
+	reply_form += '<div<?php echo (isset($_COOKIE['name']) and !empty($_COOKIE['name'])) ? ' style="max-height: 0px;"' : ''; ?> class="hashover-options" id="hashover-options-' + r + '"><hr style="clear: both;">\n';
 	reply_form += '<div class="hashover-inputs">\n';
 
 <?php
@@ -129,7 +129,7 @@ function hashover_reply(r, f) {
 		reply_form += '<div class="hashover-website-input">\n<input type="text" name="website" title="<?php echo $text['website']; ?>" value="<?php echo (isset($_COOKIE['website'])) ? $_COOKIE['website'] : $text['website']; ?>" onFocus="this.value=(this.value == \'<?php echo $text['website']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value == \'\') ? \'<?php echo $text['website']; ?>\' : this.value;">\n</div>\n';
 	}
 
-	reply_form += '</div>\n</span>\n<center>\n';
+	reply_form += '</div>\n</div>\n<center>\n';
 	reply_form += '<textarea rows="6" cols="62" name="comment" onFocus="this.value=(this.value==\'<?php echo $text['reply_form']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value==\'\') ? \'<?php echo $text['reply_form']; ?>\' : this.value;" style="width: 100%;" title="<?php echo $text['cmt_tip']; ?>"><?php echo $text['reply_form']; ?></textarea><br>\n';
 	reply_form += '<input class="post-comment" type="submit" value="<?php echo $text['post_reply']; ?>" style="width: 100%;" onClick="return hashover_noemailreply(\'' + r + '\');" onsubmit="return hashover_noemailreply(\'' + r + '\');">\n';
 <?php
@@ -150,7 +150,8 @@ function hashover_edit(e, f, s) {
 	var cmtdata = document.getElementById('hashover-content-' + e).innerHTML.replace(/<br>/gi, '\n').replace(/<\/?a(\s+.*?>|>)/gi, '').replace(/<img.*?title="(.*?)".*?>/gi, '[img]$1[/img]').replace(/^\s+|\s+$/g, '').replace('<code style="white-space: pre;">', '<code>');
 	var website = (document.getElementById('hashover-website-' + e) != undefined) ? document.getElementById('hashover-website-' + e).href : '<?php echo $text['website']; ?>';
 
-	var edit_form = '\n<span class="hashover-form-buttons">\n';
+	var edit_form = '\n<b class="hashover-title"><?php echo $text['edit_cmt']; ?></b>\n';
+	edit_form += '<span class="hashover-form-buttons">\n';
 	edit_form += '<input type="submit" name="edit" value="." style="display: none;">';
 	edit_form += '<input type="submit" name="delete" class="hashover-delete" value="<?php echo $text['delete']; ?>" onClick="return hashover_deletion_warning();">\n';
 	edit_form += '<label for="notify" title="<?php echo $text['subscribe_tip']; ?>">\n';
@@ -158,8 +159,7 @@ function hashover_edit(e, f, s) {
 	edit_form += '</label>\n';
 	edit_form += '<input type="button" value="<?php echo $text['cancel']; ?>" onClick="hashover_cancel(\'' + e + '\'); return false;">\n';
 	edit_form += '</span>\n';
-	edit_form += '<b class="hashover-title"><?php echo $text['edit_cmt']; ?></b>\n';
-	edit_form += '<span class="options"><hr style="clear: both;">\n';
+	edit_form += '<div class="hashover-options"><hr style="clear: both;">\n';
 	edit_form += '<div class="hashover-inputs">\n';
 <?php
 	if ($icons == 'yes') {
@@ -175,7 +175,7 @@ function hashover_edit(e, f, s) {
 ?>
 	edit_form += '<div class="hashover-email-input"><input type="text" name="email" title="<?php echo $text['email']; ?>" value="<?php echo (isset($_COOKIE['email'])) ? $_COOKIE['email'] : $text['email']; ?>" onFocus="this.value=(this.value == \'<?php echo $text['email']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value == \'\') ? \'<?php echo $text['email']; ?>\' : this.value;"></div>\n';
 	edit_form += '<div class="hashover-website-input"><input type="text" name="website" title="<?php echo $text['website']; ?>" value="' + website + '" onFocus="this.value=(this.value == \'<?php echo $text['website']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value == \'\') ? \'<?php echo $text['website']; ?>\' : this.value;"></div>\n';
-	edit_form += '</div>\n</span>\n<center>\n';
+	edit_form += '</div>\n</div>\n<center>\n';
 	edit_form += '<textarea rows="10" cols="62" name="comment" style="width: 100%;" title="<?php echo $text['cmt_tip']; ?>">' + cmtdata + '</textarea><br>\n';
 	edit_form += '<input class="post-comment" type="submit" name="edit" value="<?php echo $text['save_edit']; ?>" style="width: 100%;">\n';
 	edit_form += '<input type="hidden" name="cmtfile" value="' + f + '">\n';
@@ -233,11 +233,11 @@ function hashover_like(c, f) {
 // Displays options
 function hashover_showoptions(r, b) {
 	if (name_on == 'yes' || email_on == 'yes' || passwd_on == 'yes' || sites_on == 'yes') {
-		if (document.getElementById('options-' + r).style.maxHeight != '200px') {
-			document.getElementById('options-' + r).style.maxHeight = '200px';
+		if (document.getElementById('hashover-options-' + r).style.maxHeight != '200px') {
+			document.getElementById('hashover-options-' + r).style.maxHeight = '200px';
 			b.value = '\u25B2 <?php echo $text['options']; ?>';
 		} else {
-			document.getElementById('options-' + r).style.maxHeight = '0px';
+			document.getElementById('hashover-options-' + r).style.maxHeight = '0px';
 			b.value = '\u25BC <?php echo $text['options']; ?>';
 		}
 	}
@@ -263,7 +263,7 @@ function hashover_noemailreply(f) {
 		var answer = confirm('<?php echo $text['no_email_warn']; ?>');
 
 		if (answer == false) {
-			document.getElementById('options-' + f).style.display = '';
+			document.getElementById('hashover-options-' + f).style.display = '';
 			document.getElementById('reply_form-' + f).email.focus();
 			return false;
 		}
