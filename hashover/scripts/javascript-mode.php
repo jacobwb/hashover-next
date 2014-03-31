@@ -129,7 +129,7 @@ function hashover_reply(r, f) {
 		reply_form += '<div class="hashover-website-input">\n<input type="text" name="website" title="<?php echo $text['website']; ?>" value="<?php echo (isset($_COOKIE['website'])) ? $_COOKIE['website'] : $text['website']; ?>" onFocus="this.value=(this.value == \'<?php echo $text['website']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value == \'\') ? \'<?php echo $text['website']; ?>\' : this.value;">\n</div>\n';
 	}
 
-	reply_form += '</div>\n</div>\n<center>\n';
+	reply_form += '</div>\n</div>\n';
 	reply_form += '<textarea rows="6" cols="62" name="comment" onFocus="this.value=(this.value==\'<?php echo $text['reply_form']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value==\'\') ? \'<?php echo $text['reply_form']; ?>\' : this.value;" style="width: 100%;" title="<?php echo $text['cmt_tip']; ?>"><?php echo $text['reply_form']; ?></textarea><br>\n';
 	reply_form += '<input class="post-comment" type="submit" value="<?php echo $text['post_reply']; ?>" style="width: 100%;" onClick="return hashover_noemailreply(\'' + r + '\');" onsubmit="return hashover_noemailreply(\'' + r + '\');">\n';
 <?php
@@ -138,7 +138,6 @@ function hashover_reply(r, f) {
 	}
 ?>
 	reply_form += '<input type="hidden" name="cmtfile" value="' + f + '">\n<input type="hidden" name="reply_to" value="' + f + '">\n';
-	reply_form += '</center>\n';
 
 	document.getElementById('hashover-footer-' + r).style.display = 'none';
 	document.getElementById('hashover-forms-' + r).innerHTML = reply_form;
@@ -175,7 +174,7 @@ function hashover_edit(e, f, s) {
 ?>
 	edit_form += '<div class="hashover-email-input"><input type="text" name="email" title="<?php echo $text['email']; ?>" value="<?php echo (isset($_COOKIE['email'])) ? $_COOKIE['email'] : $text['email']; ?>" onFocus="this.value=(this.value == \'<?php echo $text['email']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value == \'\') ? \'<?php echo $text['email']; ?>\' : this.value;"></div>\n';
 	edit_form += '<div class="hashover-website-input"><input type="text" name="website" title="<?php echo $text['website']; ?>" value="' + website + '" onFocus="this.value=(this.value == \'<?php echo $text['website']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value == \'\') ? \'<?php echo $text['website']; ?>\' : this.value;"></div>\n';
-	edit_form += '</div>\n</div>\n<center>\n';
+	edit_form += '</div>\n</div>\n';
 	edit_form += '<textarea rows="10" cols="62" name="comment" style="width: 100%;" title="<?php echo $text['cmt_tip']; ?>">' + cmtdata + '</textarea><br>\n';
 	edit_form += '<input class="post-comment" type="submit" name="edit" value="<?php echo $text['save_edit']; ?>" style="width: 100%;">\n';
 	edit_form += '<input type="hidden" name="cmtfile" value="' + f + '">\n';
@@ -184,7 +183,6 @@ function hashover_edit(e, f, s) {
 		echo "\t" . 'edit_form += \'<input type="hidden" name="canon_url" value="' . $page_url . '">\n\';' . PHP_EOL;
 	}
 ?>
-	edit_form += '</center>\n';
 
 	document.getElementById('hashover-forms-' + e).innerHTML = edit_form;
 	document.getElementById('hashover-footer-' + e).style.display = 'none';
@@ -518,14 +516,12 @@ function sort_comments(method) {
 	}
 
 	echo jsAddSlashes('</div><br>\n') . PHP_EOL;
-	echo jsAddSlashes('<center>\n');
 	echo jsAddSlashes('HashOver Comments &middot;\n');
 	if (!empty($show_cmt)) echo jsAddSlashes('<a href="http://' . $domain . '/hashover.php?rss=' . $page_url . '" target="_blank">RSS Feed</a> &middot;\n');
 	echo jsAddSlashes('<a href="http://' . $domain . '/hashover.zip" rel="hashover-source" target="_blank">Source Code</a> &middot;\n');
 	echo jsAddSlashes('<a href="http://' . $domain . '/hashover.php" rel="hashover-javascript" target="_blank">JavaScript</a> &middot;\n');
 	echo jsAddSlashes('<a href="http://tildehash.com/hashover/changelog.txt" target="_blank">ChangeLog</a> &middot;\n');
 	echo jsAddSlashes('<a href="http://tildehash.com/hashover/archives/" target="_blank">Archives</a><br>\n');
-	echo jsAddSlashes('</center>\n');
 
 	// Script execution ending time
 	$exec_time = explode(' ', microtime());
