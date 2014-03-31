@@ -57,16 +57,16 @@
 		<span class="hashover-avatar"><?php
 			if ($icons == 'yes') {
 				if (isset($_COOKIE['name']) and preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $_COOKIE['name'])) {
-					echo '<img align="left" width="' . $icon_size . '" height="' . $icon_size . '" src="' . $script = $root_dir . 'scripts/avatars.php?username=' . $_COOKIE['name'] . '&email=' . md5(strtolower(trim($_COOKIE['email']))) . '">';
+					echo '<img width="' . $icon_size . '" height="' . $icon_size . '" src="' . $script = $root_dir . 'scripts/avatars.php?username=' . $_COOKIE['name'] . '&email=' . md5(strtolower(trim($_COOKIE['email']))) . '">';
 				} else {
-					echo '<img align="left" width="' . $icon_size . '" height="' . $icon_size . '" src="' . $script = (isset($_COOKIE['email'])) ? 'http://gravatar.com/avatar/' . md5(strtolower(trim($_COOKIE['email']))) . '?d=http://' . $domain . $root_dir . 'images/avatar.png&s=' . $icon_size . '&r=pg">' : $root_dir . 'images/avatar.png">';
+					echo '<img width="' . $icon_size . '" height="' . $icon_size . '" src="' . $script = (isset($_COOKIE['email'])) ? 'http://gravatar.com/avatar/' . md5(strtolower(trim($_COOKIE['email']))) . '?d=http://' . $domain . $root_dir . 'images/avatar.png&s=' . $icon_size . '&r=pg">' : $root_dir . 'images/avatar.png">';
 				}
 			} else {
 				echo "\t" . jsAddSlashes('<span title="Permalink">#' . $cmt_count . '</span>');
 			}
 		?></span>
 
-		<div class="hashover-balloon" align="center">
+		<div class="hashover-balloon">
 			<div class="hashover-inputs">
 <?php
 
@@ -213,13 +213,13 @@
 								$return_form .= "\t\t" . '</div>' . PHP_EOL;
 							}
 
-							$return_form .= "\t" . '</div>' . PHP_EOL . '</div>' . PHP_EOL . '<center>' . PHP_EOL;
+							$return_form .= "\t" . '</div>' . PHP_EOL . '</div>' . PHP_EOL;
 							$return_form .= "\t" . '<textarea rows="6" cols="62" name="comment" style="width: 100%;" title="' . $text['cmt_tip'] . '" placeholder="' . $text['comment_form'] . '"></textarea><br>' . PHP_EOL;
 							$return_form .= "\t" . '<input class="post-comment" type="submit" value="' . $text['post_button'] . '" style="width: 100%;">' . PHP_EOL;
 							$return_form .= (isset($_GET['canon_url']) or isset($canon_url)) ? "\t" . '<input type="hidden" name="canon_url" value="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '">' . PHP_EOL : '';
 							$return_form .= "\t" . '<input type="hidden" name="cmtfile" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $template_replace['permalink']) . '">' . PHP_EOL;
 							$return_form .= "\t" . '<input type="hidden" name="reply_to" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $template_replace['permalink']) . '">' . PHP_EOL;
-							$return_form .= '</center>';
+							
 						} else {
 							if (in_array('hashover_edit=' . $template_replace['permalink'], $ref_queries)) {
 								$return_form .= PHP_EOL . '<b class="hashover-title">' . $text['edit_cmt'] . '</b>' . PHP_EOL;
@@ -265,12 +265,12 @@
 								$template_replace['comment'] = preg_replace('/^\s+|\s+$/i', '', $template_replace['comment']);
 								$template_replace['comment'] = preg_replace('/<code style="white-space: pre;">/i', '<code>', $template_replace['comment']);
 
-								$return_form .= "\t" . '</div>' . PHP_EOL . '</div>' . PHP_EOL . '<center>' . PHP_EOL;
+								$return_form .= "\t" . '</div>' . PHP_EOL . '</div>' . PHP_EOL;
 								$return_form .= "\t" . '<textarea rows="10" cols="62" name="comment" style="width: 100%;" title="' . $text['cmt_tip'] . '" placeholder="' . $text['reply_form'] . '">' . $template_replace['comment'] . '</textarea><br>' . PHP_EOL;
 								$return_form .= "\t" . '<input class="post-comment" type="submit" name="edit" value="' . $text['save_edit'] . '" style="width: 100%;">' . PHP_EOL;
 								$return_form .= "\t" . '<input type="hidden" name="cmtfile" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $template_replace['permalink']) . '">' . PHP_EOL;
 								$return_form .= (isset($_GET['canon_url']) or isset($canon_url)) ? "\t" . '<input type="hidden" name="canon_url" value="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '">' . PHP_EOL : '';
-								$return_form .= '</center>';
+			
 							}
 						}
 
@@ -315,13 +315,13 @@
 
 ?>
 
-	<br><center>
+	<br>
 		HashOver Comments &middot;
 <?php if (!empty($show_cmt)) echo "\t\t" . '<a href="http://' . $domain . '/hashover.php?rss=' . $page_url . '" target="_blank">RSS Feed</a> &middot;' . PHP_EOL; ?>
 		<a href="http://<?php echo $domain; ?>/hashover.zip" rel="hashover-source" target="_blank">Source Code</a> &middot;
 		<a href="http://tildehash.com/hashover/changelog.txt" target="_blank">ChangeLog</a> &middot;
 		<a href="http://tildehash.com/hashover/archives/" target="_blank">Archives</a><br>
-	</center>
+	
 </div>
 
 <script type="text/javascript">
