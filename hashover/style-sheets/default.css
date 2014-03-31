@@ -409,10 +409,10 @@
 	color: #222222;
 }
 
-#hashover .hashover-comment .options {
-	display: block;
-	overflow: hidden;
+#hashover .hashover-comment .hashover-options {
+	clear: both;
 	width: 100%;
+	overflow: hidden;
 	background-color: #F0F0F0;
 	transition: all 0.15s linear 0ms;
 	-moz-transition: all 0.15s linear 0ms;
@@ -471,6 +471,7 @@
 }
 
 #hashover .hashover-comment form .hashover-title {
+	float: left;
 	padding-left: 8px;
 }
 
