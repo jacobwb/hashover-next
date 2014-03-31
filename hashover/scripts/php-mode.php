@@ -174,11 +174,11 @@
 						$return_form = '';
 
 						if (in_array('hashover_reply=' . $template_replace['permalink'], $ref_queries)) {
-							$return_form .= PHP_EOL . '<span class="hashover-form-buttons" style="float: right;">' . PHP_EOL;
+							$return_form .= PHP_EOL . '<b class="hashover-title">' . $text['reply_to_cmt'] . '</b>' . PHP_EOL;
+							$return_form .= '<span class="hashover-form-buttons" style="float: right;">' . PHP_EOL;
 							$return_form .= "\t" . '<a href="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '#' . $template_replace['permalink'] . '">' . $text['cancel'] . '</a>' . PHP_EOL;
 							$return_form .= '</span>' . PHP_EOL;
-							$return_form .= '<b class="hashover-title">' . $text['reply_to_cmt'] . '</b>' . PHP_EOL;
-							$return_form .= '<span class="options" id="options-' . $template_replace['permalink'] . '"><hr style="clear: both;">' . PHP_EOL;
+							$return_form .= '<div class="hashover-options"><hr style="clear: both;">' . PHP_EOL;
 							$return_form .= "\t" . '<div class="hashover-inputs">' . PHP_EOL;
 
 							if ($icons == 'yes' and $name_on == 'yes') {
@@ -213,7 +213,7 @@
 								$return_form .= "\t\t" . '</div>' . PHP_EOL;
 							}
 
-							$return_form .= "\t" . '</div>' . PHP_EOL . '</span>' . PHP_EOL . '<center>' . PHP_EOL;
+							$return_form .= "\t" . '</div>' . PHP_EOL . '</div>' . PHP_EOL . '<center>' . PHP_EOL;
 							$return_form .= "\t" . '<textarea rows="6" cols="62" name="comment" style="width: 100%;" title="' . $text['cmt_tip'] . '" placeholder="' . $text['comment_form'] . '"></textarea><br>' . PHP_EOL;
 							$return_form .= "\t" . '<input class="post-comment" type="submit" value="' . $text['post_button'] . '" style="width: 100%;">' . PHP_EOL;
 							$return_form .= (isset($_GET['canon_url']) or isset($canon_url)) ? "\t" . '<input type="hidden" name="canon_url" value="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '">' . PHP_EOL : '';
@@ -222,7 +222,8 @@
 							$return_form .= '</center>';
 						} else {
 							if (in_array('hashover_edit=' . $template_replace['permalink'], $ref_queries)) {
-								$return_form .= PHP_EOL . '<span class="hashover-form-buttons" style="float: right;">' . PHP_EOL;
+								$return_form .= PHP_EOL . '<b class="hashover-title">' . $text['edit_cmt'] . '</b>' . PHP_EOL;
+								$return_form .= '<span class="hashover-form-buttons" style="float: right;">' . PHP_EOL;
 								$return_form .= "\t" . '<input type="submit" name="edit" value="." style="display: none;">';
 								$return_form .= "\t" . '<input type="submit" name="delete" class="hashover-delete" value="' . $text['delete'] . '">' . PHP_EOL;
 								$return_form .= "\t" . '<label for="notify" title="' . $text['subscribe_tip'] . '">' . PHP_EOL;
@@ -230,8 +231,7 @@
 								$return_form .= "\t" . '</label>' . PHP_EOL;
 								$return_form .= "\t" . '<a href="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '#' . $template_replace['permalink'] . '">' . $text['cancel'] . '</a>' . PHP_EOL;
 								$return_form .= '</span>' . PHP_EOL;
-								$return_form .= '<b class="hashover-title">' . $text['edit_cmt'] . '</b>' . PHP_EOL;
-								$return_form .= '<span class="options"><hr style="clear: both;">' . PHP_EOL;
+								$return_form .= '<div class="hashover-options"><hr style="clear: both;">' . PHP_EOL;
 								$return_form .= "\t" . '<div class="hashover-inputs">' . PHP_EOL;
 
 								if ($icons == 'yes') {
@@ -265,7 +265,7 @@
 								$template_replace['comment'] = preg_replace('/^\s+|\s+$/i', '', $template_replace['comment']);
 								$template_replace['comment'] = preg_replace('/<code style="white-space: pre;">/i', '<code>', $template_replace['comment']);
 
-								$return_form .= "\t" . '</div>' . PHP_EOL . '</span>' . PHP_EOL . '<center>' . PHP_EOL;
+								$return_form .= "\t" . '</div>' . PHP_EOL . '</div>' . PHP_EOL . '<center>' . PHP_EOL;
 								$return_form .= "\t" . '<textarea rows="10" cols="62" name="comment" style="width: 100%;" title="' . $text['cmt_tip'] . '" placeholder="' . $text['reply_form'] . '">' . $template_replace['comment'] . '</textarea><br>' . PHP_EOL;
 								$return_form .= "\t" . '<input class="post-comment" type="submit" name="edit" value="' . $text['save_edit'] . '" style="width: 100%;">' . PHP_EOL;
 								$return_form .= "\t" . '<input type="hidden" name="cmtfile" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $template_replace['permalink']) . '">' . PHP_EOL;
