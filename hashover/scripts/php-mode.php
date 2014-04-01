@@ -219,7 +219,6 @@
 							$return_form .= (isset($_GET['canon_url']) or isset($canon_url)) ? "\t" . '<input type="hidden" name="canon_url" value="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '">' . PHP_EOL : '';
 							$return_form .= "\t" . '<input type="hidden" name="cmtfile" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $template_replace['permalink']) . '">' . PHP_EOL;
 							$return_form .= "\t" . '<input type="hidden" name="reply_to" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $template_replace['permalink']) . '">' . PHP_EOL;
-							
 						} else {
 							if (in_array('hashover_edit=' . $template_replace['permalink'], $ref_queries)) {
 								$return_form .= PHP_EOL . '<b class="hashover-title">' . $text['edit_cmt'] . '</b>' . PHP_EOL;
@@ -270,7 +269,6 @@
 								$return_form .= "\t" . '<input class="post-comment" type="submit" name="edit" value="' . $text['save_edit'] . '" style="width: 100%;">' . PHP_EOL;
 								$return_form .= "\t" . '<input type="hidden" name="cmtfile" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $template_replace['permalink']) . '">' . PHP_EOL;
 								$return_form .= (isset($_GET['canon_url']) or isset($canon_url)) ? "\t" . '<input type="hidden" name="canon_url" value="' . $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '') . '">' . PHP_EOL : '';
-			
 							}
 						}
 
@@ -315,13 +313,13 @@
 
 ?>
 
-	<br>
+	<br><center>
 		HashOver Comments &middot;
 <?php if (!empty($show_cmt)) echo "\t\t" . '<a href="http://' . $domain . '/hashover.php?rss=' . $page_url . '" target="_blank">RSS Feed</a> &middot;' . PHP_EOL; ?>
 		<a href="http://<?php echo $domain; ?>/hashover.zip" rel="hashover-source" target="_blank">Source Code</a> &middot;
 		<a href="http://tildehash.com/hashover/changelog.txt" target="_blank">ChangeLog</a> &middot;
 		<a href="http://tildehash.com/hashover/archives/" target="_blank">Archives</a><br>
-	
+	</center>
 </div>
 
 <script type="text/javascript">
