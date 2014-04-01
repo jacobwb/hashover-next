@@ -315,15 +315,15 @@
 
 	<br><center>
 		HashOver Comments &middot;
-<?php if (!empty($show_cmt)) echo "\t\t" . '<a href="http://' . $domain . '/hashover.php?rss=' . $page_url . '" target="_blank">RSS Feed</a> &middot;' . PHP_EOL; ?>
-		<a href="http://<?php echo $domain; ?>/hashover.zip" rel="hashover-source" target="_blank">Source Code</a> &middot;
+<?php if (!empty($show_cmt)) echo "\t\t" . '<a href="/hashover.php?rss=' . $page_url . '" target="_blank">RSS Feed</a> &middot;' . PHP_EOL; ?>
+		<a href="/hashover.php?source" rel="hashover-source" target="_blank">Source Code</a> &middot;
 		<a href="http://tildehash.com/hashover/changelog.txt" target="_blank">ChangeLog</a> &middot;
 		<a href="http://tildehash.com/hashover/archives/" target="_blank">Archives</a><br>
 	</center>
 </div>
 
 <script type="text/javascript">
-// Copyright (C) 2013 Jacob Barkdull, Jeremiah Stoddard
+// Copyright (C) 2014 Jacob Barkdull
 //
 //	This program is free software: you can redistribute it and/or modify
 //	it under the terms of the GNU Affero General Public License as
@@ -341,7 +341,7 @@
 //--------------------
 //
 // Source Code and Installation Instructions:
-//	http://<?php echo $domain . $_SERVER['PHP_SELF'] . "?source"; ?>
+//	http://<?php echo $domain . '/hashover.php?source' . PHP_EOL; ?>
 
 
 // Function to like a comment
