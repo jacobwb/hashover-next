@@ -361,6 +361,7 @@ Copyright (C) 2014 Jacob Barkdull
 		float: none;
 	}
 }
+
 @media only screen and (min-width: 320px) and (max-width: 400px) {
 	.hashover-form-buttons{
 		float: none ! important;
