@@ -516,12 +516,14 @@ function sort_comments(method) {
 	}
 
 	echo jsAddSlashes('</div><br>\n') . PHP_EOL;
+	echo jsAddSlashes('<center>\n');
 	echo jsAddSlashes('HashOver Comments &middot;\n');
 	if (!empty($show_cmt)) echo jsAddSlashes('<a href="http://' . $domain . '/hashover.php?rss=' . $page_url . '" target="_blank">RSS Feed</a> &middot;\n');
 	echo jsAddSlashes('<a href="http://' . $domain . '/hashover.zip" rel="hashover-source" target="_blank">Source Code</a> &middot;\n');
 	echo jsAddSlashes('<a href="http://' . $domain . '/hashover.php" rel="hashover-javascript" target="_blank">JavaScript</a> &middot;\n');
 	echo jsAddSlashes('<a href="http://tildehash.com/hashover/changelog.txt" target="_blank">ChangeLog</a> &middot;\n');
 	echo jsAddSlashes('<a href="http://tildehash.com/hashover/archives/" target="_blank">Archives</a><br>\n');
+	echo jsAddSlashes('</center>\n');
 
 	// Script execution ending time
 	$exec_time = explode(' ', microtime());
