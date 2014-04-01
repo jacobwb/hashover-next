@@ -8,14 +8,6 @@
   font-weight: normal;
   font-style: normal;
 }
- .hashover-hide {
-  clip: rect(1px, 1px, 1px, 1px);
-  height: 0;
-  opacity: 0;
-  position: absolute;
-  visibility: hidden;
-  width: 0;
-}
 [class^="hashover-"]:before, [class*=" hashover-"]:before,[class^="hashover-icon-"]:before, [class*=" hashover-icon-"]:before{
   font-family: "hashover-icons";
   font-style: normal;
