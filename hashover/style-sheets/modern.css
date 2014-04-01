@@ -1,0 +1,275 @@
+@font-face {
+  font-family: 'hashover-icons';
+  src: url('font/fontello.eot?32848364');
+  src: url('font/fontello.eot?32848364#iefix') format('embedded-opentype'),
+       url('font/fontello.svg?32848364#fontello') format('svg'),
+       url('font/fontello.ttf?32848364') format('truetype'),
+       url('font/fontello.woff?32848364') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+[class^="hashover-"]:before, [class*=" hashover-"]:before,[class^="hashover-icon-"]:before, [class*=" hashover-icon-"]:before{
+  font-family: "hashover-icons";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+ 
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .3em;
+  text-align: center;
+  /* opacity: .8; */
+ 
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+     
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+
+}
+
+.hashover-content{
+	padding-top:1em;
+}
+.hashover-header{
+	border-bottom: 1px dotted #999;
+	font-weight:600;
+	font-style:italic;
+	font-size:90%;
+}
+.hashover-buttons{
+	font-size:90%;
+}
+#sort_div .hashover-balloon{
+	overflow: hidden;
+	text-align: left;
+	height: auto;
+	width: auto;
+	background-color: #fcfcfc;
+	padding: 5px 10px 10px 10px;
+	box-shadow: 1px 1px 5px #DBDBDB;
+}
+form .hashover-balloon{
+	
+}
+#hashover form div textarea{
+	background-color: #fff;
+border: 2px solid #ddd;
+color: #777;
+display: block;
+max-width: 100%;
+outline: none;
+padding: 7px 8px;
+width: 100%;
+max-width:100%;
+margin: 0;
+box-sizing: border-box;
+}
+#hashover br{clear:both}
+.hashover-avatar{
+	float:left;
+	margin-right: 10px;
+}
+#hashover .hashover-inputs {
+	display: table;
+	width: 100%;
+}
+
+#hashover .hashover-comment .hashover-inputs > * {
+padding: 0px 2px 0px 2px;
+}
+#hashover .hashover-inputs > * {
+	display: table-cell;
+	margin-bottom: 6px;
+	vertical-align: middle;
+	padding: 2px 3px 6px 3px;
+	line-height: 16px;
+}
+#hashover .hashover-inputs > :first-child {
+padding-left: 0px;
+}
+#hashover form input, #hashover form textarea, #hashover form .hashover-inputs input, #hashover .hashover-comment pre, #hashover .hashover-comment code, #hashover .hashover-comment label {
+box-sizing: border-box;
+-moz-box-sizing: border-box;
+-webkit-box-sizing: border-box;
+-o-box-sizing: border-box;
+}
+.hashover-name-input:before{
+	
+}
+.hashover-date,
+.hashover-thread-link,
+.hashover-likes,
+.hashover-name,
+.hashover-like,
+.hashover-liked,
+.hashover-edit,
+.hashover-has-email,
+.hashover-no-email{
+	display:inline-block;
+	margin-right:0.5em;
+}
+.hashover-options{
+	clear: both;
+	width: 100%;
+	overflow: hidden;
+}
+.hashover-options .hashover-inputs{margin-bottom:1em;}
+#hashover .hashover-comment form {
+margin-top: 6px;
+clear: both;
+}
+
+.hashover-title {
+	float: left;
+	font-weight:600;
+	font-style:italic;
+	font-size: 90%;
+}
+.hashover-sort{
+	float:right;
+	display: block;
+}
+.hashover-sort select{
+	font-family: Arial, Helvetica, sans-serif;
+}
+.hashover-post-comment{
+	font-weight:700;
+}
+#hashover hr{border:none;margin:0}
+#hashover .hashover-comment .options {
+	display: block;
+	overflow: hidden;
+	width: 100%;
+	transition: all 0.15s linear 0ms;
+	-moz-transition: all 0.15s linear 0ms;
+	-webkit-transition: all 0.15s linear 0ms;
+	-o-transition: all 0.15s linear 0ms;
+}
+#hashover .hashover-comment .hashover-form-buttons {
+	float: right;
+	padding: 0px 5px 0px 0px ! important;
+	margin-bottom: 1em;
+}
+.hashover-form-buttons input{
+	display: inline-block!important;
+	border:none;
+	background-color: transparent;
+	cursor: pointer;
+	outline-offset: none;
+	outline: -webkit-focus-ring-color none;
+}
+.hashover-login-input {
+	width:36px;
+}
+.hashover-login-input input {
+background-image: url('/hashover/images/login.png');
+background-position: center center ! important;
+background-repeat: no-repeat;
+cursor: pointer;
+}
+.post-comment{
+	background-color: #CF662B!important;
+	color: #fff!important;
+	padding: 8px 14px!important;
+	font-weight: 600!important;
+	border: none!important;
+	cursor: pointer!important;
+}
+.post-comment:hover{
+	background-color: #BF4C41!important;
+}
+#hashover form .hashover-avatar{
+	clip: rect(1px, 1px, 1px, 1px);
+	height: 0;
+	opacity: 0;
+	position: absolute;
+	visibility: hidden;
+	width: 0;
+}
+.hashover-likes:empty{
+	clip: rect(1px, 1px, 1px, 1px);
+	height: 0;
+	opacity: 0;
+	position: absolute;
+	visibility: hidden;
+	width: 0;
+}
+.hashover-likes:before{
+	content: '\e800';
+}
+.hashover-name:before{
+	content: '\e804';
+}
+.hashover-thread-link:before{
+	content: '\e809';	
+}
+.hashover-date:before{
+	content: '\e807';
+}
+.hashover-like:before{
+	content: '\e801';
+}
+.hashover-icon-login:before{
+	content: '\e808';
+}
+.hashover-liked:before{
+	content: '\e800';
+}
+.hashover-edit:before{
+	content: '\e805';
+}
+.hashover-no-email:before{
+	content: '\e806';
+}
+.hashover-has-email:before{
+	content: '\e806';
+	color: #9C2E10;
+}
+
+#hashover #comment_form input,.hashover-options input{
+	background-color: #fff;
+	border: 2px solid #ddd;
+	color: #777;
+	display: block;
+	max-width: 100%;
+	outline: none;
+	padding: 7px 8px;
+	width:100%;
+	font-weight: 700;
+	margin:0;
+	box-sizing: border-box;
+	outline-offset: none;
+	outline: -webkit-focus-ring-color none;
+}
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen 
+and (min-width : 320px) 
+and (max-width : 640px) {
+/* Styles */
+.hashover-avatar{
+	width:20px;
+}
+.hashover-comment{
+	margin-left: 0!important;
+}
+#sort_div .hashover-balloon{
+	border:1px solid #BF4C41;
+}
+.reply .hashover-balloon{
+	border:0!important;
+}
+.hashover-sort{
+	float:none;
+}
+}
+@media only screen 
+and (min-width : 320px) 
+and (max-width : 400px) {
+.hashover-form-buttons{
+	float:none!important;
+	display:inline-block;
+}
+}
