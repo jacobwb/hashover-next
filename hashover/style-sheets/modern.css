@@ -45,33 +45,6 @@ Copyright (C) 2014 Jacob Barkdull
 	line-height: 1em;
 }
 
-.hashover-name-input:before {
-	content: '\e804';
-}
-
-.hashover-password-input:before {
-	content: '\e808';
-}
-
-.hashover-email-input:before {
-	content: '\e80a';
-}
-
-.hashover-website-input:before {
-	content: '\e80b';
-}
-
-.hashover-name-input:before,
-.hashover-password-input:before,
-.hashover-email-input:before,
-.hashover-website-input:before {
-	position: absolute;
-	left: 5px;
-	top: 20%;
-	color: #999;
-	margin-right: 0px;
-}
-
 .hashover-post-comment:before {
 	content: '\e803';
 }
