@@ -457,7 +457,7 @@ Copyright (C) 2014 Jacob Barkdull
 }
 
 #hashover .hashover-post-comment {
-	margin-bottom: 0px;
+	margin-bottom: 1em;
 	display: inline-block;
 	width: 100%;
 	padding-bottom: 8px;
