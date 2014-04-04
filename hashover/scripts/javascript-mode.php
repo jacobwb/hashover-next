@@ -130,7 +130,7 @@ function hashover_reply(r, f) {
 	}
 
 	reply_form += '</div>\n</div>\n';
-	reply_form += '<textarea rows="6" cols="62" name="comment" onFocus="this.value=(this.value==\'<?php echo $text['reply_form']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value==\'\') ? \'<?php echo $text['reply_form']; ?>\' : this.value;" style="width: 100%;" title="<?php echo $text['cmt_tip']; ?>"><?php echo $text['reply_form']; ?></textarea><br>\n';
+	reply_form += '<textarea rows="6" cols="62" name="comment" onFocus="this.value=(this.value==\'<?php echo $text['reply_form']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value==\'\') ? \'<?php echo $text['reply_form']; ?>\' : this.value;" style="width: 100%;" title="<?php echo $text['cmt_tip']; ?>"><?php echo $text['reply_form']; ?></textarea>\n';
 	reply_form += '<input class="post-comment" type="submit" value="<?php echo $text['post_reply']; ?>" style="width: 100%;" onClick="return hashover_noemailreply(\'' + r + '\');" onsubmit="return hashover_noemailreply(\'' + r + '\');">\n';
 <?php
 	if (isset($_GET['canon_url']) or isset($canon_url)) {
@@ -175,7 +175,7 @@ function hashover_edit(e, f, s) {
 	edit_form += '<div class="hashover-email-input"><input type="text" name="email" title="<?php echo $text['email']; ?>" value="<?php echo (isset($_COOKIE['email'])) ? $_COOKIE['email'] : $text['email']; ?>" onFocus="this.value=(this.value == \'<?php echo $text['email']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value == \'\') ? \'<?php echo $text['email']; ?>\' : this.value;"></div>\n';
 	edit_form += '<div class="hashover-website-input"><input type="text" name="website" title="<?php echo $text['website']; ?>" value="' + website + '" onFocus="this.value=(this.value == \'<?php echo $text['website']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value == \'\') ? \'<?php echo $text['website']; ?>\' : this.value;"></div>\n';
 	edit_form += '</div>\n</div>\n';
-	edit_form += '<textarea rows="10" cols="62" name="comment" style="width: 100%;" title="<?php echo $text['cmt_tip']; ?>">' + cmtdata + '</textarea><br>\n';
+	edit_form += '<textarea rows="10" cols="62" name="comment" style="width: 100%;" title="<?php echo $text['cmt_tip']; ?>">' + cmtdata + '</textarea>\n';
 	edit_form += '<input class="post-comment" type="submit" name="edit" value="<?php echo $text['save_edit']; ?>" style="width: 100%;">\n';
 	edit_form += '<input type="hidden" name="cmtfile" value="' + f + '">\n';
 <?php
