@@ -133,6 +133,11 @@ Copyright (C) 2014 Jacob Barkdull
 	clear: both
 }
 
+#hashover #comment_form {
+	margin-bottom:1em;
+	margin-top: 1em;
+}
+
 .hashover-avatar {
 	float: left;
 	margin-right: 10px;
