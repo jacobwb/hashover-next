@@ -14,10 +14,13 @@ Copyright (C) 2014 Jacob Barkdull
 	clear: both;
 }
 
+#hashover #hashover_form {
+	margin: 0.5em 0px 3em 0px;
+}
+
 #hashover form,
 #hashover .hashover-comment form {
 	display: block;
-	margin-bottom: 1em;
 }
 
 #hashover .hashover-comment form {
@@ -121,7 +124,8 @@ Copyright (C) 2014 Jacob Barkdull
 	resize: vertical;
 }
 
-#hashover form input.post-comment {
+#hashover form .hashover-submit {
+	width: 100%;
 	border-top: none;
 	margin-top: 0px ! important;
 	border-radius: 0px 0px 5px 5px;
@@ -131,12 +135,13 @@ Copyright (C) 2014 Jacob Barkdull
 	padding: 6px 4px 6px 4px;
 }
 
-#hashover input.post-comment:hover {
+#hashover .hashover-submit:hover {
 	background-color: #F0F0F0 ! important;
 	cursor: pointer;
 }
 
-#hashover input.post-comment:focus {
+#hashover .hashover-submit:focus,
+#hashover .hashover-submit[disabled] {
 	background-color: #E8E8E8 ! important;
 	border-color: #000000 ! important;
 }
@@ -376,19 +381,20 @@ Copyright (C) 2014 Jacob Barkdull
 	padding-right: 5px;
 }
 
-#hashover .hashover-comment input.post-comment {
+#hashover .hashover-comment .hashover-submit {
 	margin: 0px;
 	border: none;
 	margin-top: 0px ! important;
 	background-color: #F0F0F0;
 }
 
-#hashover .hashover-comment input.post-comment:hover {
+#hashover .hashover-comment .hashover-submit:hover {
 	background-color: #E9E9E9 ! important;
 	cursor: pointer;
 }
 
-#hashover .hashover-comment input.post-comment:focus {
+#hashover .hashover-comment .hashover-submit:focus,
+#hashover .hashover-comment .hashover-submit[disabled] {
 	background-color: #E5E5E5 ! important;
 }
 
@@ -458,7 +464,7 @@ Copyright (C) 2014 Jacob Barkdull
 }
 
 #hashover .hashover-post-comment {
-	margin-bottom: 1em;
+	margin: 1em 0px 0.5em 0px;
 	display: inline-block;
 	width: 100%;
 	padding-bottom: 8px;
@@ -638,9 +644,14 @@ Copyright (C) 2014 Jacob Barkdull
 	color: #FF0000;
 }
 
+#hashover #hashover-end-links {
+	margin: 2em 0px 0.5em 0px;
+	text-align: center;
+}
+
 #hashover .hashover-title#hashover-message {
 	display: block;
-	margin-top: 6px;
+	margin-bottom: 1.5em;
 	padding: 6px;
 	text-align: center;
 	background-color: rgba(210, 210, 255, 0.5);
