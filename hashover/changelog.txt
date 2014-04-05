@@ -1,3 +1,11 @@
+Changes by Jacob Barkdull 2014-04-05
+-------------------------------------------------------------------------------
+Submit buttons now disable on submission, enable again after 20 seconds.
+Unified "hashover_noemail" and "hashover_noemailreply".
+Removed "<br>" tags in favor of CSS.
+Removed inline style.
+
+
 Changes by Jacob Barkdull 2014-04-01
 -------------------------------------------------------------------------------
 Added a new theme draft by Luka Kaspar
@@ -854,4 +862,3 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
-
