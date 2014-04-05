@@ -126,11 +126,16 @@ Copyright (C) 2014 Jacob Barkdull
 	width: 100%;
 	max-width: 100%;
 	min-width: 100%;
-	margin: 0px;
+	margin: 0em 0em 1em 0em;
 }
 
 #hashover br {
 	clear: both
+}
+
+#hashover #comment_form {
+	margin-bottom:1em;
+	margin-top: 1em;
 }
 
 .hashover-avatar {
