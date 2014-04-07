@@ -177,7 +177,7 @@
 			$show_count = $cmt_count . ' Comment';
 			if ($cmt_count != '1') $show_count .= 's';
 			$show_count .= ' (' . $total_count . ' counting repl';
-			$show_count .= (abs($total_count - $cmt_count) >= 1) ? 'ies)' : 'y)';
+			$show_count .= (abs($total_count - $cmt_count) > 1) ? 'ies)' : 'y)';
 		}
 
 		return $show_count;
