@@ -47,6 +47,7 @@ Copyright (C) 2014 Jacob Barkdull
 
 .hashover-post-comment:before {
 	content: '\e803';
+	font-size: 20px;
 }
 
 .hashover-likes:before {
@@ -90,8 +91,14 @@ Copyright (C) 2014 Jacob Barkdull
 	color: #9C2E10;
 }
 
+#hashover a,.hashover-likes {
+	text-decoration:none;
+	color:#555
+}
+
 .hashover-content {
-	padding-top:1em;
+	padding-top:0.6em;
+	margin-bottom: 0.5em;
 }
 
 .hashover-header {
@@ -113,12 +120,14 @@ Copyright (C) 2014 Jacob Barkdull
 	background-color: #fcfcfc;
 	padding: 5px 10px 10px 10px;
 	box-shadow: 1px 1px 5px #DBDBDB;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 }
 
 #hashover form div textarea {
 	background-color: #FFFFFF;
 	border: 2px solid #DDDDDD;
-	color: #777;
+	color: #555;
 	display: block;
 	max-width: 100%;
 	outline: none;
@@ -127,6 +136,8 @@ Copyright (C) 2014 Jacob Barkdull
 	max-width: 100%;
 	min-width: 100%;
 	margin: 0em 0em 1em 0em;
+	font-size: 100%;
+	line-height: 1.5em;
 }
 
 #hashover br {
@@ -134,7 +145,7 @@ Copyright (C) 2014 Jacob Barkdull
 }
 
 #hashover #comment_form {
-	margin-bottom:1em;
+	margin-bottom:2em;
 	margin-top: 1em;
 }
 
@@ -174,6 +185,8 @@ Copyright (C) 2014 Jacob Barkdull
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	-o-box-sizing: border-box;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 }
 
 .hashover-date,
@@ -209,6 +222,7 @@ Copyright (C) 2014 Jacob Barkdull
 	font-weight: 600;
 	font-style: italic;
 	font-size: 90%;
+	color: #CF662B;
 }
 
 .hashover-sort {
@@ -220,7 +234,8 @@ Copyright (C) 2014 Jacob Barkdull
 }
 
 .hashover-post-comment {
-	font-weight: 700;
+	font-weight: 600;
+	font-style: italic;
 }
 
 #hashover hr {
@@ -241,7 +256,7 @@ Copyright (C) 2014 Jacob Barkdull
 #hashover .hashover-comment .hashover-form-buttons {
 	float: right;
 	padding: 0px 5px 0px 0px ! important;
-	margin-bottom: 1em;
+	margin-bottom: 0.6em;
 }
 
 .hashover-form-buttons input {
@@ -251,6 +266,9 @@ Copyright (C) 2014 Jacob Barkdull
 	cursor: pointer;
 	outline-offset: none;
 	outline: -webkit-focus-ring-color none;
+	font-weight: 600;
+	font-style: italic;
+	color: #CF662B;
 }
 
 .hashover-login-input {
@@ -284,6 +302,11 @@ Copyright (C) 2014 Jacob Barkdull
 	position: absolute;
 	visibility: hidden;
 	width: 0px;
+}
+
+.hashover-avatar img,.hashover-avatar-image img {
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 }
 
 .hashover-likes:empty {
