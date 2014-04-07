@@ -169,13 +169,9 @@
 	function display_count() {
 		global $cmt_count, $total_count;
 		$cmt_count--; $total_count--;
+		$show_count = $cmt_count . ' Comment' . (($cmt_count != '1') ? 's' : '');
 
-		if ($total_count == $cmt_count) {
-			$show_count = $cmt_count . ' Comment';
-			if ($cmt_count != '1') $show_count .= 's';
-		} else {
-			$show_count = $cmt_count . ' Comment';
-			if ($cmt_count != '1') $show_count .= 's';
+		if ($total_count != $cmt_count) {
 			$show_count .= ' (' . $total_count . ' counting repl';
 			$show_count .= (abs($total_count - $cmt_count) > 1) ? 'ies)' : 'y)';
 		}
