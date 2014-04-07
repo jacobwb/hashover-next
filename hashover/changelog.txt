@@ -1,3 +1,8 @@
+Changes by Jacob Barkdull 2014-04-07
+-------------------------------------------------------------------------------
+Fixed plurals in comment count for replies.
+
+
 Changes by Jacob Barkdull 2014-04-05
 -------------------------------------------------------------------------------
 Submit buttons now disable on submission, enable again after 20 seconds.
