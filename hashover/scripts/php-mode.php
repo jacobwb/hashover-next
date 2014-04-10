@@ -385,8 +385,10 @@ function hashover_like(c, f) {
 	$exec_time = ($exec_end - $exec_start);
 
 	echo '<!--' . PHP_EOL;
-	echo "\t" . 'Script Execution Time: ' . round($exec_time, 5) . ' Seconds' . PHP_EOL;
-	echo "\t" . 'Memory Usage: ' . round(memory_get_usage(true) / 1048576, 2) . 'Mb' . PHP_EOL;
+	echo "\t" . 'HashOver Statistics:' . PHP_EOL . PHP_EOL;
+	echo "\t\t" . 'Execution Time' . "\t\t" . ': ' . round($exec_time, 5) . ' Seconds' . PHP_EOL;
+	echo "\t\t" . 'Script Memory Peak' . "\t" . ': ' . round(memory_get_peak_usage() / 1048576, 2) . 'Mb' . PHP_EOL;
+	echo "\t\t" . 'System Memory Peak' . "\t" . ': ' . round(memory_get_peak_usage(true) / 1048576, 2) . 'Mb' . PHP_EOL;
 	echo '-->' . PHP_EOL;
 
 ?>
