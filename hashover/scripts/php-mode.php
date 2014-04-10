@@ -384,6 +384,9 @@ function hashover_like(c, f) {
 	$exec_end = $exec_time[1] + $exec_time[0];
 	$exec_time = ($exec_end - $exec_start);
 
-	echo '<!-- Script Execution Time: ' . round($exec_time, 5) . ' Seconds -->' . PHP_EOL;
+	echo '<!--' . PHP_EOL;
+	echo "\t" . 'Script Execution Time: ' . round($exec_time, 5) . ' Seconds' . PHP_EOL;
+	echo "\t" . 'Memory Usage: ' . round(memory_get_usage(true) / 1048576, 2) . 'Mb' . PHP_EOL;
+	echo '-->' . PHP_EOL;
 
 ?>
