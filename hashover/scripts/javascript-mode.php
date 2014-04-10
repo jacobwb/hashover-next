@@ -542,6 +542,7 @@ function sort_comments(method) {
 
 	echo PHP_EOL . '// Place all content on page' . PHP_EOL;
 	echo 'document.getElementById("hashover").innerHTML = show_cmt;' . PHP_EOL . PHP_EOL;
-	echo '// Script Execution Time: ' . round($exec_time, 5) . ' Seconds';
+	echo '// Script Execution Time: ' . round($exec_time, 5) . ' Seconds' . PHP_EOL;
+	echo '// Memory Usage: ' . round(memory_get_usage(true) / 1048576, 2) . 'Mb';
 
 ?>
