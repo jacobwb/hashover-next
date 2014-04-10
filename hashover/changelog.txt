@@ -1,3 +1,8 @@
+Changes by Jacob Barkdull 2014-04-10
+-------------------------------------------------------------------------------
+Added memory usage comment to JavaScript and HTML output.
+
+
 Changes by Jacob Barkdull 2014-04-07
 -------------------------------------------------------------------------------
 Fixed plurals in comment count for replies.
