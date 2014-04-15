@@ -280,7 +280,7 @@ function hashover_validate(f) {
 			}
 		}
 
-		if (document.hashover_form.comment.innerHTML == '' || document.hashover_form.comment.innerHTML == '<?php echo $text['comment_form']; ?>') {
+		if (document.hashover_form.comment.value == '' || document.hashover_form.comment.value == '<?php echo $text['comment_form']; ?>') {
 			document.getElementById('hashover-message').innerHTML = '<?php echo $text['cmt_needed']; ?>';
 			document.getElementById('hashover-message').style = null;
 			document.hashover_form.comment.focus();
@@ -316,7 +316,7 @@ function hashover_validate(f) {
 			}
 		}
 
-		if (document.getElementById('hashover-reply-form-' + f).comment.innerHTML == '' || document.getElementById('hashover-reply-form-' + f).comment.innerHTML == '<?php echo $text['reply_form']; ?>') {
+		if (document.getElementById('hashover-reply-form-' + f).comment.value == '' || document.getElementById('hashover-reply-form-' + f).comment.value == '<?php echo $text['reply_form']; ?>') {
 			document.getElementById('hashover-message-' + f).innerHTML = '<?php echo $text['reply_needed']; ?>';
 			document.getElementById('hashover-message-' + f).className = 'hashover-message open';
 			document.getElementById('hashover-reply-form-' + f).comment.focus();
