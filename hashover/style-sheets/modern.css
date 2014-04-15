@@ -45,7 +45,7 @@ Copyright (C) 2014 Jacob Barkdull
 	line-height: 1em;
 }
 
-.hashover-hashover-submit:before {
+.hashover-post-comment:before {
 	content: '\e803';
 	font-size: 20px;
 }
