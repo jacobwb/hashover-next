@@ -192,11 +192,10 @@ function hashover_edit(e, f, s) {
 // Disable submit buttons on submissions
 function hashover_submit(f, b) {
 	if (hashover_noemail(f) != false) {
-		b.disabled = true;
-
-		setTimeout(function() {
-			b.disabled = false;
-		}, 20000);
+		setTimeout(function() { b.disabled = true; }, 1000);
+		setTimeout(function() { b.disabled = false; }, 20000);
+	} else {
+		return false;
 	}
 }
 
