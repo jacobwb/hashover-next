@@ -22,10 +22,6 @@ Copyright (C) 2014 Jacob Barkdull
 #hashover .hashover-comment form {
 	display: block;
 	margin-top: 1.6em;
-}
-
-#hashover .hashover-comment form {
-	margin-top: 6px;
 	clear: both;
 }
 
