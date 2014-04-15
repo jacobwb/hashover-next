@@ -111,12 +111,23 @@ Copyright (C) 2014 Jacob Barkdull
 	font-size: 90%;
 }
 
-#hashover-end-links{
+#hashover-end-links {
 	background-color: #eee;
 	padding: 1em;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	text-align: center;
+}
+
+.hashover-sort select {
+	background-color: #FFFFFF;
+	border: 2px solid #DDDDDD;
+	color: #777777;
+	outline: none;
+	padding: 0.1em;
+	margin: 0px;
+	outline-offset: none;
+	outline: -webkit-focus-ring-color none;
 }
 
 #sort_div .hashover-balloon {
