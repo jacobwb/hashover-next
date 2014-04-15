@@ -111,6 +111,25 @@ Copyright (C) 2014 Jacob Barkdull
 	font-size: 90%;
 }
 
+#hashover-end-links {
+	background-color: #eee;
+	padding: 1em;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	text-align: center;
+}
+
+.hashover-sort select {
+	background-color: #FFFFFF;
+	border: 2px solid #DDDDDD;
+	color: #777777;
+	outline: none;
+	padding: 0.1em;
+	margin: 0px;
+	outline-offset: none;
+	outline: -webkit-focus-ring-color none;
+}
+
 #sort_div .hashover-balloon {
 	overflow: hidden;
 	text-align: left;
@@ -141,9 +160,13 @@ Copyright (C) 2014 Jacob Barkdull
 	clear: both
 }
 
-#hashover #comment_form {
+#hashover #hashover_form {
 	margin-bottom:2em;
 	margin-top: 1em;
+	background-color: #eee;
+	padding: 1em;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 }
 
 .hashover-avatar {
@@ -176,7 +199,7 @@ Copyright (C) 2014 Jacob Barkdull
 #hashover .hashover-comment pre,
 #hashover .hashover-comment code,
 #hashover .hashover-comment label,
-#hashover #comment_form input,
+#hashover #hashover_form input,
 .hashover-options input {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -195,6 +218,11 @@ Copyright (C) 2014 Jacob Barkdull
 	color: #444;
 	-webkit-box-shadow: 0 0 3px rgba(0,0,0,0.1);
 	box-shadow: 0 0 3px rgba(0,0,0,0.1);
+}
+
+.hashover-form-buttons input:focus {
+	-webkit-box-shadow: none!important;
+	box-shadow: none!important;
 }
 
 .hashover-date,
@@ -235,6 +263,15 @@ Copyright (C) 2014 Jacob Barkdull
 
 .hashover-sort {
 	float: right;
+}
+
+.hashover-count {
+	float: left;
+}
+
+#sort_div {
+	clear:both;
+	padding-top:1em
 }
 
 .hashover-sort select {
@@ -290,7 +327,7 @@ Copyright (C) 2014 Jacob Barkdull
 	cursor: pointer;
 }
 
-.post-comment {
+.hashover-submit {
 	background-color: #3b8dbd ! important;
 	color: #FFFFFF ! important;
 	padding: 8px 14px ! important;
@@ -304,7 +341,7 @@ Copyright (C) 2014 Jacob Barkdull
 	transition: all .2s ease;
 }
 
-.post-comment:hover {
+.hashover-submit:hover {
 	background-color: #444 ! important;
 }
 
@@ -331,7 +368,7 @@ Copyright (C) 2014 Jacob Barkdull
 	width: 0px;
 }
 
-#hashover #comment_form input,
+#hashover #hashover_form input,
 .hashover-options input {
 	background-color: #FFFFFF;
 	border: 2px solid #DDDDDD;
