@@ -260,6 +260,15 @@ Copyright (C) 2014 Jacob Barkdull
 	float: right;
 }
 
+.hashover-count {
+	float: left;
+}
+
+#sort_div {
+	clear:both;
+	padding-top:1em
+}
+
 .hashover-sort select {
 	font-family: Arial, Helvetica, sans-serif;
 }
