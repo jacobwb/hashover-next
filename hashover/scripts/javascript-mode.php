@@ -98,7 +98,8 @@ function hashover_reply(r, f) {
 ?>
 	reply_form += '<input type="button" value="<?php echo $text['cancel']; ?>" onclick="hashover_cancel(\'' + r + '\'); return false;">\n';
 	reply_form += '</span>\n';
-	reply_form += '<div<?php echo (isset($_COOKIE['name']) and !empty($_COOKIE['name'])) ? ' style="max-height: 0px;"' : ''; ?> class="hashover-options" id="hashover-options-' + r + '"><hr style="clear: both;">\n';
+	reply_form += '<span id="hashover-message-' + r + '" class="hashover-message"></span>\n';
+	reply_form += '<div id="hashover-options-' + r + '" class="hashover-options<?php if (!isset($_COOKIE['name']) or empty($_COOKIE['name'])) echo ' open'; ?>">\n';
 	reply_form += '<div class="hashover-inputs">\n';
 
 <?php
@@ -158,7 +159,7 @@ function hashover_edit(e, f, s) {
 	edit_form += '</label>\n';
 	edit_form += '<input type="button" value="<?php echo $text['cancel']; ?>" onclick="hashover_cancel(\'' + e + '\'); return false;">\n';
 	edit_form += '</span>\n';
-	edit_form += '<div class="hashover-options"><hr style="clear: both;">\n';
+	edit_form += '<div class="hashover-options open">\n';
 	edit_form += '<div class="hashover-inputs">\n';
 <?php
 	if ($icons == 'yes') {
@@ -191,7 +192,7 @@ function hashover_edit(e, f, s) {
 
 // Disable submit buttons on submissions
 function hashover_submit(f, b) {
-	if (hashover_noemail(f) != false) {
+	if (hashover_validate(f) != false) {
 		setTimeout(function() { b.disabled = true; }, 1000);
 		setTimeout(function() { b.disabled = false; }, 20000);
 	} else {
@@ -241,11 +242,11 @@ function hashover_like(c, f) {
 // Displays options
 function hashover_showoptions(r, b) {
 	if (name_on == 'yes' || email_on == 'yes' || passwd_on == 'yes' || sites_on == 'yes') {
-		if (document.getElementById('hashover-options-' + r).style.maxHeight != '200px') {
-			document.getElementById('hashover-options-' + r).style.maxHeight = '200px';
+		if (document.getElementById('hashover-options-' + r).className != 'hashover-options open') {
+			document.getElementById('hashover-options-' + r).className = 'hashover-options open';
 			b.value = '\u25B2 <?php echo $text['options']; ?>';
 		} else {
-			document.getElementById('hashover-options-' + r).style.maxHeight = '0px';
+			document.getElementById('hashover-options-' + r).className = 'hashover-options';
 			b.value = '\u25BC <?php echo $text['options']; ?>';
 		}
 	}
@@ -254,25 +255,77 @@ function hashover_showoptions(r, b) {
 }
 
 // Displays a "blank email address" warning
-function hashover_noemail(f) {
+function hashover_validate(f) {
 	if (f == true) {
-		if (email_on == 'yes' && (document.hashover_form.email.value == '' || document.hashover_form.email.value == '<?php echo $text['email']; ?>')) {
-			var answer = confirm('<?php echo $text['no_email_warn']; ?>');
+		if (email_on == 'yes') {
+			if (document.hashover_form.email.value == '' || document.hashover_form.email.value == '<?php echo $text['email']; ?>') {
+				var answer = confirm('<?php echo $text['no_email_warn']; ?>');
 
-			if (answer == false) {
-				document.hashover_form.email.focus();
-				return false;
+				if (answer == false) {
+					document.hashover_form.email.focus();
+					return false;
+				}
+			} else {
+				if (!document.hashover_form.email.value.match(/\S+@\S+/)) {
+					document.getElementById('hashover-message').innerHTML = '<?php echo $text['invalid_email']; ?>';
+					document.getElementById('hashover-message').style = null;
+					document.hashover_form.email.focus();
+
+					setTimeout(function() {
+						document.getElementById('hashover-message').style.display = 'none';
+					}, 10000);
+
+					return false;
+				}
 			}
 		}
-	} else {
-		if (email_on == 'yes' && (document.getElementById('hashover-reply-form-' + f).email.value == '' || document.getElementById('hashover-reply-form-' + f).email.value == '<?php echo $text['email']; ?>')) {
-			var answer = confirm('<?php echo $text['no_email_warn']; ?>');
 
-			if (answer == false) {
-				document.getElementById('hashover-options-' + f).style.display = '';
-				document.getElementById('hashover-reply-form-' + f).email.focus();
-				return false;
+		if (document.hashover_form.comment.innerHTML == '' || document.hashover_form.comment.innerHTML == '<?php echo $text['comment_form']; ?>') {
+			document.getElementById('hashover-message').innerHTML = '<?php echo $text['cmt_needed']; ?>';
+			document.getElementById('hashover-message').style = null;
+			document.hashover_form.comment.focus();
+
+			setTimeout(function() {
+				document.getElementById('hashover-message').style.display = 'none';
+			}, 10000);
+
+			return false;
+		}
+	} else {
+		if (email_on == 'yes') {
+			if (document.getElementById('hashover-reply-form-' + f).email.value == '' || document.getElementById('hashover-reply-form-' + f).email.value == '<?php echo $text['email']; ?>') {
+				var answer = confirm('<?php echo $text['no_email_warn']; ?>');
+
+				if (answer == false) {
+					document.getElementById('hashover-options-' + f).style.display = '';
+					document.getElementById('hashover-reply-form-' + f).email.focus();
+					return false;
+				}
+			} else {
+				if (!document.getElementById('hashover-reply-form-' + f).email.value.match(/\S+@\S+/)) {
+					document.getElementById('hashover-message-' + f).innerHTML = '<?php echo $text['invalid_email']; ?>';
+					document.getElementById('hashover-message-' + f).className = 'hashover-message open';
+					document.getElementById('hashover-reply-form-' + f).email.focus();
+
+					setTimeout(function() {
+						document.getElementById('hashover-message-' + f).className = 'hashover-message';
+					}, 10000);
+
+					return false;
+				}
 			}
+		}
+
+		if (document.getElementById('hashover-reply-form-' + f).comment.innerHTML == '' || document.getElementById('hashover-reply-form-' + f).comment.innerHTML == '<?php echo $text['reply_form']; ?>') {
+			document.getElementById('hashover-message-' + f).innerHTML = '<?php echo $text['reply_needed']; ?>';
+			document.getElementById('hashover-message-' + f).className = 'hashover-message open';
+			document.getElementById('hashover-reply-form-' + f).comment.focus();
+
+			setTimeout(function() {
+				document.getElementById('hashover-message-' + f).className = 'hashover-message';
+			}, 10000);
+
+			return false;
 		}
 	}
 }
@@ -387,12 +440,12 @@ function sort_comments(method) {
 	echo "\t" . 'document.write("<div id=\"hashover\"></div>\n");' . PHP_EOL;
 	echo '}' . PHP_EOL . PHP_EOL;
 
-	echo jsAddSlashes('<a name="comments"></a><b class="hashover-post-comment">' . $text['post_cmt'] . $js_title . ':</b>');
+	echo jsAddSlashes('<a name="comments"></a><b class="hashover-post-comment">' . $text['post_cmt'] . $js_title . ':</b>\n');
 
 	if (isset($_COOKIE['message']) and !empty($_COOKIE['message'])) {
 		echo jsAddSlashes('<b id="hashover-message" class="hashover-title">' . $_COOKIE['message'] . '</b>\n');
 	} else {
-		echo jsAddSlashes('\n');
+		echo jsAddSlashes('<b id="hashover-message" class="hashover-title" style="display: none;"></b>\n');
 	}
 
 	echo jsAddSlashes('<form id="hashover_form" name="hashover_form" action="/hashover.php" method="post">\n');

@@ -1,3 +1,9 @@
+Changes by Jacob Barkdull 2014-04-15
+-------------------------------------------------------------------------------
+Implemented JavaScript e-mail and message validation.
+Now invalid e-mails won't be stored.
+
+
 Changes by Jacob Barkdull 2014-04-10
 -------------------------------------------------------------------------------
 Added memory usage comment to JavaScript and HTML output.
@@ -872,3 +878,4 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
+
