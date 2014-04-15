@@ -144,6 +144,10 @@ Copyright (C) 2014 Jacob Barkdull
 #hashover #comment_form {
 	margin-bottom:2em;
 	margin-top: 1em;
+	background-color: #eee;
+	padding: 1em;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 }
 
 .hashover-avatar {
