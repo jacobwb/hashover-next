@@ -283,6 +283,10 @@ Copyright (C) 2014 Jacob Barkdull
 	font-style: italic;
 }
 
+.hashover-comment {
+	clear:both;
+}
+
 #hashover hr {
 	border: none;
 	margin: 0px
