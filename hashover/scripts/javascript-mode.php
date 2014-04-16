@@ -268,7 +268,7 @@ function hashover_validate(f) {
 			} else {
 				if (!document.hashover_form.email.value.match(/\S+@\S+/)) {
 					document.getElementById('hashover-message').innerHTML = '<?php echo $text['invalid_email']; ?>';
-					document.getElementById('hashover-message').style = null;
+					document.getElementById('hashover-message').style.display = null;
 					document.hashover_form.email.focus();
 
 					setTimeout(function() {
@@ -282,7 +282,7 @@ function hashover_validate(f) {
 
 		if (document.hashover_form.comment.value == '' || document.hashover_form.comment.value == '<?php echo $text['comment_form']; ?>') {
 			document.getElementById('hashover-message').innerHTML = '<?php echo $text['cmt_needed']; ?>';
-			document.getElementById('hashover-message').style = null;
+			document.getElementById('hashover-message').style.display = null;
 			document.hashover_form.comment.focus();
 
 			setTimeout(function() {
