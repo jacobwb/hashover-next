@@ -187,7 +187,7 @@
 			$write_cmt = simplexml_load_file('template.xml');
 			$write_cmt->name = xml_sanitize(trim($name, ' '));
 			$write_cmt->passwd = (isset($_POST['password']) and !empty($_POST['password']) and $_POST['password'] != $text['password']) ? md5(encrypt(stripslashes($_POST['password']))) : '';
-			$write_cmt->email = (isset($_POST['email']) and $_POST['email'] != $text['email']) ? str_replace('"', '&quot;', encrypt(stripslashes(xml_sanitize($email)))) : '';
+			$write_cmt->email = (isset($_POST['email']) and $_POST['email'] != $text['email'] and filter_var($email, FILTER_VALIDATE_EMAIL)) ? str_replace('"', '&quot;', encrypt(stripslashes(xml_sanitize($email)))) : '';
 			$write_cmt->website = (isset($website)) ? xml_sanitize(trim($website, ' ')) : '';
 			$write_cmt->date = date('m/d/Y - g:ia');
 			$write_cmt['likes'] = '0';
