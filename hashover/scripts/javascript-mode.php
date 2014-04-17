@@ -98,7 +98,6 @@ function hashover_reply(r, f) {
 ?>
 	reply_form += '<input type="button" value="<?php echo $text['cancel']; ?>" onclick="hashover_cancel(\'' + r + '\'); return false;">\n';
 	reply_form += '</span>\n';
-	reply_form += '<span id="hashover-message-' + r + '" class="hashover-message"></span>\n';
 	reply_form += '<div id="hashover-options-' + r + '" class="hashover-options<?php if (!isset($_COOKIE['name']) or empty($_COOKIE['name'])) echo ' open'; ?>">\n';
 	reply_form += '<div class="hashover-inputs">\n';
 
@@ -131,6 +130,7 @@ function hashover_reply(r, f) {
 	}
 
 	reply_form += '</div>\n</div>\n';
+	reply_form += '<div id="hashover-message-' + r + '" class="hashover-message"></div>\n';
 	reply_form += '<textarea rows="6" cols="62" name="comment" onFocus="this.value=(this.value==\'<?php echo $text['reply_form']; ?>\') ? \'\' : this.value;" onBlur="this.value=(this.value==\'\') ? \'<?php echo $text['reply_form']; ?>\' : this.value;" title="<?php echo $text['cmt_tip']; ?>"><?php echo $text['reply_form']; ?></textarea>\n';
 <?php
 	if (isset($_GET['canon_url']) or isset($canon_url)) {
