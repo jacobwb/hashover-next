@@ -26,16 +26,23 @@
 	if (isset($_GET['title']) and !empty($_GET['title'])) {
 		$title = $_GET['title'];
 	} else {
-		$title = $domain . ': ' . basename($dir);
+		$matches = array();
+		preg_match('/<title>(.+)<\/title>/', file_get_contents($_GET['rss']), $matches);
+
+		if (!empty($matches[1])) {
+			header('Location: .' . $_SERVER['PHP_SELF'] . '?rss=' . $_GET['rss'] . '&title=' . $matches[1]);
+		} else {
+			$title = str_replace('www.', '', $domain) . ((basename($dir) == 'pages') ? '' : ': ' . str_replace('-', ' ', basename($dir)));
+		}
 	}
 
 	// Read directory contents if conditions met
 	if (file_exists($dir) and (isset($_GET['rss']) and !empty($_GET['rss']))) {
-		$files = array();
-		$ac = 0;
-
 		// Read comment files into array; convert date into UNIX timestamp
 		foreach (glob($dir . '/*.xml', GLOB_NOSORT) as $file) {
+			static $files = array();
+			static $ac = 0;
+
 			$files[$ac] = simplexml_load_file($file);
 			$files[$ac]['date'] = strtotime(str_replace(array('- ', 'am', 'pm'), array('', ' AM PST', ' PM PST'), $files[$ac]->date));
 			$files[$ac]['file'] = $file;
@@ -55,19 +62,6 @@
 
 		foreach ($files as $rss_cmt) {
 			static $rss_feed = '';
-
-			// Set feed title
-			if (isset($_GET['title']) and !empty($_GET['title'])) {
-				$title = $_GET['title'];
-			} else {
-				preg_match('/<title>(.+)<\/title>/', file_get_contents($_GET['rss']), $matches);
-
-				if (!empty($matches[1])) {
-					header('Location: .' . $_SERVER['PHP_SELF'] . '?rss=' . $_GET['rss'] . '&title=' . $matches[1]);
-				} else {
-					$title = str_replace('www.', '', $domain) . ': ' . basename($dir);
-				}
-			}
 
 			// Error handling
 			if ($rss_cmt !== false) {
@@ -100,18 +94,19 @@
 
 				$rss_feed .= "\t\t\t" . '<avatar>' . $rss_avatar . '</avatar>' . PHP_EOL;
 				$rss_feed .= "\t\t\t" . '<likes>' . $rss_cmt['likes'] . '</likes>' . PHP_EOL;
-				$rss_feed .= "\t\t\t" . '<pubDate>' . date('D, d M Y H:i:s O', (string)$rss_cmt->date) . '</pubDate>' . PHP_EOL;
+				$rss_feed .= "\t\t\t" . '<pubDate>' . date('D, d M Y H:i:s O', (int)$rss_cmt->date) . '</pubDate>' . PHP_EOL;
 				$rss_feed .= "\t\t\t" . '<guid>' . $_GET['rss'] . '#' . $permalink . '</guid>' . PHP_EOL;
 				$rss_feed .= "\t\t\t" . '<link>' . $_GET['rss'] . '#' . $permalink . '</link>' . PHP_EOL;
 				$rss_feed .= "\t\t" . '</item>' . PHP_EOL;
 			} else {
+				// Substract from count if XML is invaild
 				$total_count--;
 			}
 		}
 	} else {
 		$rss_feed = "\t\t" . '<item>' . PHP_EOL;
-		$rss_feed .= "\t\t\t" . '<title>Error</title>' . PHP_EOL;
-		$rss_feed .= "\t\t\t" . '<description>Please choose a comment thread via page URL.</description>' . PHP_EOL;
+		$rss_feed .= "\t\t\t" . '<title>Please choose a comment thread via page URL.</title>' . PHP_EOL;
+		$rss_feed .= "\t\t\t" . '<description>For example: http://' . str_replace('www.', '', $domain) . '/article.html</description>' . PHP_EOL;
 		$rss_feed .= "\t\t" . '</item>' . PHP_EOL;
 	}
 
