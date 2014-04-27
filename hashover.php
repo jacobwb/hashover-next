@@ -53,6 +53,7 @@
 
 	ini_set('default_charset', 'UTF-8');
 	// ini_set('display_errors', '1');
+	// error_reporting(E_ALL);
 
 	// Script execution starting time
 	$exec_time = explode(' ', microtime());
@@ -80,7 +81,7 @@
 	}
 
 	// Include settings file, error on fail
-	if (!include('./hashover/scripts/settings.php')) {
+	if (!include('./hashover-next/scripts/settings.php')) {
 		if (empty($notification_email) and empty($encryption_key)) {
 			exit(jsAddSlashes('<b>HashOver - Error:</b> file "settings.php" is required (with permission 0755)', 'single'));
 		}

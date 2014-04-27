@@ -64,7 +64,8 @@
 
 			// Count comment
 			if (preg_match('/-/', basename($file, '.xml'))) {
-				$thread = $dir . '/' . basename($file, '-' . end(explode('-', basename($file)))) . '.xml';
+				$file_parts = explode('-', basename($file));
+				$thread = $dir . '/' . basename($file, '-' . end($file_parts)) . '.xml';
 				$subfile_count["$thread"] = (isset($subfile_count["$thread"])) ? $subfile_count["$thread"] + 1 : 1;
 			}
 

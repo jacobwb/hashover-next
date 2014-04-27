@@ -433,6 +433,8 @@ function sort_comments(method) {
 	if ($page_title == 'yes') {
 		$js_title = "'+ pagetitle +'";
 		$js_title = (isset($_GET['pagetitle'])) ? ' on "' . $_GET['pagetitle'] . '"' : $js_title;
+	} else {
+		$js_title = '';
 	}
 
 	echo '// Place "hashover" DIV' . PHP_EOL;
