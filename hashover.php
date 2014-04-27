@@ -81,7 +81,7 @@
 	}
 
 	// Include settings file, error on fail
-	if (!include('./hashover-next/scripts/settings.php')) {
+	if (!include('./hashover/scripts/settings.php')) {
 		if (empty($notification_email) and empty($encryption_key)) {
 			exit(jsAddSlashes('<b>HashOver - Error:</b> file "settings.php" is required (with permission 0755)', 'single'));
 		}
