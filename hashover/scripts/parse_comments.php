@@ -29,8 +29,9 @@
 		global $mode, $root_dir, $ref_path, $text, $html_template, $icons, $icon_size, $short_dates, $top_likes, $popular, $domain, $indention, $admin_nickname, $admin_password, $script_query;
 
 		// Generate permalink
+		$file_parts = explode('-', basename($file, '.xml'));
 		$permalink = 'c' . str_replace('-', 'r', basename($file, '.xml'));
-		$permatext = end(explode('-', basename($file, '.xml')));
+		$permatext = end($file_parts);
 
 		// Calculate CSS padding for reply indention
 		if (($dashes = substr_count(basename($file), '-')) != '0' and $check == 'yes') {
