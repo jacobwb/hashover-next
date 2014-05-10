@@ -573,10 +573,10 @@ function sort_comments(method) {
 		echo '}' . PHP_EOL . PHP_EOL;
 		echo jsAddSlashes('</div>\n') . PHP_EOL;
 	} else {
-		echo jsAddSlashes('<div style="margin: 16px 0px 12px 0px;" class="hashover-comment">\n');
+		echo jsAddSlashes('<div style="margin: 16px 0px 12px 0px;" class="hashover-comment hashover-first">\n');
 		echo jsAddSlashes('<span class="hashover-avatar"><img width="' . $icon_size . '" height="' . $icon_size . '" src="/hashover/images/first-comment.png"></span>\n');
 		echo jsAddSlashes('<div style="height: ' . $icon_size . 'px;" class="hashover-balloon">\n');
-		echo jsAddSlashes('<b class="hashover-first hashover-title">Be the first to comment!</b>\n</div>');
+		echo jsAddSlashes('<b class="hashover-title">Be the first to comment!</b>\n</div>');
 	}
 
 	echo jsAddSlashes('</div>\n') . PHP_EOL;
