@@ -303,10 +303,10 @@
 	if (!empty($show_cmt)) {
 		parse_template($show_cmt, $total_count);
 	} else {
-		echo "\t" . '<div style="margin: 16px 0px 12px 0px;" class="hashover-comment">' . PHP_EOL;
+		echo "\t" . '<div style="margin: 16px 0px 12px 0px;" class="hashover-comment hashover-first">' . PHP_EOL;
 		echo "\t\t" . '<span class="hashover-avatar"><img width="' . $icon_size . '" height="' . $icon_size . '" src="/hashover/images/first-comment.png"></span>' . PHP_EOL;
 		echo "\t\t" . '<div style="height: ' . $icon_size . 'px;" class="hashover-balloon">' . PHP_EOL;
-		echo "\t\t\t" . '<b class="hashover-first hashover-title" style="color: #000000;">Be the first to comment!</b>' . PHP_EOL;
+		echo "\t\t\t" . '<b class="hashover-title">Be the first to comment!</b>' . PHP_EOL;
 		echo "\t\t" . '</div>' . PHP_EOL;
 		echo "\t" . '</div>' . PHP_EOL;
 	}
