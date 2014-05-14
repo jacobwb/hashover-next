@@ -34,7 +34,7 @@
 	// Function for liking a comment
 	if (isset($_SERVER['HTTP_REFERER'])) {
 		if (!empty($_GET['like'])) {
-			require('secrets.php');
+			require('settings.php');
 			require('encryption.php');
 			$encryption = new Encryption();
 
