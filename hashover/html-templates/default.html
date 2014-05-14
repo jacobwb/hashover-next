@@ -1,10 +1,10 @@
 <a name="' + permalink + '"></a>
-<div style="margin: ' + indent + ';" class="' + cmtclass + '">
+<div style="margin: ' + indent + ';" class="hashover-comment' + cmtclass + '">
 	<span class="hashover-avatar">' + avatar + '</span>
 	<div class="hashover-balloon">
 		<div class="hashover-header">' + name + ' ' + thread + '</div>
 		<div id="hashover-content-' + permalink + '" class="hashover-content">' + comment + '</div>
-		<form name="reply_form-' + permalink + '" id="hashover-reply-form-' + permalink + '" method="post" action="/hashover.php">
+		<form name="reply_form-' + permalink + '" id="hashover-reply-form-' + permalink + '" method="post" action="' + action + '">
 			<div id="hashover-forms-' + permalink + '" align="left">' + form + '</div>
 		</form>
 
