@@ -23,11 +23,6 @@
 	//	icon based on a given @username. If the user's account doesn't 
 	//	have an avatar or worse doesn't exist, then the script redirects 
 	//	to an icon fron Gravatar if one exists there.
-	//
-	// NOTICE:
-	//
-	//	Identi.ca avatar support is temporarily disabled until I learn how to 
-	//	retrive avatar images from Pump.io -- on which Identi.ca is now based.
 
 
 	// Display source code
@@ -36,39 +31,38 @@
 		exit(file_get_contents(basename(__FILE__)));
 	}
 
-	// Function to get Avatar icons fron Twitter and Identi.ca
-	if (isset($_GET['username']) and isset($_GET['email'])) {
-		$avatar = 'http://gravatar.com/avatar/' . $_GET['email'] . '.png?d=http://' . $_SERVER['HTTP_HOST'] . str_replace('.', '', '/hashover/') . 'images/avatar.png&amp;s=45&amp;r=pg';
-		$username = preg_replace('/^@([a-zA-Z0-9_@]{1,29}$)/', '\\1', $_GET['username']);
+	$format = (isset($_GET['format'])) ? $_GET['format'] : 'png';
+	$icon_size = (isset($_GET['size'])) ? (($format == 'svg') ? 256 : $_GET['size']) : '45';
 
-	//	if (!preg_match('/@identica$/i', $username)) {
-			// Get Twitter avatar image headers
+	if (!empty($_GET['email'])) {
+		$avatar = 'http://gravatar.com/avatar/' . $_GET['email'] . '.png?d=http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format . '&s=' . $icon_size . '&r=pg';
+
+		// Get Twitter avatar image headers
+		if (!empty($_GET['username'])) {
+			$username = preg_replace('/^@([a-zA-Z0-9_@]{1,29}$)/', '\\1', $_GET['username']);
 			$headers = get_headers('http://twitter.com/api/users/profile_image/' . $username, 1);
 			$code = (isset($headers[1])) ? next(explode(' ', $headers[1])) : next(explode(' ', $headers[0]));
 
 			// Check if the file exists and there are no errors
 			if ($code != 404 and $code != 403 and $code != 400 and $code != 500) {
 				if (!preg_match('/default_profile_(.*?)_normal.png/i', end($headers['location']))) {
-					exit(header('Location: ' . end($headers['location'])));
+					exit(header('Location: ' . str_replace('_normal', (($format == 'svg') ? '_200x200' : '_bigger'), end($headers['location']))));
 				}
 			}
-	/*	} else {
-			// Get Identi.ca avatar image headers
-			$headers = get_headers('http://identi.ca/' . str_replace('@identica', '', $username) . '/avatar/48', 1);
+
+			header('Location: ' . $avatar);
+		} else {
+			$headers = get_headers($avatar, 1);
 			$code = (isset($headers[1])) ? next(explode(' ', $headers[1])) : next(explode(' ', $headers[0]));
 
-			// Check if the file exists and there are no errors
-			if ($code != 404 and $code != 403 and $code != 400 and $code != 500) {
-				if (!preg_match('/default-avatar-stream.png/i', $headers['Location'])) {
-					exit(header('Location: ' . $headers['Location']));
-				}
+			if ($code != '400' and $code != '404') {
+				header('Location: ' . $avatar);
+			} else {
+				header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format);
 			}
 		}
-	*/
-
-		header('Location: ' . $avatar);
 	} else {
-		header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hashover/' . 'images/avatar.png');
+		header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format);
 	}
 
 ?>

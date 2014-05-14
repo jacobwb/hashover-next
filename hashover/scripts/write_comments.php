@@ -22,75 +22,75 @@
 		exit(file_get_contents(basename(__FILE__)));
 	}
 
-	// URL back to comment
-	$kickback = $parse_url['path'] . ((!empty($parse_url['query'])) ? '?' . $parse_url['query'] : '');
+	$kickback = $this->parse_url['path'] . ((!empty($this->parse_url['query'])) ? '?' . $this->parse_url['query'] : ''); // URL back to comment
+
+	// Characters to be removed from name, email, and website fields
+	$search = array('<', '>', "\n", "\r", "\t", '&nbsp;', '&lt;', '&gt;', '"', "'", '\\');
+	$replace = array('', '', '', '', '', '', '', '', '&quot;', '&#39;', '');
 
 	// Clean up name, set name cookie
-	if (isset($_POST['name']) and trim($_POST['name'], ' ') != '' and $_POST['name'] != $text['nickname']) {
+	if (isset($_POST['name']) and trim($_POST['name'], ' ') != '') {
 		$name = substr(ucwords(strtolower(str_replace($search, $replace, $_POST['name']))), 0, 30);
 
 		if (isset($_POST['edit'])) {
-			if (!isset($_POST['delete']) and ($_COOKIE['name'] != $admin_nickname and $_COOKIE['password'] != $admin_password)) {
-				setcookie('name', $name, $expire, '/', str_replace('www.', '', $domain));
+			if (!isset($_POST['delete']) and ($_COOKIE['name'] != $this->admin_nickname and $_COOKIE['password'] != $this->admin_password)) {
+				$cookies->set('name', $name);
 			}
 		} else {
 			if (!isset($_POST['delete'])) {
-				setcookie('name', $name, $expire, '/', str_replace('www.', '', $domain));
+				$cookies->set('name', $name);
 			}
 		}
+	} else {
+		$name = $this->setting['default_name'];
 	}
 
 	// Set password cookie
-	if (isset($_POST['password']) and (!empty($_POST['password']) and $_POST['password'] != $text['password'])) {
+	if (!empty($_POST['password'])) {
 		if (isset($_POST['edit'])) {
-			if (!isset($_POST['delete']) and ($_COOKIE['name'] != $admin_nickname and $_COOKIE['password'] != $admin_password)) {
-				setcookie('password', str_replace('"', '&quot;', stripslashes($_POST['password'])), $expire, '/', str_replace('www.', '', $domain));
+			if (!isset($_POST['delete']) and ($_COOKIE['name'] != $this->admin_nickname and $_COOKIE['password'] != $this->admin_password)) {
+				$cookies->set('password', str_replace('"', '&quot;', $_POST['password']));
 			}
 		} else {
 			if (!isset($_POST['delete'])) {
-				setcookie('password', str_replace('"', '&quot;', stripslashes($_POST['password'])), $expire, '/', str_replace('www.', '', $domain));
+				$cookies->set('password', str_replace('"', '&quot;', $_POST['password']));
 			}
 		}
 	}
 
 	// Default email headers
-	$header = "From: $noreply_email\r\nReply-To: $noreply_email";
+	$header = "From: " . $this->setting['noreply_email'] . "\r\nReply-To: " . $this->setting['noreply_email'];
 
 	// Clean up email, set email cookie
-	if (isset($_POST['email']) and trim($_POST['email'], ' ') != '' and $_POST['email'] != $text['email']) {
+	if (isset($_POST['email']) and trim($_POST['email'], ' ') != '') {
 		$email = str_replace($search, '', $_POST['email']);
 		$header = (trim($_POST['email'], ' ') != '') ? "From: $email\r\nReply-To: $email" : $header;
 
 		if (isset($_POST['edit'])) {
-			if (!isset($_POST['delete']) and ($_COOKIE['name'] != $admin_nickname and $_COOKIE['password'] != $admin_password)) {
-				setcookie('email', $email, $expire, '/', str_replace('www.', '', $domain));
+			if (!isset($_POST['delete']) and ($_COOKIE['name'] != $this->admin_nickname and $_COOKIE['password'] != $this->admin_password)) {
+				$cookies->set('email', $email);
 			}
 		} else {
 			if (!isset($_POST['delete'])) {
-				setcookie('email', $email, $expire, '/', str_replace('www.', '', $domain));
+				$cookies->set('email', $email);
 			}
 		}
 	}
 
 	// Clean up web address, set website cookie
-	if (isset($_POST['website']) and trim($_POST['website'], ' ') != '' and $_POST['website'] != $text['website']) {
+	if (isset($_POST['website']) and trim($_POST['website'], ' ') != '') {
 		$website = str_replace($search, $replace, $_POST['website']);
 		$website = (!preg_match('/htt[p|ps]:\/\//i', $website)) ? 'http://' . $website : $website;
 
 		if (isset($_POST['edit'])) {
-			if (!isset($_POST['delete']) and ($_COOKIE['name'] != $admin_nickname and $_COOKIE['password'] != $admin_password)) {
-				setcookie('website', $website, $expire, '/', str_replace('www.', '', $domain));
+			if (!isset($_POST['delete']) and ($_COOKIE['name'] != $this->admin_nickname and $_COOKIE['password'] != $this->admin_password)) {
+				$cookies->set('website', $website);
 			}
 		} else {
 			if (!isset($_POST['delete'])) {
-				setcookie('website', $website, $expire, '/', str_replace('www.', '', $domain));
+				$cookies->set('website', $website);
 			}
 		}
-	}
-
-	function sanitize($query) {
-		$value = str_replace('../', '', $query);
-		return $value;
 	}
 
 	function xml_sanitize($string) {
@@ -98,32 +98,53 @@
 		$string = preg_replace('/[^\x{0009}\x{000A}\x{000D}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]/u', '?', $string);
 		return $string;
 	}
+	
+	foreach (array('cmtfile', 'reply_to') as $post_file) {
+		if (isset($_POST[$post_file])) {
+			if (!in_array($_POST[$post_file], array_keys($this->comments))) {
+				$cookies->set('message', $this->text['cmt_needed']);
+				exit(header('Location: ' . $kickback . '#comments'));
+			}
+		}
+	}
 
 	// Delete comment
-	if (isset($_POST['delete']) and (isset($_POST['password']) and !empty($_POST['password']))) {
-		if (file_exists($dir . '/' . $_POST['cmtfile'] . '.xml')) {
-			$del_file = $dir . '/' . sanitize($_POST['cmtfile'] . '.xml');
-			$get_pass = simplexml_load_file($del_file);
+	if (isset($_POST['delete']) and !empty($_POST['password'])) {
+		if (file_exists($this->dir . '/' . $_POST['cmtfile'] . '.' . $this->setting['data_format'])) {
+			$del_file = $this->dir . '/' . $_POST['cmtfile'] . '.' . $this->setting['data_format'];
+
+			switch ($this->setting['data_format']) {
+				default: exit($this->escape_output('<b>HashOver:</b> Unsupported data format!', 'single')); break;
+
+				case 'xml':
+					$get_pass = simplexml_load_file($del_file);
+					break;
+
+				case 'json':
+					$get_pass = json_decode(file_get_contents($del_file));
+					break;
+			}
 		} else {
 			exit(header('Location: ' . $kickback . '#comments'));
 		}
 
 		// Check if password matches the one in the file
-		if (md5(encrypt(stripslashes($_POST['password']))) == $get_pass->passwd or ($_COOKIE['name'] == $admin_nickname and $_COOKIE['password'] == $admin_password)) {
+		if ($this->encryption->verify_hash($_POST['password'], $get_pass->passwd) or ($_COOKIE['name'] == $this->admin_nickname and $_COOKIE['password'] == $this->admin_password)) {
 			unlink($del_file); // Delete the comment file
-			setcookie('password', str_replace('"', '&quot;', $_POST['password']), $expire, '/', str_replace('www.', '', $domain));
-			read_comments($dir, 'no'); // Read comments without output
+			$cookies->set('password', str_replace('"', '&quot;', $_POST['password']));
+			$file_parts = explode('-', $_POST['cmtfile']);
 
 			// Kick visitor back to comment
-			if (file_exists($dir . '/' . ($_POST['cmtfile'] + 1) . '.xml') or file_exists($dir . '/' . $_POST['cmtfile'] . '-1.xml')) {
+			if (file_exists($this->dir . '/' . (basename($_POST['cmtfile'], '-' . end($file_parts)) . end($file_parts) + 1) . '.' . $this->setting['data_format']) or file_exists($this->dir . '/' . $_POST['cmtfile'] . '-1.' . $this->setting['data_format'])) {
 				exit(header('Location: ' . $kickback . '#c' . str_replace('-', 'r', $_POST['cmtfile'])));
-			} else {
-				setcookie('message', $text['cmt_deleted'], $expire, '/', str_replace('www.', '', $domain));
-				exit(header('Location: ' . $kickback . '#comments'));
 			}
+
+			$cookies->set('message', $this->text['cmt_deleted']);
 		} else {
-			exit(header('Location: ' . $kickback . '#c' . str_replace('-', 'r', $_POST['cmtfile'])));
+			$cookies->set('message', $this->text['post_fail']);
 		}
+
+		exit(header('Location: ' . $kickback . '#comments'));
 	}
 
 	// Check trap fields
@@ -134,14 +155,36 @@
 	if (!empty($_POST['zip'])) $is_spam = true;
 
 	// Check if a comment has been entered, clean comment, replace HTML, create hyperlinks
-	if (!isset($is_spam) and isset($_POST['comment']) and !isset($_POST['delete'])) {
+	if (isset($_POST['comment']) and !isset($_POST['delete'])) {
+		// Set login cookie; kick visitor back
 		if (isset($_POST['login'])) {
-			setcookie('hashover-' . strtolower(str_replace(' ', '-', $name)), hash('ripemd160', xml_sanitize(trim($name, ' ')) . ((isset($_POST['password']) and !empty($_POST['password']) and $_POST['password'] != $text['password']) ? md5(encrypt(stripslashes($_POST['password']))) : '')), $expire, '/', str_replace('www.', '', $domain));
-			setcookie('message', $text['logged_in'], $expire, '/', str_replace('www.', '', $domain));
+			$cookies->set('hashover-' . strtolower(str_replace(' ', '-', $name)), hash('ripemd160', xml_sanitize(trim($name, ' ')) . ((isset($_POST['email']) and $_POST['email'] != $this->text['email'] and filter_var($email, FILTER_VALIDATE_EMAIL)) ? $_POST['email'] : '')));
+			$cookies->set('message', $this->text['logged_in']);
 			exit(header('Location: ' . $kickback . '#comments'));
 		}
 
-		if (!empty($_POST['comment']) and trim($_POST['comment'], " \r\n") != '' and (!preg_match('/' . str_replace(array('(', ')'), array('\(', '\)'), $text['comment_form']) . '/i', $_POST['comment']) and !preg_match('/' . str_replace(array('(', ')'), array('\(', '\)'), $text['reply_form']) . '/i', $_POST['comment']))) {
+		// Block for filing trap fields
+		if (isset($is_spam)) {
+			exit('<b>HashOver:</b> You are blocked!');
+		} else {
+			$spam_check = new SpamCheck($_SERVER['REMOTE_ADDR']);
+
+			// Check user's IP address against stopforumspam.com
+			if ($this->setting['spam_check_modes'] == 'both') {
+				if ($spam_check->{$this->setting['spam_database']}()) {
+					exit('<b>HashOver:</b> You are blocked!');
+				}
+			} else {
+				if ($this->setting['spam_check_modes'] == $this->mode) {
+					if ($spam_check->{$this->setting['spam_database']}()) {
+						exit('<b>HashOver:</b> You are blocked!');
+					}
+				}
+			}
+		}
+
+		// Check if a comment was posted
+		if (!empty($_POST['comment']) and trim($_POST['comment'], " \r\n") != '') {
 			// Characters to search for and replace with in comments
 			$data_search = array('\\', '"', '<', '>', "\n\r", "\n", "\r", '  ', '&lt;b&gt;', '&lt;/b&gt;', '&lt;u&gt;', '&lt;/u&gt;', '&lt;i&gt;', '&lt;/i&gt;', '&lt;s&gt;', '&lt;/s&gt;', '&lt;pre&gt;', '&lt;/pre&gt;', '&lt;code&gt;', '&lt;/code&gt;', '&lt;ul&gt;', '&lt;/ul&gt;', '&lt;ol&gt;', '&lt;/ol&gt;', '&lt;li&gt;', '&lt;/li&gt;', '&lt;blockquote&gt;', '&lt;/blockquote&gt;');
 			$data_replace = array('&#92;', '&quot;', '&lt;', '&gt;', '<br>', '', '<br>', ' &nbsp;', '<b>', '</b>', '<u>', '</u>', '<i>', '</i>', '<s>', '</s>', '<pre>', '</pre>', '<code>', '</code>', '<ul>', '</ul>', '<ol>', '</ol>', '<li>', '</li>', '<blockquote>', '</blockquote>');
@@ -155,7 +198,7 @@
 			$cleantags = array('blockquote', 'ul', 'ol');
 
 			// Check if all allowed HTML tags have been closed, if not add them at the end
-			for ($tc = '0'; $tc != count($tags); $tc++) {
+			for ($tc = 0; $tc < count($tags); $tc++) {
 				$open_tags = substr_count(strtolower(preg_replace('/<code>.*?<\/code>/i', '', $clean_code)), '<' . $tags[$tc] . '>');
 				$close_tags = substr_count(strtolower(preg_replace('/<code>.*?<\/code>/i', '', $clean_code)), '</' . $tags[$tc] . '>');
 
@@ -184,109 +227,160 @@
 			$clean_code = str_ireplace('</li><br>', '</li>\n', $clean_code);
 
 			// Open comment template; prepare data
-			$write_cmt = simplexml_load_file('template.xml');
+			$write_cmt = simplexml_load_file('.' . $this->setting['root_dir'] . 'template.xml');
 			$write_cmt->name = xml_sanitize(trim($name, ' '));
-			$write_cmt->passwd = (isset($_POST['password']) and !empty($_POST['password']) and $_POST['password'] != $text['password']) ? md5(encrypt(stripslashes($_POST['password']))) : '';
-			$write_cmt->email = (isset($_POST['email']) and $_POST['email'] != $text['email'] and filter_var($email, FILTER_VALIDATE_EMAIL)) ? str_replace('"', '&quot;', encrypt(stripslashes(xml_sanitize($email)))) : '';
+			$write_cmt->passwd = (!empty($_POST['password'])) ? $this->encryption->create_hash($_POST['password']) : '';
+			$encryption_keys = $this->encryption->encrypt(xml_sanitize($email));
+			$write_cmt->email = (isset($_POST['email']) and filter_var($email, FILTER_VALIDATE_EMAIL)) ? $encryption_keys['encrypted'] : '';
+			$write_cmt->encryption = (!empty($_POST['password'])) ? $encryption_keys['keys'] : '';
 			$write_cmt->website = (isset($website)) ? xml_sanitize(trim($website, ' ')) : '';
 			$write_cmt->date = date('m/d/Y - g:ia');
 			$write_cmt['likes'] = '0';
 			$write_cmt['notifications'] = 'yes';
-			$write_cmt['ipaddr'] = ($ip_addrs == 'yes') ? $_SERVER['REMOTE_ADDR'] : '';
+			$write_cmt['ipaddr'] = ($this->setting['ip_addrs'] == 'yes') ? $_SERVER['REMOTE_ADDR'] : '';
 			$write_cmt->body = xml_sanitize($clean_code); // Final comment body
 
 			// Edit comment
 			if (isset($_POST['edit']) and (isset($_POST['password']) and isset($_POST['cmtfile'])) and !isset($_POST['delete'])) {
-				if (file_exists($dir . '/' . $_POST['cmtfile'] . '.xml')) {
-					$edit_cmt = simplexml_load_file($dir . '/' . sanitize($_POST['cmtfile'] . '.xml'));
+				if (file_exists($this->dir . '/' . $_POST['cmtfile'] . '.' . $this->setting['data_format'])) {
+					switch ($this->setting['data_format']) {
+						default: exit($this->escape_output('<b>HashOver:</b> Unsupported data format!', 'single')); break;
+
+						case 'xml':
+							$edit_cmt = simplexml_load_file($this->dir . '/' . $_POST['cmtfile'] . '.xml');
+							break;
+
+						case 'json':
+							$write_cmt = (object)(array)$write_cmt;
+							$edit_cmt = json_decode(file_get_contents($this->dir . '/' . $_POST['cmtfile'] . '.json'));
+							break;
+					}
 
 					// Check if password matches the one in the file
-					if (md5(encrypt(stripslashes($_POST['password']))) == $edit_cmt->passwd or ($_COOKIE['name'] == $admin_nickname and $_COOKIE['password'] == $admin_password)) {
+					if ($this->encryption->verify_hash($_POST['password'], $edit_cmt->passwd) or ($_COOKIE['name'] == $this->admin_nickname and $_COOKIE['password'] == $this->admin_password)) {
 						// Write edited comment to file
 						$edit_cmt->name = $write_cmt->name;
-						if ($_COOKIE['name'] != $admin_nickname and $_COOKIE['password'] != $admin_password) $edit_cmt->email = $write_cmt->email;
+						if ($_COOKIE['name'] != $this->admin_nickname and $_COOKIE['password'] != $this->admin_password) $edit_cmt->email = $write_cmt->email;
 						$edit_cmt->website = $write_cmt->website;
-						$edit_cmt['notifications'] = (isset($_POST['notify']) and $_POST['notify'] == 'on') ? 'yes' : 'no';
-						if ($_POST['password'] != $admin_password) $edit_cmt->passwd = $write_cmt->passwd;
-						if ($clean_code != $edit_cmt->body) $edit_cmt->body = $write_cmt->body;
-						$edit_cmt->asXML($dir . '/' . sanitize($_POST['cmtfile']) . '.xml');
 
-						// Set "Password" and "Login" cookies
-						setcookie('password', str_replace('"', '&quot;', stripslashes($_POST['password'])), $expire, '/', str_replace('www.', '', $domain));
-						setcookie('hashover-' . strtolower(str_replace(' ', '-', $name)), hash('ripemd160', $write_cmt->name . $write_cmt->passwd), $expire, '/', str_replace('www.', '', $domain));
+						switch ($this->setting['data_format']) {
+							default: exit($this->escape_output('<b>HashOver:</b> Unsupported data format!', 'single')); break;
+
+							case 'xml':
+								$edit_cmt['notifications'] = (isset($_POST['notify']) and $_POST['notify'] == 'on') ? 'yes' : 'no';
+								break;
+
+							case 'json':
+								$edit_cmt->notifications = (isset($_POST['notify']) and $_POST['notify'] == 'on') ? 'yes' : 'no';
+								break;
+						}
+
+						if ($_POST['password'] != $this->admin_password) $edit_cmt->passwd = $write_cmt->passwd;
+						if ($clean_code != $edit_cmt->body) $edit_cmt->body = $write_cmt->body;
+
+						switch ($this->setting['data_format']) {
+							default: exit($this->escape_output('<b>HashOver:</b> Unsupported data format!', 'single')); break;
+
+							case 'xml':
+								$edit_cmt->asXML($this->dir . '/' . $_POST['cmtfile'] . '.xml');
+								break;
+
+							case 'json':
+								file_put_contents($this->dir . '/' . $_POST['cmtfile'] . '.json', preg_replace('/{(\s+)}/', '{}', json_encode($edit_cmt, JSON_PRETTY_PRINT)));
+								break;
+						}
+
+						// Set "Password" and "Login" cookies; kick visitor back to comment(s)
+						$cookies->set('password', str_replace('"', '&quot;', $_POST['password']));
+						$cookies->set('hashover-' . strtolower(str_replace(' ', '-', $name)), hash('ripemd160', $write_cmt->name . $_POST['email']));
+						exit(header('Location: ' . $kickback . '#c' . str_replace('-', 'r', $_POST['cmtfile'])));
+					} else {
+						$cookies->set('message', $this->text['post_fail']);
+						exit(header('Location: ' . $kickback . '#comments'));
 					}
 				}
-
-				// Kick visitor back to comment
-				exit(header('Location: ' . $kickback . '#c' . str_replace('-', 'r', $_POST['cmtfile'])));
 			}
 
-			// Read comments without output
-			read_comments($dir, 'no');
-
 			// Rename file for reply
-			if (isset($_POST['reply_to']) and !empty($_POST['reply_to'])) {
-				if (!preg_match('/[a-zA-Z]/i', $_POST['reply_to']) and file_exists($dir . '/' . $_POST['reply_to'] . ".xml")) {
+			if (!empty($_POST['reply_to'])) {
+				if (file_exists($this->dir . '/' . $_POST['reply_to'] . '.' . $this->setting['data_format'])) {
 					// Set reply directory information & "cookie" for successful reply
-					$reply_dir = $dir . '/' . $_POST['reply_to'] . '.xml';
-					$cmt_file = $dir . '/' . $_POST['reply_to'] . '-' . $subfile_count["$reply_dir"] . '.xml';
-					setcookie('replied', $_POST['reply_to'], $expire, '/', str_replace('www.', '', $domain));
+					$cmt_file = $this->dir . '/' . $_POST['reply_to'] . '-' . $this->subfile_count[$_POST['reply_to']] . '.' . $this->setting['data_format'];
+					$cookies->set('replied', $_POST['reply_to']);
 				}
 			} else {
-				$cmt_file = $dir . '/' . $cmt_count . '.xml';
+				$cmt_file = $this->dir . '/' . $this->cmt_count . '.' . $this->setting['data_format'];
 			}
 
 			// Write comment to file
-			if ($write_cmt->asXML(sanitize($cmt_file))) {
+			switch ($this->setting['data_format']) {
+				default: exit($this->escape_output('<b>HashOver:</b> Unsupported data format!', 'single')); break;
+
+				case 'xml':
+					if (!file_exists($cmt_file) and !$write_cmt->asXML($cmt_file)) $post_failure = true;
+					break;
+
+				case 'json':
+					$write_json = (array)$write_cmt;
+					$write_json = array_merge((array)$write_json, (array)$write_json['@attributes']);
+					unset($write_json['@attributes']);
+
+					if (!file_exists($cmt_file) and !file_put_contents($cmt_file, preg_replace('/{(\s+)}/', '{}', json_encode((array)$write_json, JSON_PRETTY_PRINT)))) {
+						$post_failure = true;
+					}
+					break;
+			}
+
+			if (!$post_failure) {
 				chmod($cmt_file, 0600);
 
 				// Send notification e-mails
-				$permalink = 'c' . str_replace('-', 'r', basename($cmt_file, '.xml'));
-				$from_email = (isset($_POST['email']) and !empty($_POST['email']) and $_POST['email'] != $text['email'] and $user_reply == 'yes') ? $name . ' <' . $email . '>' : $name;
+				$permalink = 'c' . str_replace('-', 'r', basename($cmt_file, '.' . $this->setting['data_format']));
+				$from_email = (!empty($_POST['email']) and $_POST['email'] != $this->text['email'] and $this->setting['user_reply'] == 'yes') ? $name . ' <' . $email . '>' : $name;
 				$reverse_datasearch = array('&quot;', '&lt;', '&gt;', '<br>\n', '\n', '<br>', '&nbsp;', '\r');
 				$reverse_datareplace = array('"', '<', '>', PHP_EOL, PHP_EOL, "\r", '  ', "\r");
 				$to_webmaster = '';
 
 				// Notify commenter of reply
-				if (isset($_POST['reply_to']) and !empty($_POST['reply_to'])) {
-					if (!preg_match('/[a-zA-Z]/i', $_POST['reply_to']) and file_exists($dir . '/' . $_POST['reply_to'] . ".xml")) {
-						$get_cmt = simplexml_load_file($dir . '/' . sanitize($_POST['reply_to'] . '.xml'));
+				if (!empty($_POST['reply_to'])) {
+					if (file_exists($this->dir . '/' . $_POST['reply_to'] . '.' . $this->setting['data_format'])) {
+						$get_cmt = simplexml_load_file($this->dir . '/' . $_POST['reply_to'] . '.' . $this->setting['data_format']);
 						$to_commenter = "\nIn reply to:\n\n\t" . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($get_cmt->body)) . "\n\n";
 						$to_webmaster = "\nIn reply to " . $get_cmt->name . ":\n\n\t" . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($get_cmt->body)) . "\n\n";
-						$decryto = encrypt($get_cmt->email);
+						$decryto = $this->encryption->create_hash($get_cmt->email);
 
 						if (!empty($decryto) and $decryto != $notification_email and $decryto != $email) {
 							if ($get_cmt['notifications'] == 'yes') {
-								if ($user_reply != 'yes') $header = "From: $noreply_email\r\nReply-To: $noreply_email";
-								mail($decryto, $_SERVER['HTTP_HOST'] . ' - New Reply', "From $from_email:\n\n\t" . strip_tags(stripslashes($_POST['comment'])) . "\n\n$to_commenter----\nPermalink: $page_url" . '#' . $permalink . "\nPage: $page_url", $header);
+								if ($this->setting['user_reply'] != 'yes') $header = "From: " . $this->setting['noreply_email'] . "\r\nReply-To: " . $this->setting['noreply_email'];
+								mail($decryto, $_SERVER['HTTP_HOST'] . ' - New Reply', "From $from_email:\n\n\t" . strip_tags($_POST['comment']) . "\n\n$to_commenter----\nPermalink: $page_url" . '#' . $permalink . "\nPage: $page_url", $header);
 							}
 						}
 					}
 				}
 
 				// Notify webmaster via e-mail
-				if ($write_cmt->email != encrypt($notification_email)) {
+				if (!$this->encryption->verify_hash($notification_email, $write_cmt->email)) {
 					mail($notification_email, 'New Comment', "From $from_email:\n\n\t" . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($clean_code)) . "\n\n$to_webmaster----\nPermalink: $page_url" . '#' . $permalink . "\nPage: $page_url", $header);
 				}
 
 				// Set blank cookie for successful comment, kick visitor back to comment
-				setcookie('replied', '', $expire, '/', str_replace('www.', '', $domain));
-				setcookie('hashover-' . strtolower(str_replace(' ', '-', $name)), hash('ripemd160', $write_cmt->name . $write_cmt->passwd), $expire, '/', str_replace('www.', '', $domain));
+				$cookies->set('replied', '');
+				$cookies->set('hashover-' . strtolower(str_replace(' ', '-', $name)), hash('ripemd160', $write_cmt->name . $_POST['email']));
 				exit(header('Location: ' . $kickback . '#' . $permalink));
 			} else {
-				setcookie('message', $text['post_fail'], $expire, '/', str_replace('www.', '', $domain));
+				$cookies->set('message', $this->text['post_fail']);
 				exit(header('Location: ' . $kickback . '#comments'));
 			}
 		} else {
 			// Set failed comment cookie
-			setcookie('success', 'no', $expire, '/', str_replace('www.', '', $domain));
+			$cookies->set('success', 'no');
 
 			// Set message cookie to comment or reply requirement notice
-			if (isset($_POST['reply_to']) and !empty($_POST['reply_to'])) {
-				setcookie('replied', $_POST['reply_to'], $expire, '/', str_replace('www.', '', $domain));
-				setcookie('message', $text['reply_needed'], $expire, '/', str_replace('www.', '', $domain));
+			if (!empty($_POST['reply_to'])) {
+				$cookies->set('replied', $_POST['reply_to']);
+				$cookies->set('message', $this->text['reply_needed']);
 			} else {
-				setcookie('message', $text['cmt_needed'], $expire, '/', str_replace('www.', '', $domain));
+				$cookies->set('message', $this->text['cmt_needed']);
 			}
 
 			// Kick visitor back to comment form

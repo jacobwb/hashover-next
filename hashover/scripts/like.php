@@ -31,37 +31,16 @@
 		exit(file_get_contents(basename(__FILE__)));
 	}
 
-	// Decryption method for stored e-mails
-	function encrypt($str) {
-		global $encryption_key;
-
-		$str = str_replace(' ', '-', $str);
-		$encryption_key = str_replace(chr(32), '', $encryption_key);
-		if (strlen($encryption_key) < 8) exit('<b>HashOver - Error:</b> Key error, make sure it\'s at least 8 characters long.');
-		$kl = strlen($encryption_key) < 32 ? strlen($encryption_key) : 32;
-		$k = array();
-
-		for ($i2 = 0; $i2 < $kl; $i2++) {
-			$k[$i2] = ord($encryption_key{$i2}) & 0x1F;
-		}
-		$j = 0;
-
-		for ($i2 = 0; $i2 < strlen($str); $i2++) {
-			$e = ord($str{$i2});
-			$str{$i2} = $e & 0xE0 ? chr($e^$k[$j]) : chr($e);
-			$j++; $j = $j == $kl ? 0 : $j;
-		}
-
-		return $str;
-	}
-
 	// Function for liking a comment
 	if (isset($_SERVER['HTTP_REFERER'])) {
-		if (isset($_GET['like']) and !empty($_GET['like'])) {
+		if (!empty($_GET['like'])) {
 			require('secrets.php');
+			require('encryption.php');
+			$encryption = new Encryption();
+
 			$file = '../pages/' . str_replace('../', '', $_GET['like']) . '.xml';
 			$like = (file_exists($file)) ? simplexml_load_file($file) : exit('File: "' . $file . '" non-existent!');
-			if (isset($_COOKIE['email']) and encrypt($_COOKIE['email']) == $like->email) exit('Practice altruism!');
+			if (isset($_COOKIE['email']) and $encryption->encrypt($_COOKIE['email']) == $like->email) exit('Practice altruism!');
 			$like_cookie = md5($_SERVER['SERVER_NAME'] . $_GET['like']);
 
 			if (!isset($_COOKIE[$like_cookie]) or (isset($_COOKIE[$like_cookie]) and $_COOKIE[$like_cookie] == 'unliked')) {

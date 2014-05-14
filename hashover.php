@@ -41,7 +41,7 @@
 
 	// Display source code
 	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		$script_query = 'true';
+		$script_query = true;
 
 		if (!isset($_GET['rss']) and !isset($_GET['canon_url'])) {
 			if (isset($_GET['source']) or !isset($_SERVER['HTTP_REFERER'])) {
@@ -51,184 +51,68 @@
 		}
 	}
 
+	// Use UTF-8 character set
 	ini_set('default_charset', 'UTF-8');
-	// ini_set('display_errors', '1');
-	// error_reporting(E_ALL);
 
-	// Script execution starting time
-	$exec_time = explode(' ', microtime());
-	$exec_start = $exec_time[1] + $exec_time[0];
+	// Enable display of PHP errors
+	ini_set('display_errors', '1');
+	error_reporting(E_ALL);
 
-	// Output for JavaScript mode
-	function jsAddSlashes($script, $type = '') {
-		global $mode;
+	// Autoload class files
+	function __autoload($classname) {
+		if (!@include_once('./hashover/scripts/' . strtolower($classname) . '.php')) {
+			exit('<b>HashOver - Error:</b> "' . strtolower($classname) . '.php" file could not be included!');
+		}
+	}
 
-		if (!isset($mode) or $mode == 'javascript') {
-			if ($type != 'single') {
-				return 'show_cmt += \'' . str_replace(array('\\\n', '\\\r', '\\\\n', "\'+", "+\'", "\t"), array('\n', '\r', '\\n', "'+", "+'", ''), addcslashes($script, "'")) . '\';' . PHP_EOL;
-				break;
-			} else {
-				return 'document.write("' . str_replace(array('\\\n', '\\\r', '\"+', '+\"'), array('\n', '\r', '"+', '+"'), addslashes($script)) . '");' . PHP_EOL;
-				break;
+	// Main HashOver class
+	class HashOver extends Setup {
+		public function init() {
+			// Check if PHP version is the minimum required
+			if (version_compare(PHP_VERSION, '5.3.3') < 0) {
+				exit($this->escape_output('<b>HashOver - Error:</b> PHP ' . current(explode('-', PHP_VERSION)) . ' is too old. Must be at least version 5.3.3.', 'single'));
 			}
-		} else {
-			return str_replace(array('\n', '\r'), '', $script) . PHP_EOL;
-		}
-	}
 
-	if (version_compare(PHP_VERSION, '5.3.3') < 0) {
-		exit(jsAddSlashes('<b>HashOver - Error:</b> PHP ' . current(explode('-', PHP_VERSION)) . ' is too old. Must be at least version 5.3.3.', 'single'));
-	}
-
-	// Include settings file, error on fail
-	if (!include('./hashover/scripts/settings.php')) {
-		if (empty($notification_email) and empty($encryption_key)) {
-			exit(jsAddSlashes('<b>HashOver - Error:</b> file "settings.php" is required (with permission 0755)', 'single'));
-		}
-	}
-
-	// Include encryption key & notification e-mail, error on fail
-	if (!include('./scripts/secrets.php')) {
-		if (empty($notification_email) and empty($encryption_key)) {
-			exit(jsAddSlashes('<b>HashOver - Error:</b> file "secrets.php" is required (with permission 0755)', 'single'));
-		}
-	}
-
-	// Exit if encryption key, notification email, or administrative nickname or password set to defaults
-	if ($encryption_key == '8CharKey' || $notification_email == 'example@example.com' || $admin_nickname == 'admin' || $admin_password == 'passwd') {
-		exit(jsAddSlashes('<b>HashOver:</b> The variable values in /hashover/scripts/secrets.php need to be UNIQUE.', 'single'));
-	}
-
-	// Exit if visitor's IP address is in block list file
-	if (file_exists('./blocklist.txt')) {
-		$blockedIPs = explode(PHP_EOL, file_get_contents('./blocklist.txt'));
-
-		if (in_array($_SERVER['REMOTE_ADDR'], $blockedIPs)) {
-			exit(jsAddSlashes('<b>HashOver:</b> You are blocked!', 'single'));
-		}
-	}
-
-	// Check user's IP address against stopforumspam.com
-	if ($spam_IP_check == 'both') {
-		if (preg_match('/yes/', file_get_contents('http://www.stopforumspam.com/api?ip=' . $_SERVER['REMOTE_ADDR']))) {
-			exit(jsAddSlashes('<b>HashOver:</b> You are blocked!', 'single'));
-		}
-	} else {
-		if ($spam_IP_check == $mode) {
-			if (preg_match('/yes/', file_get_contents('http://www.stopforumspam.com/api?ip=' . $_SERVER['REMOTE_ADDR']))) {
-				exit(jsAddSlashes('<b>HashOver:</b> You are blocked!', 'single'));
+			// Check for Blowfish hashing support
+			if (!(defined('CRYPT_BLOWFISH') and CRYPT_BLOWFISH)) {
+				exit($this->escape_output('<b>HashOver - Error:</b> Failed to find CRYPT_BLOWFISH. Blowfish hashing support is required.', 'single'));
 			}
-		}
-	}
 
-	// Default scripts to be included
-	$include_files = array(
-		'./scripts/urlwork.php',
-		'./scripts/encryption.php',
-		'./scripts/global_variables.php',
-		'./scripts/locales.php'
-	);
+			$statistics = new Statistics(); // Instantiate statistics
+			$statistics->execution_start(); // Start statistics
+			$display_comments = new DisplayComments();
 
-	// Load scripts for displaying comments or RSS feed
-	if (!isset($_GET['rss'])) {
-		array_push($include_files,
-			'./scripts/parse_comments.php',
-			'./scripts/deletion_notice.php',
-			'./scripts/read_comments.php',
-			'./scripts/write_comments.php'
-		);
-	} else {
-		array_push($include_files,
-			'./scripts/rss-output.php'
-		);
-	}
-
-	// Actually include the scripts; display error on failure
-	foreach ($include_files as $script) {
-		if (!include($script)) {
-			exit(jsAddSlashes('<b>HashOver - Error:</b> "' . $script . '" file could not be included!', 'single'));
-		}
-	}
-
-	// Create comment thread directory & error on fail
-	if (!file_exists($dir) and !isset($_GET['count_link'])) {
-		if (!mkdir($dir, 0755) and !chmod($dir, 0755)) {
-			exit(jsAddSlashes('<b>HashOver - Error:</b> Failed to create comment thread directory at "' . $dir . '"', 'single'));
-		}
-	}
-
-	// If the "count_link" query is set, display link to comment
-	if (isset($script_query)) {
-		if (isset($_GET['count_link']) and !empty($_GET['count_link'])) {
-			if (!file_exists($dir)) {
-				exit(jsAddSlashes('<a href="' . $_GET['count_link'] . '#comments">Post Comment</a>', 'single'));
+			// Exit if encryption key, notification email, or administrative nickname or password set to defaults
+			if ($this->encryption_key == '8CharKey' || $this->notification_email == 'example@example.com' || $this->admin_nickname == 'admin' || $this->admin_password == 'passwd') {
+				exit($this->escape_output('<b>HashOver:</b> The "Required setup" variables in /hashover/scripts/settings.php need to be UNIQUE.', 'single'));
 			}
-		}
-	}
 
-	// Function for displaying comment count
-	function display_count() {
-		global $cmt_count, $total_count;
-		$cmt_count--; $total_count--;
-		$show_count = $cmt_count . ' Comment' . (($cmt_count != '1') ? 's' : '');
+			// Exit if visitor's IP address is in block list file
+			if (file_exists('./blocklist.txt')) {
+				$blockedIPs = explode(PHP_EOL, file_get_contents('./blocklist.txt'));
 
-		if ($total_count != $cmt_count) {
-			$show_count .= ' (' . $total_count . ' counting repl';
-			$show_count .= (abs($total_count - $cmt_count) > 1) ? 'ies)' : 'y)';
-		}
-
-		return $show_count;
-	}
-
-	// If the "count_link" query is set, echo comment count as link
-	if (isset($script_query)) {
-		if (isset($_GET['count_link']) and !empty($_GET['count_link'])) {
-			read_comments($dir, 'no'); // Run read_comments function
-
-			if ($total_count > 1) {
-				exit(jsAddSlashes('<a href="' . $_GET['count_link'] . '#comments">' . display_count() . '</a>', 'single'));
-			} else {
-				exit(jsAddSlashes('<a href="' . $_GET['count_link'] . '#comments">Post Comment</a>', 'single'));
+				if (in_array($_SERVER['REMOTE_ADDR'], $blockedIPs)) {
+					exit($this->escape_output('<b>HashOver:</b> You are blocked!', 'single'));
+				}
 			}
+
+			// If the "count_link" query is set, display link count as link to comments
+			if (basename($_SERVER['PHP_SELF']) == basename(__FILE__) and !empty($_GET['count_link'])) {
+				$display_comments->display(false);
+
+				if (file_exists($this->dir)) {
+					exit($this->escape_output('<a href="' . $_GET['count_link'] . '#comments">' . (($display_comments->total_count > 0) ? $display_comments->show_count : 'Post Comment') . '</a>', 'single'));
+				} else {
+					exit($this->escape_output('<a href="' . $_GET['count_link'] . '#comments">Post Comment</a>', 'single'));
+				}
+			}
+
+			$display_comments->display(true);
+			$statistics->execution_end();
 		}
 	}
 
-	// Clear message cookie
-	if (isset($_COOKIE['message']) and !empty($_COOKIE['message'])) {
-		setcookie('message', '', 1, '/', str_replace('www.', '', $domain));
-	}
-
-	// Check if either a comment or reply failed to post
-	if (isset($_COOKIE['success']) and $_COOKIE['success'] == 'no') {
-		setcookie('success', '', 1, '/', str_replace('www.', '', $domain));
-
-		if (isset($_COOKIE['replied']) and !empty($_COOKIE['replied'])) {
-			$text['comment_form'] = $text['reply_form'];
-			$text['post_button'] = $text['post_reply'];
-			setcookie('replied', '', 1, '/', str_replace('www.', '', $domain));
-		}
-	}
-
-	// Check if visitor is on mobile device
-	if (preg_match('/android/i', $_SERVER['HTTP_USER_AGENT']) or preg_match('/blackberry/i', $_SERVER['HTTP_USER_AGENT']) or preg_match('/phone/i', $_SERVER['HTTP_USER_AGENT'])) {
-		$is_mobile = 'yes';
-	} else {
-		$is_mobile = 'no';
-	}
-
-	read_comments($dir, 'yes'); // Run read_comments function
-	krsort($top_likes); // Sort popular comments
-
-	if ($mode == 'php') {
-		if (!include('./scripts/php-mode.php')) {
-			exit(jsAddSlashes('<b>HashOver - Error:</b> file "php-mode.php" could not be included!', 'single'));
-		}
-	} else {
-		header('Content-Type: text/javascript');
-
-		if (!include('./scripts/javascript-mode.php')) {
-			exit(jsAddSlashes('<b>HashOver - Error:</b> file "javascript-mode.php" could not be included!', 'single'));
-		}
-	}
+	$hashover = new HashOver();
+	$hashover->init();
 
 ?>
