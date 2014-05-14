@@ -114,7 +114,4 @@
 		}
 	}
 
-	$en = new Encryption();
-	echo $en->decrypt('rl1uVn4cILyzF4tkcAD4tCVdZnlDo6cV887xLiI9fR0=', '13,18,22,22,2,1,2,12,6,18,2,0,10,3,1,3');
-
 ?>
