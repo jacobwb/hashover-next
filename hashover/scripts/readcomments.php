@@ -93,13 +93,6 @@
 			if ($output == true) {
 				uksort($this->comments, 'strnatcasecmp');
 			}
-
-			$this->show_count = ($this->cmt_count - 1) . ' Comment' . (($this->cmt_count != 2) ? 's' : '');
-
-			if ($this->total_count != $this->cmt_count) {
-				$this->show_count .= ' (' . ($this->total_count - 1) . ' counting repl';
-				$this->show_count .= (abs($this->total_count - $this->cmt_count) > 1) ? 'ies)' : 'y)';
-			}
 		}
 
 		public function count_comments($comment) {
