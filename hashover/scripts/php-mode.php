@@ -319,7 +319,7 @@
 	if (!empty($this->hashover)) {
 		$php_mode->parse_template($this->hashover, $this->total_count);
 	} else {
-		echo "\t" . '<div style="margin: 16px 0px 12px 0px;" class="hashover-first hashover-comment">' . PHP_EOL;
+		echo "\t" . '<div style="margin: 16px 0px 12px 0px;" class="hashover-comment hashover-first">' . PHP_EOL;
 		echo "\t\t" . '<span class="hashover-avatar"><img width="' . $this->setting['icon_size'] . '" height="' . $this->setting['icon_size'] . '" src="/hashover/images/' . $this->setting['image_format'] . 's/first-comment.' . $this->setting['image_format'] . '"></span>' . PHP_EOL;
 		echo "\t\t" . '<div style="height: ' . $this->setting['icon_size'] . 'px;" class="hashover-balloon">' . PHP_EOL;
 		echo "\t\t\t" . '<b class="hashover-title">Be the first to comment!</b>' . PHP_EOL;
