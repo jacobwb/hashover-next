@@ -221,7 +221,7 @@
 				// Add keys to JavaScript object
 				$output = "\t" . '{' . PHP_EOL;
 				$output .= "\t\t" . 'permalink: \'' . $comment['permalink'] . '\',' . PHP_EOL;
-				$output .= (preg_match('/r/', $comment['permalink'])) ? "\t\t" . 'cmtclass: \'reply\',' . PHP_EOL : '';
+				$output .= (preg_match('/r/', $comment['permalink'])) ? "\t\t" . 'cmtclass: \'hashover-reply\',' . PHP_EOL : '';
 				$output .= "\t\t" . 'avatar: \'' . addcslashes($avatar_icon, "'") . '\',' . PHP_EOL;
 				$output .= "\t\t" . 'indent: \'' . (($this->setting['indention'] == 'right') ? '16px ' . $comment['indent'] . 'px 12px 0px' : '16px 0px 12px ' . $comment['indent'] . 'px') . '\',' . PHP_EOL;
 				$output .= "\t\t" . 'name: \'' . addcslashes('<b class="hashover-name' . $name_class . '" id="hashover-name-' . $comment['permalink'] . '">' . $name . '</b>', "'") . '\',' . PHP_EOL;
@@ -252,7 +252,7 @@
 				$output = array();
 				$output['permalink'] = $comment['permalink'];
 				$output['avatar'] = $avatar_icon;
-				if (preg_match('/r/', $comment['permalink'])) $output['cmtclass'] = 'reply';
+				if (preg_match('/r/', $comment['permalink'])) $output['cmtclass'] = 'hashover-reply';
 				$output['indent'] = (($this->setting['indention'] == 'right') ? '16px ' . $comment['indent'] . 'px 12px 0px' : '16px 0px 12px ' . $comment['indent'] . 'px');
 				$output['name'] = '<b class="hashover-name' . $name_class . '" id="hashover-name-' . $comment['permalink'] . '">' . $name . '</b>';
 				if (preg_match("/r/", $comment['permalink'])) $output['thread'] = '<a href="#' . preg_replace('/^(.*)r.*$/', '\\1', $comment['permalink']) . '" title="' . $this->text['thread_tip'] . '" class="hashover-thread-link">' . $this->text['thread'] . '</a>';
@@ -312,16 +312,16 @@
 				if ($this->mode != 'php') {
 					$output = "\t" . '{' . PHP_EOL;
 					$output .= "\t\t" . 'permalink: \'' . $comment['permalink'] . '\',' . PHP_EOL;
-					$output .= "\t\t" . 'cmtclass: \'' . ((preg_match('/r/', $comment['permalink'])) ? 'hashover-comment reply' : 'hashover-comment') . '\',' . PHP_EOL;
+					$output .= "\t\t" . 'cmtclass: \'' . ((preg_match('/r/', $comment['permalink'])) ? 'hashover-comment hashover-deleted hashover-reply' : 'hashover-comment hashover-deleted') . '\',' . PHP_EOL;
 					$output .= "\t\t" . 'indent: \'' . (($this->setting['indention'] == 'right') ? '16px ' . $comment['indent'] . 'px 12px 0px' : '16px 0px 12px ' . $comment['indent'] . 'px') . '\',' . PHP_EOL;
-					$output .= "\t\t" . 'deletion_notice: \'<span class="hashover-avatar">' . $icon_fmt . '</span><div style="height: ' . $this->setting['icon_size'] . 'px;" class="hashover-balloon">\n<b class="hashover-deleted hashover-title">' . $this->text['del_note'] . '</b>\n</div>\n\'' . PHP_EOL;
+					$output .= "\t\t" . 'deletion_notice: \'<span class="hashover-avatar">' . $icon_fmt . '</span><div style="height: ' . $this->setting['icon_size'] . 'px;" class="hashover-balloon">\n<b class="hashover-title">' . $this->text['del_note'] . '</b>\n</div>\n\'' . PHP_EOL;
 					$output .= "\t" . '},' . PHP_EOL . PHP_EOL;
 				} else {
 					$output = array();
 					$output['permalink'] = $comment['permalink'];
-					$output['cmtclass'] = ((preg_match('/r/', $comment['permalink'])) ? 'hashover-comment reply' : 'hashover-comment');
+					$output['cmtclass'] = ((preg_match('/r/', $comment['permalink'])) ? 'hashover-comment hashover-deleted hashover-reply' : 'hashover-comment hashover-deleted');
 					$output['indent'] = (($this->setting['indention'] == 'right') ? '16px ' . $comment['indent'] . 'px 12px 0px' : '16px 0px 12px ' . $comment['indent'] . 'px');
-					$output['deletion_notice'] = '<span class="hashover-avatar">' . $icon_fmt . '</span><div style="height: ' . $this->setting['icon_size'] . 'px;" class="hashover-balloon">' . PHP_EOL . '<b class="hashover-deleted hashover-title">' . $this->text['del_note'] . '</b>' . PHP_EOL . '</div>' . PHP_EOL;
+					$output['deletion_notice'] = '<span class="hashover-avatar">' . $icon_fmt . '</span><div style="height: ' . $this->setting['icon_size'] . 'px;" class="hashover-balloon">' . PHP_EOL . '<b class="hashover-title">' . $this->text['del_note'] . '</b>' . PHP_EOL . '</div>' . PHP_EOL;
 				}
 			}
 
