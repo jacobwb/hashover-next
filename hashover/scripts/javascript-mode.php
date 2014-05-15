@@ -579,10 +579,10 @@ function sort_comments(method) {
 		echo '}' . PHP_EOL . PHP_EOL;
 		echo $this->escape_output('</div>\n');
 	} else {
-		echo $this->escape_output('<div style="margin: 16px 0px 12px 0px;" class="hashover-comment">\n');
+		echo $this->escape_output('<div style="margin: 16px 0px 12px 0px;" class="hashover-first hashover-comment">\n');
 		echo $this->escape_output('<span class="hashover-avatar"><img width="' . $this->setting['icon_size'] . '" height="' . $this->setting['icon_size'] . '" src="/hashover/images/' . $this->setting['image_format'] . 's/first-comment.' . $this->setting['image_format'] . '"></span>\n');
 		echo $this->escape_output('<div style="height: ' . $this->setting['icon_size'] . 'px;" class="hashover-balloon">\n');
-		echo $this->escape_output('<b class="hashover-first hashover-title">Be the first to comment!</b>\n</div>');
+		echo $this->escape_output('<b class="hashover-title">Be the first to comment!</b>\n</div>');
 	}
 
 	echo $this->escape_output('</div>\n') . PHP_EOL;
