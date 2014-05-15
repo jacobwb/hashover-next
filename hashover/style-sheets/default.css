@@ -343,7 +343,7 @@ Copyright (C) 2014 Jacob Barkdull
 	padding: 0px;
 }
 
-#hashover .hashover-comment.reply .hashover-balloon {
+#hashover .hashover-comment.hashover-reply .hashover-balloon {
 	margin-left: 49px;
 }
 
@@ -358,7 +358,7 @@ Copyright (C) 2014 Jacob Barkdull
 	cursor: pointer;
 }
 
-#hashover .hashover-comment.reply .hashover-content {
+#hashover .hashover-comment.hashover-reply .hashover-content {
 	padding: 0px 8px 0px 8px;
 }
 
@@ -491,7 +491,7 @@ Copyright (C) 2014 Jacob Barkdull
 	font-size: 20px;
 }
 
-#hashover .hashover-comment.reply .hashover-name {
+#hashover .hashover-comment.hashover-reply .hashover-name {
 	font-size: 16px;
 	margin-top: -1px;
 }
@@ -525,7 +525,7 @@ Copyright (C) 2014 Jacob Barkdull
 	overflow: hidden;
 }
 
-#hashover .hashover-comment.reply .hashover-header {
+#hashover .hashover-comment.hashover-reply .hashover-header {
 	padding: 8px 8px 6px 8px;
 }
 
@@ -550,8 +550,8 @@ Copyright (C) 2014 Jacob Barkdull
 	color: #808080;
 }
 
-#hashover .hashover-comment.reply .hashover-avatar img,
-#hashover .hashover-comment.reply .hashover-avatar a {
+#hashover .hashover-comment.hashover-reply .hashover-avatar img,
+#hashover .hashover-comment.hashover-reply .hashover-avatar a {
 	width: 35px;
 	height: 35px;
 	line-height: 35px;
@@ -569,7 +569,7 @@ Copyright (C) 2014 Jacob Barkdull
 	background-attachment: scroll;
 }
 
-#hashover .hashover-comment.reply .hashover-avatar {
+#hashover .hashover-comment.hashover-reply .hashover-avatar {
 	padding-right: 13px;
 	background-position: 41px center;
 }
@@ -633,7 +633,7 @@ Copyright (C) 2014 Jacob Barkdull
 	background-color: rgba(196, 196, 255, 0.15);
 }
 
-#hashover .hashover-comment.reply .hashover-footer {
+#hashover .hashover-comment.hashover-reply .hashover-footer {
 	margin-top: -3px;
 }
 
@@ -659,8 +659,8 @@ Copyright (C) 2014 Jacob Barkdull
 	-o-box-shadow: 0px 0px 3px #FF5555 ! important;
 }
 
-#hashover .hashover-comment .hashover-first.hashover-title,
-#hashover .hashover-comment .hashover-deleted.hashover-title {
+#hashover .hashover-comment.hashover-first .hashover-title,
+#hashover .hashover-comment.hashover-deleted .hashover-title {
 	font-size: 16px;
 	display: inline-block;
 	position: relative;
@@ -669,7 +669,7 @@ Copyright (C) 2014 Jacob Barkdull
 	vertical-align: top;
 }
 
-#hashover .hashover-comment .hashover-deleted.hashover-title {
+#hashover .hashover-comment.hashover-deleted .hashover-title {
 	color: #FF0000;
 }
 
