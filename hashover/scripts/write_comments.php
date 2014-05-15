@@ -286,7 +286,7 @@
 								break;
 
 							case 'json':
-								file_put_contents($this->dir . '/' . $_POST['cmtfile'] . '.json', preg_replace('/{(\s+)}/', '{}', json_encode($edit_cmt, JSON_PRETTY_PRINT)));
+								file_put_contents($this->dir . '/' . $_POST['cmtfile'] . '.json', preg_replace('/{(\s+)}/', '""', json_encode($edit_cmt, JSON_PRETTY_PRINT)));
 								break;
 						}
 
@@ -325,7 +325,7 @@
 					$write_json = array_merge((array)$write_json, (array)$write_json['@attributes']);
 					unset($write_json['@attributes']);
 
-					if (!file_exists($cmt_file) and !file_put_contents($cmt_file, preg_replace('/{(\s+)}/', '{}', json_encode((array)$write_json, JSON_PRETTY_PRINT)))) {
+					if (!file_exists($cmt_file) and !file_put_contents($cmt_file, preg_replace('/{(\s+)}/', '""', json_encode((array)$write_json, JSON_PRETTY_PRINT)))) {
 						$post_failure = true;
 					}
 					break;
