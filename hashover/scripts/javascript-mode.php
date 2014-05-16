@@ -24,9 +24,9 @@
 
 	// Avatar icon for edit and reply forms
 	if (isset($_COOKIE['name']) and preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $_COOKIE['name'])) {
-		$form_avatar = '<img width="32" height="32" src="' . $this->setting['root_dir'] . 'scripts/avatars.php?format=' . $this->setting['image_format'] . '&size=' . $this->setting['icon_size'] . '&username=' . $_COOKIE['name'] . '&email=' . md5(strtolower(trim($_COOKIE['email']))) . '">';
+		$form_avatar = '<img width="32" height="32" src="' . $this->setting['root_dir'] . 'scripts/avatars.php?format=' . $this->setting['image_format'] . '&size=' . $this->setting['icon_size'] . '&username=' . $_COOKIE['name'] . '&email=' . md5(strtolower(trim($_COOKIE['email']))) . '" alt="#' . $this->cmt_count . '">';
 	} else {
-		$form_avatar = '<img width="32" height="32" src="' . $this->setting['root_dir'] . 'scripts/avatars.php?format=' . $this->setting['image_format'] . '&size=' . $this->setting['icon_size'] . ((isset($_COOKIE['email'])) ? '&email=' . md5(strtolower(trim($_COOKIE['email']))) : '') . '">';
+		$form_avatar = '<img width="32" height="32" src="' . $this->setting['root_dir'] . 'scripts/avatars.php?format=' . $this->setting['image_format'] . '&size=' . $this->setting['icon_size'] . ((isset($_COOKIE['email'])) ? '&email=' . md5(strtolower(trim($_COOKIE['email']))) : '') . '" alt="#' . $this->cmt_count . '">';
 	}
 
 ?>
