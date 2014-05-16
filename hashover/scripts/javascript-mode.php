@@ -24,9 +24,9 @@
 
 	// Avatar icon for edit and reply forms
 	if (isset($_COOKIE['name']) and preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $_COOKIE['name'])) {
-		$form_avatar = '<img width="32" height="32" src="' . $this->setting['root_dir'] . 'scripts/avatars.php?username=' . $_COOKIE['name'] . '&email=' . md5(strtolower(trim($_COOKIE['email']))) . '&format=' . $this->setting['image_format'] . '&size=' . $this->setting['icon_size'] . '">';
+		$form_avatar = '<img width="32" height="32" src="' . $this->setting['root_dir'] . 'scripts/avatars.php?format=' . $this->setting['image_format'] . '&size=' . $this->setting['icon_size'] . '&username=' . $_COOKIE['name'] . '&email=' . md5(strtolower(trim($_COOKIE['email']))) . '">';
 	} else {
-		$form_avatar = '<img width="32" height="32" src="' . ((isset($_COOKIE['email'])) ? 'http://gravatar.com/avatar/' . md5(strtolower(trim($_COOKIE['email']))) . '?d=http://' . $this->setting['domain'] . $this->setting['root_dir'] . 'images/' . $this->setting['image_format'] . 's/avatar.' . $this->setting['image_format'] . '&s=' . (($this->setting['image_format'] == 'svg') ? 256 : 32) . '&r=pg">' : $this->setting['root_dir'] . 'images/' . $this->setting['image_format'] . 's/avatar.' . $this->setting['image_format'] . '">');
+		$form_avatar = '<img width="32" height="32" src="' . $this->setting['root_dir'] . 'scripts/avatars.php?format=' . $this->setting['image_format'] . '&size=' . $this->setting['icon_size'] . ((isset($_COOKIE['email'])) ? '&email=' . md5(strtolower(trim($_COOKIE['email']))) : '') . '">';
 	}
 
 ?>
@@ -456,17 +456,7 @@ function sort_comments(method) {
 
 	echo $this->escape_output('<form id="hashover_form" name="hashover_form" action="/hashover.php" method="post">\n');
 	echo $this->escape_output('<span class="hashover-avatar">');
-
-	if ($this->setting['icons'] == 'yes') {
-		if (isset($_COOKIE['name']) and preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $_COOKIE['name'])) {
-			echo $this->escape_output('<img width="' . $this->setting['icon_size'] . '" height="' . $this->setting['icon_size'] . '" src="' . $script = $this->setting['root_dir'] . 'scripts/avatars.php?username=' . $_COOKIE['name'] . '&email=' . md5(strtolower(trim($_COOKIE['email']))) . '&format=' . $this->setting['image_format'] . '&size=' . $this->setting['icon_size'] . '">');
-		} else {
-			echo $this->escape_output('<img width="' . $this->setting['icon_size'] . '" height="' . $this->setting['icon_size'] . '" src="' . $script = (isset($_COOKIE['email'])) ? 'http://gravatar.com/avatar/' . md5(strtolower(trim($_COOKIE['email']))) . '?d=http://' . $this->setting['domain'] . $this->setting['root_dir'] . 'images/' . $this->setting['image_format'] . 's/avatar.' . $this->setting['image_format'] . '&s=' . (($this->setting['image_format'] == 'svg') ? 256 : $this->setting['icon_size']) . '&r=pg">\n' : $this->setting['root_dir'] . 'images/' . $this->setting['image_format'] . 's/avatar.' . $this->setting['image_format'] . '">');
-		}
-	} else {
-		echo "\t" . $this->escape_output('<span title="Permalink">#' . $cmt_count . '</span>');
-	}
-
+	echo $this->escape_output((($this->setting['icons'] == 'yes') ? $form_avatar : '<span title="Permalink">#' . $this->cmt_count . '</span>'));
 	echo $this->escape_output('</span>\n');
 	echo $this->escape_output('<div class="hashover-balloon">\n');
 	echo $this->escape_output('<div class="hashover-inputs">\n') . PHP_EOL;
