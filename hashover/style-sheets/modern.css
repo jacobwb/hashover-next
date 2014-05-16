@@ -435,6 +435,11 @@ Copyright (C) 2014 Jacob Barkdull
 
 #hashover .hashover-login-input input {
 	cursor: pointer;
+	width: initial!important;
+}
+
+#hashover .hashover-login-input:hover > input {
+	border-color: #3b8dbd!important;
 }
 
 #hashover .hashover-submit {
