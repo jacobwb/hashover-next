@@ -31,17 +31,33 @@
 		exit(file_get_contents(basename(__FILE__)));
 	}
 
+	// Get HTTP headers for avatar image; return response code
+	function avatar_header($url) {
+		if (function_exists('curl_init')) {
+			$ch = curl_init();
+			$options = array(CURLOPT_URL => $url, CURLOPT_RETURNTRANSFER => true);
+			curl_setopt_array($ch, $options);
+			curl_exec($ch);
+			$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			curl_close($ch);
+		} else {
+			$headers = get_headers($url, 1);
+			$code = (isset($headers[1])) ? next(explode(' ', $headers[1])) : next(explode(' ', $headers[0]));
+		}
+
+		return $code;
+	}
+
 	$format = (isset($_GET['format'])) ? $_GET['format'] : 'png';
 	$icon_size = (isset($_GET['size'])) ? (($format == 'svg') ? 256 : $_GET['size']) : '45';
 
 	if (!empty($_GET['email'])) {
 		$avatar = 'http://gravatar.com/avatar/' . $_GET['email'] . '.png?d=http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format . '&s=' . $icon_size . '&r=pg';
 
-		// Get Twitter avatar image headers
+		// Attempt to get Twitter avatar image
 		if (!empty($_GET['username'])) {
 			$username = preg_replace('/^@([a-zA-Z0-9_@]{1,29}$)/', '\\1', $_GET['username']);
-			$headers = get_headers('http://twitter.com/api/users/profile_image/' . $username, 1);
-			$code = (isset($headers[1])) ? next(explode(' ', $headers[1])) : next(explode(' ', $headers[0]));
+			$code = avatar_header('http://twitter.com/api/users/profile_image/' . $username);
 
 			// Check if the file exists and there are no errors
 			if ($code != 404 and $code != 403 and $code != 400 and $code != 500) {
@@ -50,19 +66,21 @@
 				}
 			}
 
-			header('Location: ' . $avatar);
+			exit(header('Location: ' . $avatar));
 		} else {
-			$headers = get_headers($avatar, 1);
-			$code = (isset($headers[1])) ? next(explode(' ', $headers[1])) : next(explode(' ', $headers[0]));
+			// Attempt to get Gravatar avatar image
+			$code = avatar_header($avatar);
 
+			// Check if the file exists and there are no errors
 			if ($code != '400' and $code != '404') {
-				header('Location: ' . $avatar);
+				exit(header('Location: ' . $avatar));
 			} else {
-				header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format);
+				exit(header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format));
 			}
 		}
-	} else {
-		header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format);
 	}
+
+	// Redirect to default avatar image if both Gravatar and Twitter fail
+	exit(header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format));
 
 ?>
