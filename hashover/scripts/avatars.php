@@ -19,10 +19,10 @@
 	//
 	// Script Description:
 	//
-	//	This script redirects to the URL of a Twitter or Identi.ca avatar 
-	//	icon based on a given @username. If the user's account doesn't 
-	//	have an avatar or worse doesn't exist, then the script redirects 
-	//	to an icon fron Gravatar if one exists there.
+	//	This script redirects to the URL of a Gravatar or Twitter avatar 
+	//	icon image based on a given e-mail or @username. If the user's 
+	//	account doesn't have an avatar or worse doesn't exist, then the 
+	//	script redirects to the default avatar image.
 
 
 	// Display source code
@@ -34,18 +34,34 @@
 	// Get HTTP headers for avatar image; return response code
 	function avatar_header($url) {
 		if (function_exists('curl_init')) {
+			$headers = array();
 			$ch = curl_init();
-			$options = array(CURLOPT_URL => $url, CURLOPT_RETURNTRANSFER => true);
+			$options = array(CURLOPT_URL => $url, CURLOPT_RETURNTRANSFER => true, CURLOPT_NOBODY => true, CURLOPT_HEADER => true, CURLOPT_FOLLOWLOCATION => true);
 			curl_setopt_array($ch, $options);
-			curl_exec($ch);
+			$get_headers = explode(PHP_EOL, curl_exec($ch));
+
+			foreach ($get_headers as $key => $header) {
+				$parts = explode(': ', $header);
+
+				if (count($parts) > 1) {
+					$headers[$parts[0]] = $parts[1];
+				} else {
+					$headers[$key] = $parts[0];
+				}
+			}
+
 			$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			curl_close($ch);
 		} else {
 			$headers = get_headers($url, 1);
-			$code = (isset($headers[1])) ? next(explode(' ', $headers[1])) : next(explode(' ', $headers[0]));
+			$header = explode(' ', (isset($headers[1])) ? $headers[1] : $headers[0]);
+			$code = next($header);
 		}
 
-		return $code;
+		return array(
+			'load' => ($code != 404 and $code != 403 and $code != 400 and $code != 500) ? true : false,
+			'location' => isset($headers['location']) ? is_array($headers['location']) ? end($headers['location']) : $headers['location'] : ''
+		);
 	}
 
 	$format = (isset($_GET['format'])) ? $_GET['format'] : 'png';
@@ -57,22 +73,22 @@
 		// Attempt to get Twitter avatar image
 		if (!empty($_GET['username'])) {
 			$username = preg_replace('/^@([a-zA-Z0-9_@]{1,29}$)/', '\\1', $_GET['username']);
-			$code = avatar_header('http://twitter.com/api/users/profile_image/' . $username);
+			$headers = avatar_header('http://twitter.com/api/users/profile_image/' . $username);
 
 			// Check if the file exists and there are no errors
-			if ($code != 404 and $code != 403 and $code != 400 and $code != 500) {
-				if (!preg_match('/default_profile_(.*?)_normal.png/i', end($headers['location']))) {
-					exit(header('Location: ' . str_replace('_normal', (($format == 'svg') ? '_200x200' : '_bigger'), end($headers['location']))));
+			if ($headers['load'] and !empty($headers['location'])) {
+				if (!preg_match('/default_profile_(.*?)_normal.png/i', $headers['location'])) {
+					exit(header('Location: ' . str_replace('_normal', (($format == 'svg') ? '_200x200' : '_bigger'), $headers['location'])));
 				}
 			}
 
 			exit(header('Location: ' . $avatar));
 		} else {
 			// Attempt to get Gravatar avatar image
-			$code = avatar_header($avatar);
+			$headers = avatar_header($avatar);
 
 			// Check if the file exists and there are no errors
-			if ($code != '400' and $code != '404') {
+			if ($headers['load']) {
 				exit(header('Location: ' . $avatar));
 			} else {
 				exit(header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format));
