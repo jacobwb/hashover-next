@@ -232,7 +232,7 @@
 			$write_cmt->passwd = (!empty($_POST['password'])) ? $this->encryption->create_hash($_POST['password']) : '';
 			$encryption_keys = $this->encryption->encrypt(xml_sanitize($email));
 			$write_cmt->email = (isset($_POST['email']) and filter_var($email, FILTER_VALIDATE_EMAIL)) ? $encryption_keys['encrypted'] : '';
-			$write_cmt->encryption = (!empty($_POST['password'])) ? $encryption_keys['keys'] : '';
+			$write_cmt->encryption = (!empty($_POST['email'])) ? $encryption_keys['keys'] : '';
 			$write_cmt->website = (isset($website)) ? xml_sanitize(trim($website, ' ')) : '';
 			$write_cmt->date = date('m/d/Y - g:ia');
 			$write_cmt['likes'] = '0';
