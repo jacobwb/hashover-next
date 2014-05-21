@@ -42,7 +42,7 @@
 			}
 
 			// Check if visitor is on mobile device
-			if (preg_match('/android/i', $_SERVER['HTTP_USER_AGENT']) or preg_match('/blackberry/i', $_SERVER['HTTP_USER_AGENT']) or preg_match('/phone/i', $_SERVER['HTTP_USER_AGENT'])) {
+			if (preg_match('/(android|blackberry|phone)/i', $_SERVER['HTTP_USER_AGENT'])) {
 				$this->is_mobile = true;
 				$this->setting['image_format'] = 'svg';
 			}
