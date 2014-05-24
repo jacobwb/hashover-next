@@ -347,20 +347,20 @@
 						$get_cmt = simplexml_load_file($this->dir . '/' . $_POST['reply_to'] . '.' . $this->setting['data_format']);
 						$to_commenter = "\nIn reply to:\n\n\t" . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($get_cmt->body)) . "\n\n";
 						$to_webmaster = "\nIn reply to " . $get_cmt->name . ":\n\n\t" . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($get_cmt->body)) . "\n\n";
-						$decryto = $this->encryption->create_hash($get_cmt->email);
+						$decryto = $this->encryption->decrypt($get_cmt->email, $get_cmt->encryption);
 
-						if (!empty($decryto) and $decryto != $notification_email and $decryto != $email) {
+						if (!empty($decryto) and $decryto != $this->notification_email and $decryto != $email) {
 							if ($get_cmt['notifications'] == 'yes') {
 								if ($this->setting['user_reply'] != 'yes') $header = "From: " . $this->setting['noreply_email'] . "\r\nReply-To: " . $this->setting['noreply_email'];
-								mail($decryto, $_SERVER['HTTP_HOST'] . ' - New Reply', "From $from_email:\n\n\t" . strip_tags($_POST['comment']) . "\n\n$to_commenter----\nPermalink: $page_url" . '#' . $permalink . "\nPage: $page_url", $header);
+								mail($decryto, $_SERVER['HTTP_HOST'] . ' - New Reply', "From $from_email:\n\n\t" . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($clean_code)) . "\n\n$to_commenter----\nPermalink: " . $this->page_url . '#' . $permalink . "\nPage: " . $this->page_url, $header);
 							}
 						}
 					}
 				}
 
 				// Notify webmaster via e-mail
-				if (!$this->encryption->verify_hash($notification_email, $write_cmt->email)) {
-					mail($notification_email, 'New Comment', "From $from_email:\n\n\t" . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($clean_code)) . "\n\n$to_webmaster----\nPermalink: $page_url" . '#' . $permalink . "\nPage: $page_url", $header);
+				if ($email != $this->notification_email) {
+					mail($this->notification_email, 'New Comment', "From $from_email:\n\n\t" . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($clean_code)) . "\n\n$to_webmaster----\nPermalink: " . $this->page_url . '#' . $permalink . "\nPage: " . $this->page_url, $header);
 				}
 
 				// Set blank cookie for successful comment, kick visitor back to comment
