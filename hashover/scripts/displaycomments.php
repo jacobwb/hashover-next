@@ -240,8 +240,8 @@
 				}
 
 				// Define "Edit" link if proper login cookie set
-				if ((isset($_COOKIE[$edit_cookie]) and $_COOKIE[$edit_cookie] == hash('ripemd160', $comment['name'] . $this->encryption->decrypt($comment['email'], $comment['encryption']))) or (isset($_COOKIE['name']) and isset($_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))]) and $_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))] == hash('ripemd160', $this->admin_nickname . $this->admin_password))) {
-					$output .= "\t\t" . 'edit_link: \'' . ((!empty($comment['passwd']) or (isset($_COOKIE['name']) and isset($_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))]) and $_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))] == hash('ripemd160', $this->admin_nickname . $this->admin_password))) ? addcslashes('<a href="#" onClick="hashover_edit(\'' . $comment['permalink'] . '\', \'' . $file_basename . '\', \'' . (($comment['notifications'] != 'no') ? '1' : '0') . '\'); return false;" title="' . $this->text['edit_your_cmt'] . '" class="hashover-edit">' . $this->text['edit'] . '</a>', "'") : '') . '\',' . PHP_EOL;
+				if ((isset($_COOKIE[$edit_cookie]) and $_COOKIE[$edit_cookie] == hash('ripemd160', $comment['name'] . $this->encryption->decrypt($comment['email'], $comment['encryption']))) or (isset($_COOKIE['name']) and isset($_COOKIE['password']) and $_COOKIE['name'] === $this->admin_nickname and $_COOKIE['password'] === $this->admin_password)) {
+					$output .= "\t\t" . 'edit_link: \'' . ((!empty($comment['passwd']) or (isset($_COOKIE['name']) and isset($_COOKIE['password']) and $_COOKIE['name'] === $this->admin_nickname and $_COOKIE['password'] === $this->admin_password)) ? addcslashes('<a href="#" onClick="hashover_edit(\'' . $comment['permalink'] . '\', \'' . $file_basename . '\', \'' . (($comment['notifications'] != 'no') ? '1' : '0') . '\'); return false;" title="' . $this->text['edit_your_cmt'] . '" class="hashover-edit">' . $this->text['edit'] . '</a>', "'") : '') . '\',' . PHP_EOL;
 				}
 
 				$output .= "\t\t" . 'reply_link: \'' . addcslashes('<a href="#" onClick="hashover_reply(\'' . $comment['permalink'] . '\', \'' . $file_basename . '\'); return false;" title="' . $this->text['reply_to_cmt'] . ' - ' . $email_indicator . '>' . $this->text['reply'] . '</a>', "'") . '\',' . PHP_EOL;
@@ -271,8 +271,8 @@
 				}
 
 				// Define "Edit" link if proper login cookie set
-				if ((isset($_COOKIE[$edit_cookie]) and $_COOKIE[$edit_cookie] == hash('ripemd160', $comment['name'] . $this->encryption->decrypt($comment['email'], $comment['encryption']))) or (isset($_COOKIE['name']) and isset($_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))]) and $_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))] == hash('ripemd160', $this->admin_nickname . $this->admin_password))) {
-					if (!empty($comment['passwd']) or (isset($_COOKIE['name']) and isset($_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))]) and $_COOKIE['hashover-' . strtolower(str_replace(' ', '-', $_COOKIE['name']))] == hash('ripemd160', $this->admin_nickname . $this->admin_password))) {
+				if ((isset($_COOKIE[$edit_cookie]) and $_COOKIE[$edit_cookie] == hash('ripemd160', $comment['name'] . $this->encryption->decrypt($comment['email'], $comment['encryption']))) or (isset($_COOKIE['name']) and isset($_COOKIE['password']) and $_COOKIE['name'] === $this->admin_nickname and $_COOKIE['password'] === $this->admin_password)) {
+					if (!empty($comment['passwd']) or (isset($_COOKIE['name']) and isset($_COOKIE['password']) and $_COOKIE['name'] === $this->admin_nickname and $_COOKIE['password'] === $this->admin_password)) {
 						$output['edit_link'] = '<a href="' . ((!empty($this->parse_url['query'])) ? '?' . $this->parse_url['query'] . '&' : '?') . 'hashover_edit=' . $comment['permalink'] . '#' . $comment['permalink'] . '-form" title="' . $this->text['edit_your_cmt'] . '" class="hashover-edit">' . $this->text['edit'] . '</a>';
 					}
 				}
