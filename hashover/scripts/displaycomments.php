@@ -105,6 +105,7 @@
 		// Parse comment files
 		public function parse($comment, $popular = false) {
 			$comment['permalink'] .= ($popular == true) ? '_pop' : '';
+			$comment['email'] = $this->encryption->decrypt($comment['email'], $comment['encryption']);
 			$name_at = (preg_match('/^@.*?$/', $comment['name'])) ? '@' : '';
 			$name_class = (preg_match('/^@.*?$/', $comment['name'])) ? ' at' : '';
 			$file_basename = basename($comment['file'], '.' . $this->setting['data_format']);
@@ -156,7 +157,7 @@
 				}
 
 				if (!empty($comment['email'])) {
-					$avatar .= '&email=' . md5(strtolower(trim($this->encryption->decrypt($comment['email'], $comment['encryption']))));
+					$avatar .= '&email=' . md5(strtolower(trim($comment['email'])));
 				} else {
 					$avatar = $this->setting['root_dir'] . 'images/' . $this->setting['image_format'] . 's/avatar.' . $this->setting['image_format'];
 				}
@@ -191,7 +192,7 @@
 
 			// Define "Reply" link with appropriate tooltip
 			if (!empty($comment['email']) and $comment['notifications'] == 'yes') {
-				if (isset($_COOKIE['email']) and $_COOKIE['email'] == $this->encryption->decrypt($comment['email'], $comment['encryption'])) {
+				if (isset($_COOKIE['email']) and $_COOKIE['email'] == $comment['email']) {
 					$email_indicator = $this->text['op_cmt_note'] . '" class="hashover-no-email"';
 				} else{
 					$email_indicator = $comment['name'] . ' ' . $this->text['subbed_note'] . '" class="hashover-has-email"';
@@ -233,14 +234,14 @@
 				$output .= "\t\t" . 'sort_likes: \'' . $comment['likes'] . '\',' . PHP_EOL;
 
 				// Define "Like" link for everyone except original poster
-				if (!isset($_COOKIE[$edit_cookie]) or $_COOKIE[$edit_cookie] != hash('ripemd160', $comment['name'] . $this->encryption->decrypt($comment['email'], $comment['encryption']))) {
-					if (!isset($_COOKIE['email']) or $_COOKIE['email'] != $this->encryption->decrypt($comment['email'], $comment['encryption'])) {
+				if (!isset($_COOKIE[$edit_cookie]) or $_COOKIE[$edit_cookie] != hash('ripemd160', $comment['name'] . $comment['email'])) {
+					if (!isset($_COOKIE['email']) or $_COOKIE['email'] != $comment['email']) {
 						$output .= "\t\t" . 'like_link: \'' . addcslashes('<a href="#" id="hashover-like-' . $comment['permalink'] . '" onClick="' . $like_onclick . 'return false;" title="' . $like_title . '" class="' . $like_class . '">' . $like_text . '</a>', "'") . '\',' . PHP_EOL;
 					}
 				}
 
 				// Define "Edit" link if proper login cookie set
-				if ((isset($_COOKIE[$edit_cookie]) and $_COOKIE[$edit_cookie] == hash('ripemd160', $comment['name'] . $this->encryption->decrypt($comment['email'], $comment['encryption']))) or (isset($_COOKIE['name']) and isset($_COOKIE['password']) and $_COOKIE['name'] === $this->admin_nickname and $_COOKIE['password'] === $this->admin_password)) {
+				if ((isset($_COOKIE[$edit_cookie]) and $_COOKIE[$edit_cookie] == hash('ripemd160', $comment['name'] . $comment['email'])) or (isset($_COOKIE['name']) and isset($_COOKIE['password']) and $_COOKIE['name'] === $this->admin_nickname and $_COOKIE['password'] === $this->admin_password)) {
 					$output .= "\t\t" . 'edit_link: \'' . ((!empty($comment['passwd']) or (isset($_COOKIE['name']) and isset($_COOKIE['password']) and $_COOKIE['name'] === $this->admin_nickname and $_COOKIE['password'] === $this->admin_password)) ? addcslashes('<a href="#" onClick="hashover_edit(\'' . $comment['permalink'] . '\', \'' . $file_basename . '\', \'' . (($comment['notifications'] != 'no') ? '1' : '0') . '\'); return false;" title="' . $this->text['edit_your_cmt'] . '" class="hashover-edit">' . $this->text['edit'] . '</a>', "'") : '') . '\',' . PHP_EOL;
 				}
 
@@ -264,14 +265,14 @@
 				$output['notifications'] = $comment['notifications'];
 
 				// Define "Like" link for everyone except original poster
-				if (!isset($_COOKIE[$edit_cookie]) or $_COOKIE[$edit_cookie] != hash('ripemd160', $comment['name'] . $this->encryption->decrypt($comment['email'], $comment['encryption']))) {
-					if (!isset($_COOKIE['email']) or $_COOKIE['email'] != $this->encryption->decrypt($comment['email'], $comment['encryption'])) {
+				if (!isset($_COOKIE[$edit_cookie]) or $_COOKIE[$edit_cookie] != hash('ripemd160', $comment['name'] . $comment['email'])) {
+					if (!isset($_COOKIE['email']) or $_COOKIE['email'] != $comment['email']) {
 						$output['like_link'] = '<a href="#" id="hashover-like-' . $comment['permalink'] . '" onClick="' . $like_onclick . 'return false;" title="' . $like_title . '" class="' . $like_class . '">' . $like_text . '</a>';
 					}
 				}
 
 				// Define "Edit" link if proper login cookie set
-				if ((isset($_COOKIE[$edit_cookie]) and $_COOKIE[$edit_cookie] == hash('ripemd160', $comment['name'] . $this->encryption->decrypt($comment['email'], $comment['encryption']))) or (isset($_COOKIE['name']) and isset($_COOKIE['password']) and $_COOKIE['name'] === $this->admin_nickname and $_COOKIE['password'] === $this->admin_password)) {
+				if ((isset($_COOKIE[$edit_cookie]) and $_COOKIE[$edit_cookie] == hash('ripemd160', $comment['name'] . $comment['email'])) or (isset($_COOKIE['name']) and isset($_COOKIE['password']) and $_COOKIE['name'] === $this->admin_nickname and $_COOKIE['password'] === $this->admin_password)) {
 					if (!empty($comment['passwd']) or (isset($_COOKIE['name']) and isset($_COOKIE['password']) and $_COOKIE['name'] === $this->admin_nickname and $_COOKIE['password'] === $this->admin_password)) {
 						$output['edit_link'] = '<a href="' . ((!empty($this->parse_url['query'])) ? '?' . $this->parse_url['query'] . '&' : '?') . 'hashover_edit=' . $comment['permalink'] . '#' . $comment['permalink'] . '-form" title="' . $this->text['edit_your_cmt'] . '" class="hashover-edit">' . $this->text['edit'] . '</a>';
 					}
