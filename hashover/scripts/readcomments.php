@@ -53,8 +53,8 @@
 							}
 
 							// Calculate CSS padding for reply indention
-							if (($dashes = substr_count(basename($file), '-')) != '0') {
-								$this->comments[$key]['indent'] = ($dashes >= 1) ? (($this->setting['icon_size'] + 4) * $dashes) + 16 : ($this->setting['icon_size'] + 20) * $dashes;
+							if (($dashes = substr_count(basename($file), '-')) != 0) {
+								$this->comments[$key]['indent'] = ($dashes >= 1) ? (($this->setting['icon_size'] + 7) * $dashes) + 13 : ($this->setting['icon_size'] + 20) * $dashes;
 							} else {
 								$this->comments[$key]['indent'] = '0';
 							}
