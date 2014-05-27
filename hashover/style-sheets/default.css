@@ -240,7 +240,7 @@ Copyright (C) 2014 Jacob Barkdull
 	display: inline-block;
 	vertical-align: middle;
 	height: 26px;
-	width: 29px;
+	width: 30px;
 	margin: 0px;
 	background-image: url('/hashover/images/pngs/inputs-and-buttons.png');
 	background-repeat: no-repeat;
@@ -268,7 +268,7 @@ Copyright (C) 2014 Jacob Barkdull
 
 #hashover a.hashover-has-email,
 #hashover a.hashover-no-email {
-	width: 33px ! important;
+	width: 32px ! important;
 }
 
 #hashover .hashover-comment .hashover-footer .hashover-buttons a.hashover-like:active {
@@ -322,7 +322,6 @@ Copyright (C) 2014 Jacob Barkdull
 
 #hashover a:hover {
 	text-decoration: underline;
-	text-shadow: 0px 0px 3px #8CF5FF;
 	cursor: pointer;
 	color: #005EFF;
 }
@@ -427,7 +426,6 @@ Copyright (C) 2014 Jacob Barkdull
 #hashover .hashover-comment label:hover {
 	border-color: #C1C1C1 ! important;
 	background-color: #ECEEFF ! important;
-	text-shadow: none;
 	cursor: pointer;
 	text-decoration: none;
 	color: #222222;
@@ -545,7 +543,6 @@ Copyright (C) 2014 Jacob Barkdull
 	font-size: 18px;
 	text-align: center;
 	line-height: 45px;
-	text-shadow: none;
 	font-weight: bold;
 	color: #808080;
 }
@@ -560,17 +557,43 @@ Copyright (C) 2014 Jacob Barkdull
 
 #hashover .hashover-avatar {
 	display: inline-block;
-	padding-right: 19px;
+	position: relative;
 	float: left;
+	padding-right: 18px;
+}
+
+#hashover .hashover-avatar:before,
+#hashover .hashover-avatar:after {
+	content: " ";
+	position: absolute;
+	display: block;
+	top: 14px;
+	right: 0px;
+	width: 0px;
+	height: 0px;
+	border-width: 10px;
+	border-color: transparent;
+	border-style: solid solid outset;
+	pointer-events: none;
+}
+
+#hashover .hashover-comment.hashover-reply .hashover-avatar:before,
+#hashover .hashover-comment.hashover-reply .hashover-avatar:after {
+	top: 11px;
+	border-width: 8px;
+}
+
+#hashover .hashover-avatar:before {
+	border-right-color: #808080;
+}
+
+#hashover .hashover-avatar:after {
+	border-right-color: #F7F9FF;
 	margin-right: -1px;
-	background-image: url('/hashover/images/pngs/bubble-tick.png');
-	background-position: right center;
-	background-repeat: no-repeat;
-	background-attachment: scroll;
 }
 
 #hashover .hashover-comment.hashover-reply .hashover-avatar {
-	padding-right: 13px;
+	padding-right: 15px;
 	background-position: 41px center;
 }
 
@@ -615,10 +638,8 @@ Copyright (C) 2014 Jacob Barkdull
 #hashover .hashover-comment .hashover-date a,
 #hashover .hashover-comment .hashover-date a:visited,
 #hashover .hashover-comment .hashover-date span {
-	text-shadow: none;
 	color: #606060;
 }
-
 
 #hashover .hashover-comment .hashover-date a:hover,
 #hashover .hashover-comment .hashover-date a:active {
