@@ -42,7 +42,7 @@ HashOver 2.0 (development)
 			</td>
 		</tr>
 	</tbody>
-</table>
+</table><br>
 
 <b>Information and Documentation:</b>
 ---
@@ -69,6 +69,10 @@ This means the possibility of new features in version 2.0 is next to null, and c
 
 <b>Contributing:</b>
 ---
-When sending a "Pull Request", committing code, or otherwise sending, submitting, or transmitting code in any other way, please assign your contribution's copyright to "Jacob Barkdull", and place a GNU Affero General Public License or any compatible license notice at the top of the code, if one isn't already present. This gives me necessary rights to distribute your contribution in HashOver under the GNU Affero General Public License. If you only assign yourself as copyright holder, your contribution will be rejected.
+When sending a "Pull Request", committing code, or otherwise sending, submitting, or transmitting code in any other way, please assign your contribution's copyright to "Jacob Barkdull", and place a GNU Affero General Public License or any compatible license notice at the top of the code, if one isn't already present. This gives me necessary rights to distribute your contribution in HashOver under the GNU Affero General Public License.
 
-HashOver makes use of JavaScript, plain, standard, non-jQuery JavaScript. If your contribution improves or adds new functionality to the JavaScipt portions of HashOver, your contribution must also be written in plain, standard, non-jQuery JavaScript. Code contributions using or assuming the presence of jQuery, Underscore, AccDC, Ample SDK, AngularJS, CupQ, DHTMLX, Dojo, Echo3, Enyo, Ext JS, midori, MochiKit, MooTools, PhoneJS, Prototype, qooxdoo, Rialto Toolkit, Rico, script.aculo.us, Wakanda, Web Atoms JS, Webix, YUI, or any other abstraction layer, library, and/or framework will be rejected.
+If you only assign yourself as copyright holder, your contribution will be rejected.
+
+HashOver makes use of JavaScript, plain, standard, non-jQuery JavaScript. If your contribution improves or adds new functionality to the JavaScipt portions of HashOver, your contribution must also be written in plain, standard, non-jQuery JavaScript.
+
+Code contributions using or assuming the presence of jQuery, Underscore, AccDC, Ample SDK, AngularJS, CupQ, DHTMLX, Dojo, Echo3, Enyo, Ext JS, midori, MochiKit, MooTools, PhoneJS, Prototype, qooxdoo, Rialto Toolkit, Rico, script.aculo.us, Wakanda, Web Atoms JS, Webix, YUI, or any other abstraction layer, library, and/or framework will be rejected.
