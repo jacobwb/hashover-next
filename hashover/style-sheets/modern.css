@@ -21,13 +21,6 @@ Copyright (C) 2014 Jacob Barkdull
 	font-style: normal;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-	@font-face {
-		font-family: 'hashover-icons';
-		src: url('fonts/fontello.svg#fontello') format('svg');
-	}
-}
-
 [class^="hashover-"]:before,
 [class*=" hashover-"]:before,
 [class^="hashover-icon-"]:before,
