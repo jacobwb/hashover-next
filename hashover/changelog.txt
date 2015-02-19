@@ -1,4 +1,4 @@
-Changes by Jacob Barkdull 2015-01-20
+Changes by Jacob Barkdull 2015-02-19
 --------------------------------------------------------------------------------
 * NOTICE:
 
@@ -186,6 +186,7 @@ Changes by Jacob Barkdull 2015-01-20
 	hashover.js,
 	hashover/hashover.php,
 	hashover/scripts/api,
+	hashover/api/count_link.php,
 	hashover/scripts/api/rss.php,
 	hashover/scripts/api/json.php,
 	hashover/scripts/api/latest.php,
@@ -1257,4 +1258,3 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
-
