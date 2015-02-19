@@ -17,28 +17,31 @@
 
 
 	// Display source code
-	if (isset($_GET['source']) and basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		header('Content-type: text/plain; charset=UTF-8');
-		exit(file_get_contents(basename(__FILE__)));
+	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
+		if (isset($_GET['source'])) {
+			header('Content-type: text/plain; charset=UTF-8');
+			exit(file_get_contents(basename(__FILE__)));
+		}
 	}
 
 	// Encryption methods
-	class Encryption extends Settings {
-		protected $cipher = MCRYPT_RIJNDAEL_128;
-		protected $mcrypt_mode = MCRYPT_MODE_CBC;
-		protected $prefix;
-		protected $cost = '$10$';
-		protected $encryption_hash;
+	class Encryption
+	{
+		protected $cipher = MCRYPT_RIJNDAEL_128,
+		          $mcrypt_mode = MCRYPT_MODE_CBC,
+		          $prefix,
+		          $cost = '$10$',
+		          $encryption_hash;
 
-		public function __construct() {
-			parent::__construct();
-
+		public function __construct($encryption_key)
+		{
 			$this->prefix = (version_compare(PHP_VERSION, '5.3.7') < 0) ? '$2a' : '$2y';
-			$this->encryption_hash = str_split(hash('sha256', $this->encryption_key)); // SHA-256 hash array
+			$this->encryption_hash = str_split(hash('sha256', $encryption_key)); // SHA-256 hash array
 		}
 
 		// Creates Blowfish hash for passwords
-		public function create_hash($str) {
+		public function create_hash($str)
+		{
 			$alphabet = str_split('aAbBcCdDeEfFgGhHiIjJkKlLmM.nNoOpPqQrRsStTuUvVwWxXyYzZ/0123456789');
 			shuffle($alphabet);
 			$salt = '';
@@ -51,40 +54,48 @@
 		}
 
 		// Creates Blowfish hash with salt from supplied hash; returns true if both match
-		public function verify_hash($str, $compare) {
-			$salt = explode('$', (string)$compare);
-			return (crypt($str, $this->prefix . $this->cost . $salt[3] . '$$') === (string)$compare) ? true : false;
+		public function verify_hash($str, $compare)
+		{
+			$salt = explode('$', (string) $compare);
+			$hash = crypt($str, $this->prefix . $this->cost . $salt[3] . '$$');
+
+			return ($hash === (string) $compare) ? true : false;
 		}
 
 		// Generate a random mcrypt key
-		public function mcrypt_key($str, $create = false) {
+		public function mcrypt_create_key($str)
+		{
+			$key = '';
+			shuffle($str);
+			$keys = array();
+
+			for ($k = 0; $k < 16; $k++) {
+				$keys[] = array_search($str[$k], $this->encryption_hash);
+				$key .= $str[$k];
+			}
+
+			return array(
+				'key' => $key,
+				'keys' => join(',', $keys)
+			);
+		}
+
+		// Get mcrypt key from array
+		public function mcrypt_get_key($str)
+		{
 			$key = '';
 
-			if ($create == true) {
-				shuffle($str);
-				$keys = array();
-
-				for ($k = 0; $k < 16; $k++) {
-					$keys[] = array_search($str[$k], $this->encryption_hash);
-					$key .= $str[$k];
-				}
-
-				return array(
-					'key' => $key,
-					'keys' => join(',', $keys)
-				);
-			} else {
-				foreach (explode(',', (string)$str) as $value) {
-					$key .= $this->encryption_hash[$value];
-				}
-
-				return $key;
+			foreach (explode(',', (string) $str) as $value) {
+				$key .= $this->encryption_hash[$value];
 			}
+
+			return $key;
 		}
 
 		// Mcrypt with random key from SHA-256 hash for e-mails
-		public function encrypt($str) {
-			$key = $this->mcrypt_key($this->encryption_hash, true);
+		public function encrypt($str)
+		{
+			$key = $this->mcrypt_create_key($this->encryption_hash);
 			$iv_size = mcrypt_get_iv_size($this->cipher, $this->mcrypt_mode);
 			$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 			$encrypted = mcrypt_encrypt($this->cipher, $key['key'], $str, $this->mcrypt_mode, $iv);
@@ -96,12 +107,14 @@
 			);
 		}
 
-		public function decrypt($str, $encrypted) {
+		// Decrypt Mcrypt'd string
+		public function decrypt($str, $encrypted)
+		{
 			$str = (string) $str;
 			$encrypted = (string) $encrypted;
 
 			if (!empty($str) and !empty($encrypted)) {
-				$key = $this->mcrypt_key($encrypted);
+				$key = $this->mcrypt_get_key($encrypted);
 				$decrypted = base64_decode($str);
 				$iv_size = mcrypt_get_iv_size($this->cipher, $this->mcrypt_mode);
 				$iv = substr($decrypted, 0, $iv_size);

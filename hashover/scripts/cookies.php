@@ -17,24 +17,38 @@
 
 
 	// Display source code
-	if (isset($_GET['source']) and basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		header('Content-type: text/plain; charset=UTF-8');
-		exit(file_get_contents(basename(__FILE__)));
+	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
+		if (isset($_GET['source'])) {
+			header('Content-type: text/plain; charset=UTF-8');
+			exit(file_get_contents(basename(__FILE__)));
+		}
 	}
 
-	class Cookies {
-		protected $expire, $domain;
+	class Cookies
+	{
+		public $domain,
+		       $expire;
 
-		public function __construct($date, $domain) {
-			$this->expire = $date;
-			$this->domain = str_replace('www.', '', $domain);
+		public function __construct($domain, $expire)
+		{
+			$this->domain = $domain;
+			$this->expire = $expire;
 		}
 
-		public function set($name, $value, $date = false) {
+		public function set($name, $value, $date = false)
+		{
 			setcookie($name, $value, (($date != false) ? $date : $this->expire), '/', $this->domain, isset($_SERVER['HTTPS']), true);
 		}
 
-		public function clear() {
+		public function expire_cookie($cookie)
+		{
+			if (isset($_COOKIE[$cookie])) {
+				setcookie($cookie, '', 1, '/', $this->domain, isset($_SERVER['HTTPS']), true);
+			}
+		}
+
+		public function clear()
+		{
 			// Expire message cookie
 			if (isset($_COOKIE['message'])) {
 				setcookie('message', '', 1, '/', $this->domain, isset($_SERVER['HTTPS']), true);

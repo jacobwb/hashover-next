@@ -26,13 +26,16 @@
 
 
 	// Display source code
-	if (isset($_GET['source']) and basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		header('Content-type: text/plain; charset=UTF-8');
-		exit(file_get_contents(basename(__FILE__)));
+	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
+		if (isset($_GET['source'])) {
+			header('Content-type: text/plain; charset=UTF-8');
+			exit(file_get_contents(basename(__FILE__)));
+		}
 	}
 
 	// Get HTTP headers for avatar image; return response code
-	function avatar_header($url) {
+	function avatar_header($url)
+	{
 		if (function_exists('curl_init')) {
 			$headers = array();
 			$ch = curl_init();
@@ -42,15 +45,19 @@
 
 			foreach ($get_headers as $key => $header) {
 				$parts = explode(': ', $header);
+				$parts[0] = trim($parts[0]);
 
 				if (count($parts) > 1) {
 					$headers[$parts[0]] = $parts[1];
 				} else {
-					$headers[$key] = $parts[0];
+					if (!empty($parts[0])) {
+						$headers[0] = $parts[0];
+					}
 				}
 			}
 
-			$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$header = explode(' ', $headers[0]);
+			$code = next($header);
 			curl_close($ch);
 		} else {
 			$headers = get_headers($url, 1);
@@ -66,37 +73,33 @@
 
 	$format = (isset($_GET['format'])) ? $_GET['format'] : 'png';
 	$icon_size = (isset($_GET['size'])) ? (($format == 'svg') ? 256 : $_GET['size']) : '45';
+	$avatar = 'http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format;
 
-	if (!empty($_GET['email'])) {
-		$avatar = 'http://gravatar.com/avatar/' . $_GET['email'] . '.png?d=http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format . '&s=' . $icon_size . '&r=pg';
+	// Attempt to get Twitter avatar image
+	if (!empty($_GET['username'])) {
+		$username = preg_replace('/^@([a-zA-Z0-9_@]{1,29}$)/', '\\1', $_GET['username']);
+		$headers = avatar_header('http://twitter.com/api/users/profile_image/' . $username);
 
-		// Attempt to get Twitter avatar image
-		if (!empty($_GET['username'])) {
-			$username = preg_replace('/^@([a-zA-Z0-9_@]{1,29}$)/', '\\1', $_GET['username']);
-			$headers = avatar_header('http://twitter.com/api/users/profile_image/' . $username);
-
-			// Check if the file exists and there are no errors
-			if ($headers['load'] and !empty($headers['location'])) {
-				if (!preg_match('/default_profile_(.*?)_normal.png/i', $headers['location'])) {
-					exit(header('Location: ' . str_replace('_normal', (($format == 'svg') ? '_200x200' : '_bigger'), $headers['location'])));
-				}
+		// Check if the file exists and there are no errors
+		if ($headers['load'] and !empty($headers['location'])) {
+			if (!preg_match('/default_profile_(.*?)_normal.png/i', $headers['location'])) {
+				exit(header('Location: ' . str_replace('_normal', (($format == 'svg') ? '_200x200' : '_bigger'), $headers['location'])));
 			}
-
-			exit(header('Location: ' . $avatar));
-		} else {
-			// Attempt to get Gravatar avatar image
-			$headers = avatar_header($avatar);
+		}
+	} else {
+		// Attempt to get Gravatar avatar image
+		if (!empty($_GET['email'])) {
+			$gravatar = 'http://gravatar.com/avatar/' . $_GET['email'] . '.png?d=' . $avatar . '&s=' . $icon_size . '&r=pg';
+			$headers = avatar_header($gravatar);
 
 			// Check if the file exists and there are no errors
 			if ($headers['load']) {
-				exit(header('Location: ' . $avatar));
-			} else {
-				exit(header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format));
+				exit(header('Location: ' . $gravatar));
 			}
 		}
 	}
 
 	// Redirect to default avatar image if both Gravatar and Twitter fail
-	exit(header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format));
+	exit(header('Location: ' . $avatar));
 
 ?>

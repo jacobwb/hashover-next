@@ -17,20 +17,35 @@
 
 
 	// Display source code
-	if (isset($_GET['source']) and basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		header('Content-type: text/plain; charset=UTF-8');
-		exit(file_get_contents(basename(__FILE__)));
+	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
+		if (isset($_GET['source'])) {
+			header('Content-type: text/plain; charset=UTF-8');
+			exit(file_get_contents(basename(__FILE__)));
+		}
 	}
 
-	class SpamCheck {
-		protected $remote_addr;
+	class SpamCheck
+	{
+		public function __construct($setup)
+		{
+			$this->setup = $setup;
+			$blocklist = './blocklist.txt';
 
-		public function __construct($ip) {
-			$this->remote_addr = $ip;
+			// Exit if visitor's IP address is in block list file
+			if (file_exists($blocklist)) {
+				$ips = explode(PHP_EOL, file_get_contents($blocklist));
+
+				for ($ip = count($ips) - 1; $ip >= 0; $ip--) {
+					if ($ips[$ip] === $_SERVER['REMOTE_ADDR']) {
+						exit($setup->escape_output('<b>HashOver:</b> You are blocked!', 'single'));
+					}
+				}
+			}
 		}
 
-		public function remote() {
-			$url = 'http://www.stopforumspam.com/api?ip=' . $this->remote_addr . '&f=json';
+		public function remote()
+		{
+			$url = 'http://www.stopforumspam.com/api?ip=' . $_SERVER['REMOTE_ADDR'] . '&f=json';
 
 			if (function_exists('curl_init')) {
 				$ch = curl_init();
@@ -43,7 +58,7 @@
 				if ($read_json !== false) {
 					return (!empty($read_json->appears) and $read_json->appears == 'yes') ? true : false;
 				} else {
-					echo $this->escape_output('<b>HashOver:</b> Invalid JSON!', 'single');
+					echo $this->setup->escape_output('<b>HashOver:</b> Invalid JSON!', 'single');
 				}
 			} else {
 				if (ini_get('allow_url_fopen')) {
@@ -52,7 +67,7 @@
 					if ($read_json !== false) {
 						return (!empty($read_json->appears) and $read_json->appears == 'yes') ? true : false;
 					} else {
-						echo $this->escape_output('<b>HashOver:</b> Invalid JSON!', 'single');
+						echo $this->setup->escape_output('<b>HashOver:</b> Invalid JSON!', 'single');
 					}
 				} else {
 					return false;
@@ -60,17 +75,20 @@
 			}
 		}
 
-		public function local() {
-			if (file_exists('../spam_database.csv')) {
-				$ips = explode(',', file_get_contents('../spam_database.csv'));
+		public function local()
+		{
+			$spam_database = './spam_database.csv';
+
+			if (file_exists($spam_database)) {
+				$ips = explode(',', file_get_contents($spam_database));
 
 				for ($ip = count($ips) - 1; $ip >= 0; $ip--) {
-					if ($ip[$ips] === $this->remote_addr) {
+					if ($ips[$ip] === $_SERVER['REMOTE_ADDR']) {
 						return false;
 					}
 				}
 			} else {
-				echo $this->escape_output('<b>HashOver:</b> No local database found!', 'single');
+				echo $this->setup->escape_output('<b>HashOver:</b> No local database found!', 'single');
 				return false;
 			}
 		}

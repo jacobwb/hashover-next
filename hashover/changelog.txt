@@ -1,3 +1,281 @@
+Changes by Jacob Barkdull 2015-01-20
+--------------------------------------------------------------------------------
+* NOTICE:
+
+	Do not preserve your "settings.php" file.
+
+	You will need the new version to take advantage of the new and changed 
+	features listed below. Not using the new version will cause potentially 
+	harmful behavior, errors, and PHP error/warning messages that will 
+	in-turn cause JavaScript syntax errors.
+
+	It is completely safe to simply move the values from your old 
+	"settings.php" file into the new version. We no longer store settings 
+	in an array, so all that is needed is for the new variables to exist.
+
+
+* Structure of data storage has changed
+
+	The structure of how comments are stored has changed a bit. Notably the 
+	"passwd" field is stored as proper "password" now. Unfortunately this 
+	means all old comments willn't be editable unless converted to the new 
+	structure. For which I have a script for anyone interested.
+
+	Please note that the data format storage structure will most definitely 
+	change more, and do so a few more times in the future. However, the 
+	changes should be minimal from version 2.0 onward, and in the event 
+	that there are big changes, 2.x releases will have backward 
+	compatibility. As will 2.0 to 1.0.
+
+
+* Preliminary support for SQLite as a data storage format.
+
+	It's very early support, it shouldn't be considered stable nor secure. 
+	It should be stable and secure by release, or be removed.
+
+	As I expected, SQLite isn't showing any better performance than XML nor 
+	JSON. Indeed, to the contrary, SQLite performs worse than XML, and 
+	especially worse than JSON. SQLite causes the script to use more memory 
+	and it appears to be that as the number of comments for any given page 
+	grows, the load time for every page also increases.
+
+
+* Added ability to "Dislike" comments. Allowing Reddit-style comment voting.
+
+	Before this change comments could only be liked, and then unliked, a 
+	comment's popularity was decided only by people who like the comment 
+	(as to agree with it), while people who dislike a comment (as to 
+	disagree with it) had no power in its popularity.
+
+	The sort "By Likes" method remains in descending order, but is now 
+	implemented by the number of likes minus the number of dislikes.
+
+	Using CSS, anyone should be able to choose how to present the 
+	Like/Dislike functionality to users, whether it's presented as 
+	"Voting", Thumbs Up/Down, or even heart/broken heart. In addition, 
+	disliking can be disabled to allow the old behavior of liking comments 
+	in a "Favorite"-esque manner, à la Tumblr and Twitter.
+
+
+* Added comment thread metadata files.
+
+	Stored in `hashover/pages/.metadata` and 
+	`hashover/pages/<page>/.metadata` these files serve as a way to 
+	retrieve information about the page and comment thread, such as the 
+	original page title and URL, as well as the status of thread and a list 
+	of an adjustable number of the most recent comments.
+
+
+* Moved comment parsing regular expressions into JavaScript.
+
+	The regular expressions for automatic URL links, embedded images, and 
+	comment clean-up, are now implemented in JavaScript via ".replace()" 
+	rather than in PHP via "preg_replace()" and "preg_replace_callback()" 
+	functions. This helps improve performance by delegating those tasks to 
+	the client-side (web browsers).
+
+
+* Added optional comment break point.
+
+	By "break point" I mean only a adjustable number of comments will be 
+	displayed (default 3) and then a link reading "Show X Other Comments" 
+	will be displayed, which after clicked will show the other comments.
+
+	It isn't implemented as efficiently as I'd like, as right now all it 
+	does is set the necessary HTML element class name that will hide the 
+	comments (or grey/blur them out, whatever you want to do to them via 
+	CSS), this means the comments are still being read and parsed by the 
+	server, and loaded by the browser just not being displayed.
+
+	Some -- meaning me -- would say that's fine, as the idea of a break 
+	point is to restrict the number of comments being displayed when the 
+	thread is very long, and the enduser should be not be burdened by 
+	waiting for secondary resources to load as would be the case if the 
+	comments were loaded asynchronously via AJAX. However, I do understand 
+	the benefits of only reading, parsing and loading the rest of the 
+	comments once the user has actually requested them.
+
+	This feature will be improved to include that kind of functionality.
+
+
+* Added threaded versions of each comment sorting method.
+
+	The new sorting methods leave comments threaded, that is to say the 
+	comments are sorted but their replies are unaffected, this for example, 
+	allows people to sort "By Commenter" and read each commenter's 
+	conversations (the replies) in regular order.
+
+	This change is not final, pending discussion as to whether any make 
+	sense to users, they will either be kept in the form of new sort 
+	options under the "Threaded" label in the dropdown menu, replace the 
+	some of the unthreaded sorting methods or all be removed.
+
+
+* "javascript-mode.php" sets HTTP header to disable/expire browser cache.
+
+	In JavaScript mode, HashOver now tells the browser to disable/not set, 
+	or expire the cache of the JavaScript output so that the user actually 
+	receives the newest JavaScript content. It's very important for 
+	JavaScript that is dynamically generated not to be cached by web 
+	browsers, because depending on what the user is doing, the JavaScript 
+	output might not always be the same.
+
+	For example:
+
+	    If the browser loads a cached version of the JavaScript after a 
+	    user posts a comment, the user will not see their comment unless 
+	    they force a uncached refresh on their browser. Although, sometimes 
+	    that's not enough to actually get the new file.
+
+	    The same thing applies after a user clicks "Login". They will not 
+	    appear to be logged in, since HashOver needs to generate one kind 
+	    of JavaScript when the user is logged out and a different 
+	    JavaScript when the user is logged in.
+
+	    Also, when editing or deleting a comment, if the cached JavaScript 
+	    is loaded, after saving their edit the user will see the old 
+	    comment, not the edited version of their comment.
+
+
+* Changes towards unifying JavaScript and PHP modes.
+
+	`json_encode()` is now used to create the necessary JavaScript comment 
+	objects, this means the `$hashover` variable is no longer a string in 
+	JavaScript mode (it's an array in both modes), and there's now less 
+	differing work between the two modes.
+
+	The "Edit" and "Reply" links now use PHP mode's href attributes in both 
+	modes, that is to say they always point to "?hashover_edit=<permalink>" 
+	and "?hashover_reply=<permalink>", respectively, instead of "#". 
+	Necessary code has been added to run the respective functions when 
+	these URL queries are set. This allows people to middle-click or 
+	right click->Open Link in New Tab and actually get the desired form in 
+	JavaScript mode, which wasn't possible before.
+
+	These are small changes, but they're necessary first steps towards 
+	unifying the JavaScript and PHP modes once again. The two modes should 
+	be unified before 2.0's released, or be further separated.
+
+
+* "Login" fields no longer show after posting a comment or logging in.
+
+	Basically logging in means something now.
+
+	There is now a single cookie used for login specific functions such as 
+	showing the "Edit" link and hiding the "Like"/"Dislike" links.
+
+	The "Name", "Password", "E-mail Address", and "Website" fields are now 
+	hidden when the user is logged in, however, they still show when 
+	editing a comment, since the information is useful there.
+
+
+* Added optional animated loading GIFs.
+
+	When the JavaScript loading is deferred it can be useful to display a 
+	loading GIF, however, deferred JavaScript loading is about their only 
+	intended use. HashOver should never execute slowly enough to require or 
+	allow a loading image or message of any kind to be displayed, as 
+	HashOver's total execution time -- with one thousand comments -- should 
+	be in the tenths of a second. These loading GIFs are just temporary, 
+	improvements are welcomed and customization is encouraged, especially 
+	to fit them into the theme of your website.
+
+
+* Added files:
+
+	hashover.js,
+	hashover/hashover.php,
+	hashover/scripts/api,
+	hashover/scripts/api/rss.php,
+	hashover/scripts/api/json.php,
+	hashover/scripts/api/latest.php,
+	hashover/scripts/readfiles.php,
+	hashover/scripts/readxml.php,
+	hashover/scripts/readjson.php,
+	hashover/scripts/readsql.php,
+	hashover/scripts/database.php,
+	hashover/scripts/widget-output.php,
+	hashover/scripts/locales/de.php,
+	hashover/scripts/locales/en.php,
+	hashover/scripts/locales/es.php,
+	hashover/scripts/locales/fr.php,
+	hashover/scripts/locales/jp.php,
+	hashover/themes,
+	hashover/themes/default,
+	hashover/themes/default/layout.html,
+	hashover/themes/default/style.css,
+	hashover/themes/default/widget-layout.html,
+	hashover/themes/default/widget-style.css,
+	hashover/themes/1.0-ported,
+	hashover/themes/1.0-ported/style.css,
+	hashover/themes/1.0-ported/layout.html,
+	hashover/themes/modern,
+	hashover/themes/modern/layout.html,
+	hashover/themes/modern/style.css,
+	hashover/themes/modern/fonts,
+	hashover/themes/modern/fonts/fontello.eot,
+	hashover/themes/modern/fonts/fontello.svg,
+	hashover/themes/modern/fonts/fontello.ttf,
+	hashover/themes/modern/fonts/fontello.woff,
+	hashover/images/pngs/loading-ctrl.gif,
+	hashover/images/pngs/loading-ltr.gif
+
+
+* Deleted files:
+
+	hashover.php,
+	hashover/html-templates,
+	hashover/style-sheets,
+	hashover/template.xml,
+	hashover/scripts/readcomments.php,
+	hashover/scripts/rss-output.php,
+	hashover/images/svgs/bubble-tick.svg,
+	hashover/images/pngs/bubble-tick.png
+
+
+* Added: "Latest Comments" functionality to API.
+* Added: JSON output to API.
+* Added: French translation by Adrien Fabre.
+* Added: German translation by "q2apro".
+* Added: Initial code for moderation support.
+* Fixed: Failing Twitter avatars when an e-mail wasn't given.
+* Fixed: "Like" link displaying when using blank password and e-mail.
+* Fixed: Ignorable URL queries file functionality.
+* Fixed: Dates in RSS output.
+* Fixed: E-mail notification delivery.
+* Fixed: Administrative login.
+* Fixed: Names, including admin name, couldn't use mixed case characters.
+* Improved: API.
+* Improved: Locales now in separate files, added language specific plurals.
+* Improved: URL parsing, leading, trailing, and multiple dashes now removed.
+* Improved: Reduced memory usage slightly.
+* Improved: Design input icons, notably the edit icon.
+* Removed: Unnecessary calls to `escape_output()` function.
+* Removed: "bubble tick" image, using CSS instead.
+* Removed: "ChangeLog" and "Archives" links.
+* Many changes to accommodate said and following changes.
+* Reduced size of JavaScript output (by upwards of 4%, I think.)
+* Using "Name" instead of "Nickname".
+* Variable "$admin_nickname" renamed to "$admin_name".
+* XML template no longer used for XML files, DOMDocument is used instead.
+* Closing tags no longer used in XML files for elements with no contents.
+* Comment thread directories are now created when the first comment is posted.
+* Code for each supported data storage format now in separate classes and files.
+* cURL now fetches avatar information by default, with fallback to get_headers.
+* Each comment e-mail is now decrypted only once, decreasing execution time.
+* Comment replies can now be displayed as either a typical thread or a stream.
+* Comment replies are now nested within their parent comment's HTML element.
+* The RSS feed link can now be disabled/hidden/not-displayed.
+* Multiple preg_match calls for mobile device detection now single expression.
+* RSS feed code has been moved into the new "api/rss.php" file.
+* Comments in e-mails no longer exceed 80 characters.
+* Comments in e-mails are now entirely indented, not just the first line.
+* Echo statements now use commas instead of concatenation.
+* The reply and edit forms are now separate forms.
+* Some sorting methods have been renamed.
+* "All that, and a toilet!"
+
+
 Changes by Jacob Barkdull 2014-05-14
 --------------------------------------------------------------------------------
 * Custom encryption algorithm removed in favor of Blowfish and Mcrypt.
@@ -29,10 +307,10 @@ Changes by Jacob Barkdull 2014-05-14
 
 * Added files:
 
-	displaycomments.php,
-	spamcheck.php,
-	cookies.php,
-	statistics.php.
+	hashover/scripts/displaycomments.php,
+	hashover/scripts/spamcheck.php,
+	hashover/scripts/cookies.php,
+	hashover/scripts/statistics.php.
 
 	"spamcheck.php" contains new code for spam checking against a local 
 	database, and improved code for spam checking against a remote 
@@ -41,10 +319,10 @@ Changes by Jacob Barkdull 2014-05-14
 
 * Deleted files:
 
-	secrets.php,
-	global_variables.php,
-	parse_comments.php,
-	deletion_notice.php.
+	hashover/scripts/secrets.php,
+	hashover/scripts/global_variables.php,
+	hashover/scripts/parse_comments.php,
+	hashover/scripts/deletion_notice.php.
 
 	Rationale:
 
@@ -340,7 +618,7 @@ Many CSS changes.
 Changes by Jacob Barkdull 2012-07-15
 --------------------------------------------------------------------------------
 Cleaned up code to get page URL.
-Added error message to "mkdir()".
+Added error message to `mkdir()`.
 Fixed comment deletion notice bug.
 Improved error message of include of "secrets.php".
 Added link relation to the "Source Code" link.
@@ -383,7 +661,7 @@ to list what has been changed.
 
 	Renamed a few variables.
 	Added a few code comments.
-	Replaced "$fsroot_dir" variable with "chdir()".
+	Replaced `$fsroot_dir` variable with `chdir()`.
 	All mentions of "comments.php" in actual code removed.
 	Separated "Default Settings" variables from URL cleaning code.
 	Moved "Default Settings" variables back to the top of the code.
@@ -403,7 +681,7 @@ Fixed bug that made only alphanumeric comments possible (うぐぅ).
 Fixed bug causing corrupt permalinks in RSS feeds.
 Changed display of count link to "Post Comment" if there are no comments.
 Removed full XML file server-side locations from "Like" links.
-Removed unnecessary second "str_replace()" from "$clean_data" variable.
+Removed unnecessary second `str_replace()` from "$clean_data" variable.
 Changed reply button tooltips to better reflect status of e-mail subscription.
 The "Edit" link is now shown for multiple users of the same computer.
 Added Twitter/Identi.ca profile linking back in (doesn't check for profile)
@@ -727,7 +1005,7 @@ Cleaned up code.
 
 Changes by Jacob Barkdull 2011-25-08
 --------------------------------------------------------------------------------
-Replaced deprecated function "eregi_replace()" with "preg_replace()".
+Replaced deprecated function `eregi_replace()` with `preg_replace()`.
 Improved how accepted HTML tags are handled.
 Added code to escape HTML tags inside <code> tags.
 Added <code> tag to accepted HTML.
@@ -860,7 +1138,7 @@ Changes by Jeremiah Stoddard 2010-11-06
 Altered the unlink line to replace the file contents with the note
 "This file has been deleted."
 
-Altered the readfile() in line 334 to make a comparison to that note and 
+Altered the `readfile()` in line 334 to make a comparison to that note and 
 skip the reply/delete links if file contents match the note.
 
 Modified the script to find missing files and recreate them.
@@ -942,7 +1220,7 @@ $deletedcount removed, $commentcount now used for tracking deleted comments.
 
 Changes by Jacob Barkdull 2010-07-28
 --------------------------------------------------------------------------------
-Added if statement to mail() so that if the email given is the same as the 
+Added if statement to `mail()` so that if the email given is the same as the 
 email used for notification it won't send mail to the notification email.
 
 

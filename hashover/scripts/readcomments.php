@@ -17,87 +17,114 @@
 
 
 	// Display source code
-	if (isset($_GET['source']) and basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		header('Content-type: text/plain; charset=UTF-8');
-		exit(file_get_contents(basename(__FILE__)));
+	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
+		if (isset($_GET['source'])) {
+			header('Content-type: text/plain; charset=UTF-8');
+			exit(file_get_contents(basename(__FILE__)));
+		}
 	}
 
-	// Read and count comments
-	class ReadComments extends HashOver {
-		public $hashover;
-		public $comments = array();
-		public $top_likes = array();
-		public $show_count = '';
-		public $subfile_count = array();
-		public $total_count = 1;
-		public $cmt_count = 1;
+	class ReadComments
+	{
+		public $data,
+		       $commentlist,
+		       $subfile_count = array(),
+		       $total_count = 1,
+		       $cmt_count = 1,
+		       $show_count = '';
 
-		// Read directory contents, put filenames in array, count files
-		public function read($output = false) {
-			switch ($this->setting['data_format']) {
-				default: exit($this->escape_output('<b>HashOver:</b> Unsupported data format!', 'single')); break;
+		public function __construct($setup)
+		{
+			$this->setup = $setup;
 
-				case ($this->setting['data_format'] == 'xml' or $this->setting['data_format'] == 'json'):
-					foreach (glob($this->dir . '/*.' . $this->setting['data_format'], GLOB_NOSORT) as $file) {
-						$key = basename($file, '.' . $this->setting['data_format']);
-						$this->comments[$key]['file'] = $file;
+			// Instantiate necessary class data format class
+			$data_class = 'Parse' . strtoupper($setup->data_format);
+			$this->data = new $data_class($setup);
 
-						if ($output == true) {
-							$this->comments[$key]['permalink'] = 'c' . str_replace('-', 'r', $key);
+			// Query a list of comments
+			$this->commentlist = $this->data->query();
 
-							if (preg_match('/-/', $key)) {
-								$file_parts = explode('-', $key);
-								$this->comments[$key]['permatext'] = end($file_parts);
-							} else {
-								$this->comments[$key]['permatext'] = $key;
-							}
+			// Check for missing comments
+			foreach (array_keys($this->commentlist) as $key) {
+				$key_parts = explode('-', $key);
 
-							// Calculate CSS padding for reply indention
-							if (($dashes = substr_count(basename($file), '-')) != 0) {
-								$this->comments[$key]['indent'] = ($dashes >= 1) ? (($this->setting['icon_size'] + 7) * $dashes) + 13 : ($this->setting['icon_size'] + 20) * $dashes;
-							} else {
-								$this->comments[$key]['indent'] = '0';
-							}
+				// Start by checking for the first comment
+				$cmt_tree = '';
 
-							// Load XML or JSON data
-							if ($this->setting['data_format'] == 'xml') {
-								libxml_use_internal_errors(true);
-								$read_comment = @simplexml_load_file($file);
+				foreach ($key_parts as $reply) {
+					// Then check for comments counting backward from the current
+					for ($i = 1; $i <= $reply; $i++) {
+						// Current level to check for
+						$current = $cmt_tree . (!empty($cmt_tree) ? '-' : '') . $i;
 
-								if ($read_comment !== false) {
-									$this->comments[$key] = array_merge($this->comments[$key], (array)$read_comment);
-									$this->comments[$key] = array_merge($this->comments[$key], $this->comments[$key]['@attributes']);
-									$this->comments[$key]['@attributes'] = null;
-								}
-							} else {
-								$read_comment = @json_decode(file_get_contents($file), true);
+						if (!isset($this->commentlist[$current])) {
+							// List missing comment
+							$this->commentlist[$current] = 'deleted';
 
-								if ($read_comment !== false) {
-									$this->comments[$key] = array_merge($this->comments[$key], (array)$read_comment);
-								}
-							}
+							// Count missing comment
+							$this->count_comments($current);
 						}
-
-						$this->count_comments($key);
 					}
 
-					break;
+					// Add current reply level to tree
+					$cmt_tree .= (!empty($cmt_tree) ? '-' : '') . $reply;
+				}
 
-				case 'sqlite':
-					// Fix me!
-					exit('Not implemented yet!');
-					break;
+				// Count comment
+				$this->count_comments($key);
 			}
 
-			// Sort files ascending alphabetically
-			if ($output == true) {
-				uksort($this->comments, 'strnatcasecmp');
+			// Sort comments by their keys alphabetically in ascending order
+			uksort($this->commentlist, 'strnatcasecmp');
+
+			// Format comment count
+			$prime_plural = ($this->cmt_count != 2) ? 1 : 0;
+			$showing_cmts = $setup->text['showing_cmts'][$prime_plural];
+			$this->show_count = str_replace('_NUM_', $this->cmt_count - 1, $showing_cmts);
+
+			// Add reply count if there are any
+			if ($this->total_count != $this->cmt_count) {
+				$reply_plural = (abs($this->total_count - $this->cmt_count) > 1) ? 1 : 0;
+				$count_replies = str_replace('_NUM_', $this->total_count - 1, $setup->text['count_replies'][$reply_plural]);
+				$this->show_count .= ' (' . $count_replies . ')';
 			}
 		}
 
-		public function count_comments($comment) {
-			// Count all comments
-			if (preg_match('/-/', $comment)) {
+		// Read comments
+		public function read($skipdeleted = false, $fullpath = false)
+		{
+			$comments = array();
+			$url_regex = '(((ftp|http|https){1}:\/\/)[a-zA-Z0-9-@:%_\+.~#?&\/=]+)';
+
+			foreach ($this->commentlist as $key => $comment) {
+				if ($comment == 'deleted') {
+					if ($skipdeleted) {
+						continue;
+					}
+
+					$comments[$key]['status'] = 'deleted';
+				} else {
+					$comments[$key] = $this->data->read($comment, $fullpath);
+
+					// Replace [img] tags with external image placeholder if enabled
+					if ($this->setup->mode != 'javascript') {
+						// Add HTML anchor tag to URLs (hyperlinks)
+						$comments[$key]['body'] = preg_replace('/' . $url_regex . '([\s]{0,})/i', '<a href="\\1" target="_blank">\\1</a>', $comments[$key]['body']);
+
+						// Replace [img] tags with hyperlinks
+						$comments[$key]['body'] = preg_replace('/\[img\]<a.*?>' . $url_regex . '<\/a>\[\/img\]/i', '<a href="\\1" target="_blank">\\1</a>', $comments[$key]['body']);
+					}
+				}
+			}
+
+			return $comments;
+		}
+
+		// Count the comments
+		public function count_comments($comment)
+		{
+			// Count replies
+			if (strpos($comment, '-') !== false) {
 				$file_parts = explode('-', $comment);
 				$thread = basename($comment, '-' . end($file_parts));
 
@@ -118,6 +145,7 @@
 				$this->subfile_count["$comment"] = 1;
 			}
 
+			// Count all comments
 			$this->total_count++;
 		}
 	}

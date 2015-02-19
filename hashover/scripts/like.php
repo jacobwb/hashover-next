@@ -26,38 +26,101 @@
 
 
 	// Display source code
-	if (isset($_GET['source']) and basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		header('Content-type: text/plain; charset=UTF-8');
-		exit(file_get_contents(basename(__FILE__)));
+	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
+		if (isset($_GET['source'])) {
+			header('Content-type: text/plain; charset=UTF-8');
+			exit(file_get_contents(basename(__FILE__)));
+		}
+	}
+
+	ini_set('display_errors', true);
+	error_reporting(E_ALL);
+
+	// Move up a directory
+	chdir('../');
+
+	// Autoload class files
+	function __autoload($classname) {
+		$classname = strtolower($classname);
+
+		if (!@include('./scripts/' . $classname . '.php')) {
+			exit('<b>HashOver</b>: "' . $classname . '.php" file could not be included!');
+		}
 	}
 
 	// Function for liking a comment
-	if (isset($_SERVER['HTTP_REFERER'])) {
-		if (!empty($_GET['like'])) {
-			require('settings.php');
-			require('encryption.php');
-			$encryption = new Encryption();
+	if (isset($_SERVER['HTTP_REFERER']) and !empty($_GET['like'])) {
+		$setup = new Setup('api');
+		$read_comment = new ReadComments($setup);
+		$like_cookie = md5($_SERVER['SERVER_NAME'] . $_GET['like']);
+		$file = './pages/' . str_replace('../', '', $_GET['like']) . '.' . $setup->data_format;
 
-			$file = '../pages/' . str_replace('../', '', $_GET['like']) . '.xml';
-			$like = (file_exists($file)) ? simplexml_load_file($file) : exit('File: "' . $file . '" non-existent!');
-			if (isset($_COOKIE['email']) and $encryption->encrypt($_COOKIE['email']) == $like->email) exit('Practice altruism!');
-			$like_cookie = md5($_SERVER['SERVER_NAME'] . $_GET['like']);
+		if (file_exists($file)) {
+			$like = $read_comment->data->read($file, true);
+		} else {
+			exit('File: "' . $file . '" non-existent!');
+		}
 
-			if (!isset($_COOKIE[$like_cookie]) or (isset($_COOKIE[$like_cookie]) and $_COOKIE[$like_cookie] == 'unliked')) {
-				setcookie($like_cookie, 'liked', mktime(0, 0, 0, 11, 26, 3468), '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
-				$like['likes'] = $like['likes'] + 1;
-				$like->asXML($file);
-				exit($like['likes'] . ' likes!');
-			} else {
-				if ($_COOKIE[$like_cookie] != 'unliked') {
-					setcookie($like_cookie, 'unliked', mktime(0, 0, 0, 11, 26, 3468), '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
+		if ($like == false) {
+			exit('Failed to read file: "' . $file . '"');
+		}
 
-					if ($like['likes'] > 0) {
-						$like['likes'] = $like['likes'] - 1;
-						$like->asXML($file);
+		if (isset($_COOKIE['email']) and $setup->encryption->encrypt($_COOKIE['email']) === $like['email']) {
+			exit('Practice altruism!');
+		}
+
+		if (!empty($_GET['action'])) {
+			if ($_GET['action'] == 'like') {
+				if (empty($_COOKIE[$like_cookie])) {
+					setcookie($like_cookie, 'liked', mktime(0, 0, 0, 11, 26, 3468), '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
+					$like['likes'] = $like['likes'] + 1;
+				} else {
+					if ($_COOKIE[$like_cookie] == 'liked') {
+						setcookie($like_cookie, 'unliked', 0, '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
+
+						if ($like['likes'] > 0) {
+							$like['likes'] = $like['likes'] - 1;
+						}
 					}
 
-					exit('Unliked >;)');
+					if ($_COOKIE[$like_cookie] == 'disliked') {
+						setcookie($like_cookie, 'liked', mktime(0, 0, 0, 11, 26, 3468), '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
+						$like['likes'] = $like['likes'] + 1;
+
+						if ($like['dislikes'] > 0) {
+							$like['dislikes'] = $like['dislikes'] - 1;
+						}
+					}
+				}
+			}
+
+			if ($_GET['action'] == 'dislike') {
+				if (empty($_COOKIE[$like_cookie])) {
+					setcookie($like_cookie, 'disliked', mktime(0, 0, 0, 11, 26, 3468), '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
+					$like['dislikes'] = $like['dislikes'] + 1;
+				} else {
+					if ($_COOKIE[$like_cookie] == 'disliked') {
+						setcookie($like_cookie, 'undisliked', 0, '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
+
+						if ($like['dislikes'] > 0) {
+							$like['dislikes'] = $like['dislikes'] - 1;
+						}
+					}
+
+					if ($_COOKIE[$like_cookie] == 'liked') {
+						setcookie($like_cookie, 'disliked', mktime(0, 0, 0, 11, 26, 3468), '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
+						$like['dislikes'] = $like['dislikes'] + 1;
+
+						if ($like['likes'] > 0) {
+							$like['likes'] = $like['likes'] - 1;
+						}
+					}
+				}
+			}
+
+			if ($_GET['action'] == 'like' or $_GET['action'] == 'dislike') {
+				if ($read_comment->data->save($like, $file, true, true)) {
+					echo $like['likes'], ' likes, ', $like['dislikes'], ' dislikes';
 				}
 			}
 		}

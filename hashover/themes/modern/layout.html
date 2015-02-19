@@ -1,0 +1,15 @@
+<span class="hashover-avatar">' + avatar + '</span>
+<div class="hashover-balloon">
+	<div class="hashover-header">' + name + '<span class="hashover-date">' + date + '</span><span id="hashover-likes-' + permalink + '" class="hashover-likes">' + likes + '</span></div>
+	<div id="hashover-content-' + permalink + '" class="hashover-content">' + comment + '</div>
+	<form name="hashover_edit_form-' + permalink + '" id="hashover-reply-forms-' + permalink + '" method="post" action="' + action + '">
+		' + reply_form + '
+	</form>
+	<form name="hashover_edit_form-' + permalink + '" id="hashover-edit-forms-' + permalink + '" method="post" action="' + action + '">
+		' + edit_form + '
+	</form>
+
+	<div id="hashover-footer-' + permalink + '" class="hashover-footer"' + hashover_footer_style + '>
+		<span class="hashover-buttons">' + like_link + ' ' + edit_link + ' ' + reply_link + '</span>
+	</div>
+</div>
