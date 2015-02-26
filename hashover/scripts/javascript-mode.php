@@ -81,10 +81,10 @@ var head = document.getElementsByTagName('head')[0];
 
 <?php if ($this->setup->appends_css_link == 'yes') { ?>
 // Add comment stylesheet to page <head>
-if (document.querySelector('link[href="/<?php echo $this->setup->root_dir; ?>/themes/<?php echo $this->setup->theme; ?>/style.css"]') == null) {
+if (document.querySelector('link[href="<?php echo $this->setup->root_dir; ?>/themes/<?php echo $this->setup->theme; ?>/style.css"]') == null) {
 	link = document.createElement('link');
 	link.rel = 'stylesheet';
-	link.href = '/<?php echo $this->setup->root_dir; ?>/themes/<?php echo $this->setup->theme; ?>/style.css';
+	link.href = '<?php echo $this->setup->root_dir; ?>/themes/<?php echo $this->setup->theme; ?>/style.css';
 	link.type = 'text/css';
 	head.appendChild(link);
 }
@@ -94,7 +94,7 @@ if (document.querySelector('link[href="/<?php echo $this->setup->root_dir; ?>/th
 // Add comment RSS feed to page header
 link = document.createElement('link');
 link.rel = 'alternate';
-link.href = '/<?php echo $this->setup->root_dir; ?>/api/rss.php?url=' + location.href.replace(/#.*$/g, '') + '&title=<?php echo $js_title; ?>';
+link.href = '<?php echo $this->setup->root_dir; ?>/api/rss.php?url=' + location.href.replace(/#.*$/g, '') + '&title=<?php echo $js_title; ?>';
 link.type = 'application/rss+xml';
 link.title = 'Comments';
 head.appendChild(link);
