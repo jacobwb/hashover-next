@@ -84,8 +84,10 @@
 
 		public function __construct()
 		{
+			$dirname = dirname(__DIR__);
+
 			// Technical settings
-			$this->root_dir		= basename(dirname(__DIR__));	// HTTP root directory for comments
+			$this->root_dir		= '/' . basename($dirname);	// HTTP root directory for comments
 			$this->expire		= time() + 60 * 60 * 24 * 30;	// Cookies' expiration date
 			$this->domain		= $_SERVER['HTTP_HOST'];	// Domain name for refer checking & notifications
 		}
