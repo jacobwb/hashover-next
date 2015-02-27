@@ -73,12 +73,13 @@
 
 	$format = (isset($_GET['format'])) ? $_GET['format'] : 'png';
 	$icon_size = (isset($_GET['size'])) ? (($format == 'svg') ? 256 : $_GET['size']) : '45';
-	$avatar = 'http://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format;
+	$http = !empty($_SERVER['HTTPS']) ? 'https' : 'http';
+	$avatar = $http . '://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format;
 
 	// Attempt to get Twitter avatar image
 	if (!empty($_GET['username'])) {
 		$username = preg_replace('/^@([a-zA-Z0-9_@]{1,29}$)/', '\\1', $_GET['username']);
-		$headers = avatar_header('http://twitter.com/api/users/profile_image/' . $username);
+		$headers = avatar_header($http . '://twitter.com/api/users/profile_image/' . $username);
 
 		// Check if the file exists and there are no errors
 		if ($headers['load'] and !empty($headers['location'])) {
@@ -89,7 +90,7 @@
 	} else {
 		// Attempt to get Gravatar avatar image
 		if (!empty($_GET['email'])) {
-			$gravatar = 'http://gravatar.com/avatar/' . $_GET['email'] . '.png?d=' . $avatar . '&s=' . $icon_size . '&r=pg';
+			$gravatar = $http . '://gravatar.com/avatar/' . $_GET['email'] . '.png?d=' . $avatar . '&s=' . $icon_size . '&r=pg';
 			$headers = avatar_header($gravatar);
 
 			// Check if the file exists and there are no errors
