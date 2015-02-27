@@ -100,13 +100,13 @@ link.title = 'Comments';
 head.appendChild(link);
 
 <?php } ?>
-// Put number of comments into "cmtcount" identified HTML element
-if (document.getElementById('cmtcount') != null) {
-	if (<?php echo $this->read_comments->total_count - 1; ?> != 0) {
-		document.getElementById('cmtcount').innerHTML = '<?php echo $this->read_comments->total_count - 1; ?>';
-	}
+<?php if ($this->read_comments->total_count - 1 != 0) { ?>
+// Put number of comments into "hashover-cmtcount" identified HTML element
+if (document.getElementById('hashover-cmtcount') != null) {
+	document.getElementById('hashover-cmtcount').innerHTML = '<?php echo $this->read_comments->total_count - 1; ?>';
 }
 
+<?php } ?>
 // Displays reply form
 function hashover_reply(r, f) {
 	var reply_form = '\n<a name="' + r + '-form"></a>\n';
