@@ -369,6 +369,7 @@ function parse_template(object, count, sort, method, forpop) {
 
 	var replies = 0;
 	var permalink = object['permalink'];
+	var permatext = permalink.replace('_pop', '').slice(1).split('r').pop();
 	var cmtclass = '';
 
 	if (forpop == false) {
@@ -390,9 +391,9 @@ function parse_template(object, count, sort, method, forpop) {
 
 	// Setup avatar icon
 	if (object['avatar']) {
-		var avatar = '<img width="<?php echo $this->setup->icon_size; ?>" height="<?php echo $this->setup->icon_size; ?>" src="' + object['avatar'] + '" alt="#' + permalink + '">';
+		var avatar = '<img width="<?php echo $this->setup->icon_size; ?>" height="<?php echo $this->setup->icon_size; ?>" src="' + object['avatar'] + '" alt="#' + permatext + '">';
 	} else {
-		var avatar = '<a href="#' + permalink + '" title="Permalink">#' + permalink.slice(1).split('r').pop() + '</a>';
+		var avatar = '<a href="#' + permalink + '" title="Permalink">#' + permatext + '</a>';
 	}
 
 	if (!object['notice']) {
@@ -710,7 +711,7 @@ hashover += '\t\t<div class="hashover-inputs">\n';
 	if ($this->setup->uses_icons == 'yes') {
 		echo $this->setup->escape_output('<div class="hashover-avatar-image">' . $form_avatar . '</div>');
 	} else {
-		echo $this->setup->escape_output('<span>#' . $this->read_comments->cmt_count . '</span>');
+		echo $this->setup->escape_output('<div class="hashover-avatar-image"><span>#' . $this->read_comments->cmt_count . '</span></div>');
 	}
 
 	if (!empty($_COOKIE['hashover-login'])) {
