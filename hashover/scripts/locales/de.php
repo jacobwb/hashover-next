@@ -56,6 +56,7 @@
 		'post_cmt_on'	=> array('Kommentar posten', ' auf "_TITLE_"'),
 		'popular_cmts'	=> array('Beliebteste Kommentar', 'Beliebteste Kommentare'),
 		'showing_cmts'	=> array('Anzeige von _NUM_ Kommentar', 'Anzeige von _NUM_ Kommentare'),
+		'count_link'	=> array('_NUM_ Kommentar', '_NUM_ Kommentare'),
 		'count_replies'	=> array('inklusive _NUM_ Antwort', 'inklusive _NUM_ Antworten'),
 		'sort'		=> 'Sortieren',
 		'sort_ascend'	=> 'In Reihenfolge',

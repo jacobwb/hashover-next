@@ -37,6 +37,7 @@
 		public $theme			= 'default';			// Comment Cascading Style Sheet (CSS)
 		public $default_name		= 'Anonymous';			// Nickname when one isn't given
 		public $display_title		= 'yes';			// Whether page title is shown or not
+		public $shows_count_total	= 'yes';			// Whether to show reply count separately from total
 		public $timezone		= 'America/Los_Angeles';	// Timezone
 		public $uses_12h_time		= 'yes';			// Whether to use 12 hour time format, otherwise use 24 hour format
 		public $uses_icons		= 'yes';			// Whether comments have avatar icons (Gravatar)

@@ -79,14 +79,20 @@
 
 			// Format comment count
 			$prime_plural = ($this->cmt_count != 2) ? 1 : 0;
-			$showing_cmts = $setup->text['showing_cmts'][$prime_plural];
-			$this->show_count = str_replace('_NUM_', $this->cmt_count - 1, $showing_cmts);
+			$locale_key = ($setup->mode == 'api') ? 'count_link' : 'showing_cmts';
+			$showing_cmts = $setup->text[$locale_key][$prime_plural];
 
-			// Add reply count if there are any
-			if ($this->total_count != $this->cmt_count) {
-				$reply_plural = (abs($this->total_count - $this->cmt_count) > 1) ? 1 : 0;
-				$count_replies = str_replace('_NUM_', $this->total_count - 1, $setup->text['count_replies'][$reply_plural]);
-				$this->show_count .= ' (' . $count_replies . ')';
+			if ($setup->shows_count_total == 'yes') {
+				$this->show_count = str_replace('_NUM_', $this->cmt_count - 1, $showing_cmts);
+
+				// Add reply count if there are any
+				if ($this->total_count != $this->cmt_count) {
+					$reply_plural = (abs($this->total_count - $this->cmt_count) > 1) ? 1 : 0;
+					$count_replies = str_replace('_NUM_', $this->total_count - 1, $setup->text['count_replies'][$reply_plural]);
+					$this->show_count .= ' (' . $count_replies . ')';
+				}
+			} else {
+				$this->show_count = str_replace('_NUM_', $this->total_count - 1, $showing_cmts);
 			}
 		}
 
