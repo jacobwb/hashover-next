@@ -4,8 +4,8 @@ Changes by Jacob Barkdull 2015-03-03
 * <a name/> style placemark anchors removed in favor of element IDs.
 * c#[r#]-form changed to hashover-[edit|reply]-c#[r#]
 * HTML tags now stripped from both URL and title.
-* HTML characters now encode in both URL and title.
-* Fixed: "?hashover_[edit|reply]=c#[r#]" queries not removed to URLs.
+* HTML characters now encoded in both URL and title.
+* Fixed: "?hashover_[edit|reply]=c#[r#]" queries not being removed from URLs.
 
 
 Changes by Jacob Barkdull 2015-02-27
@@ -1285,4 +1285,3 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
-
