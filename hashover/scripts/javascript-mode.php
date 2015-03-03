@@ -94,7 +94,7 @@ if (document.querySelector('link[href="<?php echo $this->setup->root_dir; ?>/the
 // Add comment RSS feed to page header
 link = document.createElement('link');
 link.rel = 'alternate';
-link.href = '<?php echo $this->setup->root_dir; ?>/api/rss.php?url=' + location.href.replace(/#.*$/g, '') + '&title=<?php echo $js_title; ?>';
+link.href = '<?php echo $this->setup->root_dir; ?>/api/rss.php?url=' + encodeURIComponent(location.href.replace(/#.*$/g, '')) + '&title=<?php echo $js_title; ?>';
 link.type = 'application/rss+xml';
 link.title = 'Comments';
 head.appendChild(link);
@@ -109,8 +109,7 @@ if (document.getElementById('hashover-cmtcount') != null) {
 <?php } ?>
 // Displays reply form
 function hashover_reply(r, f) {
-	var reply_form = '\n<a name="' + r + '-form"></a>\n';
-	reply_form += '<div class="hashover-balloon">';
+	var reply_form = '<div class="hashover-balloon">';
 <?php
 
 	if (!empty($_COOKIE['hashover-login'])) {
@@ -170,8 +169,8 @@ function hashover_reply(r, f) {
 	reply_form += '<input class="hashover-submit" type="button" value="<?php echo $this->setup->text['cancel']; ?>" title="<?php echo $this->setup->text['cancel']; ?>" onclick="hashover_cancel_reply(\'' + r + '\'); return false;">\n';
 	reply_form += '</div>';
 
-	document.getElementById('hashover-reply-forms-' + r).className = 'hashover-comment hashover-reply';
-	document.getElementById('hashover-reply-forms-' + r).innerHTML = reply_form;
+	document.getElementById('hashover-reply-' + r).className = 'hashover-comment hashover-reply';
+	document.getElementById('hashover-reply-' + r).innerHTML = reply_form;
 	return false;
 }
 
@@ -185,8 +184,7 @@ function hashover_edit(e, f, s) {
 		website = document.getElementById('hashover-name-' + e).href;
 	}
 
-	var edit_form = '\n<a name="' + e + '-form"></a>\n';
-	edit_form += '<div class="hashover-dashed-title hashover-title"><?php echo $this->setup->text['edit_cmt']; ?></div>\n';
+	var edit_form = '<div class="hashover-dashed-title hashover-title"><?php echo $this->setup->text['edit_cmt']; ?></div>\n';
 	edit_form += '<div class="hashover-inputs">\n';
 	edit_form += '<div class="hashover-name-input"><input type="text" name="name" title="<?php echo $this->setup->text['name_tip']; ?>" value="' + name + '" maxlength="30" placeholder="<?php echo $this->setup->text['name']; ?>"></div>\n';
 	edit_form += '<div class="hashover-password-input"><input type="password" name="password" title="<?php echo $this->setup->text['password_tip']; ?>" value="<?php if (!empty($_COOKIE['password'])) echo $_COOKIE['password']; ?>" placeholder="<?php echo $this->setup->text['password']; ?>"></div>\n';
@@ -209,7 +207,7 @@ function hashover_edit(e, f, s) {
 	edit_form += '<input class="hashover-submit" type="button" value="<?php echo $this->setup->text['cancel']; ?>" onclick="hashover_cancel_edit(\'' + e + '\'); return false;">\n';
 	edit_form += '<input class="hashover-submit hashover-post-button" type="submit" name="delete" value="<?php echo $this->setup->text['delete']; ?>" onclick="return hashover_deletion_warning();">\n';
 
-	document.getElementById('hashover-edit-forms-' + e).innerHTML = edit_form;
+	document.getElementById('hashover-edit-' + e).innerHTML = edit_form;
 	document.getElementById('hashover-footer-' + e).style.display = 'none';
 	return false
 }
@@ -226,15 +224,15 @@ function hashover_submit(f, b) {
 
 // Function to cancel reply forms
 function hashover_cancel_reply(f) {
-	document.getElementById('hashover-reply-forms-' + f).innerHTML = '';
-	document.getElementById('hashover-reply-forms-' + f).className = '';
+	document.getElementById('hashover-reply-' + f).innerHTML = '';
+	document.getElementById('hashover-reply-' + f).className = '';
 	return false;
 }
 
 // Function to cancel edit forms
 function hashover_cancel_edit(f) {
 	document.getElementById('hashover-footer-' + f).style.display = '';
-	document.getElementById('hashover-edit-forms-' + f).innerHTML = '';
+	document.getElementById('hashover-edit-' + f).innerHTML = '';
 	return false;
 }
 
@@ -277,7 +275,7 @@ function hashover_like(a, c, f) {
 // Displays a "blank email address" warning
 function hashover_validate(f) {
 	var form_email = document.hashover_form.email.value;
-	var hashover_reply_forms = document.getElementById('hashover-reply-forms-' + f);
+	var hashover_reply_forms = document.getElementById('hashover-reply-' + f);
 
 	if (email_on == false) {
 		return true;
@@ -395,7 +393,6 @@ function parse_template(object, count, sort, method, forpop) {
 		}
 	}
 
-	window['hashover'] += '\t<a name="' + permalink + '"></a>\n';
 	window['hashover'] += '\t<div id="' + permalink + '" class="hashover-comment' + cmtclass + '">\n';
 
 	// Setup avatar icon
@@ -698,7 +695,10 @@ if (document.getElementById('hashover') == null) {
 }
 
 document.getElementById('hashover').className = '<?php echo $this->setup->image_format; ?>';
-hashover += '<a name="comments"></a>\n';
+
+if (document.getElementById('comments') == null) {
+	hashover += '<span id="comments"></span>';
+}
 
 <?php
 
@@ -898,10 +898,10 @@ hashover += '\t</div>\n</form>\n';
 
 		if ($this->setup->collapses_comments == 'yes' and ($this->read_comments->total_count - 1) > $this->setup->collapse_limit) {
 			echo 'for (var comment in comments) {', PHP_EOL;
-			echo "\t", 'parse_template(comments[comment], !href.match(/#c[1-9r]+/));', PHP_EOL;
+			echo "\t", 'parse_template(comments[comment], !href.match(/#(hashover-(edit|reply)-|)c[1-9r]+/));', PHP_EOL;
 			echo '}', PHP_EOL, PHP_EOL;
 
-			echo 'if (!href.match(/#c[1-9r]+/)) {', PHP_EOL;
+			echo 'if (!href.match(/#(hashover-(edit|reply)-|)c[1-9r]+/)) {', PHP_EOL;
 			$collapse_plural = ($this->read_comments->total_count != 1) ? 1 : 0;
 
 			if ($this->setup->collapse_limit >= 1) {
@@ -938,13 +938,13 @@ hashover += '\t<a href="http://tildehash.com/?page=hashover" target="_blank"><b>
 
 	if (!empty($this->hashover) and $this->setup->displays_rss_link == 'yes') {
 		if ($this->setup->api_status('rss') != 'disabled') {
-			echo $this->setup->escape_output('\t<a href="' . $this->setup->root_dir . '/api/rss.php?url=' . $this->setup->page_url . '" target="_blank">RSS Feed</a> &middot;\n');
+			echo $this->setup->escape_output('\t<a href="' . $this->setup->root_dir . '/api/rss.php?url=' . urlencode($this->setup->page_url) . '" target="_blank">RSS Feed</a> &middot;\n');
 		}
 	}
 
 ?>
 hashover += '\t<a href="<?php echo $this->setup->root_dir; ?>/hashover.php?source" rel="hashover-source" target="_blank">Source Code</a> &middot;\n';
-hashover += '\t<a href="<?php echo $this->setup->root_dir; ?>/hashover.php?url=<?php echo $page_url; ?>&title=<?php echo $page_title; ?>" rel="hashover-javascript" target="_blank">JavaScript</a>\n';
+hashover += '\t<a href="<?php echo $this->setup->root_dir; ?>/hashover.php?url=<?php echo urlencode($page_url); ?>&title=<?php echo $page_title; ?>" rel="hashover-javascript" target="_blank">JavaScript</a>\n';
 hashover += '</div>';
 
 // Place all content on page

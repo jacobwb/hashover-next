@@ -81,7 +81,6 @@
 			// Generate necessary indention for HTML output
 			$indention = str_repeat("\t", substr_count($comment['permalink'], 'r'));
 
-			echo "\t", $indention, '<a name="', $comment['permalink'], '"></a>', PHP_EOL;
 			echo "\t", $indention, '<div id="', $comment['permalink'], '" class="hashover-comment', $this->template_replace['cmtclass'], '">', PHP_EOL;
 
 			// Setup avatar icon
@@ -198,7 +197,6 @@
 
 			if ($arr[1] == 'reply_form' or $arr[1] == 'edit_form') {
 				if ($arr[1] == 'reply_form' and $this->is_a_reply) {
-					$return_form .= PHP_EOL . '<a name="' . $this->template_replace['permalink'] . '-form"></a>' . PHP_EOL;
 					$return_form .= '<div class="hashover-balloon">' . PHP_EOL;
 
 					if (!empty($_COOKIE['hashover-login'])) {
@@ -255,8 +253,7 @@
 				}
 
 				if ($arr[1] == 'edit_form' and $this->is_an_edit) {
-					$return_form = PHP_EOL . '<a name="' . $this->template_replace['permalink'] . '-form"></a>' . PHP_EOL;
-					$return_form .= '<div class="hashover-dashed-title hashover-title">' . $this->setup->text['edit_cmt'] . '</div>' . PHP_EOL;
+					$return_form = '<div class="hashover-dashed-title hashover-title">' . $this->setup->text['edit_cmt'] . '</div>' . PHP_EOL;
 					$return_form .= '<div class="hashover-options open">' . PHP_EOL;
 					$return_form .= "\t" . '<div class="hashover-inputs">' . PHP_EOL;
 					$return_form .= "\t\t" . '<div class="hashover-name-input">' . PHP_EOL;
@@ -314,7 +311,7 @@
 ?>
 
 <div id="hashover" class="<?php echo $this->setup->image_format; ?>">
-	<a name="comments"></a>
+	<span id="comments"></span>
 	<div class="hashover-dashed-title hashover-title">
 		<?php echo $php_title, PHP_EOL; ?>
 	</div>
@@ -458,7 +455,7 @@
 
 		if (!empty($this->hashover) and $this->setup->displays_rss_link == 'yes') {
 			if ($this->setup->api_status('rss') != 'disabled') {
-				echo "\t\t", '<a href="', $this->setup->root_dir, '/api/rss.php?url=', $this->setup->page_url, '" target="_blank">RSS Feed</a> &middot;', PHP_EOL;
+				echo "\t\t", '<a href="', $this->setup->root_dir, '/api/rss.php?url=', urlencode($this->setup->page_url), '" target="_blank">RSS Feed</a> &middot;', PHP_EOL;
 			}
 		}
 

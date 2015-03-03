@@ -228,7 +228,7 @@
 
 				// Define "Edit" link if proper login cookie set
 				if ($user_is_logged_in or $this->setup->user_is_admin) {
-					$output['edit_link'] =(string) '<a href="' . ((!empty($this->setup->ref_queries)) ? '?' . $this->setup->ref_queries . '&' : '?') . 'hashover_edit=' . $comment['perma_popper'] . '#' . $comment['perma'] . '-form"' . $edit_onclick . ' title="' . $this->setup->text['edit_your_cmt'] . '" class="hashover-edit">' . $this->setup->text['edit'] . '</a>';
+					$output['edit_link'] =(string) '<a href="' . ((!empty($this->setup->ref_queries)) ? '?' . $this->setup->ref_queries . '&' : '?') . 'hashover_edit=' . $comment['perma_popper'] . '#hashover-edit-' . $comment['perma'] . '"' . $edit_onclick . ' title="' . $this->setup->text['edit_your_cmt'] . '" class="hashover-edit">' . $this->setup->text['edit'] . '</a>';
 				}
 
 				// Define "Reply" link with appropriate tooltip
@@ -242,7 +242,7 @@
 					}
 				}
 
-				$output['reply_link'] =(string) '<a href="' . ((!empty($this->setup->ref_queries)) ? '?' . $this->setup->ref_queries . '&' : '?') . 'hashover_reply=' . $comment['perma_popper'] . '#' . $comment['perma'] . '-form"' . $reply_onclick . ' title="' . $this->setup->text['reply_to_cmt'] . ' - ' . $email_indicator . '>' . $this->setup->text['reply'] . '</a>';
+				$output['reply_link'] =(string) '<a href="' . ((!empty($this->setup->ref_queries)) ? '?' . $this->setup->ref_queries . '&' : '?') . 'hashover_reply=' . $comment['perma_popper'] . '#hashover-reply-' . $comment['perma'] . '"' . $reply_onclick . ' title="' . $this->setup->text['reply_to_cmt'] . ' - ' . $email_indicator . '>' . $this->setup->text['reply'] . '</a>';
 			}
 
 			$output['comment'] =(string) str_replace('\n', PHP_EOL, $comment['body']);

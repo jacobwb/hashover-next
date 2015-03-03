@@ -1,6 +1,17 @@
+Changes by Jacob Barkdull 2015-03-03
+--------------------------------------------------------------------------------
+* URLs are now encoded where necessary.
+* <a name/> style placemark anchors removed in favor of element IDs.
+* c#[r#]-form changed to hashover-[edit|reply]-c#[r#]
+* HTML tags now stripped from both URL and title.
+* HTML characters now encode in both URL and title.
+* Fixed: "?hashover_[edit|reply]=c#[r#]" queries not removed to URLs.
+
+
 Changes by Jacob Barkdull 2015-02-27
 --------------------------------------------------------------------------------
 * Added: Setting to disable separate counts for replies and primary comments.
+* Fixed: Unchecked "Notify me of replies", users no longer asked to confirm.
 * Fixed: "Showing" being displayed in count link.
 * Fixed: Disabled avatar icon styling.
 * Removed "_pop" from popular comments' permalink where its shown.

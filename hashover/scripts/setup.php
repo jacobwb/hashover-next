@@ -112,9 +112,6 @@
 					}
 				}
 
-				// Strip HTML characters from page URL
-				$this->page_url = htmlspecialchars(strip_tags($this->page_url));
-
 				// Error if the script wasn't requested by this server
 				if (!empty($_SERVER['HTTP_REFERER']) and !preg_match('/' . $this->domain . '/i', parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST))) {
 					exit($this->escape_output('<b>HashOver</b>: External use not allowed.', 'single'));
@@ -127,7 +124,7 @@
 					$this->page_title = $_POST['title'];
 				} else {
 					if (!empty($_GET['title'])) {
-						$this->page_title = htmlspecialchars(strip_tags($_GET['title']));
+						$this->page_title = $_GET['title'];
 					} else {
 						// Error on failure
 						exit($this->escape_output('<b>HashOver</b>: Failed to obtain page title.', 'single'));
@@ -226,6 +223,18 @@
 			if (strpos($this->ref_path, '--') !== false) {
 				$this->ref_path = preg_replace('/-{2,}/', '-', $this->ref_path);
 			}
+
+			// Strip HTML tags from page URL
+			$this->page_url = strip_tags(html_entity_decode($this->page_url, false, 'UTF-8'));
+
+			// Encode HTML characters in page URL
+			$this->page_url = htmlspecialchars($this->page_url, false, 'UTF-8', false);
+
+			// Strip HTML tags from page title
+			$this->page_title = strip_tags(html_entity_decode($this->page_title, false, 'UTF-8'));
+
+			// Encode HTML characters in page title
+			$this->page_title = htmlspecialchars($this->page_title, false, 'UTF-8', false);
 
 			// Remove leading and trailing dashes
 			$this->ref_path = trim($this->ref_path, '-');

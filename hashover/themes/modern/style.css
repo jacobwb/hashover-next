@@ -48,7 +48,9 @@ Copyright (C) 2014 Jacob Barkdull
 	cursor: default;
 }
 
-#hashover #hashover-requiredFields {
+#hashover #hashover-requiredFields,
+#hashover .hashover-first .hashover-avatar,
+#hashover .hashover-comment.hashover-collapsed {
 	display: none;
 }
 
@@ -190,11 +192,6 @@ Copyright (C) 2014 Jacob Barkdull
 #hashover .hashover-comment .hashover-options.open,
 #hashover .hashover-comment .hashover-message.open {
 	max-height: 60px;
-}
-
-#hashover .hashover-first .hashover-avatar,
-#hashover .hashover-comment.hashover-collapsed {
-	display: none;
 }
 
 #hashover .hashover-first .hashover-balloon{
