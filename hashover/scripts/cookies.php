@@ -27,23 +27,26 @@
 	class Cookies
 	{
 		public $domain,
-		       $expire;
+		       $expire,
+		       $http;
 
 		public function __construct($domain, $expire)
 		{
 			$this->domain = $domain;
 			$this->expire = $expire;
+			$this->http = !empty($_SERVER['HTTPS']) ? 1 : 0;
 		}
 
 		public function set($name, $value, $date = false)
 		{
-			setcookie($name, $value, (($date != false) ? $date : $this->expire), '/', $this->domain, !empty($_SERVER['HTTPS']), true);
+			$date = ($date != false) ? $date : $this->expire;
+			setcookie($name, $value, $date, '/', $this->domain, $this->http, true);
 		}
 
 		public function expire_cookie($cookie)
 		{
 			if (isset($_COOKIE[$cookie])) {
-				setcookie($cookie, '', 1, '/', $this->domain, !empty($_SERVER['HTTPS']), true);
+				setcookie($cookie, '', 1, '/', $this->domain, $this->http, true);
 			}
 		}
 
@@ -51,15 +54,15 @@
 		{
 			// Expire message cookie
 			if (isset($_COOKIE['message'])) {
-				setcookie('message', '', 1, '/', $this->domain, !empty($_SERVER['HTTPS']), true);
+				setcookie('message', '', 1, '/', $this->domain, $this->http, true);
 			}
 
 			// Expire comment and reply failure cookie(s)
 			if (isset($_COOKIE['success']) and $_COOKIE['success'] == 'no') {
-				setcookie('success', '', 1, '/', $this->domain, !empty($_SERVER['HTTPS']), true);
+				setcookie('success', '', 1, '/', $this->domain, $this->http, true);
 
 				if (!empty($_COOKIE['replied'])) {
-					setcookie('replied', '', 1, '/', $this->domain, !empty($_SERVER['HTTPS']), true);
+					setcookie('replied', '', 1, '/', $this->domain, $this->http, true);
 				}
 			}
 		}
