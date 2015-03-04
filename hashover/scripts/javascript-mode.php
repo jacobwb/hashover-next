@@ -94,7 +94,7 @@ if (document.querySelector('link[href="<?php echo $this->setup->root_dir; ?>/the
 // Add comment RSS feed to page header
 link = document.createElement('link');
 link.rel = 'alternate';
-link.href = '<?php echo $this->setup->root_dir; ?>/api/rss.php?url=' + encodeURIComponent(location.href.replace(/#.*$/g, '')) + '&title=<?php echo $js_title; ?>';
+link.href = '<?php echo $this->setup->root_dir; ?>/api/rss.php?url=' + encodeURIComponent(location.href.replace(/#.*$/g, ''));
 link.type = 'application/rss+xml';
 link.title = 'Comments';
 head.appendChild(link);
