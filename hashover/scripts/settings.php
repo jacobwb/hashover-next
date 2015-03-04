@@ -29,8 +29,8 @@
 		// Required setup
 		public $notification_email	= 'example@example.com';	// E-mail for notification of new comments
 		protected $encryption_key	= '8CharKey';			// Unique encryption key
-		protected $admin_name		= 'admin';			// Nickname with admin rights (must be title-cased)
-		protected $admin_password	= 'passwd';			// Password to gain admin rights
+		protected $admin_name		= 'admin';			// Login name to gain admin rights (case-sensitive)
+		protected $admin_password	= 'passwd';			// Login password to gain admin rights (case-sensitive)
 
 		// Various optional settings
 		public $language		= 'en';				// Language used for forms, buttons, links, and tooltips
