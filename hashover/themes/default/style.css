@@ -566,6 +566,11 @@ Copyright (C) 2014 Jacob Barkdull
 }
 
 #hashover .hashover-avatar-image:before,
+#hashover .hashover-avatar-image:after {
+	margin-left: -10px;
+}
+
+#hashover .hashover-avatar-image:before,
 #hashover .hashover-comment .hashover-avatar:before,
 #hashover .hashover-comment form .hashover-avatar-image:before {
 	border-bottom-color: #808080;
