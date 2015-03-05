@@ -28,41 +28,49 @@
 	{
 		public $domain,
 		       $expire,
-		       $http;
+		       $secure = false;
 
-		public function __construct($domain, $expire)
+		public function __construct($domain, $expire, $secure)
 		{
+			// Set domain and default expiration date from parameters
 			$this->domain = $domain;
 			$this->expire = $expire;
-			$this->http = !empty($_SERVER['HTTPS']) ? 1 : 0;
-		}
 
-		public function set($name, $value, $date = false)
-		{
-			$date = ($date != false) ? $date : $this->expire;
-			setcookie($name, $value, $date, '/', $this->domain, $this->http, true);
-		}
-
-		public function expire_cookie($cookie)
-		{
-			if (isset($_COOKIE[$cookie])) {
-				setcookie($cookie, '', 1, '/', $this->domain, $this->http, true);
+			// Transmit cookies over HTTPS if set so in Settings
+			if ($secure == 'yes') {
+				$this->secure = !empty($_SERVER['HTTPS']) ? true : false;
 			}
 		}
 
+		// Set a cookie, with either a specific expiration date or the one in Settings
+		public function set($name, $value, $date)
+		{
+			$date = !empty($date) ? $date : $this->expire;
+			setcookie($name, $value, $date, '/', $this->domain, $this->secure, true);
+		}
+
+		// Expire a cookie by setting its expiration date to 1
+		public function expire_cookie($cookie)
+		{
+			if (isset($_COOKIE[$cookie])) {
+				setcookie($cookie, '', 1, '/', $this->domain, $this->secure, true);
+			}
+		}
+
+		// Expire HashOver's default cookies
 		public function clear()
 		{
 			// Expire message cookie
 			if (isset($_COOKIE['message'])) {
-				setcookie('message', '', 1, '/', $this->domain, $this->http, true);
+				setcookie('message', '', 1, '/', $this->domain, $this->secure, true);
 			}
 
 			// Expire comment and reply failure cookie(s)
 			if (isset($_COOKIE['success']) and $_COOKIE['success'] == 'no') {
-				setcookie('success', '', 1, '/', $this->domain, $this->http, true);
+				setcookie('success', '', 1, '/', $this->domain, $this->secure, true);
 
 				if (!empty($_COOKIE['replied'])) {
-					setcookie('replied', '', 1, '/', $this->domain, $this->http, true);
+					setcookie('replied', '', 1, '/', $this->domain, $this->secure, true);
 				}
 			}
 		}
