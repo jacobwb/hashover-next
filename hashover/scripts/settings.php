@@ -62,6 +62,7 @@
 		public $parses_huge		= 'yes';			// Whether to condense the XML data into a single string to parse
 		public $uses_short_dates	= 'yes';			// Whether comment dates are shortened
 		public $enable_api		= 'yes';			// API: 'yes' = fully-enabled, 'no' = fully disabled, or array of modes
+		public $secure_cookies		= 'no';				// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 		public $latest_num		= 10;				// Number of comments to save as latest comments
 		public $allows_user_replies	= 'no';				// Whether given e-mails are sent as reply-to address to users
 		public $noreply_email		= 'noreply@example.com';	// E-mail used when no e-mail is given
