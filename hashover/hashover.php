@@ -117,7 +117,7 @@
 	$statistics = new Statistics($hashover_mode);
 	$statistics->execution_start(); // Start statistics
 	$setup = new Setup($hashover_mode, $hashover_title);
-	$cookies = new Cookies($setup->domain, $setup->expire);
+	$cookies = new Cookies($setup->domain, $setup->expire, $setup->secure_cookies);
 	$read_comments = new ReadComments($setup);
 
 	if (isset($_POST['comment'])) {
