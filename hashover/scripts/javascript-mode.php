@@ -412,9 +412,21 @@ function parse_template(object, count, sort, method, forpop) {
 			var extensions = ['<?php echo implode('\', \'', $this->setup->image_types); ?>'];
 			var urlExtension = url.split('.').pop().split(/\#|\?/)[0];
 
+			// Check if the image URL is off an allowed type
 			for (var ext = 0, length = extensions.length; ext < length; ext++) {
 				if (extensions[ext] == urlExtension) {
-					return '<br><br><img src="<?php echo $this->setup->root_dir, '/images/', $this->setup->image_format, 's/place-holder.', $this->setup->image_format; ?>" title="' + url +  '" alt="Loading..." onClick="((this.src==this.title) ? this.src=\'<?php echo $this->setup->root_dir, '/images/', $this->setup->image_format, 's/place-holder.', $this->setup->image_format; ?>\' : this.src=this.title);"><br><br>';
+					var imgtag = document.createElement('img');
+					var placeholder = '<?php echo $this->setup->root_dir, '/images/', $this->setup->image_format, 's/place-holder.', $this->setup->image_format; ?>';
+
+					// Add external image tag attributes
+					imgtag.className = 'hashover-imgtag';
+					imgtag.src = placeholder;
+					imgtag.title = 'Click to view external image';
+					imgtag.dataset.placeholder = placeholder;
+					imgtag.dataset.url = url;
+					imgtag.alt = 'External Image';
+
+					return '<br><br>' + imgtag.outerHTML + '<br><br>';
 				}
 			};
 
@@ -950,11 +962,33 @@ hashover += '</div>';
 // Place all content on page
 document.getElementById("hashover").innerHTML = hashover + '\n';
 
+// Get all external image tags by class name
+imgtags = document.getElementsByClassName('hashover-imgtag');
+
+// Set onclick functions for external images
+for (var i = 0, il = imgtags.length; i < il; i++) {
+	imgtags[i].onclick = function() {
+		if (this.src == this.dataset.url) {
+			this.src = this.dataset.placeholder;
+			return false;
+		}
+
+		this.src = this.dataset.url;
+		this.title = 'Loading...';
+
+		this.onload = function() {
+			this.title = 'Click to close';
+		};
+	};
+}
+
+// Display reply form when the "hashover_reply" URL query is set
 if (href.match(/hashover_reply=/)) {
 	var comment = href.replace(/(.*?hashover_reply=)(c[1-9r_pop]+)(.*)/, '$2');
 	hashover_reply(comment, comment.replace('c', '').replace('r', '-'));
 }
 
+// Display edit form when the "hashover_edit" URL query is set
 if (href.match(/hashover_edit=/)) {
 	var comment = href.replace(/(.*?hashover_edit=)(c[1-9r_pop]+)(.*)/, '$2');
 	hashover_edit(comment, comment.replace('c', '').replace('r', '-'), 1);

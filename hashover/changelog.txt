@@ -1,3 +1,54 @@
+Changes by Jacob Barkdull 2015-03-16
+--------------------------------------------------------------------------------
+* hashover/scripts/javascript-mode.php
+
+	- Added a couple code comments.
+
+	- HTML for external images is no longer hard coded.
+
+	- External images no longer have an "onClick" attribute. Instead, 
+	  onclick is set using JavaScript.
+
+	- External images now have "Click to view external image" as their 
+	  title attribute, this title is set to "Loading..." while the image 
+	  is loading and set to "Click to close" once the image is loaded.
+
+	  These changes will eventually allow a loading animation to be 
+	  displayed, as well as allow for an animation to play when the image 
+	  has finished loading, for example a fade or zoom effect.
+
+
+Changes by Jacob Barkdull 2015-03-04
+--------------------------------------------------------------------------------
+* hashover/scripts/settings.php
+
+	- Code comments now reflect the fact that title-case is no longer 
+	  required, but that both name and password are case-sensitive.
+
+	- Added secure cookie option 
+
+
+* hashover/scripts/javascript-mode.php
+
+	- Removed unused title from RSS link.
+
+
+* hashover/scripts/cookies.php
+
+	- Removed multiple HTTPS checks
+	- Cookies respect new secure cookies setting.
+
+
+* hashover/hashover.php
+
+	- New secure cookie setting is now passed to the Cookies class.
+
+
+* hashover/themes/default/style.css
+
+	- Minor fix.
+
+
 Changes by Jacob Barkdull 2015-03-03
 --------------------------------------------------------------------------------
 * URLs are now encoded where necessary.
@@ -1285,3 +1336,4 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
+
