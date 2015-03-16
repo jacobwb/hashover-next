@@ -970,6 +970,7 @@ for (var i = 0, il = imgtags.length; i < il; i++) {
 	imgtags[i].onclick = function() {
 		if (this.src == this.dataset.url) {
 			this.src = this.dataset.placeholder;
+			this.title = 'Click to view external image';
 			return false;
 		}
 
@@ -978,6 +979,7 @@ for (var i = 0, il = imgtags.length; i < il; i++) {
 
 		this.onload = function() {
 			this.title = 'Click to close';
+			this.onload = null;
 		};
 	};
 }
