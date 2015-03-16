@@ -412,7 +412,7 @@ function parse_template(object, count, sort, method, forpop) {
 			var extensions = ['<?php echo implode('\', \'', $this->setup->image_types); ?>'];
 			var urlExtension = url.split('.').pop().split(/\#|\?/)[0];
 
-			// Check if the image URL is off an allowed type
+			// Check if the image URL is of an allowed type
 			for (var ext = 0, length = extensions.length; ext < length; ext++) {
 				if (extensions[ext] == urlExtension) {
 					var imgtag = document.createElement('img');
