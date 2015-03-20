@@ -807,7 +807,7 @@ hashover += '\t\t</div>\n';
 	if (isset($_COOKIE['replied'])) {
 		echo $this->setup->escape_output('\t\t<input type="hidden" name="reply_to" value="' . $_COOKIE['replied'] . '">\n');
 	}
-	echo $this->setup->escape_output('<div class="hashover-buttons">');
+	echo $this->setup->escape_output('<div class="hashover-main-buttons">');
 	if (empty($_COOKIE['hashover-login']) or !empty($_COOKIE['email'])) {
 		echo $this->setup->escape_output('\t\t<label for="hashover-subscribe" title="' . $this->setup->text['subscribe_tip'] . '">\n');
 		echo $this->setup->escape_output('\t\t\t<input id="hashover-subscribe" type="checkbox" name="subscribe" checked="true"> ' . $this->setup->text['subscribe'] . '\n');
