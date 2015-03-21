@@ -81,6 +81,7 @@
 
 
 var hashover = '', collapse_limit = 0, href = window.location.href;
+var hashover_div = document.getElementById('hashover');
 var page_title = (document.title != '') ? document.title : '';
 var name_on = (name_on != undefined) ? name_on : true;
 var email_on = (email_on != undefined) ? email_on : true;
@@ -89,7 +90,7 @@ var password_on = (password_on != undefined) ? password_on : true;
 var head = document.getElementsByTagName('head')[0];
 
 <?php if ($this->setup->appends_css_link == 'yes') { ?>
-// Add comment stylesheet to page <head>
+// Append comment stylesheet to page <head>
 if (document.querySelector('link[href="<?php echo $this->setup->root_dir; ?>/themes/<?php echo $this->setup->theme; ?>/style.css"]') == null) {
 	link = document.createElement('link');
 	link.rel = 'stylesheet';
@@ -100,7 +101,7 @@ if (document.querySelector('link[href="<?php echo $this->setup->root_dir; ?>/the
 
 <?php } ?>
 <?php if (!empty($this->hashover) and $this->setup->api_status('rss') != 'disabled') { ?>
-// Add comment RSS feed to page header
+// Append comment RSS feed to page <head>
 link = document.createElement('link');
 link.rel = 'alternate';
 link.href = '<?php echo $this->setup->root_dir; ?>/api/rss.php?url=' + encodeURIComponent(location.href.replace(/#.*$/g, ''));
@@ -109,6 +110,15 @@ link.title = 'Comments';
 head.appendChild(link);
 
 <?php } ?>
+// Append an HTML div tag for HashOver comments to appear in
+if (hashover_div == null) {
+	var scripts = document.getElementsByTagName('script');
+	var this_script = scripts[scripts.length - 1];
+	hashover_div = document.createElement('div');
+	hashover_div.id = 'hashover';
+	this_script.parentNode.insertBefore(hashover_div, this_script);
+}
+
 <?php if ($this->read_comments->total_count - 1 != 0) { ?>
 // Put number of comments into "hashover-cmtcount" identified HTML element
 if (document.getElementById('hashover-cmtcount') != null) {
@@ -717,17 +727,6 @@ function show_cmts(element) {
 }
 
 <?php } ?>
-// Place "hashover" DIV'
-if (document.getElementById('hashover') == null) {
-	var scripts = document.getElementsByTagName('script');
-	var this_script = scripts[scripts.length - 2];
-	var div = document.createElement('div');
-	div.id = 'hashover';
-	this_script.parentNode.insertBefore(div, this_script);
-}
-
-document.getElementById('hashover').className = '<?php echo $this->setup->image_format; ?>';
-
 if (document.getElementById('comments') == null) {
 	hashover += '<span id="comments"></span>';
 }
@@ -988,7 +987,8 @@ hashover += '\t<a href="<?php echo $this->setup->root_dir; ?>/hashover.php?url=<
 hashover += '</div>';
 
 // Place all content on page
-document.getElementById("hashover").innerHTML = hashover + '\n';
+hashover_div.className = '<?php echo $this->setup->image_format; ?>';
+hashover_div.innerHTML = hashover;
 
 // Get all external image tags by class name
 imgtags = document.getElementsByClassName('hashover-imgtag');
