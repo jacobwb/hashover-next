@@ -157,7 +157,7 @@
 			}
 
 			// Get "Like" cookie vaue
-			$like_cookie_name = md5($_SERVER['SERVER_NAME'] . $this->setup->ref_path . '/' . $key);
+			$like_cookie_name = md5($this->setup->domain . $this->setup->ref_path . '/' . $key);
 			$like_cookie = !empty($_COOKIE[$like_cookie_name]) ? $_COOKIE[$like_cookie_name] : '';
 
 			// Text for "Like" and "Dislike" buttons
@@ -193,8 +193,9 @@
 				}
 
 				if ($this->setup->allows_dislikes == 'yes') {
+					$like_class .= ' dislikes';
+
 					if ($like_cookie == 'disliked') {
-						$like_class .= ' dislikes';
 						$dislike_title = $this->setup->text['disliked_cmt'];
 						$dislike_class = 'hashover-disliked';
 						$dislike_text = $this->setup->text['disliked'];
