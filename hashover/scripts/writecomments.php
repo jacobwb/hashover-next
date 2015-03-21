@@ -152,7 +152,7 @@
 			foreach ($this->metalevels as $level => $metafile) {
 				$metafile .= '/.metadata';
 				$metadata = array();
-				$data = array();
+				$data = array('latest' => array());
 
 				if ($level == 0) {
 					$metadata['title'] = $this->setup->page_title;
@@ -160,25 +160,22 @@
 					$metadata['status'] = 'open';
 				}
 
-				$metadata['latest'] = array();
-				$data['latest'] = array();
-
 				if (file_exists($metafile) and is_writable($metafile)) {
 					$data = json_decode(file_get_contents($metafile), true);
-				}
 
-				if ($level == 0) {
-					$metadata['status'] = $data['status'];
-					array_unshift($data['latest'], (string) $file);
-				} else {
-					$cmtdir = str_replace('./pages/', '', $this->metalevels[0]);
-					array_unshift($data['latest'], $cmtdir . '/' . $file);
-				}
+					if ($level == 0) {
+						$metadata['status'] = $data['status'];
+						array_unshift($data['latest'], (string) $file);
+					} else {
+						$cmtdir = str_replace('./pages/', '', $this->metalevels[0]);
+						array_unshift($data['latest'], $cmtdir . '/' . $file);
+					}
 
-				if (count($data['latest']) >= 10) {
-					if (count($data['latest']) >= $this->setup->latest_num) {
-						$max = max(10, $this->setup->latest_num);
-						$data['latest'] = array_slice($data['latest'], 0, $max);
+					if (count($data['latest']) >= 10) {
+						if (count($data['latest']) >= $this->setup->latest_num) {
+							$max = max(10, $this->setup->latest_num);
+							$data['latest'] = array_slice($data['latest'], 0, $max);
+						}
 					}
 				}
 
