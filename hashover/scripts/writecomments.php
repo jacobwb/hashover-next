@@ -28,9 +28,10 @@
 	{
 		public $header,
 		       $kickback,
-		       $name,
-		       $email,
-		       $website,
+		       $name = '',
+		       $password = '',
+		       $email = '',
+		       $website = '',
 		       $metalevels;
 
 		// Characters to be removed from name, email, and website fields
@@ -87,13 +88,17 @@
 			}
 
 			// Set password cookie
-			if (isset($_POST['edit'])) {
-				if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
-					$this->cookies->set('password', str_replace('"', '&quot;', $_POST['password']));
-				}
-			} else {
-				if (!isset($_POST['delete'])) {
-					$this->cookies->set('password', str_replace('"', '&quot;', $_POST['password']));
+			if (isset($_POST['password'])) {
+				$this->password = $_POST['password'];
+
+				if (isset($_POST['edit'])) {
+					if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
+						$this->cookies->set('password', str_replace('"', '&quot;', $this->password));
+					}
+				} else {
+					if (!isset($_POST['delete'])) {
+						$this->cookies->set('password', str_replace('"', '&quot;', $this->password));
+					}
 				}
 			}
 
@@ -220,14 +225,14 @@
 			$get_pass = $this->read_comments->data->read($_POST['cmtfile']);
 
 			// Check if password matches the one in the file
-			if ($this->setup->encryption->verify_hash($_POST['password'], $get_pass['password']) or $this->setup->user_is_admin == true) {
+			if ($this->setup->encryption->verify_hash($this->password, $get_pass['password']) or $this->setup->user_is_admin == true) {
 				// Delete the comment file
 				if ($this->read_comments->data->delete($_POST['cmtfile'])) {
 					if ($this->read_comments->data->storage_format == 'flat-file') {
 						$this->remove_from_latest($_POST['cmtfile']);
 					}
 
-					$this->cookies->set('password', str_replace('"', '&quot;', $_POST['password']));
+					$this->cookies->set('password', str_replace('"', '&quot;', $this->password));
 					$this->cookies->set('message', $this->setup->text['cmt_deleted']);
 				}
 			} else {
@@ -268,7 +273,7 @@
 
 			// Set login cookie; kick visitor back
 			if (isset($_POST['login'])) {
-				$this->cookies->set('hashover-login', hash('ripemd160', $this->xml_sanitize($this->name) . $_POST['password']));
+				$this->cookies->set('hashover-login', hash('ripemd160', $this->xml_sanitize($this->name) . $this->password));
 				$this->cookies->set('message', $this->setup->text['logged_in']);
 				exit(header('Location: ' . $this->kickback . '#comments'));
 			}
@@ -345,12 +350,12 @@
 				$write_cmt['body'] = $this->xml_sanitize($clean_code);
 
 				// Store password and login ID if a password is given
-				if (!empty($_POST['password'])) {
-					$write_cmt['password'] = $this->setup->encryption->create_hash($_POST['password']);
+				if (!empty($this->password)) {
+					$write_cmt['password'] = $this->setup->encryption->create_hash($this->password);
 
 					// Store login ID if it's not the same as the default name
 					if ($write_cmt['name'] != $this->setup->default_name) {
-						$write_cmt['login_id'] = hash('ripemd160', $write_cmt['name'] . $_POST['password']);
+						$write_cmt['login_id'] = hash('ripemd160', $write_cmt['name'] . $this->password);
 					}
 				}
 
@@ -377,11 +382,11 @@
 				}
 
 				// Edit comment
-				if (isset($_POST['edit']) and (isset($_POST['password']) and isset($_POST['cmtfile'])) and !isset($_POST['delete'])) {
+				if (isset($_POST['edit']) and (!empty($this->password) and isset($_POST['cmtfile'])) and !isset($_POST['delete'])) {
 					$edit_cmt = $this->read_comments->data->read($_POST['cmtfile']);
 
 					// Check if password matches the one in the file
-					if ($this->setup->encryption->verify_hash($_POST['password'], $edit_cmt['password']) or $this->setup->user_is_admin == true) {
+					if ($this->setup->encryption->verify_hash($this->password, $edit_cmt['password']) or $this->setup->user_is_admin == true) {
 						$edit_cmt['name'] = $write_cmt['name'];
 						$edit_cmt['website'] = $write_cmt['website'];
 
@@ -458,7 +463,7 @@
 
 					// Set blank cookie for successful comment, kick visitor back to comment
 					$this->cookies->set('replied', '');
-					$this->cookies->set('hashover-login', hash('ripemd160', $write_cmt['name'] . $_POST['password']));
+					$this->cookies->set('hashover-login', hash('ripemd160', $write_cmt['name'] . $this->password));
 					exit(header('Location: ' . $this->kickback . '#' . $permalink));
 				} else {
 					$this->cookies->set('message', $this->setup->text['post_fail']);
