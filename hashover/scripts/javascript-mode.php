@@ -113,9 +113,10 @@ function hashover_reply(r, f) {
 <?php
 
 	if (!empty($_COOKIE['hashover-login'])) {
-
+	if ($this->setup->uses_icons == 'yes') {
 ?>
 	reply_form += '<div class="hashover-avatar-image"><img width="<?php echo $this->setup->icon_size; ?>" height="<?php echo $this->setup->icon_size; ?>" src="/hashover/images/<?php echo $this->setup->image_format; ?>s/first-comment.<?php echo $this->setup->image_format; ?>" alt="#' + f + '"></div>';
+	<?php } ?>
 	reply_form += '<input type="hidden" name="name" value="<?php if (!empty($_COOKIE['name'])) echo $_COOKIE['name']; ?>">\n';
 	reply_form += '<input type="hidden" name="password" value="<?php if (!empty($_COOKIE['password'])) echo $_COOKIE['password']; ?>">\n';
 	reply_form += '<input type="hidden" name="email" value="<?php if (!empty($_COOKIE['email'])) echo $_COOKIE['email']; ?>">\n';
@@ -126,8 +127,9 @@ function hashover_reply(r, f) {
 
 ?>
 	reply_form += '<div class="hashover-inputs">\n';
+	<?php if ($this->setup->uses_icons == 'yes') { ?>
 	reply_form += '<div class="hashover-avatar-image"><img width="<?php echo $this->setup->icon_size; ?>" height="<?php echo $this->setup->icon_size; ?>" src="/hashover/images/<?php echo $this->setup->image_format; ?>s/first-comment.<?php echo $this->setup->image_format; ?>" alt="#' + f + '"></div>';
-
+	<?php } ?>
 	if (name_on) {
 		reply_form += '<div class="hashover-name-input">\n<input type="text" name="name" title="<?php echo $this->setup->text['name_tip']; ?>" value="<?php if (!empty($_COOKIE['name'])) echo $_COOKIE['name']; ?>" maxlength="30" placeholder="<?php echo $this->setup->text['name']; ?>">\n</div>\n';
 	}
