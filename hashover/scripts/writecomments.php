@@ -291,8 +291,8 @@
 				// Check if comment thread directory exists
 				if ($this->read_comments->data->storage_format == 'flat-file') {
 					if (file_exists($this->setup->dir)) {
-						// If yes, exit with error if it's not writable
-						if (!is_writable($this->setup->dir)) {
+						// If yes, exit with error if fail to make it writable
+						if (!is_writable($this->setup->dir) and !@chmod($this->setup->dir, 0755)) {
 							exit($this->setup->escape_output('<b>HashOver</b>: Comment thread directory at "' . $this->setup->dir . '" is not writable. Check directory permissions.', 'single'));
 						}
 					} else {
@@ -317,8 +317,9 @@
 
 				// Check if all allowed HTML tags have been closed, if not add them at the end
 				for ($tc = 0, $tcl = count($tags); $tc < $tcl; $tc++) {
-					$open_tags = substr_count(strtolower(preg_replace('/<code>.*?<\/code>/i', '', $clean_code)), '<' . $tags[$tc] . '>');
-					$close_tags = substr_count(strtolower(preg_replace('/<code>.*?<\/code>/i', '', $clean_code)), '</' . $tags[$tc] . '>');
+					$without_code_tags = strtolower(preg_replace('/<code>.*?<\/code>/i', '', $clean_code));
+					$open_tags = substr_count($without_code_tags, '<' . $tags[$tc] . '>');
+					$close_tags = substr_count($without_code_tags, '</' . $tags[$tc] . '>');
 
 					if ($open_tags != $close_tags) {
 						while ($open_tags > $close_tags) {
