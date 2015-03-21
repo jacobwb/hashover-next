@@ -70,21 +70,22 @@
 				}
 			}
 
-			// Clean up name, set name cookie
-			if (!empty($_POST['name']) and trim($_POST['name'], ' ') != '') {
+			// Clean up name
+			if (!empty($_POST['name'])) {
 				$this->name = substr(str_replace($this->search, $this->replace, trim($_POST['name'])), 0, 30);
-
-				if (isset($_POST['edit'])) {
-					if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
-						$this->cookies->set('name', $this->name);
-					}
-				} else {
-					if (!isset($_POST['delete'])) {
-						$this->cookies->set('name', $this->name);
-					}
-				}
 			} else {
 				$this->name = $this->setup->default_name;
+			}
+
+			// Set name cookie
+			if (isset($_POST['edit'])) {
+				if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
+					$this->cookies->set('name', ($this->name != $this->setup->default_name) ? $this->name : '');
+				}
+			} else {
+				if (!isset($_POST['delete'])) {
+					$this->cookies->set('name', ($this->name != $this->setup->default_name) ? $this->name : '');
+				}
 			}
 
 			// Set password cookie
