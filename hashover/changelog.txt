@@ -35,6 +35,8 @@ Changes by Jacob Barkdull 2015-03-21
 
 	- Non-existent metadata no longer manipulated.
 
+	- Login cookies are now set even if they're empty.
+
 
 * hashover/scripts/cookies.php
 
@@ -1379,4 +1381,3 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
-
