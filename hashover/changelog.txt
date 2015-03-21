@@ -1,5 +1,10 @@
 Changes by Jacob Barkdull 2015-03-21
 --------------------------------------------------------------------------------
+* hashover.js
+
+	Improved how URL queries in the script tag are passed to HashOver.
+
+
 * hashover/scripts/settings.php
 
 	- Renamed public string variable $uses_icons to $icon_mode.
@@ -21,6 +26,7 @@ Changes by Jacob Barkdull 2015-03-21
 
 * hashover/scripts/javascript-mode.php,
   hashover/scripts/php-mode.php,
+  hashover/scripts/widget-output.php,
   hashover/scripts/displaycomments.php
 
 	- Changes to accommodate $uses_icons variable name change and new 
@@ -29,6 +35,8 @@ Changes by Jacob Barkdull 2015-03-21
 	- Added "Top of Thread" link back in PHP mode.
 
 	- Forms no longer displayed in popular comments.
+
+	- Improved how "hashover" DIV tag is appended to page HTML.
 
 
 * hashover/scripts/writecomments.php
