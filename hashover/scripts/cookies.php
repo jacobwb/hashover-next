@@ -30,7 +30,7 @@
 		       $expire,
 		       $secure = false;
 
-		public function __construct($domain, $expire, $secure)
+		public function __construct($domain, $expire, $secure = 'no')
 		{
 			// Set domain and default expiration date from parameters
 			$this->domain = $domain;
@@ -43,7 +43,7 @@
 		}
 
 		// Set a cookie, with either a specific expiration date or the one in Settings
-		public function set($name, $value, $date)
+		public function set($name, $value, $date = '')
 		{
 			$date = !empty($date) ? $date : $this->expire;
 			setcookie($name, $value, $date, '/', $this->domain, $this->secure, true);
