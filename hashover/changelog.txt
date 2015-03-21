@@ -12,9 +12,9 @@ Changes by Jacob Barkdull 2015-03-21
 	- Other minor fixes.
 
 
-* hashover/scripts/readfiles.php
+* hashover/scripts/readcomments.php
 
-	Ignore files that aren't readable.
+	Treat unreadable comment files as deleted.
 
 
 * hashover/scripts/settings.php
