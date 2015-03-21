@@ -5,11 +5,18 @@ Changes by Jacob Barkdull 2015-03-21
 	Improved how URL queries in the script tag are passed to HashOver.
 
 
+* hashover/scripts/like.php
+
+	- Fixed dislike function.
+	- Changed `$like` variable to `$comment`.
+	- Other minor fixes.
+
+
 * hashover/scripts/settings.php
 
-	- Renamed public string variable $uses_icons to $icon_mode.
+	- Renamed public string variable `$uses_icons` to `$icon_mode`.
 
-	- $icon_mode now has three possible values
+	- `$icon_mode` now has three possible values
 
 		'image' - Displays an image avatar.
 		'count' - Displays a number relative to the comment parent.
@@ -29,14 +36,16 @@ Changes by Jacob Barkdull 2015-03-21
   hashover/scripts/widget-output.php,
   hashover/scripts/displaycomments.php
 
-	- Changes to accommodate $uses_icons variable name change and new 
-	  'none' $icon_mode option. Wrap avatar in span tag.
+	- Changes to accommodate `$uses_icons` variable name change and new 
+	  'none' `$icon_mode` option. Wrap avatar in span tag.
 
 	- Added "Top of Thread" link back in PHP mode.
 
 	- Forms no longer displayed in popular comments.
 
 	- Improved how "hashover" DIV tag is appended to page HTML.
+
+	- Fixed "dislikes" not being appended to like link class attribute.
 
 
 * hashover/scripts/writecomments.php
