@@ -760,12 +760,13 @@ hashover += '\t\t<div class="hashover-inputs">\n';
 	}
 
 	if (!empty($_COOKIE['hashover-login'])) {
+		$name = !empty($_COOKIE['name']) ? $_COOKIE['name'] : $this->setup->default_name;
 		echo 'hashover += \'\t\t\t<div>\n\';', PHP_EOL;
 
 		if (!empty($_COOKIE['website'])) {
-			echo $this->setup->escape_output('\t\t\t\t<a class="hashover-name" href="' . $_COOKIE['website'] . '" target="_blank">' . $_COOKIE['name'] . '</a>\n');
+			echo $this->setup->escape_output('\t\t\t\t<a class="hashover-name" href="' . $_COOKIE['website'] . '" target="_blank">' . $name . '</a>\n');
 		} else {
-			echo $this->setup->escape_output('\t\t\t\t<span class="hashover-name">' . ((!empty($_COOKIE['name'])) ? $_COOKIE['name'] : $this->setup->default_name) . '</span>\n');
+			echo $this->setup->escape_output('\t\t\t\t<span class="hashover-name">' . $name . '</span>\n');
 		}
 
 		echo 'hashover += \'\t\t\t</div>\n\';', PHP_EOL;
