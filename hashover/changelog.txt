@@ -45,19 +45,17 @@ Changes by Jacob Barkdull 2015-03-21
 	  'none' `$icon_mode` option. Wrap avatar in span tag.
 
 	- Added "Top of Thread" link back in PHP mode.
-
 	- Forms no longer displayed in popular comments.
-
 	- Improved how "hashover" DIV tag is appended to page HTML.
-
 	- Fixed "dislikes" not being appended to like link class attribute.
 
 
 * hashover/scripts/writecomments.php
 
 	- Non-existent metadata no longer manipulated.
-
 	- Login cookies are now set even if they're empty.
+	- Now attempts to `chmod()` comment directory if it's not writeable.
+	- Only `strtolower()` and `preg_replace()` code tags once.
 
 
 * hashover/scripts/cookies.php
