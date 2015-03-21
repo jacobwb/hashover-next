@@ -744,7 +744,7 @@ if (document.getElementById('comments') == null) {
 ?>
 
 hashover += '<form id="hashover_form" name="hashover_form" action="<?php echo $this->setup->root_dir; ?>/hashover.php" method="post">\n';
-hashover += '\t<div class="hashover-balloon">\n';
+hashover += '\t<div class="hashover-balloon hashover-first-balloon">\n';
 hashover += '\t\t<div class="hashover-inputs">\n';
 <?php
 
@@ -834,7 +834,7 @@ hashover += '\t\t</div>\n';
 	if (isset($_COOKIE['replied'])) {
 		echo $this->setup->escape_output('\t\t<input type="hidden" name="reply_to" value="' . $_COOKIE['replied'] . '">\n');
 	}
-
+	echo $this->setup->escape_output('<div class="hashover-main-buttons">');
 	if (empty($_COOKIE['hashover-login']) or !empty($_COOKIE['email'])) {
 		echo $this->setup->escape_output('\t\t<label for="hashover-subscribe" title="' . $this->setup->text['subscribe_tip'] . '">\n');
 		echo $this->setup->escape_output('\t\t\t<input id="hashover-subscribe" type="checkbox" name="subscribe" checked="true"> ' . $this->setup->text['subscribe'] . '\n');
@@ -848,7 +848,7 @@ hashover += '\t\t</div>\n';
 	} else {
 		echo $this->setup->escape_output('\t\t<input class="hashover-submit hashover-login" type="submit" name="logout" title="' . $this->setup->text['logout'] . '" value="' . $this->setup->text['logout'] . '">\n');
 	}
-
+	echo $this->setup->escape_output('</div>');
 ?>
 hashover += '\t</div>\n</form>\n';
 
@@ -905,7 +905,7 @@ hashover += '\t</div>\n</form>\n';
 
 	// Display comments, if there are no comments display a note
 	if (!empty($this->hashover)) {
-		echo 'hashover += \'<div class="hashover-dashed-title">\';';
+		echo 'hashover += \'<div class="hashover-dashed-title hashover-sort-count">\';';
 
 		// Display comment count
 		if ($this->setup->collapse_limit >= 1) {
