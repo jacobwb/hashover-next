@@ -524,7 +524,7 @@ function parse_template(object, count, sort, method, forpop) {
 
 		if (object['avatar']) {
 			window['hashover'] += '\t\t<div class="hashover-header">\n';
-			window['hashover'] += '\t\t\t<span class="hashover-avatar">' + avatar + '</span>\n';
+			window['hashover'] += '\t\t\t' + avatar + '\n';
 			window['hashover'] += '\t\t</div>\n';
 		}
 
