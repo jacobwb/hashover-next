@@ -878,7 +878,7 @@ hashover += '\t</div>\n</form>\n';
 
 	// Display comments, if there are no comments display a note
 	if (!empty($this->hashover)) {
-		echo 'hashover += \'<div class="hashover-dashed-title">\';';
+		echo 'hashover += \'<div class="hashover-dashed-title hashover-sort-count">\';';
 
 		// Display comment count
 		if ($this->setup->collapse_limit >= 1) {
