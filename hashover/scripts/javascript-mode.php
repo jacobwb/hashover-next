@@ -725,7 +725,7 @@ if (document.getElementById('comments') == null) {
 ?>
 
 hashover += '<form id="hashover_form" name="hashover_form" action="<?php echo $this->setup->root_dir; ?>/hashover.php" method="post">\n';
-hashover += '\t<div class="hashover-balloon first-balloon">\n';
+hashover += '\t<div class="hashover-balloon hashover-first-balloon">\n';
 hashover += '\t\t<div class="hashover-inputs">\n';
 <?php
 
