@@ -731,9 +731,7 @@ hashover += '\t\t<div class="hashover-inputs">\n';
 
 	if ($this->setup->uses_icons == 'yes') {
 		echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image">' . $form_avatar . '</div>');
-	} else {
-		echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image"><span>#' . $this->read_comments->cmt_count . '</span></div>');
-	}
+	} 
 
 	if (!empty($_COOKIE['hashover-login'])) {
 		echo 'hashover += \'\t\t\t<div>\n\';', PHP_EOL;
