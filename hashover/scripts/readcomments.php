@@ -110,7 +110,14 @@
 
 					$comments[$key]['status'] = 'deleted';
 				} else {
-					$comments[$key] = $this->data->read($comment, $fullpath);
+					$read_comment = $this->data->read($comment, $fullpath);
+
+					if ($read_comment) {
+						$comments[$key] = $read_comment;
+					} else {
+						$comments[$key]['status'] = 'deleted';
+						continue;
+					}
 
 					// Replace [img] tags with external image placeholder if enabled
 					if ($this->setup->mode != 'javascript') {
