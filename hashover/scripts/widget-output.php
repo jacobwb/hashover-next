@@ -20,6 +20,7 @@
 
 var hashover_latest = '';
 var head = document.getElementsByTagName('head')[0];
+var hashover_widget_div = document.getElementById('hashover-widget');
 
 <?php if ($setup->appends_css_link == 'yes') { ?>
 // Add comment stylesheet to page <head>
@@ -142,12 +143,15 @@ function parse_template(object, count, sort, method) {
 
 ?>
 
-// Place "hashover" DIV
-if (document.getElementById('hashover-widget') == null) {
-	document.body.innerHTML += '<div id="hashover-widget" class="<?php echo $setup->image_format; ?>"></div>\n';
-} else {
-	document.getElementById('hashover-widget').className = '<?php echo $setup->image_format; ?>';
+// Append an HTML div tag for HashOver comments to appear in
+if (hashover_widget_div == null) {
+	var scripts = document.getElementsByTagName('script');
+	var this_script = scripts[scripts.length - 1];
+	hashover_widget_div = document.createElement('div');
+	hashover_widget_div.id = 'hashover-widget';
+	this_script.parentNode.insertBefore(hashover_widget_div, this_script);
 }
 
 // Place all content on page
-document.getElementById("hashover-widget").innerHTML = hashover_latest;
+hashover_widget_div.className = '<?php echo $setup->image_format; ?>';
+hashover_widget_div.innerHTML = hashover_latest;
