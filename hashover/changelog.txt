@@ -12,6 +12,11 @@ Changes by Jacob Barkdull 2015-03-21
 	- Other minor fixes.
 
 
+* hashover/scripts/readfiles.php
+
+	Ignore files that aren't readable.
+
+
 * hashover/scripts/settings.php
 
 	- Renamed public string variable `$uses_icons` to `$icon_mode`.
