@@ -91,10 +91,8 @@
 			}
 
 			foreach ($files as $file) {
-				if (is_readable($file)) {
-					$key = basename($file, '.' . $extension);
-					$comments[$key] = (string) $key;
-				}
+				$key = basename($file, '.' . $extension);
+				$comments[$key] = (string) $key;
 			}
 
 			return $comments;
