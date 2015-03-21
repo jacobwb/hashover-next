@@ -63,8 +63,10 @@
 
 		public function parse_template(array $comment, $forPop = false)
 		{
+			$this->forPop = $forPop;
+
 			$this->template_replace = array(
-				'cmtclass' => (strpos($comment['permalink'], 'r') !== false) ? ' hashover-reply' : '',
+				'cmtclass' => '',
 				'permalink' => str_replace('_pop', '', $comment['permalink'])
 			);
 
@@ -83,12 +85,18 @@
 
 			echo "\t", $indention, '<div id="', $comment['permalink'], '" class="hashover-comment', $this->template_replace['cmtclass'], '">', PHP_EOL;
 
+			if ($this->setup->icon_mode != 'none') {
+				if ($this->setup->icon_mode == 'image') {
+					$php_avatar = '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="' . $comment['avatar'] .  '" alt="#' . $comment['permalink'] .  '">';
+				} else {
+					$avatar_link_text = explode('r', substr($comment['permalink'], 1));
+					$php_avatar = '<a href="#' . $comment['permalink'] . '" title="Permalink">#' . array_pop($avatar_link_text) . '</a>';
+				}
+			}
+
 			// Setup avatar icon
 			if (isset($comment['avatar'])) {
-				$this->template_replace['avatar'] = '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="' . $comment['avatar'] .  '" alt="#' . $comment['permalink'] .  '">';
-			} else {
-				$avatar_link_text = explode('r', substr($comment['permalink'], 1));
-				$this->template_replace['avatar'] = '<a href="#' . $comment['permalink'] . '" title="Permalink">#' . array_pop($avatar_link_text) . '</a>';
+				$this->template_replace['avatar'] = '<span class="hashover-avatar">' . $php_avatar . '</span>';
 			}
 
 			if (!isset($comment['notice'])) {
@@ -105,7 +113,7 @@
 				}
 
 				$this->template_replace['name'] = $comment['name'];
-				$this->template_replace['thread'] = (!empty($comment['thread'])) ? $comment['thread'] : '';
+				$this->template_replace['thread'] = (strpos($comment['permalink'], 'r') !== false) ? '<a href="#' . preg_replace('/^(.*)r.*$/', '\\1', $comment['permalink']) . '" title="' . $this->setup->text['thread_tip'] . '" class="hashover-thread-link">' . $this->setup->text['thread'] . '</a>' : '';
 				$this->template_replace['comment'] = $comment['comment'];
 				$this->template_replace['action'] = $_SERVER['PHP_SELF'];
 				$this->template_replace['likes'] = '<span id="hashover-likes-' . $comment['permalink'] . '" class="hashover-likes">' . $likes_num . '</span>';
@@ -116,12 +124,14 @@
 				$this->template_replace['edit_link'] = (!empty($comment['edit_link'])) ? $comment['edit_link'] : '';
 				$this->template_replace['reply_link'] = $comment['reply_link'];
 
-				if ($this->is_an_edit) {
-					$this->template_replace['hashover_footer_style'] = ' style="display: none;"';
-				}
+				if ($forPop == false) {
+					if ($this->is_an_edit) {
+						$this->template_replace['hashover_footer_style'] = ' style="display: none;"';
+					}
 
-				if ($this->is_a_reply) {
-					$this->template_replace['hashover_reply_form_style'] = ' class="hashover-comment hashover-reply"';
+					if ($this->is_a_reply) {
+						$this->template_replace['hashover_reply_form_class'] = ' class="hashover-comment hashover-reply"';
+					}
 				}
 
 				$name_at = preg_match('/^@.*?$/', $comment['name']) ? '@' : '';
@@ -142,7 +152,7 @@
 				$this->template_replace['name'] = '<span class="hashover-name' . $name_class . '">' . $name_at . $comment['name'] . '</span>';
 				$this->notifications = $comment['notifications'];
 
-				// Popular template with comment data
+				// Populate template with comment data
 				$themed_comment = preg_replace_callback('/\\\' \+ (.*?) \+ \\\'/', 'self::add_forms', $this->theme_layout);
 
 				// Indent lines, removing blank lines
@@ -156,9 +166,11 @@
 			} else {
 				$notice_class = isset($comment['notice_class']) ? ' ' . $comment['notice_class'] : '';
 
-				echo "\t\t", '<div class="hashover-header">', PHP_EOL;
-				echo "\t\t\t", '<span class="hashover-avatar">', $this->template_replace['avatar'], '</span>', PHP_EOL;
-				echo "\t\t", '</div>', PHP_EOL;
+				if (isset($comment['avatar'])) {
+					echo "\t\t", '<div class="hashover-header">', PHP_EOL;
+					echo "\t\t\t", '<span class="hashover-avatar">', $this->template_replace['avatar'], '</span>', PHP_EOL;
+					echo "\t\t", '</div>', PHP_EOL;
+				}
 
 				echo "\t\t", '<div class="hashover-balloon">', PHP_EOL;
 				echo "\t\t\t", '<div id="hashover-content-', $comment['permalink'], '" class="hashover-content', $notice_class, '">', PHP_EOL;
@@ -195,19 +207,26 @@
 		{
 			$return_form = '';
 
-			if ($arr[1] == 'reply_form' or $arr[1] == 'edit_form') {
+			if ($this->forPop == false and ($arr[1] == 'reply_form' or $arr[1] == 'edit_form')) {
 				if ($arr[1] == 'reply_form' and $this->is_a_reply) {
 					$return_form .= '<div class="hashover-balloon">' . PHP_EOL;
+					$first_cmt_image = "\t\t" . '<div class="hashover-avatar-image">' . PHP_EOL . "\t\t\t" . '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="' . $this->setup->root_dir . '/images/' . $this->setup->image_format . 's/first-comment.' . $this->setup->image_format . '" alt="#' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $this->template_replace['permalink']) . '">' . PHP_EOL . "\t\t" . '</div>' . PHP_EOL;
 
 					if (!empty($_COOKIE['hashover-login'])) {
-						$return_form .= "\t\t" . '<div class="hashover-avatar-image">' . PHP_EOL . "\t\t\t" . '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="' . $this->setup->root_dir . '/images/' . $this->setup->image_format . 's/first-comment.' . $this->setup->image_format . '" alt="#' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $this->template_replace['permalink']) . '">' . PHP_EOL . "\t\t" . '</div>' . PHP_EOL;
+						if ($this->setup->icon_mode != 'none') {
+							$return_form .= $first_cmt_image;
+						}
+
 						$return_form .= "\t\t" . '<input type="hidden" name="name" value="' . ((!empty($_COOKIE['name'])) ? $_COOKIE['name'] : '') . '">' . PHP_EOL;
 						$return_form .= "\t\t" . '<input type="hidden" name="password" value="' . ((!empty($_COOKIE['password'])) ? $_COOKIE['password'] : '') . '">' . PHP_EOL;
 						$return_form .= "\t\t" . '<input type="hidden" name="email" value="' . ((!empty($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '">' . PHP_EOL;
 						$return_form .= "\t\t" . '<input type="hidden" name="website" value="' . ((!empty($_COOKIE['website'])) ? $_COOKIE['website'] : '') . '">' . PHP_EOL;
 					} else {
 						$return_form .= "\t" . '<div class="hashover-inputs">' . PHP_EOL;
-						$return_form .= "\t\t" . '<div class="hashover-avatar-image">' . PHP_EOL . "\t\t\t" . '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="' . $this->setup->root_dir . '/images/' . $this->setup->image_format . 's/first-comment.' . $this->setup->image_format . '" alt="#' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $this->template_replace['permalink']) . '">' . PHP_EOL . "\t\t" . '</div>' . PHP_EOL;
+
+						if ($this->setup->icon_mode != 'none') {
+							$return_form .= $first_cmt_image;
+						}
 
 						if ($this->name_on) {
 							$return_form .= "\t\t" . '<div class="hashover-name-input">' . PHP_EOL;
@@ -324,7 +343,18 @@
 	<form id="hashover_form" name="hashover_form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 		<div class="hashover-balloon">
 			<div class="hashover-inputs">
-				<span class="hashover-avatar-image"><?php echo ($this->setup->uses_icons == 'yes') ? $php_mode->form_avatar : '<span title="Permalink">#' . $this->read_comments->cmt_count . '</span>'; ?></span>
+<?php
+
+	if ($this->setup->icon_mode != 'none') {
+		if ($this->setup->icon_mode == 'image') {
+			echo "\t\t\t\t", '<div class="hashover-avatar-image">', $php_mode->form_avatar, '</div>', PHP_EOL;
+		} else {
+			echo "\t\t\t\t", '<div class="hashover-avatar-image"><span>#', $this->read_comments->cmt_count, '</span></div>', PHP_EOL;
+		}
+	}
+
+?>
+
 <?php
 
 	if (!empty($_COOKIE['hashover-login'])) {
@@ -359,7 +389,10 @@
 		// Add second table row on mobile devices
 		if ($this->setup->is_mobile) {
 			echo "\t\t\t\t", '</div>', PHP_EOL, "\t\t\t\t\t", '<div class="hashover-inputs">', PHP_EOL;
-			echo "\t\t\t\t\t", '<div class="hashover-avatar-image"></div>', PHP_EOL;
+
+			if ($this->setup->icon_mode != 'none') {
+				echo "\t\t\t\t\t", '<div class="hashover-avatar-image"></div>', PHP_EOL;
+			}
 		}
 
 		// Display email input tag if told to
@@ -407,7 +440,6 @@
 	if (!empty($this->top_likes)) {
 		krsort($this->top_likes); // Sort popular comments
 		$popPlural = (count($this->top_likes) != 1) ? 1 : 0;
-		$js_out = array();
 
 		echo "\t", '<div class="hashover-dashed-title">', PHP_EOL;
 		echo "\t\t", '<span class="hashover-title">', PHP_EOL;
@@ -420,7 +452,7 @@
 		for ($p = 1, $pl = count($this->top_likes); $p <= $pl and $p <= $this->setup->pop_limit; $p++) {
 			$popKey = array_shift($this->top_likes);
 			$popComment = $this->read_comments->data->read($popKey);
-			$php_mode->parse_template($this->parse($popComment, true));
+			$php_mode->parse_template($this->parse($popComment, $popKey), true);
 		}
 
 		echo "\t", '</div>', PHP_EOL;

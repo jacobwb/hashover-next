@@ -38,15 +38,24 @@
 		$form_avatar = '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="' . $this->setup->root_dir . '/scripts/avatars.php?format=' . $this->setup->image_format . '&amp;size=' . $this->setup->icon_size . ((isset($_COOKIE['email'])) ? '&amp;email=' . md5(strtolower(trim($_COOKIE['email']))) : '') . '" alt="#' . $this->read_comments->cmt_count . '">';
 	}
 
-	$json_search = array('    ', '\\\r', '\\\\');
-	$json_replace = array("\t", '', '');
-	$js_title = $this->setup->text['post_cmt_on'][0];
-
 	$page_title = addcslashes($this->setup->page_title, "'");
 	$page_url = addcslashes($this->setup->page_url, "'");
 
+	$json_search = array('    ', '\\\r', '\\\\');
+	$json_replace = array("\t", '', '');
+	$js_title = $this->setup->text['post_cmt_on'][0];
+	$js_avatar = '';
+
 	if ($this->setup->display_title == 'yes') {
 		$js_title .= str_replace('_TITLE_', $page_title, $this->setup->text['post_cmt_on'][1]);
+	}
+
+	if ($this->setup->icon_mode != 'none') {
+		if ($this->setup->icon_mode == 'image') {
+			$js_avatar = '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="\' + object[\'avatar\'] + \'" alt="#\' + permatext + \'">';
+		} else {
+			$js_avatar = '<a href="#\' + permalink + \'" title="Permalink">#\' + permatext + \'</a>';
+		}
 	}
 
 ?>
@@ -112,10 +121,14 @@ function hashover_reply(r, f) {
 	var reply_form = '<div class="hashover-balloon">';
 <?php
 
+	$first_cmt_image = '<div class="hashover-avatar-image"><img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="/hashover/images/' . $this->setup->image_format . 's/first-comment.' . $this->setup->image_format . '" alt="+"></div>';
+
 	if (!empty($_COOKIE['hashover-login'])) {
+		if ($this->setup->icon_mode != 'none') {
+			echo "\t", 'reply_form += \'', $first_cmt_image, '\';', PHP_EOL;
+		}
 
 ?>
-	reply_form += '<div class="hashover-avatar-image"><img width="<?php echo $this->setup->icon_size; ?>" height="<?php echo $this->setup->icon_size; ?>" src="/hashover/images/<?php echo $this->setup->image_format; ?>s/first-comment.<?php echo $this->setup->image_format; ?>" alt="#' + f + '"></div>';
 	reply_form += '<input type="hidden" name="name" value="<?php if (!empty($_COOKIE['name'])) echo $_COOKIE['name']; ?>">\n';
 	reply_form += '<input type="hidden" name="password" value="<?php if (!empty($_COOKIE['password'])) echo $_COOKIE['password']; ?>">\n';
 	reply_form += '<input type="hidden" name="email" value="<?php if (!empty($_COOKIE['email'])) echo $_COOKIE['email']; ?>">\n';
@@ -126,7 +139,13 @@ function hashover_reply(r, f) {
 
 ?>
 	reply_form += '<div class="hashover-inputs">\n';
-	reply_form += '<div class="hashover-avatar-image"><img width="<?php echo $this->setup->icon_size; ?>" height="<?php echo $this->setup->icon_size; ?>" src="/hashover/images/<?php echo $this->setup->image_format; ?>s/first-comment.<?php echo $this->setup->image_format; ?>" alt="#' + f + '"></div>';
+<?php
+
+	if ($this->setup->icon_mode != 'none') {
+		echo 'reply_form += \'', $first_cmt_image, '\'', PHP_EOL;
+	}
+
+?>
 
 	if (name_on) {
 		reply_form += '<div class="hashover-name-input">\n<input type="text" name="name" title="<?php echo $this->setup->text['name_tip']; ?>" value="<?php if (!empty($_COOKIE['name'])) echo $_COOKIE['name']; ?>" maxlength="30" placeholder="<?php echo $this->setup->text['name']; ?>">\n</div>\n';
@@ -235,7 +254,6 @@ function hashover_cancel_edit(f) {
 	document.getElementById('hashover-edit-' + f).innerHTML = '';
 	return false;
 }
-
 
 // Function to like a comment
 function hashover_like(a, c, f) {
@@ -378,6 +396,7 @@ function parse_template(object, count, sort, method, forpop) {
 	var permalink = object['permalink'];
 	var permatext = permalink.replace('_pop', '').slice(1).split('r').pop();
 	var cmtclass = '';
+	var avatar = '';
 
 	if (forpop == false) {
 		if (permalink.match('r') && (sort == false || method == 'ascending')) {
@@ -397,9 +416,7 @@ function parse_template(object, count, sort, method, forpop) {
 
 	// Setup avatar icon
 	if (object['avatar']) {
-		var avatar = '<img width="<?php echo $this->setup->icon_size; ?>" height="<?php echo $this->setup->icon_size; ?>" src="' + object['avatar'] + '" alt="#' + permatext + '">';
-	} else {
-		var avatar = '<a href="#' + permalink + '" title="Permalink">#' + permatext + '</a>';
+		avatar = '<span class="hashover-avatar"><?php echo $js_avatar; ?></span>';
 	}
 
 	if (!object['notice']) {
@@ -460,7 +477,7 @@ function parse_template(object, count, sort, method, forpop) {
 			reply_form = '',
 			edit_form = '',
 			hashover_footer_style = '',
-			hashover_reply_form_style = ''
+			hashover_reply_form_class = ''
 		;
 
 		var name_at = (object['name'].match(/^@.*?$/)) ? '@' : '';
@@ -492,9 +509,12 @@ function parse_template(object, count, sort, method, forpop) {
 	} else {
 		var notice_class = (object['notice_class']) ? ' ' + object['notice_class'] : '';
 
-		window['hashover'] += '\t\t<div class="hashover-header">\n';
-		window['hashover'] += '\t\t\t<span class="hashover-avatar">' + avatar + '</span>\n';
-		window['hashover'] += '\t\t</div>\n';
+		if (object['avatar']) {
+			window['hashover'] += '\t\t<div class="hashover-header">\n';
+			window['hashover'] += '\t\t\t<span class="hashover-avatar">' + avatar + '</span>\n';
+			window['hashover'] += '\t\t</div>\n';
+		}
+
 		window['hashover'] += '\t\t<div class="hashover-balloon">\n';
 		window['hashover'] += '\t\t\t<div id="hashover-content-' + permalink + '" class="hashover-content' + notice_class + '">\n';
 		window['hashover'] += '\t\t\t\t<span class="hashover-title">' + object['notice'] + '</span>\n';
@@ -729,10 +749,12 @@ hashover += '\t<div class="hashover-balloon">\n';
 hashover += '\t\t<div class="hashover-inputs">\n';
 <?php
 
-	if ($this->setup->uses_icons == 'yes') {
-		echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image">' . $form_avatar . '</div>');
-	} else {
-		echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image"><span>#' . $this->read_comments->cmt_count . '</span></div>');
+	if ($this->setup->icon_mode != 'none') {
+		if ($this->setup->icon_mode == 'image') {
+			echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image">' . $form_avatar . '</div>');
+		} else {
+			echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image"><span>#' . $this->read_comments->cmt_count . '</span></div>');
+		}
 	}
 
 	if (!empty($_COOKIE['hashover-login'])) {
@@ -767,12 +789,18 @@ if (password_on) {
 	hashover += '\t\t\t</div>\n';
 }
 
-<?php if ($this->setup->is_mobile) { ?>
+<?php
 
-hashover += '\t\t\t</div>\n\t\t\t<div class="hashover-inputs">\n';
-hashover += '\t\t\t\t<div class="hashover-avatar-image"></div>\n';
+	if ($this->setup->is_mobile) {
+		echo 'hashover += \'\t\t\t</div>\n\t\t\t<div class="hashover-inputs">\n\';', PHP_EOL;
 
-<?php } ?>
+		if ($this->setup->icon_mode != 'none') {
+			echo 'hashover += \'\t\t\t\t<div class="hashover-avatar-image"></div>\n\';', PHP_EOL;
+		}
+	}
+
+?>
+
 // Display email input tag if told to
 if (email_on) {
 	hashover += '\t\t\t<div class="hashover-email-input">\n';

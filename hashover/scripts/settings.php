@@ -40,7 +40,7 @@
 		public $shows_count_total	= 'yes';			// Whether to show reply count separately from total
 		public $timezone		= 'America/Los_Angeles';	// Timezone
 		public $uses_12h_time		= 'yes';			// Whether to use 12 hour time format, otherwise use 24 hour format
-		public $uses_icons		= 'yes';			// Whether comments have avatar icons (Gravatar)
+		public $icon_mode		= 'image';			// How to display avatar icons (either 'image', 'count' or 'none')
 		public $icon_size		= '45';				// Size of Gravatar icons in pixels
 		public $allows_images		= 'yes';			// Whether external image URLs wrapped in [img] tags are embedded
 		public $allows_dislikes		= 'no';				// Whether a "Dislike" link is display; allowing Reddit-style voting

@@ -1,3 +1,46 @@
+Changes by Jacob Barkdull 2015-03-21
+--------------------------------------------------------------------------------
+* hashover/scripts/settings.php
+
+	- Renamed public string variable $uses_icons to $icon_mode.
+
+	- $icon_mode now has three possible values
+
+		'image' - Displays an image avatar.
+		'count' - Displays a number relative to the comment parent.
+		'none'  - Displays no avatar at all.
+
+
+* hashover/themes/default/layout.html,
+  hashover/themes/modern/layout.html,
+  hashover/themes/1.0-ported/layout.html
+
+	- Moved HTML for avatar into javascript-mode.
+	- Removed unused "name" attribute from form tags.
+
+
+* hashover/scripts/javascript-mode.php,
+  hashover/scripts/php-mode.php,
+  hashover/scripts/displaycomments.php
+
+	- Changes to accommodate $uses_icons variable name change and new 
+	  'none' $icon_mode option. Wrap avatar in span tag.
+
+	- Added "Top of Thread" link back in PHP mode.
+
+	- Forms no longer displayed in popular comments.
+
+
+* hashover/scripts/writecomments.php
+
+	- Non-existent metadata no longer manipulated.
+
+
+* hashover/scripts/cookies.php
+
+	- Added default values for optional function parameters.
+
+
 Changes by Jacob Barkdull 2015-03-16
 --------------------------------------------------------------------------------
 * hashover/scripts/javascript-mode.php

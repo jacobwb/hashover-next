@@ -128,27 +128,32 @@
 			}
 
 			// Get avatar icons
-			if ($this->setup->uses_icons == 'yes') {
-				$avatar = $this->setup->root_dir . '/scripts/avatars.php?format=' . $this->setup->image_format . '&amp;size=' . $this->setup->icon_size;
+			if ($this->setup->icon_mode != 'none') {
+				if ($this->setup->icon_mode == 'image') {
+					$avatar = $this->setup->root_dir . '/scripts/avatars.php?format=' . $this->setup->image_format . '&amp;size=' . $this->setup->icon_size;
 
-				if (preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $comment['name'])) {
-					$avatar .= '&amp;username=' . $comment['name'];
-				} else {
-					if (preg_match('/(twitter.com\/[a-zA-Z0-9_@]{1,29}$)/i', $comment['website'])) {
-						$web_username = preg_replace('/(.*?twitter\.com)\/([a-zA-Z0-9_]{1,20}$)/i', '\\2', $comment['website']);
-						$avatar .= '&amp;username=@' . $web_username;
-					}
-				}
-
-				if (strpos($avatar, 'username=@') === false) {
-					if (!empty($comment['email'])) {
-						$avatar .= '&amp;email=' . md5(strtolower(trim($comment['email'])));
+					if (preg_match('/^@([a-zA-Z0-9_@]{1,29}$)/', $comment['name'])) {
+						$avatar .= '&amp;username=' . $comment['name'];
 					} else {
-						$avatar = $this->setup->root_dir . '/images/' . $this->setup->image_format . 's/avatar.' . $this->setup->image_format;
+						if (preg_match('/(twitter.com\/[a-zA-Z0-9_@]{1,29}$)/i', $comment['website'])) {
+							$web_username = preg_replace('/(.*?twitter\.com)\/([a-zA-Z0-9_]{1,20}$)/i', '\\2', $comment['website']);
+							$avatar .= '&amp;username=@' . $web_username;
+						}
 					}
-				}
 
-				$output['avatar'] =(string) $avatar;
+					if (strpos($avatar, 'username=@') === false) {
+						if (!empty($comment['email'])) {
+							$avatar .= '&amp;email=' . md5(strtolower(trim($comment['email'])));
+						} else {
+							$avatar = $this->setup->root_dir . '/images/' . $this->setup->image_format . 's/avatar.' . $this->setup->image_format;
+						}
+					}
+
+					$output['avatar'] =(string) $avatar;
+				} else {
+					$key_parts = explode('-', $key);
+					$output['avatar'] = '#' . end($key_parts);
+				}
 			}
 
 			// Get "Like" cookie vaue
