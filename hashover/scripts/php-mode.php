@@ -260,14 +260,16 @@
 					}
 
 					$return_form .= '<textarea rows="6" cols="62" name="comment" title="' . $this->setup->text['cmt_tip'] . '" placeholder="' . $this->setup->text['comment_form'] . '"></textarea>' . PHP_EOL;
-					$return_form .= '<label for="subscribe" title="' . $this->setup->text['subscribe_tip'] . '">' . PHP_EOL;
-					$return_form .= "\t" . '<input type="checkbox" checked="true" id="subscribe" name="subscribe"> ' . $this->setup->text['subscribe'] . PHP_EOL;
-					$return_form .= '</label>' . PHP_EOL;
-					$return_form .= '<input type="hidden" name="title" value="' . $this->setup->page_title . '">' . PHP_EOL;
-					$return_form .= '<input type="hidden" name="url" value="' . $this->setup->page_url . '">' . PHP_EOL;
-					$return_form .= '<input type="hidden" name="reply_to" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $this->template_replace['permalink']) . '">' . PHP_EOL;
-					$return_form .= '<input class="hashover-submit" type="submit" value="' . $this->setup->text['post_button'] . '">' . PHP_EOL;
-					$return_form .= '<a class="hashover-submit" href="' . $this->setup->parse_url['path'] . ((!empty($this->setup->ref_queries)) ? '?' . $this->setup->ref_queries : '') . '#' . $this->template_replace['permalink'] . '">' . $this->setup->text['cancel'] . '</a>' . PHP_EOL;
+					$return_form .= '<div class="hashover-form-buttons">' . PHP_EOL;
+					$return_form .= "\t" . '<label for="subscribe" title="' . $this->setup->text['subscribe_tip'] . '">' . PHP_EOL;
+					$return_form .= "\t\t" . '<input type="checkbox" checked="true" id="subscribe" name="subscribe"> ' . $this->setup->text['subscribe'] . PHP_EOL;
+					$return_form .= "\t" . '</label>' . PHP_EOL;
+					$return_form .= "\t" . '<input type="hidden" name="title" value="' . $this->setup->page_title . '">' . PHP_EOL;
+					$return_form .= "\t" . '<input type="hidden" name="url" value="' . $this->setup->page_url . '">' . PHP_EOL;
+					$return_form .= "\t" . '<input type="hidden" name="reply_to" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $this->template_replace['permalink']) . '">' . PHP_EOL;
+					$return_form .= "\t" . '<input class="hashover-submit" type="submit" value="' . $this->setup->text['post_button'] . '">' . PHP_EOL;
+					$return_form .= "\t" . '<a class="hashover-submit" href="' . $this->setup->parse_url['path'] . ((!empty($this->setup->ref_queries)) ? '?' . $this->setup->ref_queries : '') . '#' . $this->template_replace['permalink'] . '">' . $this->setup->text['cancel'] . '</a>' . PHP_EOL;
+					$return_form .= "\t" . '</div>' . PHP_EOL;
 					$return_form .= '</div>';
 				}
 
@@ -303,15 +305,17 @@
 
 					$return_form .= "\t" . '</div>' . PHP_EOL . '</div>' . PHP_EOL;
 					$return_form .= '<textarea rows="10" cols="62" name="comment" title="' . $this->setup->text['cmt_tip'] . '" placeholder="' . $this->setup->text['reply_form'] . '">' . $this->template_replace['comment'] . '</textarea>' . PHP_EOL;
-					$return_form .= '<label for="notify" title="' . $this->setup->text['subscribe_tip'] . '">' . PHP_EOL;
-					$return_form .= "\t" . '<input type="checkbox"' . (($this->notifications != 'no') ? ' checked="true"' : '') . ' id="notify" name="notify"> ' . $this->setup->text['subscribe'] . PHP_EOL;
-					$return_form .= '</label>' . PHP_EOL;
-					$return_form .= '<input type="hidden" name="title" value="' . $this->setup->page_title . '">' . PHP_EOL;
-					$return_form .= '<input type="hidden" name="url" value="' . $this->setup->page_url . '">' . PHP_EOL;
-					$return_form .= '<input type="hidden" name="cmtfile" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $this->template_replace['permalink']) . '">' . PHP_EOL;
-					$return_form .= '<input class="hashover-submit" type="submit" name="edit" value="' . $this->setup->text['save_edit'] . '">';
-					$return_form .= '<a class="hashover-submit" href="' . $this->setup->parse_url['path'] . ((!empty($this->setup->ref_queries)) ? '?' . $this->setup->ref_queries : '') . '#' . $this->template_replace['permalink'] . '">' . $this->setup->text['cancel'] . '</a>' . PHP_EOL;
-					$return_form .= '<input class="hashover-submit hashover-post-button" type="submit" name="delete" class="hashover-delete" value="' . $this->setup->text['delete'] . '">' . PHP_EOL;
+					$return_form .= '<div class="hashover-form-buttons">' . PHP_EOL;
+					$return_form .= "\t" . '<label for="notify" title="' . $this->setup->text['subscribe_tip'] . '">' . PHP_EOL;
+					$return_form .= "\t\t" . '<input type="checkbox"' . (($this->notifications != 'no') ? ' checked="true"' : '') . ' id="notify" name="notify"> ' . $this->setup->text['subscribe'] . PHP_EOL;
+					$return_form .= "\t" . '</label>' . PHP_EOL;
+					$return_form .= "\t" . '<input type="hidden" name="title" value="' . $this->setup->page_title . '">' . PHP_EOL;
+					$return_form .= "\t" . '<input type="hidden" name="url" value="' . $this->setup->page_url . '">' . PHP_EOL;
+					$return_form .= "\t" . '<input type="hidden" name="cmtfile" value="' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $this->template_replace['permalink']) . '">' . PHP_EOL;
+					$return_form .= "\t" . '<input class="hashover-submit" type="submit" name="edit" value="' . $this->setup->text['save_edit'] . '">';
+					$return_form .= "\t" . '<a class="hashover-submit" href="' . $this->setup->parse_url['path'] . ((!empty($this->setup->ref_queries)) ? '?' . $this->setup->ref_queries : '') . '#' . $this->template_replace['permalink'] . '">' . $this->setup->text['cancel'] . '</a>' . PHP_EOL;
+					$return_form .= "\t" . '<input class="hashover-submit hashover-post-button" type="submit" name="delete" class="hashover-delete" value="' . $this->setup->text['delete'] . '">' . PHP_EOL;
+					$return_form .= '</div>' . PHP_EOL;
 				}
 
 				return str_replace(PHP_EOL, PHP_EOL . "\t\t\t\t\t", $return_form) . PHP_EOL . "\t\t\t\t";
@@ -424,15 +428,17 @@
 	echo "\t\t\t", '<input type="hidden" name="title" value="', $this->setup->page_title, '">', PHP_EOL;
 	echo "\t\t\t", '<input type="hidden" name="url" value="', $this->setup->page_url, '">', PHP_EOL;
 	if (isset($_COOKIE['replied'])) echo "\t\t\t", '<input type="hidden" name="reply_to" value="', $_COOKIE['replied'], '">', PHP_EOL;
-	echo "\t\t\t", '<label for="hashover-subscribe"><input id="hashover-subscribe" type="checkbox" name="subscribe" checked="true"> ' . $this->setup->text['subscribe'] . '</label>', PHP_EOL;
-	echo "\t\t\t", '<input class="hashover-submit hashover-post-button" type="submit" value="', $this->setup->text['post_button'], '">', PHP_EOL;
+	echo "\t\t\t", '<div class="hashover-main-buttons">';
+	echo "\t\t\t\t", '<label for="hashover-subscribe"><input id="hashover-subscribe" type="checkbox" name="subscribe" checked="true"> ' . $this->setup->text['subscribe'] . '</label>', PHP_EOL;
+	echo "\t\t\t\t", '<input class="hashover-submit hashover-post-button" type="submit" value="', $this->setup->text['post_button'], '">', PHP_EOL;
 
 	if (empty($_COOKIE['hashover-login'])) {
-		echo "\t\t\t", '<input class="hashover-submit hashover-login" type="submit" name="login" title="' . $this->setup->text['login_tip'] . '" value="' . $this->setup->text['login'] . '">', PHP_EOL;
+		echo "\t\t\t\t", '<input class="hashover-submit hashover-login" type="submit" name="login" title="' . $this->setup->text['login_tip'] . '" value="' . $this->setup->text['login'] . '">', PHP_EOL;
 	} else {
-		echo "\t\t\t", '<input class="hashover-submit hashover-login" type="submit" name="logout" title="' . $this->setup->text['logout'] . '" value="' . $this->setup->text['logout'] . '">', PHP_EOL;
+		echo "\t\t\t\t", '<input class="hashover-submit hashover-login" type="submit" name="logout" title="' . $this->setup->text['logout'] . '" value="' . $this->setup->text['logout'] . '">', PHP_EOL;
 	}
 
+	echo "\t\t\t", '</div>', PHP_EOL;
 	echo "\t\t", '</div>', PHP_EOL;
 	echo "\t", '</form>', PHP_EOL, PHP_EOL;
 
