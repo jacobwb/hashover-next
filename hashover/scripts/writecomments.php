@@ -87,50 +87,47 @@
 			}
 
 			// Set password cookie
-			if (!empty($_POST['password'])) {
-				if (isset($_POST['edit'])) {
-					if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
-						$this->cookies->set('password', str_replace('"', '&quot;', $_POST['password']));
-					}
-				} else {
-					if (!isset($_POST['delete'])) {
-						$this->cookies->set('password', str_replace('"', '&quot;', $_POST['password']));
-					}
+			if (isset($_POST['edit'])) {
+				if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
+					$this->cookies->set('password', str_replace('"', '&quot;', $_POST['password']));
+				}
+			} else {
+				if (!isset($_POST['delete'])) {
+					$this->cookies->set('password', str_replace('"', '&quot;', $_POST['password']));
 				}
 			}
 
-			// Clean up email, set email cookie
-			if (isset($_POST['email']) and trim($_POST['email'], ' ') != '') {
+			// Clean up email
+			if (!empty($_POST['email']) and trim($_POST['email'], ' ') != '') {
 				$this->email = str_replace($this->search, '', $_POST['email']);
 				$this->header = (trim($_POST['email'], ' ') != '') ? "From: $this->email\r\nReply-To: $this->email" : $this->header;
+			}
 
-				if (isset($_POST['edit'])) {
-					if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
-						$this->cookies->set('email', $this->email);
-					}
-				} else {
-					if (!isset($_POST['delete'])) {
-						$this->cookies->set('email', $this->email);
-					}
+			// Set email cookie
+			if (isset($_POST['edit'])) {
+				if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
+					$this->cookies->set('email', $this->email);
+				}
+			} else {
+				if (!isset($_POST['delete'])) {
+					$this->cookies->set('email', $this->email);
 				}
 			}
 
-			// Clean up web address, set website cookie
-			if (isset($_POST['website'])) {
+			// Clean up web address
+			if (!empty($_POST['website'])) {
 				$this->website = str_replace($this->search, $this->replace, trim($_POST['website']));
+				$this->website = (!preg_match('/htt[p|ps]:\/\//i', $this->website)) ? 'http://' . $this->website : $this->website;
+			}
 
-				if (!empty($this->website)) {
-					$this->website = (!preg_match('/htt[p|ps]:\/\//i', $this->website)) ? 'http://' . $this->website : $this->website;
+			// Set website cookie
+			if (isset($_POST['edit'])) {
+				if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
+					$this->cookies->set('website', $this->website);
 				}
-
-				if (isset($_POST['edit'])) {
-					if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
-						$this->cookies->set('website', $this->website);
-					}
-				} else {
-					if (!isset($_POST['delete'])) {
-						$this->cookies->set('website', $this->website);
-					}
+			} else {
+				if (!isset($_POST['delete'])) {
+					$this->cookies->set('website', $this->website);
 				}
 			}
 		}
