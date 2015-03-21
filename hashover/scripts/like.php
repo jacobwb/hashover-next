@@ -52,43 +52,44 @@
 	if (isset($_SERVER['HTTP_REFERER']) and !empty($_GET['like'])) {
 		$setup = new Setup('api');
 		$read_comment = new ReadComments($setup);
-		$like_cookie = md5($_SERVER['SERVER_NAME'] . $_GET['like']);
+		$cookies = new Cookies($setup->domain, $setup->expire, $setup->secure_cookies);
+		$like_cookie = md5($setup->domain . $_GET['like']);
 		$file = './pages/' . str_replace('../', '', $_GET['like']) . '.' . $setup->data_format;
 
 		if (file_exists($file)) {
-			$like = $read_comment->data->read($file, true);
+			$comment = $read_comment->data->read($file, true);
 		} else {
 			exit('File: "' . $file . '" non-existent!');
 		}
 
-		if ($like == false) {
+		if ($comment == false) {
 			exit('Failed to read file: "' . $file . '"');
 		}
 
-		if (isset($_COOKIE['email']) and $setup->encryption->encrypt($_COOKIE['email']) === $like['email']) {
+		if (isset($_COOKIE['email']) and $setup->encryption->encrypt($_COOKIE['email']) === $comment['email']) {
 			exit('Practice altruism!');
 		}
 
 		if (!empty($_GET['action'])) {
 			if ($_GET['action'] == 'like') {
 				if (empty($_COOKIE[$like_cookie])) {
-					setcookie($like_cookie, 'liked', mktime(0, 0, 0, 11, 26, 3468), '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
-					$like['likes'] = $like['likes'] + 1;
+					$cookies->set($like_cookie, 'liked', mktime(0, 0, 0, 11, 26, 3468));
+					$comment['likes'] = $comment['likes'] + 1;
 				} else {
 					if ($_COOKIE[$like_cookie] == 'liked') {
-						setcookie($like_cookie, 'unliked', 0, '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
+						$cookies->expire_cookie($like_cookie);
 
-						if ($like['likes'] > 0) {
-							$like['likes'] = $like['likes'] - 1;
+						if ($comment['likes'] > 0) {
+							$comment['likes'] = $comment['likes'] - 1;
 						}
 					}
 
 					if ($_COOKIE[$like_cookie] == 'disliked') {
-						setcookie($like_cookie, 'liked', mktime(0, 0, 0, 11, 26, 3468), '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
-						$like['likes'] = $like['likes'] + 1;
+						$cookies->set($like_cookie, 'liked', mktime(0, 0, 0, 11, 26, 3468));
+						$comment['likes'] = $comment['likes'] + 1;
 
-						if ($like['dislikes'] > 0) {
-							$like['dislikes'] = $like['dislikes'] - 1;
+						if ($comment['dislikes'] > 0) {
+							$comment['dislikes'] = $comment['dislikes'] - 1;
 						}
 					}
 				}
@@ -96,31 +97,31 @@
 
 			if ($_GET['action'] == 'dislike') {
 				if (empty($_COOKIE[$like_cookie])) {
-					setcookie($like_cookie, 'disliked', mktime(0, 0, 0, 11, 26, 3468), '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
-					$like['dislikes'] = $like['dislikes'] + 1;
+					$cookies->set($like_cookie, 'disliked', mktime(0, 0, 0, 11, 26, 3468));
+					$comment['dislikes'] = $comment['dislikes'] + 1;
 				} else {
 					if ($_COOKIE[$like_cookie] == 'disliked') {
-						setcookie($like_cookie, 'undisliked', 0, '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
+						$cookies->expire_cookie($like_cookie);
 
-						if ($like['dislikes'] > 0) {
-							$like['dislikes'] = $like['dislikes'] - 1;
+						if ($comment['dislikes'] > 0) {
+							$comment['dislikes'] = $comment['dislikes'] - 1;
 						}
 					}
 
 					if ($_COOKIE[$like_cookie] == 'liked') {
-						setcookie($like_cookie, 'disliked', mktime(0, 0, 0, 11, 26, 3468), '/', str_replace('www.', '', $_SERVER['SERVER_NAME']));
-						$like['dislikes'] = $like['dislikes'] + 1;
+						$cookies->set($like_cookie, 'disliked', mktime(0, 0, 0, 11, 26, 3468));
+						$comment['dislikes'] = $comment['dislikes'] + 1;
 
-						if ($like['likes'] > 0) {
-							$like['likes'] = $like['likes'] - 1;
+						if ($comment['likes'] > 0) {
+							$comment['likes'] = $comment['likes'] - 1;
 						}
 					}
 				}
 			}
 
 			if ($_GET['action'] == 'like' or $_GET['action'] == 'dislike') {
-				if ($read_comment->data->save($like, $file, true, true)) {
-					echo $like['likes'], ' likes, ', $like['dislikes'], ' dislikes';
+				if ($read_comment->data->save($comment, $file, true, true)) {
+					echo $comment['likes'], ' likes, ', $comment['dislikes'], ' dislikes';
 				}
 			}
 		}
