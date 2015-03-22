@@ -182,7 +182,7 @@
 			$this->parse_url = parse_url($this->page_url);
 
 			// Set initial path
-			if ($this->parse_url['path'] == '/') {
+			if (empty($this->parse_url['path']) or $this->parse_url['path'] == '/') {
 				$this->ref_path = 'index';
 			} else {
 				// Remove starting slash and replace reserved characters with dashes
