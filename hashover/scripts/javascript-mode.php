@@ -1022,12 +1022,22 @@ for (var i = 0, il = imgtags.length; i < il; i++) {
 
 // Display reply form when the "hashover_reply" URL query is set
 if (href.match(/hashover_reply=/)) {
-	var comment = href.replace(/(.*?hashover_reply=)(c[1-9r_pop]+)(.*)/, '$2');
-	hashover_reply(comment, comment.replace('c', '').replace('r', '-'));
+	var comment = href.replace(/(.*?hashover_reply=c)([0-9r_pop]+)(.*)/, '$2');
+	hashover_reply('c' + comment, comment.replace('r', '-'));
 }
 
 // Display edit form when the "hashover_edit" URL query is set
 if (href.match(/hashover_edit=/)) {
-	var comment = href.replace(/(.*?hashover_edit=)(c[1-9r_pop]+)(.*)/, '$2');
-	hashover_edit(comment, comment.replace('c', '').replace('r', '-'), 1);
+	var comment = href.replace(/(.*?hashover_edit=c)([0-9r_pop]+)(.*)/, '$2');
+	hashover_edit('c' + comment, comment.replace('r', '-'), 1);
+}
+
+// Workaround for stupid Chrome bug
+window.onload = function() {
+	var url_hash = this.location.hash;
+
+	if (url_hash != '') {
+		var permalink_anchor = document.getElementById(url_hash.slice(1));
+		permalink_anchor.scrollIntoView(true);
+	}
 }
