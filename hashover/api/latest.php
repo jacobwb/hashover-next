@@ -70,7 +70,7 @@
 		for ($i = 0, $il = count($metadata['latest']); $i < $il; $i++) {
 			$tryfile = $file . $metadata['latest'][$i] . '.' . $setup->data_format;
 
-			if (file_exists($tryfile)) {
+			if (file_exists($tryfile) and is_readable($tryfile)) {
 				$latest[basename($metadata['latest'][$i])] = $tryfile;
 			}
 		}
