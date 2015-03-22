@@ -44,10 +44,16 @@ Changes by Jacob Barkdull 2015-03-21
 	- Changes to accommodate `$uses_icons` variable name change and new 
 	  'none' `$icon_mode` option. Wrap avatar in span tag.
 
+	- Added workaround for Chrome bug.
+	
+		Anchor "jump" tags aren't followed if the linked element isn't 
+		on the page before the page begins loading.
+
 	- Added "Top of Thread" link back in PHP mode.
 	- Forms no longer displayed in popular comments.
 	- Improved how "hashover" DIV tag is appended to page HTML.
 	- Fixed "dislikes" not being appended to like link class attribute.
+	- Fixed form anchors with zero(s) in them not opening the forms.
 
 
 * hashover/scripts/writecomments.php
