@@ -239,12 +239,12 @@
 
 				// Define "Reply" link with appropriate tooltip
 				if ($user_is_logged_in) {
-					$email_indicator = $this->setup->text['op_cmt_note'] . '" class="hashover-no-email"';
+					$email_indicator = $this->setup->text['op_cmt_note'] . '" class="hashover-no-email hashover-comment-reply"';
 				} else {
 					if (!empty($comment['email']) and $comment['notifications'] == 'yes') {
-						$email_indicator = $comment['name'] . ' ' . $this->setup->text['subbed_note'] . '" class="hashover-has-email"';
+						$email_indicator = $comment['name'] . ' ' . $this->setup->text['subbed_note'] . '" class="hashover-has-email hashover-comment-reply"';
 					} else{
-						$email_indicator = $comment['name'] . ' ' . $this->setup->text['unsubbed_note'] . '" class="hashover-no-email"';
+						$email_indicator = $comment['name'] . ' ' . $this->setup->text['unsubbed_note'] . '" class="hashover-no-email hashover-comment-reply"';
 					}
 				}
 
