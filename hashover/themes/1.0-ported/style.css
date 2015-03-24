@@ -687,7 +687,7 @@ Copyright (C) 2014 Jacob Barkdull
 }
 
 #hashover .hashover-comment.hashover-first .hashover-title,
-#hashover .hashover-balloon.hashover-deleted .hashover-title {
+#hashover .hashover-comment.hashover-deleted .hashover-title {
 	font-size: 16px;
 	display: inline-block;
 	position: relative;
@@ -696,7 +696,7 @@ Copyright (C) 2014 Jacob Barkdull
 	vertical-align: top;
 }
 
-#hashover .hashover-balloon.hashover-deleted .hashover-title {
+#hashover .hashover-comment.hashover-deleted .hashover-title {
 	color: #FF0000;
 }
 
