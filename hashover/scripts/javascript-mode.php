@@ -429,6 +429,10 @@ function parse_template(object, count, sort, method, forpop) {
 		}
 	}
 
+	if (object['notice_class']) {
+		cmtclass += ' ' + object['notice_class'];
+	}
+
 	window['hashover'] += '\t<div id="' + permalink + '" class="hashover-comment' + cmtclass + '">\n';
 
 	// Setup avatar icon
@@ -524,8 +528,6 @@ function parse_template(object, count, sort, method, forpop) {
 		}
 ?>
 	} else {
-		var notice_class = (object['notice_class']) ? ' ' + object['notice_class'] : '';
-
 		if (object['avatar']) {
 			window['hashover'] += '\t\t<div class="hashover-header">\n';
 			window['hashover'] += '\t\t\t' + avatar + '\n';
@@ -533,7 +535,7 @@ function parse_template(object, count, sort, method, forpop) {
 		}
 
 		window['hashover'] += '\t\t<div class="hashover-balloon">\n';
-		window['hashover'] += '\t\t\t<div id="hashover-content-' + permalink + '" class="hashover-content' + notice_class + '">\n';
+		window['hashover'] += '\t\t\t<div id="hashover-content-' + permalink + '" class="hashover-content">\n';
 		window['hashover'] += '\t\t\t\t<span class="hashover-title">' + object['notice'] + '</span>\n';
 		window['hashover'] += '\t\t\t</div>\n';
 		window['hashover'] += '\t\t</div>\n';
