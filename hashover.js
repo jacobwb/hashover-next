@@ -43,11 +43,12 @@
 			var query = parts[0];
 			var value = parts[1];
 
-			if (query == 'api') {
+			if (query == 'api' && value != null) {
 				script_src = '/api/' + value + '.php';
 				api = true;
 			} else {
-				script_queries += '&' + query + '=' + value;
+				script_queries += '&' + query;
+				script_queries += (value) ? '=' + value : '';
 			}
 		}
 	}
