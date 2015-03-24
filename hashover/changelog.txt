@@ -1,3 +1,11 @@
+Changes by Jacob Barkdull 2015-03-24
+--------------------------------------------------------------------------------
+* hashover.js
+
+	- Improved URL query parsing.
+	- API scripts no longer loaded asynchronously.
+
+
 Changes by Jacob Barkdull 2015-03-21
 --------------------------------------------------------------------------------
 * hashover.js
