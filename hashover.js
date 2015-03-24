@@ -7,6 +7,7 @@
 	var location = window.location.href.split(window.location.hash || '#');
 	var script_src = '/hashover.php';
 	var script_queries = 'url=' + encodeURIComponent(location[0]);
+	var api = false;
 
 	// Set page URL to canonical link value if available
 	if (document.querySelector) {
@@ -39,11 +40,12 @@
 		// Add all query strings to script source
 		for (var q = 0, ql = this_queries.length; q < ql; q++) {
 			var parts = this_queries[q].split('=');
-			var query = parts.shift();
-			var value = parts.join('=');
+			var query = parts[0];
+			var value = parts[1];
 
 			if (query == 'api') {
 				script_src = '/api/' + value + '.php';
+				api = true;
 			} else {
 				script_queries += '&' + query + '=' + value;
 			}
@@ -60,7 +62,12 @@
 	// Append HashOver JavaScript tag to the page head/body
 	var script = document.createElement('script');
 	script.type = 'text/javascript';
-	script.async = true;
 	script.src = '/hashover' + script_src + '?' + script_queries;
-	(head || body).appendChild(script);
+
+	if (api) {
+		this_script.parentNode.appendChild(script);
+	} else {
+		script.async = true;
+		(head || body).appendChild(script);
+	}
 })();
