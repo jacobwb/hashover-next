@@ -6,6 +6,14 @@ Changes by Jacob Barkdull 2015-03-24
 	- API scripts no longer loaded asynchronously.
 
 
+* hashover/scripts/javascript-mode.php,
+  hashover/themes/default/style.css,
+  hashover/themes/1.0-ported/style.css
+
+	- Moved "hashover-first" and "hashover-deleted" CSS classes into 
+	  "hashover-comment" element class attribute.
+
+
 Changes by Jacob Barkdull 2015-03-21
 --------------------------------------------------------------------------------
 * hashover.js
