@@ -119,6 +119,10 @@ if (hashover_div == null) {
 	this_script.parentNode.insertBefore(hashover_div, this_script);
 }
 
+if (document.getElementById('comments') == null) {
+	hashover += '<span id="comments"></span>';
+}
+
 <?php if ($this->read_comments->total_count - 1 != 0) { ?>
 // Put number of comments into "hashover-cmtcount" identified HTML element
 if (document.getElementById('hashover-cmtcount') != null) {
@@ -730,10 +734,6 @@ function show_cmts(element) {
 }
 
 <?php } ?>
-if (document.getElementById('comments') == null) {
-	hashover += '<span id="comments"></span>';
-}
-
 <?php
 
 	echo $this->setup->escape_output('<span class="hashover-title hashover-dashed-title">' . $js_title . '</span>\n');
