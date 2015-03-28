@@ -738,7 +738,7 @@ function show_cmts(element) {
 <?php } ?>
 <?php
 
-	echo $this->setup->escape_output('<span class="hashover-title hashover-dashed-title">' . $js_title . '</span>\n');
+	echo $this->setup->escape_output('<span class="hashover-title hashover-main-title hashover-dashed-title">' . $js_title . '</span>\n');
 
 	if (!empty($_COOKIE['message'])) {
 		echo $this->setup->escape_output('<span id="hashover-message" class="hashover-title">' . $_COOKIE['message'] . '</span>\n');
