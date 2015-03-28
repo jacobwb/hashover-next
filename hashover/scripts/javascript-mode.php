@@ -766,9 +766,9 @@ hashover += '\t\t<div class="hashover-inputs">\n';
 		echo 'hashover += \'\t\t\t<div>\n\';', PHP_EOL;
 
 		if (!empty($_COOKIE['website'])) {
-			echo $this->setup->escape_output('\t\t\t\t<a class="hashover-name" href="' . $_COOKIE['website'] . '" target="_blank">' . $name . '</a>\n');
+			echo $this->setup->escape_output('\t\t\t\t<a class="hashover-name hashover-top-name" href="' . $_COOKIE['website'] . '" target="_blank">' . $name . '</a>\n');
 		} else {
-			echo $this->setup->escape_output('\t\t\t\t<span class="hashover-name">' . $name . '</span>\n');
+			echo $this->setup->escape_output('\t\t\t\t<span class="hashover-name hashover-top-name">' . $name . '</span>\n');
 		}
 
 		echo 'hashover += \'\t\t\t</div>\n\';', PHP_EOL;
