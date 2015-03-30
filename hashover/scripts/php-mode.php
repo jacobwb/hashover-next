@@ -335,7 +335,7 @@
 
 <div id="hashover" class="<?php echo $this->setup->image_format; ?>">
 	<span id="comments"></span>
-	<div class="hashover-dashed-title hashover-title">
+	<div class="hashover-dashed-title hashover-main-title hashover-title">
 		<?php echo $php_title, PHP_EOL; ?>
 	</div>
 <?php
@@ -365,9 +365,9 @@
 		echo "\t\t\t\t", '<div>', PHP_EOL;
 
 		if (!empty($_COOKIE['website'])) {
-			echo "\t\t\t\t\t", '<a class="hashover-name" href="', $_COOKIE['website'], '" target="_blank">', $_COOKIE['name'], '</a>', PHP_EOL;
+			echo "\t\t\t\t\t", '<a class="hashover-name hashover-top-name" href="', $_COOKIE['website'], '" target="_blank">', $_COOKIE['name'], '</a>', PHP_EOL;
 		} else {
-			echo "\t\t\t\t\t", '<span class="hashover-name">', $_COOKIE['name'], '</span>', PHP_EOL;
+			echo "\t\t\t\t\t", '<span class="hashover-name hashover-top-name">', $_COOKIE['name'], '</span>', PHP_EOL;
 		}
 
 		echo "\t\t\t\t", '</div>', PHP_EOL;
