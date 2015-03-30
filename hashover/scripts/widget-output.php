@@ -42,7 +42,9 @@ function parse_template(object, count, sort, method) {
 	var permalink = object['permalink'];
 	var cmtclass = (permalink.match('r') && (sort == false || method == 'ascending')) ? ' ' + 'hashover-reply' : '';
 
-	window[variable] += '\t<a name="' + permalink + '"></a>\n';
+	if (object['avatar']) {
+		window[variable] += '\t<a name="' + permalink + '"></a>\n'; 
+	}
 	window[variable] += '\t<div id="' + permalink + '" class="hashover-comment' + cmtclass + '">\n';
 
 	if (!object['deletion_notice']) {
