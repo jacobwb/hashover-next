@@ -186,12 +186,12 @@ function hashover_reply(r, f) {
 <?php } ?>
 	reply_form += '<div id="hashover-message-' + r + '" class="hashover-message"></div>\n';
 	reply_form += '<textarea rows="5" cols="62" name="comment" title="<?php echo $this->setup->text['cmt_tip']; ?>" placeholder="<?php echo $this->setup->text['reply_form']; ?>"></textarea>\n';
+	reply_form += '<div class="hashover-form-buttons">\n';
 <?php
 
 	if (empty($_COOKIE['hashover-login']) or !empty($_COOKIE['email'])) {
 
 ?>
-	reply_form += '<div class="hashover-form-buttons">\n';
 	reply_form += '<label for="subscribe-' + r + '" title="<?php echo $this->setup->text['subscribe_tip']; ?>">\n';
 	reply_form += '<input type="checkbox" checked="true" id="subscribe-' + r + '" name="subscribe"> <?php echo $this->setup->text['subscribe']; ?>\n';
 	reply_form += '</label>\n';
