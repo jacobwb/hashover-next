@@ -66,7 +66,7 @@ HashOver [version 1.0](https://github.com/jacobwb/hashover) consists of code wri
 		
 This means the possibility of new features in version 2.0 is next to null, and contributions via GitHub and/or e-mail that add new features will be rejected, at least for the time being. Improvements to existing functionality and aesthetics will be accepted. New features will be accepted and available in version 2.x releases.
 
-<b>Contributing:</b>
+Contributing
 ---
 When sending a "Pull Request", committing code, or otherwise sending, submitting, or transmitting code in any other way, please assign your contribution's copyright to "Jacob Barkdull", and place a GNU Affero General Public License or any compatible license notice at the top of the code, if one isn't already present. This gives me necessary rights to distribute your contribution in HashOver under the GNU Affero General Public License.
 
