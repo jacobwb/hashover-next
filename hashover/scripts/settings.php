@@ -64,6 +64,7 @@
 		public $enable_api		= 'yes';			// API: 'yes' = fully-enabled, 'no' = fully disabled, or array of modes
 		public $secure_cookies		= 'no';				// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 		public $latest_num		= 10;				// Number of comments to save as latest comments
+		public $latest_trimwidth	= 100;				// Number of characters to trim latest comments to, 0 for no trim
 		public $allows_user_replies	= 'no';				// Whether given e-mails are sent as reply-to address to users
 		public $noreply_email		= 'noreply@example.com';	// E-mail used when no e-mail is given
 
