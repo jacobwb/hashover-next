@@ -57,6 +57,7 @@
 
 	$latest = array();
 	$hashover = array();
+	$output_key = 0;
 
 	if (!empty($_GET['global']) and $_GET['global'] == 'yes') {
 		$file = './pages/';
@@ -77,22 +78,32 @@
 
 		if (!empty($_GET['global']) and $_GET['global'] == 'yes') {
 			foreach ($latest as $key => $comment) {
-				static $output_key = 0;
-
 				if (empty($metadata_files[dirname($comment)])) {
 					$metadata_files[dirname($comment)] = json_decode(file_get_contents(dirname($comment) . '/.metadata'), true);
 				}
 
-				$hashover[$output_key] = $display_comments->parse($read_comments->data->read($comment, true), $key, false);
+				$comment_data = $read_comments->data->read($comment, true);
+
+				if ($setup->latest_trimwidth > 0) {
+					if (mb_strwidth($comment_data['body']) > $setup->latest_trimwidth) {
+						$comment_data['body'] = mb_strimwidth($comment_data['body'], 0, $setup->latest_trimwidth, '...');
+					}
+				}
+
+				$hashover[$output_key] = $display_comments->parse($comment_data, $key, false);
 				$hashover[$output_key]['thread_title'] = $metadata_files[dirname($comment)]['title'];
 				$hashover[$output_key]['thread_url'] = $metadata_files[dirname($comment)]['url'];
 				$output_key++;
 			}
 		} else {
 			foreach ($read_comments->data->query($latest, false) as $key => $comment) {
-				static $output_key = 0;
+				$comment_data = $read_comments->data->read($comment);
 
-				$hashover[$output_key] = $display_comments->parse($read_comments->data->read($comment), $key, false);
+				if ($setup->latest_trimwidth > 0) {
+					$comment_data['body'] = rtrim(mb_strimwidth($comment_data['body'], 0, $setup->latest_trimwidth, '...'));
+				}
+
+				$hashover[$output_key] = $display_comments->parse($comment_data, $key, false);
 				$hashover[$output_key]['thread_title'] = $setup->metadata['title'];
 				$hashover[$output_key]['thread_url'] = $setup->metadata['url'];
 				$output_key++;
