@@ -1,9 +1,9 @@
 HashOver 2.0 (development)
 ========
 
-<b>HashOver</b> is a PHP comment system intended as a replacement for services like Disqus. HashOver is free and open source software, under the <a href="http://www.gnu.org/licenses/agpl.html" target="_blank">GNU Affero General Public License</a>. HashOver adds a "comment section" to any website, by placing a few simple lines of JavaScript or PHP to the source code of any webpage. HashOver is a self-hosted system and allows completely anonymous comments to be posted, the only required information is the comment itself.
+**HashOver** is a PHP comment system intended as a replacement for services like Disqus. HashOver is free and open source software, under the [GNU Affero General Public License](http://www.gnu.org/licenses/agpl.html). HashOver adds a "comment section" to any website, by placing a few simple lines of JavaScript or PHP to the source code of any webpage. HashOver is a self-hosted system and allows completely anonymous comments to be posted, the only required information is the comment itself.
 
-<b>Notable Features:</b>
+Notable Features
 ---
 <table cellpadding="2" cellspacing="2" width="100%">
 	<tbody>
@@ -44,26 +44,25 @@ HashOver 2.0 (development)
 	</tbody>
 </table><br>
 
-<b>Information and Documentation:</b>
+Information and Documentation
 ---
 http://tildehash.com/?page=hashover
 
-<b>Focus of this release:</b>
+Focus of this release
 ---
-HashOver <a href="https://github.com/jacobwb/hashover" target="_blank">version 1.0</a> consists of code written by <a href="http://tildehash.com/?page=author" target="blank">one person</a> over the course of five years, come March the 29th 2014. Moreover, HashOver was my first serious use of JavaScript and my first PHP project of such complexity. Those two facts should trigger obvious concerns about HashOver's performance, efficiency, and security. With that in mind, version 2.0 will be the next release, skipping 1.x releases all together, and will focus on improving nothing but the following areas.
-<ul>
-	<li>Security</li>
-	<li>Performance</li>
-	<li>Code efficiency</li>
-	<li>Deployment</li>
-	<li>Data storage format [<a href="https://github.com/jacobwb/hashover-next/issues/32">#32</a>]</li>
-	<li>Backwards and forwards compatibility</li>
-	<li>Operating system support</li>
-	<li>Aesthetics and graphics [<a href="https://github.com/jacobwb/hashover-next/issues/4">#4</a>] [<a href="https://github.com/jacobwb/hashover-next/issues/11">#11</a>]</li>
-	<li>Graphic scalability on (<i style="font-family: monospace;">X<sup style="font-size: 10px;">i</sup></i>)HDPI displays [<a href="https://github.com/jacobwb/hashover-next/issues/4">#4</a>] [<a href="https://github.com/jacobwb/hashover-next/issues/11">#11</a>]</li>
-	<li>Code readability</li>
-	<li>Bug fixes</li>
-</ul>
+HashOver [version 1.0](https://github.com/jacobwb/hashover) consists of code written by [one person](http://tildehash.com/?page=author) over the course of five years, come March the 29th 2014. Moreover, HashOver was my first serious use of JavaScript and my first PHP project of such complexity. Those two facts should trigger obvious concerns about HashOver's performance, efficiency, and security. With that in mind, version 2.0 will be the next release, skipping 1.x releases all together, and will focus on improving nothing but the following areas.
+
+- Security
+- Performance [[#61](https://github.com/jacobwb/hashover-next/issues/61)]
+- Code efficiency [[#62](https://github.com/jacobwb/hashover-next/issues/62)]
+- Deployment
+- Data storage format [[#32](https://github.com/jacobwb/hashover-next/issues/32)]
+- Backwards and forwards compatibility
+- Operating system support
+- Aesthetics and graphics [[#4](https://github.com/jacobwb/hashover-next/issues/4)] [[#11](https://github.com/jacobwb/hashover-next/issues/11)]
+- Graphic scalability on (*x<sup>i</sup>*)HDPI displays [[#4](https://github.com/jacobwb/hashover-next/issues/4)] [[#11](https://github.com/jacobwb/hashover-next/issues/11)]
+- Code readability [[#62](https://github.com/jacobwb/hashover-next/issues/62)] [[#63](https://github.com/jacobwb/hashover-next/issues/63)]
+- Bug fixes
 		
 This means the possibility of new features in version 2.0 is next to null, and contributions via GitHub and/or e-mail that add new features will be rejected, at least for the time being. Improvements to existing functionality and aesthetics will be accepted. New features will be accepted and available in version 2.x releases.
 
