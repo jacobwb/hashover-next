@@ -4,7 +4,12 @@ Changes by Jacob Barkdull 2015-03-31
 
 	- Each script tag now has an ID of "hashover-script-<script number>"
 	- The current HTMLScriptElement length is now passed to `hashover.php`.
-	- Added some comments.
+	- Added some code comments.
+
+
+* hashover/api/latest.php
+
+	- Added functionality to trim comments to specific length.
 
 
 * hashover/api/count_link.php
@@ -24,6 +29,11 @@ Changes by Jacob Barkdull 2015-03-31
 * hashover/scripts/php-mode.php
 
 	- Replaced some JavaScript `.innerHTML` statements with `.textContent`.
+
+
+* hashover/scripts/settings.php
+
+	- Added trimwidth setting value for latest comments.
 
 
 * hashover/scripts/widget-output.php
@@ -1468,4 +1478,3 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
-
