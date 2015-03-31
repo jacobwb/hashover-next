@@ -75,6 +75,8 @@
 	$icon_size = (isset($_GET['size'])) ? (($format == 'svg') ? 256 : $_GET['size']) : '45';
 	$http = !empty($_SERVER['HTTPS']) ? 'https' : 'http';
 	$avatar = $http . '://' . $_SERVER['HTTP_HOST'] . '/hashover/images/' . $format . 's/avatar.' . $format;
+	include('./settings.php');
+	$settings = new Settings();
 
 	// Attempt to get Twitter avatar image
 	if (!empty($_GET['username'])) {
@@ -90,7 +92,17 @@
 	} else {
 		// Attempt to get Gravatar avatar image
 		if (!empty($_GET['email'])) {
-			$gravatar = $http . '://gravatar.com/avatar/' . $_GET['email'] . '.png?d=' . $avatar . '&s=' . $icon_size . '&r=pg';
+			$gravatar = $http . '://gravatar.com/avatar/' . $_GET['email'] . '.png?r=pg';
+			$gravatar .= '&s=' . $icon_size;
+
+			if ($settings->gravatar_force == 'no') {
+				$gravatar .= '&d=' . $avatar;
+			} else {
+				$gravatar .= '&d=' . $settings->gravatar_default;
+				$gravatar .= '&f=y';
+			}
+
+			// Get Gravatar response headers
 			$headers = avatar_header($gravatar);
 
 			// Check if the file exists and there are no errors
