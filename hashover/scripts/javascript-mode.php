@@ -143,6 +143,8 @@ function hashover_reply(r, f) {
 	$first_cmt_image = '<div class="hashover-avatar-image"><img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="/hashover/images/' . $this->setup->image_format . 's/first-comment.' . $this->setup->image_format . '" alt="+"></div>';
 
 	if (!empty($_COOKIE['hashover-login'])) {
+		$first_cmt_image = '<div class="hashover-avatar-image">' . $form_avatar . '</div>';
+
 		if ($this->setup->icon_mode != 'none') {
 			echo "\t", 'reply_form += \'', $first_cmt_image, '\';', PHP_EOL;
 		}
