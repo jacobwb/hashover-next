@@ -96,5 +96,6 @@
 			$this->expire		= time() + 60 * 60 * 24 * 30;	// Cookies' expiration date
 			$this->domain		= $_SERVER['HTTP_HOST'];	// Domain name for refer checking & notifications
 		}
+	}
 
 ?>
