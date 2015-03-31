@@ -41,7 +41,7 @@
 		public $timezone		= 'America/Los_Angeles';	// Timezone
 		public $uses_12h_time		= 'yes';			// Whether to use 12 hour time format, otherwise use 24 hour format
 		public $icon_mode		= 'image';			// How to display avatar icons (either 'image', 'count' or 'none')
-		public $gravatar_default	= 'retro';			// Gravatar theme to use ('mm', 'identicon', 'monsterid', 'wavatar', or 'retro')
+		public $gravatar_default	= 'mm';				// Gravatar theme to use ('mm', 'identicon', 'monsterid', 'wavatar', or 'retro')
 		public $gravatar_force		= 'no';				// Whether to force the themed Gravatar images instead of an avatar image
 		public $icon_size		= '45';				// Size of Gravatar icons in pixels
 		public $allows_images		= 'yes';			// Whether external image URLs wrapped in [img] tags are embedded
