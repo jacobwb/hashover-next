@@ -35,6 +35,7 @@
 		public $notifications,
 		       $template_replace,
 		       $form_avatar,
+		       $form_first_image,
 		       $is_a_reply = false,
 		       $is_an_edit = false;
 
@@ -55,6 +56,8 @@
 			} else {
 				$this->form_avatar = '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="' . $this->setup->root_dir . '/scripts/avatars.php?format=' . $this->setup->image_format . '&amp;size=' . $this->setup->icon_size . ((isset($_COOKIE['email'])) ? '&amp;email=' . md5(strtolower(trim($_COOKIE['email']))) : '') . '" alt="#' . $this->read_comments->cmt_count . '">';
 			}
+
+			$this->form_first_image = '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="' . $this->setup->root_dir . '/images/' . $this->setup->image_format . 's/first-comment.' . $this->setup->image_format . '" alt="+">';
 
 			// Load HTML template
 			$layout_file = file_get_contents('./themes/' . $this->setup->theme . '/layout.html');
@@ -210,10 +213,10 @@
 			if ($this->forPop == false and ($arr[1] == 'reply_form' or $arr[1] == 'edit_form')) {
 				if ($arr[1] == 'reply_form' and $this->is_a_reply) {
 					$return_form .= '<div class="hashover-balloon">' . PHP_EOL;
-					$first_cmt_image = "\t\t" . '<div class="hashover-avatar-image">' . PHP_EOL . "\t\t\t" . '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="' . $this->setup->root_dir . '/images/' . $this->setup->image_format . 's/first-comment.' . $this->setup->image_format . '" alt="#' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $this->template_replace['permalink']) . '">' . PHP_EOL . "\t\t" . '</div>' . PHP_EOL;
+					$first_cmt_image = "\t\t" . '<div class="hashover-avatar-image">' . PHP_EOL . "\t\t\t" . $this->form_first_image . PHP_EOL . "\t\t" . '</div>' . PHP_EOL;
 
 					if (!empty($_COOKIE['hashover-login'])) {
-						$first_cmt_image = '<div class="hashover-avatar-image">' . $this->form_avatar . '</div>';
+						$first_cmt_image = '<div class="hashover-avatar-image">' . PHP_EOL . "\t\t\t" . $this->form_avatar . PHP_EOL . "\t\t" . '</div>' . PHP_EOL;
 
 						if ($this->setup->icon_mode != 'none') {
 							$return_form .= $first_cmt_image;
@@ -353,7 +356,11 @@
 
 	if ($this->setup->icon_mode != 'none') {
 		if ($this->setup->icon_mode == 'image') {
-			echo "\t\t\t\t", '<div class="hashover-avatar-image">', $php_mode->form_avatar, '</div>', PHP_EOL;
+			if (!empty($_COOKIE['hashover-login'])) {
+				echo "\t\t\t\t", '<div class="hashover-avatar-image">', $php_mode->form_avatar, '</div>', PHP_EOL;
+			} else {
+				echo "\t\t\t\t", '<div class="hashover-avatar-image">', $php_mode->form_first_image, '</div>', PHP_EOL;
+			}
 		} else {
 			echo "\t\t\t\t", '<div class="hashover-avatar-image"><span>#', $this->read_comments->cmt_count, '</span></div>', PHP_EOL;
 		}
