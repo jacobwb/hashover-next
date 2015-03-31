@@ -467,7 +467,7 @@
 	// Display comments, if there are no comments display a note
 	if (!empty($this->hashover)) {
 		// Display comment count
-		echo "\t", '<div class="hashover-dashed-title">', PHP_EOL;
+		echo "\t", '<div class="hashover-dashed-title hashover-sort-count">', PHP_EOL;
 		echo "\t\t", '<span id="hashover-count">', $this->read_comments->show_count, '</span>', PHP_EOL;
 		echo "\t", '</div>', PHP_EOL, PHP_EOL;
 
