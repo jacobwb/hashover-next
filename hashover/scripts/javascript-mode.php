@@ -718,7 +718,7 @@ function sort_comments(method) {
 	hashover = '';
 	document.getElementById('hashover-sort-div').textContent = 'Loading...';
 	methods[method]();
-	document.getElementById('hashover-sort-div').textContent = hashover;
+	document.getElementById('hashover-sort-div').innerHTML = hashover;
 }
 
 <?php if ($this->setup->collapses_comments == 'yes') { ?>
@@ -1048,4 +1048,3 @@ window.onload = function() {
 		permalink_anchor.scrollIntoView(true);
 	}
 }
-
