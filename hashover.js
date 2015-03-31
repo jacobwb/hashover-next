@@ -2,7 +2,8 @@
 	var head = document.getElementsByTagName('head')[0];
 	var body = document.getElementsByTagName('body')[0];
 	var scripts = document.getElementsByTagName('script');
-	var this_script = scripts[scripts.length - 1];
+	var script_number = scripts.length;
+	var this_script = scripts[script_number - 1];
 	var this_queries = this_script.src.split('?')[1];
 	var location = window.location.href.split(window.location.hash || '#');
 	var script_src = '/hashover.php';
@@ -53,21 +54,28 @@
 		}
 	}
 
-	// Append an HTML div tag for HashOver comments to appear in
+	// HTML div tag for HashOver comments to appear in
 	if (document.getElementById('hashover') == null) {
 		var div = document.createElement('div');
-		div.id = 'hashover';
+		    div.id = 'hashover';
+
+		// Insert HTML div tag before current script tag
 		this_script.parentNode.insertBefore(div, this_script);
 	}
 
 	// Append HashOver JavaScript tag to the page head/body
 	var script = document.createElement('script');
-	script.type = 'text/javascript';
-	script.src = '/hashover' + script_src + '?' + script_queries;
+	    script.type = 'text/javascript';
+	    script.src = '/hashover' + script_src;
+	    script.src += '?' + script_queries;
+	    script.src += '&' + 'hashover-script=' + script_number;
+	    script.id = 'hashover-script-' + script_number;
 
+	// If this is an API file append to parent element of current script tag
 	if (api) {
 		this_script.parentNode.appendChild(script);
 	} else {
+		// If not append to head or body element
 		script.async = true;
 		(head || body).appendChild(script);
 	}

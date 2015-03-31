@@ -53,16 +53,26 @@
 
 	// If there are more than one comment set a comment count link
 	if ($read_comments->total_count > 1) {
-		$link = '<a href="' . $_GET['url'] . '#comments">' . $read_comments->show_count . '</a>';
+		$link_text = $read_comments->show_count;
 	} else {
 		// If not set a "Post Comment" link in configured language
-		$link = '<a href="' . $_GET['url'] . '#comments">' . $setup->text['post_button'] . '</a>';
+		$link_text = $setup->text['post_button'];
 	}
 
 	// Tell browser this is JavaScript
 	header('Content-Type: text/javascript');
 
-	// Display the link
-	echo 'document.write(\'', $link, '\');';
-
 ?>
+// Setup count link
+var count_link = document.createElement('a');
+count_link.href = '<?php echo $_GET['url']; ?>#comments';
+count_link.textContent = '<?php echo $link_text; ?>';
+
+// Display count link
+<?php if (!empty($_GET['hashover-script'])) { ?>
+var hashover_script = 'hashover-script-<?php echo $_GET['hashover-script']; ?>';
+var this_script = document.getElementById(hashover_script);
+this_script.parentNode.insertBefore(count_link, this_script);
+<?php } else { ?>
+document.write(count_link.outerHTML);
+<?php } ?>

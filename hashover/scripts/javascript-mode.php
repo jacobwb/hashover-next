@@ -112,11 +112,16 @@ head.appendChild(link);
 <?php } ?>
 // Append an HTML div tag for HashOver comments to appear in
 if (hashover_div == null) {
-	var scripts = document.getElementsByTagName('script');
-	var this_script = scripts[scripts.length - 1];
 	hashover_div = document.createElement('div');
 	hashover_div.id = 'hashover';
-	this_script.parentNode.insertBefore(hashover_div, this_script);
+
+<?php if (!empty($_GET['hashover-script'])) { ?>
+	var hashover_script = 'hashover-script-<?php echo $_GET['hashover-script']; ?>';
+	var this_script = document.getElementById(hashover_script);
+	script.parentNode.insertBefore(hashover_div, this_script);
+<?php } else { ?>
+	document.write(hashover_div.outerHTML);
+<?php } ?>
 }
 
 if (document.getElementById('comments') == null) {
@@ -126,7 +131,7 @@ if (document.getElementById('comments') == null) {
 <?php if ($this->read_comments->total_count - 1 != 0) { ?>
 // Put number of comments into "hashover-cmtcount" identified HTML element
 if (document.getElementById('hashover-cmtcount') != null) {
-	document.getElementById('hashover-cmtcount').innerHTML = '<?php echo $this->read_comments->total_count - 1; ?>';
+	document.getElementById('hashover-cmtcount').textContent = '<?php echo $this->read_comments->total_count - 1; ?>';
 }
 
 <?php } ?>
@@ -211,7 +216,7 @@ function hashover_reply(r, f) {
 // Displays edit form
 function hashover_edit(e, f, s) {
 	var cmtdata = document.getElementById('hashover-content-' + e).innerHTML.replace(/<br>/gi, '\n').replace(/<\/?a(\s+.*?>|>)/gi, '').replace(/<img.*?title="(.*?)".*?>/gi, '[img]$1[/img]').replace(/^\s+|\s+$/g, '').replace('<code style="white-space: pre;">', '<code>');
-	var name = document.getElementById('hashover-name-' + e).innerHTML;
+	var name = document.getElementById('hashover-name-' + e).textContent;
 	var website = '';
 
 	if (document.getElementById('hashover-name-' + e).href) {
@@ -260,7 +265,7 @@ function hashover_submit(f, b) {
 
 // Function to cancel reply forms
 function hashover_cancel_reply(f) {
-	document.getElementById('hashover-reply-' + f).innerHTML = '';
+	document.getElementById('hashover-reply-' + f).textContent = '';
 	document.getElementById('hashover-reply-' + f).className = '';
 	return false;
 }
@@ -268,7 +273,7 @@ function hashover_cancel_reply(f) {
 // Function to cancel edit forms
 function hashover_cancel_edit(f) {
 	document.getElementById('hashover-footer-' + f).style.display = '';
-	document.getElementById('hashover-edit-' + f).innerHTML = '';
+	document.getElementById('hashover-edit-' + f).textContent = '';
 	return false;
 }
 
@@ -283,8 +288,8 @@ function hashover_like(a, c, f) {
 	like.send();
 
 	// Get number of likes
-	if (likesElement.innerHTML != '') {
-		var likes = parseInt(likesElement.innerHTML.replace(/[^0-9]/g, ''));
+	if (likesElement.textContent != '') {
+		var likes = parseInt(likesElement.textContent.replace(/[^0-9]/g, ''));
 	} else {
 		var likes = parseInt(0);
 	}
@@ -293,12 +298,12 @@ function hashover_like(a, c, f) {
 	if (likeElement.className == 'hashover-' + a + dislikesClass) {
 		likeElement.className = 'hashover-' + a + 'd' + dislikesClass;
 		likeElement.title = (a == 'like') ? '<?php echo $this->setup->text['liked_cmt']; ?>' : '<?php echo $this->setup->text['disliked_cmt']; ?>';
-		likeElement.innerHTML = (a == 'like') ? '<?php echo $this->setup->text['liked']; ?>' : '<?php echo $this->setup->text['disliked']; ?>';
+		likeElement.textContent = (a == 'like') ? '<?php echo $this->setup->text['liked']; ?>' : '<?php echo $this->setup->text['disliked']; ?>';
 		likes++;
 	} else {
 		likeElement.className = 'hashover-' + a + dislikesClass;
 		likeElement.title = (a == 'like') ? '<?php echo $this->setup->text['like_cmt']; ?>' : '<?php echo $this->setup->text['dislike_cmt']; ?>';
-		likeElement.innerHTML = (a == 'like') ? '<?php echo $this->setup->text['like'][0]; ?>' : '<?php echo $this->setup->text['dislike'][0]; ?>';
+		likeElement.textContent = (a == 'like') ? '<?php echo $this->setup->text['like'][0]; ?>' : '<?php echo $this->setup->text['dislike'][0]; ?>';
 		likes--;
 	}
 
@@ -330,7 +335,7 @@ function hashover_validate(f) {
 			}
 		} else {
 			if (!form_email.match(/\S+@\S+/)) {
-				document.getElementById('hashover-message').innerHTML = '<?php echo $this->setup->text['invalid_email']; ?>';
+				document.getElementById('hashover-message').textContent = '<?php echo $this->setup->text['invalid_email']; ?>';
 				document.getElementById('hashover-message').style.display = null;
 				document.hashover_form.email.focus();
 
@@ -343,7 +348,7 @@ function hashover_validate(f) {
 		}
 
 		if (document.hashover_form.comment.value == '') {
-			document.getElementById('hashover-message').innerHTML = '<?php echo $this->setup->text['cmt_needed']; ?>';
+			document.getElementById('hashover-message').textContent = '<?php echo $this->setup->text['cmt_needed']; ?>';
 			document.getElementById('hashover-message').style.display = null;
 			document.hashover_form.comment.focus();
 
@@ -367,7 +372,7 @@ function hashover_validate(f) {
 			}
 		} else {
 			if (!hashover_reply_forms.email.value.match(/\S+@\S+/)) {
-				document.getElementById('hashover-message-' + f).innerHTML = '<?php echo $this->setup->text['invalid_email']; ?>';
+				document.getElementById('hashover-message-' + f).textContent = '<?php echo $this->setup->text['invalid_email']; ?>';
 				document.getElementById('hashover-message-' + f).className = 'hashover-message open';
 				hashover_reply_forms.email.focus();
 
@@ -380,7 +385,7 @@ function hashover_validate(f) {
 		}
 
 		if (hashover_reply_forms.comment.value == '') {
-			document.getElementById('hashover-message-' + f).innerHTML = '<?php echo $this->setup->text['reply_needed']; ?>';
+			document.getElementById('hashover-message-' + f).textContent = '<?php echo $this->setup->text['reply_needed']; ?>';
 			document.getElementById('hashover-message-' + f).className = 'hashover-message open';
 			hashover_reply_forms.comment.focus();
 
@@ -711,9 +716,9 @@ function sort_comments(method) {
 	}
 
 	hashover = '';
-	document.getElementById('hashover-sort-div').innerHTML = 'Loading...' + '\n';
+	document.getElementById('hashover-sort-div').textContent = 'Loading...';
 	methods[method]();
-	document.getElementById('hashover-sort-div').innerHTML = hashover + '\n';
+	document.getElementById('hashover-sort-div').textContent = hashover;
 }
 
 <?php if ($this->setup->collapses_comments == 'yes') { ?>
@@ -1043,3 +1048,4 @@ window.onload = function() {
 		permalink_anchor.scrollIntoView(true);
 	}
 }
+

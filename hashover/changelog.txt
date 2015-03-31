@@ -2,6 +2,51 @@ Changes by Jacob Barkdull 2015-03-24
 --------------------------------------------------------------------------------
 * hashover.js
 
+	- Each script tag now has an ID of "hashover-script-<script number>"
+	- The current HTMLScriptElement length is now passed to `hashover.php`.
+	- Added some comments.
+
+
+* hashover/api/count_link.php
+
+	- Improved how HTML is appended to page.
+
+
+* hashover/scripts/javascript-mode.php
+
+	- A new class was added to the "Post a Comment" title element.
+	- A new class was added to the logged in user name element.
+	- A new class was added to the comment count and sort dropdown menu div.
+	- Replaced some `.innerHTML` statements with `.textContent`.
+	- Improved how HTML is appended to page.
+
+
+* hashover/scripts/php-mode.php
+
+	- Replaced some JavaScript `.innerHTML` statements with `.textContent`.
+
+
+* hashover/scripts/widget-output.php
+
+	- "-widget" appended to classes to avoid conflicts with primary CSS.
+	- Merged improvements from javascript-mode.php.
+	- Improved how HTML is appended to page.
+
+
+* hashover/themes/default/widget-style.css
+
+	- "-widget" appended to classes to avoid conflicts with primary CSS.
+
+
+hashover/themes/default/widget-layout.html
+
+	- Removed <span> tag.
+
+
+Changes by Jacob Barkdull 2015-03-24
+--------------------------------------------------------------------------------
+* hashover.js
+
 	- Improved URL query parsing.
 	- API scripts no longer loaded asynchronously.
 
@@ -1423,3 +1468,4 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
+

@@ -199,11 +199,16 @@ function parse_template(object, count, sort, method) {
 
 // Append an HTML div tag for HashOver comments to appear in
 if (hashover_widget_div == null) {
-	var scripts = document.getElementsByTagName('script');
-	var this_script = scripts[scripts.length - 1];
 	hashover_widget_div = document.createElement('div');
 	hashover_widget_div.id = 'hashover-widget';
+
+<?php if (!empty($_GET['hashover-script'])) { ?>
+	var hashover_script = 'hashover-script-<?php echo $_GET['hashover-script']; ?>';
+	var this_script = document.getElementById(hashover_script);
 	this_script.parentNode.insertBefore(hashover_widget_div, this_script);
+<?php } else { ?>
+	document.write(hashover_widget_div.outerHTML);
+<?php } ?>
 }
 
 // Place all content on page

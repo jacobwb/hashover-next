@@ -542,26 +542,27 @@ function hashover_like(a, c, f) {
 	var like = new XMLHttpRequest();
 	var likeElement = document.getElementById('hashover-' + a + '-' + c);
 	var likesElement = document.getElementById('hashover-' + a + 's-' + c);
+	var dislikesClass = (a == 'like') ? '<?php if ($this->setup->allows_dislikes == 'yes') echo ' dislikes'; ?>' : '';
 	like.open('GET', '<?php echo $this->setup->root_dir, '/scripts/like.php?like=', $this->setup->ref_path; ?>/' + f + '&action=' + a);
 	like.send();
 
 	// Get number of likes
-	if (likesElement.innerHTML != '') {
-		var likes = parseInt(likesElement.innerHTML.replace(/[^0-9]/g, ''));
+	if (likesElement.textContent != '') {
+		var likes = parseInt(likesElement.textContent.replace(/[^0-9]/g, ''));
 	} else {
 		var likes = parseInt(0);
 	}
 
 	// Change "Like" button title and class; Increase likes
-	if (likeElement.className == 'hashover-' + a) {
-		likeElement.className = 'hashover-' + a + 'd';
+	if (likeElement.className == 'hashover-' + a + dislikesClass) {
+		likeElement.className = 'hashover-' + a + 'd' + dislikesClass;
 		likeElement.title = (a == 'like') ? '<?php echo $this->setup->text['liked_cmt']; ?>' : '<?php echo $this->setup->text['disliked_cmt']; ?>';
-		likeElement.innerHTML = (a == 'like') ? '<?php echo $this->setup->text['liked']; ?>' : '<?php echo $this->setup->text['disliked']; ?>';
+		likeElement.textContent = (a == 'like') ? '<?php echo $this->setup->text['liked']; ?>' : '<?php echo $this->setup->text['disliked']; ?>';
 		likes++;
 	} else {
-		likeElement.className = 'hashover-' + a;
+		likeElement.className = 'hashover-' + a + dislikesClass;
 		likeElement.title = (a == 'like') ? '<?php echo $this->setup->text['like_cmt']; ?>' : '<?php echo $this->setup->text['dislike_cmt']; ?>';
-		likeElement.innerHTML = (a == 'like') ? '<?php echo $this->setup->text['like']; ?>' : '<?php echo $this->setup->text['dislike']; ?>';
+		likeElement.textContent = (a == 'like') ? '<?php echo $this->setup->text['like'][0]; ?>' : '<?php echo $this->setup->text['dislike'][0]; ?>';
 		likes--;
 	}
 
