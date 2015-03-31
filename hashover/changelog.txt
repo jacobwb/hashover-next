@@ -1,4 +1,4 @@
-Changes by Jacob Barkdull 2015-03-24
+Changes by Jacob Barkdull 2015-03-31
 --------------------------------------------------------------------------------
 * hashover.js
 
