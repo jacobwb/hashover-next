@@ -758,16 +758,11 @@ function show_cmts(element) {
 
 hashover += '<form id="hashover_form" name="hashover_form" action="<?php echo $this->setup->root_dir; ?>/hashover.php" method="post">\n';
 hashover += '\t<div class="hashover-balloon">\n';
-hashover += '\t\t<div class="hashover-inputs">\n';
 <?php
-
-	if ($this->setup->icon_mode != 'none') {
+echo 'hashover += \'\t\t\t<div class="hashover-top-user">\n\';', PHP_EOL;
+if ($this->setup->icon_mode != 'none') {
 		if ($this->setup->icon_mode == 'image') {
-			if (!empty($_COOKIE['hashover-login'])) {
-				echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image">' . $form_avatar . '</div>');
-			} else {
-				echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image">' . $form_first_image . '</div>');
-			}
+			echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image">' . $form_avatar . '</div>');
 		} else {
 			echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image"><span>#' . $this->read_comments->cmt_count . '</span></div>');
 		}
@@ -775,7 +770,7 @@ hashover += '\t\t<div class="hashover-inputs">\n';
 
 	if (!empty($_COOKIE['hashover-login'])) {
 		$name = !empty($_COOKIE['name']) ? $_COOKIE['name'] : $this->setup->default_name;
-		echo 'hashover += \'\t\t\t<div>\n\';', PHP_EOL;
+		
 
 		if (!empty($_COOKIE['website'])) {
 			echo $this->setup->escape_output('\t\t\t\t<a class="hashover-name hashover-top-name" href="' . $_COOKIE['website'] . '" target="_blank">' . $name . '</a>\n');
@@ -784,6 +779,9 @@ hashover += '\t\t<div class="hashover-inputs">\n';
 		}
 
 		echo 'hashover += \'\t\t\t</div>\n\';', PHP_EOL;
+?>
+hashover += '\t\t<div class="hashover-inputs">\n';
+<?php
 		echo $this->setup->escape_output('\t\t\t<input type="hidden" name="name" value="' . ((!empty($_COOKIE['name'])) ? $_COOKIE['name'] : '') . '">\n');
 		echo $this->setup->escape_output('\t\t\t<input type="hidden" name="password" value="' . ((!empty($_COOKIE['password'])) ? $_COOKIE['password'] : '') . '">\n');
 		echo $this->setup->escape_output('\t\t\t<input type="hidden" name="email" value="' . ((!empty($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '">\n');
