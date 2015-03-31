@@ -95,10 +95,16 @@
 			$gravatar = $http . '://gravatar.com/avatar/' . $_GET['email'] . '.png?r=pg';
 			$gravatar .= '&s=' . $icon_size;
 
-			if ($settings->gravatar_force == 'no') {
+			// If set to custom direct 404s to local avatar image
+			if ($settings->gravatar_default == 'custom') {
 				$gravatar .= '&d=' . $avatar;
 			} else {
+				// If not direct to a themed default
 				$gravatar .= '&d=' . $settings->gravatar_default;
+			}
+
+			// Force Gravatar default avatar if enabled
+			if ($settings->gravatar_force == 'yes') {
 				$gravatar .= '&f=y';
 			}
 
