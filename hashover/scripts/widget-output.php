@@ -40,10 +40,10 @@ function parse_template(object, count, sort, method) {
 
 	var variable = 'hashover_latest';
 	var permalink = object['permalink'];
-	var cmtclass = (permalink.match('r') && (sort == false || method == 'ascending')) ? ' ' + 'hashover-reply' : '';
+	var cmtclass = (permalink.match('r') && (sort == false || method == 'ascending')) ? ' ' + 'hashover-widget-reply' : '';
 
 	window[variable] += '\t<a name="' + permalink + '"></a>\n';
-	window[variable] += '\t<div id="' + permalink + '" class="hashover-comment' + cmtclass + '">\n';
+	window[variable] += '\t<div id="' + permalink + '" class="hashover-widget-comment' + cmtclass + '">\n';
 
 	if (!object['deletion_notice']) {
 		// Add HTML anchor tag to URLs
@@ -103,7 +103,7 @@ function parse_template(object, count, sort, method) {
 			}
 		}
 
-		name = '<span class="hashover-name' + name_class + '">' + name_at + name + '</span>';
+		name = '<span class="hashover-widget-name' + name_class + '">' + name_at + name + '</span>';
 
 <?php
 		// Load HTML template
