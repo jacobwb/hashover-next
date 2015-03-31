@@ -213,6 +213,8 @@
 					$first_cmt_image = "\t\t" . '<div class="hashover-avatar-image">' . PHP_EOL . "\t\t\t" . '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="' . $this->setup->root_dir . '/images/' . $this->setup->image_format . 's/first-comment.' . $this->setup->image_format . '" alt="#' . str_replace(array('c', 'r', '_pop'), array('', '-', ''), $this->template_replace['permalink']) . '">' . PHP_EOL . "\t\t" . '</div>' . PHP_EOL;
 
 					if (!empty($_COOKIE['hashover-login'])) {
+						$first_cmt_image = '<div class="hashover-avatar-image">' . $this->form_avatar . '</div>';
+
 						if ($this->setup->icon_mode != 'none') {
 							$return_form .= $first_cmt_image;
 						}
