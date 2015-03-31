@@ -38,6 +38,7 @@
 		$form_avatar = '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="' . $this->setup->root_dir . '/scripts/avatars.php?format=' . $this->setup->image_format . '&amp;size=' . $this->setup->icon_size . ((isset($_COOKIE['email'])) ? '&amp;email=' . md5(strtolower(trim($_COOKIE['email']))) : '') . '" alt="#' . $this->read_comments->cmt_count . '">';
 	}
 
+	$form_first_image = '<img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="/hashover/images/' . $this->setup->image_format . 's/first-comment.' . $this->setup->image_format . '" alt="+">';
 	$page_title = addcslashes($this->setup->page_title, "'");
 	$page_url = addcslashes($this->setup->page_url, "'");
 
@@ -140,7 +141,7 @@ function hashover_reply(r, f) {
 	var reply_form = '<div class="hashover-balloon">';
 <?php
 
-	$first_cmt_image = '<div class="hashover-avatar-image"><img width="' . $this->setup->icon_size . '" height="' . $this->setup->icon_size . '" src="/hashover/images/' . $this->setup->image_format . 's/first-comment.' . $this->setup->image_format . '" alt="+"></div>';
+	$first_cmt_image = '<div class="hashover-avatar-image">' . $form_first_image . '</div>';
 
 	if (!empty($_COOKIE['hashover-login'])) {
 		$first_cmt_image = '<div class="hashover-avatar-image">' . $form_avatar . '</div>';
@@ -762,7 +763,11 @@ hashover += '\t\t<div class="hashover-inputs">\n';
 
 	if ($this->setup->icon_mode != 'none') {
 		if ($this->setup->icon_mode == 'image') {
-			echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image">' . $form_avatar . '</div>');
+			if (!empty($_COOKIE['hashover-login'])) {
+				echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image">' . $form_avatar . '</div>');
+			} else {
+				echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image">' . $form_first_image . '</div>');
+			}
 		} else {
 			echo $this->setup->escape_output('\t\t\t<div class="hashover-avatar-image"><span>#' . $this->read_comments->cmt_count . '</span></div>');
 		}
