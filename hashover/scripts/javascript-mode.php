@@ -141,7 +141,7 @@ function hashover_reply(r, f) {
 	var reply_form = '<div class="hashover-balloon">';
 <?php
 
-	$first_cmt_image = '<div class="hashover-avatar-image">' . $form_first_image . '</div>';
+	$first_cmt_image = '<div class="hashover-avatar-image hashover-avatar-image">' . $form_first_image . '</div>';
 
 	if (!empty($_COOKIE['hashover-login'])) {
 		$first_cmt_image = '<div class="hashover-avatar-image">' . $form_avatar . '</div>';
