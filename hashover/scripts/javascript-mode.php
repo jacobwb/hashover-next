@@ -821,18 +821,6 @@ if (password_on) {
 	hashover += '\t\t\t</div>\n';
 }
 
-<?php
-
-	if ($this->setup->is_mobile) {
-		echo 'hashover += \'\t\t\t</div>\n\t\t\t<div class="hashover-inputs">\n\';', PHP_EOL;
-
-		if ($this->setup->icon_mode != 'none') {
-			echo 'hashover += \'\t\t\t\t<div class="hashover-avatar-image"></div>\n\';', PHP_EOL;
-		}
-	}
-
-?>
-
 // Display email input tag if told to
 if (email_on) {
 	hashover += '\t\t\t<div class="hashover-email-input">\n';
