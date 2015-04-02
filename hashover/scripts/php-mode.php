@@ -213,7 +213,7 @@
 			if ($this->forPop == false and ($arr[1] == 'reply_form' or $arr[1] == 'edit_form')) {
 				if ($arr[1] == 'reply_form' and $this->is_a_reply) {
 					$return_form .= '<div class="hashover-balloon">' . PHP_EOL;
-					$first_cmt_image = "\t\t" . '<div class="hashover-avatar-image">' . PHP_EOL . "\t\t\t" . $this->form_first_image . PHP_EOL . "\t\t" . '</div>' . PHP_EOL;
+					$first_cmt_image = "\t\t" . '<div class="hashover-avatar-image hashover-avatar-first">' . PHP_EOL . "\t\t\t" . $this->form_first_image . PHP_EOL . "\t\t" . '</div>' . PHP_EOL;
 
 					if (!empty($_COOKIE['hashover-login'])) {
 						$first_cmt_image = '<div class="hashover-avatar-image">' . PHP_EOL . "\t\t\t" . $this->form_avatar . PHP_EOL . "\t\t" . '</div>' . PHP_EOL;
@@ -359,7 +359,7 @@
 			if (!empty($_COOKIE['hashover-login'])) {
 				echo "\t\t\t\t", '<div class="hashover-avatar-image">', $php_mode->form_avatar, '</div>', PHP_EOL;
 			} else {
-				echo "\t\t\t\t", '<div class="hashover-avatar-image">', $php_mode->form_first_image, '</div>', PHP_EOL;
+				echo "\t\t\t\t", '<div class="hashover-avatar-image hashover-avatar-first">', $php_mode->form_first_image, '</div>', PHP_EOL;
 			}
 		} else {
 			echo "\t\t\t\t", '<div class="hashover-avatar-image"><span>#', $this->read_comments->cmt_count, '</span></div>', PHP_EOL;
