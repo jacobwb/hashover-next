@@ -309,6 +309,11 @@ function hashover_validate(f) {
 	if (f == true) {
 		var form_email = document.hashover_form.email;
 
+		if (document.getElementById('hashover-subscribe').checked == false) {
+			form_email.value = '';
+			return true;
+		}
+
 		if (form_email.value == '') {
 			var answer = confirm('<?php echo $this->setup->text['no_email_warn']; ?>');
 
@@ -318,11 +323,6 @@ function hashover_validate(f) {
 			}
 		} else {
 			if (!form_email.value.match(/\S+@\S+/)) {
-				if (document.getElementById('hashover-subscribe').checked == false) {
-					form_email.value = '';
-					return true;
-				}
-
 				document.getElementById('hashover-message').textContent = '<?php echo $this->setup->text['invalid_email']; ?>';
 				document.getElementById('hashover-message').style.display = null;
 				document.hashover_form.email.focus();
@@ -337,6 +337,11 @@ function hashover_validate(f) {
 	} else {
 		var hashover_reply_forms = document.getElementById('hashover-reply-' + f);
 
+		if (document.getElementById('subscribe-' + f).checked == false) {
+			hashover_reply_forms.email.value = '';
+			return true;
+		}
+
 		if (hashover_reply_forms.email.value == '') {
 			var answer = confirm('<?php echo $this->setup->text['no_email_warn']; ?>');
 
@@ -346,11 +351,6 @@ function hashover_validate(f) {
 			}
 		} else {
 			if (!hashover_reply_forms.email.value.match(/\S+@\S+/)) {
-				if (document.getElementById('subscribe-' + f).checked == false) {
-					hashover_reply_forms.email.value = '';
-					return true;
-				}
-
 				document.getElementById('hashover-message-' + f).textContent = '<?php echo $this->setup->text['invalid_email']; ?>';
 				document.getElementById('hashover-message-' + f).className = 'hashover-message open';
 				hashover_reply_forms.email.focus();
@@ -881,7 +881,7 @@ hashover += '\t\t</div>\n';
 	if (empty($_COOKIE['hashover-login'])) {
 		echo $this->setup->escape_output('\t\t\t<input class="hashover-submit hashover-login" type="submit" name="login" title="' . $this->setup->text['login_tip'] . '" value="' . $this->setup->text['login'] . '" onclick="return hashover_validate(true);" onsubmit="return hashover_validate(true);">\n');
 	} else {
-		echo $this->setup->escape_output('\t\t\t<input class="hashover-submit hashover-login" type="submit" name="logout" title="' . $this->setup->text['logout'] . '" value="' . $this->setup->text['logout'] . '">\n');
+		echo $this->setup->escape_output('\t\t\t<input class="hashover-submit hashover-logout" type="submit" name="logout" title="' . $this->setup->text['logout'] . '" value="' . $this->setup->text['logout'] . '">\n');
 	}
 
 	echo $this->setup->escape_output('\t\t</div>\n');
