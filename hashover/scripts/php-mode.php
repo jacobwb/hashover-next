@@ -444,7 +444,7 @@
 	if (empty($_COOKIE['hashover-login'])) {
 		echo "\t\t\t\t", '<input class="hashover-submit hashover-login" type="submit" name="login" title="' . $this->setup->text['login_tip'] . '" value="' . $this->setup->text['login'] . '">', PHP_EOL;
 	} else {
-		echo "\t\t\t\t", '<input class="hashover-submit hashover-login" type="submit" name="logout" title="' . $this->setup->text['logout'] . '" value="' . $this->setup->text['logout'] . '">', PHP_EOL;
+		echo "\t\t\t\t", '<input class="hashover-submit hashover-logout" type="submit" name="logout" title="' . $this->setup->text['logout'] . '" value="' . $this->setup->text['logout'] . '">', PHP_EOL;
 	}
 
 	echo "\t\t\t", '</div>', PHP_EOL;
