@@ -247,10 +247,6 @@
 							$return_form .= "\t\t" . '</div>' . PHP_EOL;
 						}
 
-						if ($this->setup->is_mobile) {
-							$return_form .= "\t" . '</div>' . PHP_EOL . "\t" . '<div class="hashover-inputs">' . PHP_EOL;
-						}
-
 						if ($this->email_on) {
 							$return_form .= "\t\t" . '<div class="hashover-email-input">' . PHP_EOL;
 							$return_form .= "\t\t\t" . '<input type="text" name="email" title="' . $this->setup->text['email_tip'] . '" value="' . ((!empty($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '" placeholder="' . $this->setup->text['email'] . '">' . PHP_EOL;
@@ -291,10 +287,6 @@
 					$return_form .= "\t\t" . '<div class="hashover-password-input">' . PHP_EOL;
 					$return_form .= "\t\t\t" . '<input type="password" name="password" title="' . $this->setup->text['password_tip'] . '" value="' . ((!empty($_COOKIE['password'])) ? $_COOKIE['password'] : '') . '" placeholder="' . $this->setup->text['password'] . '">' . PHP_EOL;
 					$return_form .= "\t\t" . '</div>' . PHP_EOL;
-
-					if ($this->setup->is_mobile) {
-						$return_form .= "\t" . '</div>' . PHP_EOL . "\t" . '<div class="hashover-inputs">' . PHP_EOL;
-					}
 
 					$return_form .= "\t\t" . '<div class="hashover-email-input">' . PHP_EOL;
 					$return_form .= "\t\t\t" . '<input type="text" name="email" title="' . $this->setup->text['email_tip'] . '" value="' . ((!empty($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '" placeholder="' . $this->setup->text['email'] . '">' . PHP_EOL;
@@ -399,15 +391,6 @@
 			echo "\t\t\t\t", '<div class="hashover-password-input">', PHP_EOL;
 			echo "\t\t\t\t\t", '<input type="password" name="password" title="', $this->setup->text['password_tip'], '" value="', ((!empty($_COOKIE['password'])) ? $_COOKIE['password'] : ''), '" placeholder="', $this->setup->text['password'], '">', PHP_EOL;
 			echo "\t\t\t\t", '</div>', PHP_EOL;
-		}
-
-		// Add second table row on mobile devices
-		if ($this->setup->is_mobile) {
-			echo "\t\t\t\t", '</div>', PHP_EOL, "\t\t\t\t\t", '<div class="hashover-inputs">', PHP_EOL;
-
-			if ($this->setup->icon_mode != 'none') {
-				echo "\t\t\t\t\t", '<div class="hashover-avatar-image"></div>', PHP_EOL;
-			}
 		}
 
 		// Display email input tag if told to
