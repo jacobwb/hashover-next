@@ -86,6 +86,10 @@
 			// Generate necessary indention for HTML output
 			$indention = str_repeat("\t", substr_count($comment['permalink'], 'r'));
 
+			if (isset($comment['notice_class'])) {
+				$this->template_replace['cmtclass'] .= ' ' . $comment['notice_class'];
+			}
+
 			echo "\t", $indention, '<div id="', $comment['permalink'], '" class="hashover-comment', $this->template_replace['cmtclass'], '">', PHP_EOL;
 
 			if ($this->setup->icon_mode != 'none') {
@@ -167,11 +171,9 @@
 					}
 				}
 			} else {
-				$notice_class = isset($comment['notice_class']) ? ' ' . $comment['notice_class'] : '';
-
 				if (isset($comment['avatar'])) {
 					echo "\t\t", '<div class="hashover-header">', PHP_EOL;
-					echo "\t\t\t", '<span class="hashover-avatar">', $this->template_replace['avatar'], '</span>', PHP_EOL;
+					echo "\t\t\t", $this->template_replace['avatar'], PHP_EOL;
 					echo "\t\t", '</div>', PHP_EOL;
 				}
 
