@@ -332,7 +332,7 @@
 
 ?>
 
-<div id="hashover" class="<?php echo $this->setup->image_format; ?>">
+<div id="hashover" class="hashover-<?php echo ($this->setup->is_mobile) ? 'mobile' : 'desktop'; ?>">
 	<span id="comments"></span>
 	<div class="hashover-dashed-title hashover-main-title hashover-title">
 		<?php echo $php_title, PHP_EOL; ?>
