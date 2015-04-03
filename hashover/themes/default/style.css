@@ -132,10 +132,6 @@ Copyright (C) 2014 Jacob Barkdull
 	width: 1%;
 }
 
-#hashover.svg #hashover_form .hashover-avatar-image {
-	min-width: 54px;
-}
-
 #hashover .hashover-avatar-image img,
 #hashover .hashover-avatar-image span,
 #hashover .hashover-avatar img,
@@ -820,7 +816,11 @@ Copyright (C) 2014 Jacob Barkdull
 }
 
 /* Handle HDPI */
-#hashover.svg .hashover-inputs input,
-#hashover.svg .hashover-comment .hashover-footer .hashover-buttons a {
+#hashover.hashover-mobile .hashover-inputs input,
+#hashover.hashover-mobile .hashover-comment .hashover-footer .hashover-buttons a {
 	background-image: url('/hashover/images/svgs/inputs-and-buttons.svg');
+}
+
+#hashover.hashover-mobile #hashover_form .hashover-avatar-image {
+	min-width: 54px;
 }
