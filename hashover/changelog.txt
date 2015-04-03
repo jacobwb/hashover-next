@@ -1,3 +1,23 @@
+Changes by Jacob Barkdull 2015-04-03
+--------------------------------------------------------------------------------
+* hashover/scripts/php-mode.php
+
+	- Removed <span> tag.
+
+
+Changes by Jacob Barkdull 2015-04-01
+--------------------------------------------------------------------------------
+* hashover/scripts/javascript-mode.php
+
+	- Improved how various warning messages are handled.
+	- Logout button now has `hashover-logout` class.
+
+
+* hashover/scripts/php-mode.php
+
+	- Logout button now has `hashover-logout` class.
+
+
 Changes by Jacob Barkdull 2015-03-31
 --------------------------------------------------------------------------------
 * hashover.js
@@ -17,23 +37,39 @@ Changes by Jacob Barkdull 2015-03-31
 	- Improved how HTML is appended to page.
 
 
+* hashover/scripts/avatars.php
+
+	- Use new Gravatar settings.
+
+
 * hashover/scripts/javascript-mode.php
 
 	- A new class was added to the "Post a Comment" title element.
 	- A new class was added to the logged in user name element.
 	- A new class was added to the comment count and sort dropdown menu div.
+	- A new class was added to the primary form avatar div.
 	- Replaced some `.innerHTML` statements with `.textContent`.
 	- Improved how HTML is appended to page.
+	- Show first comment image in primary form when logged out.
+	- Show Gravatar image in reply form when logged in.
+	- Applied e-mail warning messages to login button.
+	- Improved how various warning messages are handled.
 
 
 * hashover/scripts/php-mode.php
 
+	- A new class was added to the "Post a Comment" title element.
+	- A new class was added to the logged in user name element.
+	- A new class was added to the primary form avatar div.
 	- Replaced some JavaScript `.innerHTML` statements with `.textContent`.
+	- Show first comment image in primary form when logged out.
+	- Show Gravatar image in reply form when logged in.
 
 
 * hashover/scripts/settings.php
 
 	- Added trimwidth setting value for latest comments.
+	- Added extra settings for configuring default Gravatar images.
 
 
 * hashover/scripts/widget-output.php
@@ -48,7 +84,7 @@ Changes by Jacob Barkdull 2015-03-31
 	- "-widget" appended to classes to avoid conflicts with primary CSS.
 
 
-hashover/themes/default/widget-layout.html
+* hashover/themes/default/widget-layout.html
 
 	- Removed <span> tag.
 
