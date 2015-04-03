@@ -1,6 +1,15 @@
 Changes by Jacob Barkdull 2015-04-03
 --------------------------------------------------------------------------------
+* hashover/scripts/javascript-mode.php
+
+	- Inputs in the primary form are no longer separated into two divs on 
+	  mobile devices. Going forward, this should be done with CSS.
+
+
 * hashover/scripts/php-mode.php
+
+	- Inputs in the primary form are no longer separated into two divs on 
+	  mobile devices. Going forward, this should be done with CSS.
 
 	- Removed <span> tag.
 
