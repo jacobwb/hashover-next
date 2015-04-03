@@ -177,11 +177,6 @@ function hashover_reply(r, f) {
 		reply_form += '<div class="hashover-password-input">\n<input type="password" name="password" title="<?php echo $this->setup->text['password_tip']; ?>" value="<?php if (!empty($_COOKIE['password'])) echo $_COOKIE['password']; ?>" placeholder="<?php echo $this->setup->text['password']; ?>">\n</div>\n';
 	}
 
-<?php
-	if ($this->setup->is_mobile) {
-		echo "\t", 'reply_form += \'</div>\n<div class="hashover-inputs">\n\';', PHP_EOL, PHP_EOL;
-	}
-?>
 	if (email_on) {
 		reply_form += '<div class="hashover-email-input">\n<input type="text" name="email" title="<?php echo $this->setup->text['email_tip']; ?>" value="<?php if (!empty($_COOKIE['email'])) echo $_COOKIE['email']; ?>" placeholder="<?php echo $this->setup->text['email']; ?>">\n</div>\n';
 	}
@@ -230,11 +225,6 @@ function hashover_edit(e, f, s) {
 	edit_form += '<div class="hashover-inputs">\n';
 	edit_form += '<div class="hashover-name-input"><input type="text" name="name" title="<?php echo $this->setup->text['name_tip']; ?>" value="' + name + '" maxlength="30" placeholder="<?php echo $this->setup->text['name']; ?>"></div>\n';
 	edit_form += '<div class="hashover-password-input"><input type="password" name="password" title="<?php echo $this->setup->text['password_tip']; ?>" value="<?php if (!empty($_COOKIE['password'])) echo $_COOKIE['password']; ?>" placeholder="<?php echo $this->setup->text['password']; ?>"></div>\n';
-<?php
-	if ($this->setup->is_mobile) {
-		echo "\t", 'edit_form += \'</div>\n<div class="hashover-inputs">\n\';', PHP_EOL;
-	}
-?>
 	edit_form += '<div class="hashover-email-input"><input type="text" name="email" title="<?php echo $this->setup->text['email_tip']; ?>" value="<?php if (!empty($_COOKIE['email'])) echo $_COOKIE['email']; ?>" placeholder="<?php echo $this->setup->text['email']; ?>"></div>\n';
 	edit_form += '<div class="hashover-website-input"><input type="text" name="website" title="<?php echo $this->setup->text['website_tip']; ?>" value="' + website + '" placeholder="<?php echo $this->setup->text['website']; ?>"></div>\n';
 	edit_form += '</div>\n';
