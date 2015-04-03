@@ -6,7 +6,7 @@ Changes by Jacob Barkdull 2015-04-03
 	- Inputs in the primary form are no longer separated into two divs on 
 	  mobile devices. Going forward, this should be done with CSS.
 
-	- Image format is no longer added as a class to the "hashover" divs to 
+	- Image format is no longer added as a class to the "hashover" div to 
 	  aid in styling on mobile devices. Instead "hashover-mobile" is, and 
 	  the default class is "hashover-desktop".
 
