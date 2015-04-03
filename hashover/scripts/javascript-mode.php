@@ -1002,7 +1002,7 @@ hashover += '\t<a href="<?php echo $this->setup->root_dir; ?>/hashover.php?url=<
 hashover += '</div>';
 
 // Place all content on page
-hashover_div.className = '<?php echo $this->setup->image_format; ?>';
+hashover_div.className = 'hashover-<?php echo ($this->setup->is_mobile) ? 'mobile' : 'desktop'; ?>';
 hashover_div.innerHTML = hashover;
 
 // Get all external image tags by class name
