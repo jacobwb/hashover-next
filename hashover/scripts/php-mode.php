@@ -125,7 +125,7 @@
 				$this->template_replace['action'] = $_SERVER['PHP_SELF'];
 				$this->template_replace['likes'] = '<span id="hashover-likes-' . $comment['permalink'] . '" class="hashover-likes">' . $likes_num . '</span>';
 				$this->template_replace['dislikes'] = '<span id="hashover-dislikes-' . $comment['permalink'] . '" class="hashover-dislikes">' . $dislikes_num . '</span>';
-				$this->template_replace['date'] = '<a href="#' . $comment['permalink'] .  '" title="Permalink">' . $comment['date'] .  '</a>';
+				$this->template_replace['date'] = '<a href="#' . $comment['permalink'] .  '" class="hashover-date-permalink" title="Permalink">' . $comment['date'] .  '</a>';
 				$this->template_replace['dislike_link'] = (!empty($comment['dislike_link'])) ? $comment['dislike_link'] : '';
 				$this->template_replace['like_link'] = (!empty($comment['like_link'])) ? $comment['like_link'] : '';
 				$this->template_replace['edit_link'] = (!empty($comment['edit_link'])) ? $comment['edit_link'] : '';
