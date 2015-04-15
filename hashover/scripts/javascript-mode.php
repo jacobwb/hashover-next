@@ -849,7 +849,7 @@ hashover += '\t\t</div>\n';
 	echo $this->setup->escape_output('\t\t<div class="hashover-main-buttons">\n');
 
 	if (empty($_COOKIE['hashover-login']) or !empty($_COOKIE['email'])) {
-		echo $this->setup->escape_output('\t\t\t<label for="hashover-subscribe" title="' . $this->setup->text['subscribe_tip'] . '">\n');
+		echo $this->setup->escape_output('\t\t\t<label for="hashover-subscribe" class="hashover-main-label" title="' . $this->setup->text['subscribe_tip'] . '">\n');
 		echo $this->setup->escape_output('\t\t\t\t<input id="hashover-subscribe" type="checkbox" name="subscribe" checked="true"> ' . $this->setup->text['subscribe'] . '\n');
 		echo $this->setup->escape_output('\t\t\t</label>\n');
 	}
