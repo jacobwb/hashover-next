@@ -188,7 +188,7 @@ function hashover_reply(r, f) {
 	reply_form += '</div>\n';
 <?php } ?>
 	reply_form += '<div id="hashover-message-' + r + '" class="hashover-message"></div>\n';
-	reply_form += '<textarea rows="5" cols="62" name="comment" title="<?php echo $this->setup->text['cmt_tip']; ?>" placeholder="<?php echo $this->setup->text['reply_form']; ?>"></textarea>\n';
+	reply_form += '<textarea rows="5" cols="62" name="comment" class="hashover-textarea hashover-textarea-reply" title="<?php echo $this->setup->text['cmt_tip']; ?>" placeholder="<?php echo $this->setup->text['reply_form']; ?>"></textarea>\n';
 	reply_form += '<div class="hashover-form-buttons">\n';
 <?php
 
@@ -202,8 +202,8 @@ function hashover_reply(r, f) {
 	reply_form += '<input type="hidden" name="title" value="<?php echo $page_title; ?>">\n';
 	reply_form += '<input type="hidden" name="url" value="<?php echo $page_url; ?>">\n';
 	reply_form += '<input type="hidden" name="reply_to" value="' + f + '">\n';
-	reply_form += '<input class="hashover-submit" type="submit" value="<?php echo $this->setup->text['post_reply']; ?>" onclick="return hashover_submit(\'' + r + '\', this);" onsubmit="return hashover_submit(\'' + r + '\', this);">\n';
-	reply_form += '<input class="hashover-submit" type="button" value="<?php echo $this->setup->text['cancel']; ?>" title="<?php echo $this->setup->text['cancel']; ?>" onclick="hashover_cancel_reply(\'' + r + '\'); return false;">\n';
+	reply_form += '<input class="hashover-submit hashover-reply-post" type="submit" value="<?php echo $this->setup->text['post_reply']; ?>" onclick="return hashover_submit(\'' + r + '\', this);" onsubmit="return hashover_submit(\'' + r + '\', this);">\n';
+	reply_form += '<input class="hashover-submit hashover-reply-cancel" type="button" value="<?php echo $this->setup->text['cancel']; ?>" title="<?php echo $this->setup->text['cancel']; ?>" onclick="hashover_cancel_reply(\'' + r + '\'); return false;">\n';
 	reply_form += '</div>\n</div>';
 
 	document.getElementById('hashover-reply-' + r).className = 'hashover-comment hashover-reply';
@@ -228,7 +228,7 @@ function hashover_edit(e, f, s) {
 	edit_form += '<div class="hashover-email-input"><input type="text" name="email" title="<?php echo $this->setup->text['email_tip']; ?>" value="<?php if (!empty($_COOKIE['email'])) echo $_COOKIE['email']; ?>" placeholder="<?php echo $this->setup->text['email']; ?>"></div>\n';
 	edit_form += '<div class="hashover-website-input"><input type="text" name="website" title="<?php echo $this->setup->text['website_tip']; ?>" value="' + website + '" placeholder="<?php echo $this->setup->text['website']; ?>"></div>\n';
 	edit_form += '</div>\n';
-	edit_form += '<textarea rows="10" cols="62" name="comment" title="<?php echo $this->setup->text['cmt_tip']; ?>">' + cmtdata + '</textarea>\n';
+	edit_form += '<textarea rows="10" cols="62" name="comment" class="hashover-textarea hashover-textarea-edit" title="<?php echo $this->setup->text['cmt_tip']; ?>">' + cmtdata + '</textarea>\n';
 	edit_form += '<div class="hashover-form-buttons">\n';
 	edit_form += '<label for="notify" title="<?php echo $this->setup->text['subscribe_tip']; ?>">\n';
 	edit_form += '<input type="checkbox"' + ((s != '0') ? ' checked="true"' : '') + ' id="notify" name="notify"> <?php echo $this->setup->text['subscribe']; ?>\n';
@@ -236,9 +236,9 @@ function hashover_edit(e, f, s) {
 	edit_form += '<input type="hidden" name="title" value="<?php echo $page_title; ?>">\n';
 	edit_form += '<input type="hidden" name="url" value="<?php echo $page_url; ?>">\n';
 	edit_form += '<input type="hidden" name="cmtfile" value="' + f + '">\n';
-	edit_form += '<input class="hashover-submit" type="submit" name="edit" value="<?php echo $this->setup->text['save_edit']; ?>">\n';
-	edit_form += '<input class="hashover-submit" type="button" value="<?php echo $this->setup->text['cancel']; ?>" onclick="hashover_cancel_edit(\'' + e + '\'); return false;">\n';
-	edit_form += '<input class="hashover-submit hashover-post-button" type="submit" name="delete" value="<?php echo $this->setup->text['delete']; ?>" onclick="return hashover_deletion_warning();">\n';
+	edit_form += '<input class="hashover-submit hashover-edit-post" type="submit" name="edit" value="<?php echo $this->setup->text['save_edit']; ?>">\n';
+	edit_form += '<input class="hashover-submit hashover-edit-cancel" type="button" value="<?php echo $this->setup->text['cancel']; ?>" onclick="hashover_cancel_edit(\'' + e + '\'); return false;">\n';
+	edit_form += '<input class="hashover-submit hashover-edit-delete" type="submit" name="delete" value="<?php echo $this->setup->text['delete']; ?>" onclick="return hashover_deletion_warning();">\n';
 	edit_form += '</div>\n';
 
 	document.getElementById('hashover-edit-' + e).innerHTML = edit_form;
@@ -838,7 +838,7 @@ hashover += '\t\t</div>\n';
 <?php
 
 	$replyborder = (isset($_COOKIE['success']) and $_COOKIE['success'] == 'no') ? ' style="border: 2px solid #FF0000 !important;"' : '';
-	echo $this->setup->escape_output('\t\t<textarea rows="5" cols="63" name="comment"' . $replyborder . ' title="' . $this->setup->text['cmt_tip'] . '" placeholder="' . $this->setup->text['comment_form'] . '"></textarea>\n');
+	echo $this->setup->escape_output('\t\t<textarea rows="5" cols="63" class="hashover-textarea hashover-textarea-main" name="comment"' . $replyborder . ' title="' . $this->setup->text['cmt_tip'] . '" placeholder="' . $this->setup->text['comment_form'] . '"></textarea>\n');
 	echo $this->setup->escape_output('\t\t<input type="hidden" name="title" value="' . $page_title . '">\n');
 	echo $this->setup->escape_output('\t\t<input type="hidden" name="url" value="' . $page_url . '">\n');
 
