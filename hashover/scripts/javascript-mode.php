@@ -527,7 +527,7 @@ function parse_template(object, count, sort, method, forpop) {
 			name = '<a id="hashover-name-' + permalink + '" class="hashover-name-website" href="' + object['website'] + '" target="_blank">' + name + '</a>';
 		}
 
-		name = '<span class="hashover-name' + name_class + '">' + name_at + name + '</span>';
+		name = '<span class="hashover-name hashover-comment-name' + name_class + '">' + name_at + name + '</span>';
 
 <?php
 		// Load HTML template
