@@ -195,7 +195,7 @@ function hashover_reply(r, f) {
 	if (empty($_COOKIE['hashover-login']) or !empty($_COOKIE['email'])) {
 
 ?>
-	reply_form += '<label for="subscribe-' + r + '" title="<?php echo $this->setup->text['subscribe_tip']; ?>">\n';
+	reply_form += '<label for="subscribe-' + r + '" class="hashover-reply-label" title="<?php echo $this->setup->text['subscribe_tip']; ?>">\n';
 	reply_form += '<input type="checkbox" checked="true" id="subscribe-' + r + '" name="subscribe"> <?php echo $this->setup->text['subscribe']; ?>\n';
 	reply_form += '</label>\n';
 <?php } ?>
