@@ -519,12 +519,12 @@ function parse_template(object, count, sort, method, forpop) {
 
 		if (object['website'] == '') {
 			if (object['name'].match(/^@([a-zA-Z0-9_@]{1,29}$)/)) {
-				name = '<a id="hashover-name-' + permalink + '" href="http://twitter.com/' + name + '" target="_blank">' + name + '</a>';
+				name = '<a id="hashover-name-' + permalink + '"  class="hashover-name-twitter" href="http://twitter.com/' + name + '" target="_blank">' + name + '</a>';
 			} else {
-				name = '<span id="hashover-name-' + permalink + '">' + name + '</span>';
+				name = '<span id="hashover-name-' + permalink + '" class="hashover-name-plain">' + name + '</span>';
 			}
 		} else {
-			name = '<a id="hashover-name-' + permalink + '" href="' + object['website'] + '" target="_blank">' + name + '</a>';
+			name = '<a id="hashover-name-' + permalink + '" class="hashover-name-website" href="' + object['website'] + '" target="_blank">' + name + '</a>';
 		}
 
 		name = '<span class="hashover-name' + name_class + '">' + name_at + name + '</span>';
@@ -935,7 +935,7 @@ hashover += '\t</div>\n</form>\n';
 			echo 'hashover += \'<span id="hashover-sort" style="display: none;">\n\';', PHP_EOL;
 		}
 
-		echo 'hashover += \'\t<select name="sort" size="1" onChange="sort_comments(this.value); return false;">\n\';', PHP_EOL;
+		echo 'hashover += \'\t<select class="hashover-select" name="sort" size="1" onChange="sort_comments(this.value); return false;">\n\';', PHP_EOL;
 		echo 'hashover += \'\t\t<option value="ascending">', $this->setup->text['sort_ascend'], '</option>\n\';', PHP_EOL;
 		echo 'hashover += \'\t\t<option value="descending">', $this->setup->text['sort_descend'], '</option>\n\';', PHP_EOL;
 		echo 'hashover += \'\t\t<option value="bydate">', $this->setup->text['sort_bydate'], '</option>\n\';', PHP_EOL;
