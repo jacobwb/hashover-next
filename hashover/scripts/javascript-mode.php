@@ -497,7 +497,7 @@ function parse_template(object, count, sort, method, forpop) {
 
 		var 
 			name = object['name'].replace(/^@(.*?)$/, '$1'),
-			date = '<a href="#' + permalink + '" title="Permalink">' + object['date'] + '</a>',
+			date = '<a href="#' + permalink + '" title="Permalink" class="hashover-date-permalink">' + object['date'] + '</a>',
 			thread = (permalink.match('r')) ? '<a href="#' + permalink.replace(/^(.*)r.*$/, '$1') + '" title="<?php echo $this->setup->text['thread_tip']; ?>" class="hashover-thread-link"><?php echo $this->setup->text['thread']; ?></a>' : '',
 			replies = (replies > 0) ? '<span class="hashover-replies">' + replies + ((replies != 1) ? ' <?php echo $this->setup->text['replies']; ?>' : ' <?php echo $this->setup->text['reply']; ?>') + '</span>' : '',
 			likes = (object['likes']) ? '<span id="hashover-likes-' + permalink + '" class="hashover-likes">' + likes_num + '</span>' : '',
