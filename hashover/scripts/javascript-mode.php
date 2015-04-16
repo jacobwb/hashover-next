@@ -170,40 +170,40 @@ function hashover_reply(r, f) {
 ?>
 
 	if (name_on) {
-		reply_form += '<div class="hashover-name-input">\n<input type="text" name="name" title="<?php echo $this->setup->text['name_tip']; ?>" value="<?php if (!empty($_COOKIE['name'])) echo $_COOKIE['name']; ?>" maxlength="30" placeholder="<?php echo $this->setup->text['name']; ?>">\n</div>\n';
+		reply_form += '<div class="hashover-name-input">\n<input type="text" name="name" class="hashover-input-info" title="<?php echo $this->setup->text['name_tip']; ?>" value="<?php if (!empty($_COOKIE['name'])) echo $_COOKIE['name']; ?>" maxlength="30" placeholder="<?php echo $this->setup->text['name']; ?>">\n</div>\n';
 	}
 
 	if (password_on) {
-		reply_form += '<div class="hashover-password-input">\n<input type="password" name="password" title="<?php echo $this->setup->text['password_tip']; ?>" value="<?php if (!empty($_COOKIE['password'])) echo $_COOKIE['password']; ?>" placeholder="<?php echo $this->setup->text['password']; ?>">\n</div>\n';
+		reply_form += '<div class="hashover-password-input">\n<input type="password" class="hashover-input-info" name="password" title="<?php echo $this->setup->text['password_tip']; ?>" value="<?php if (!empty($_COOKIE['password'])) echo $_COOKIE['password']; ?>" placeholder="<?php echo $this->setup->text['password']; ?>">\n</div>\n';
 	}
 
 	if (email_on) {
-		reply_form += '<div class="hashover-email-input">\n<input type="text" name="email" title="<?php echo $this->setup->text['email_tip']; ?>" value="<?php if (!empty($_COOKIE['email'])) echo $_COOKIE['email']; ?>" placeholder="<?php echo $this->setup->text['email']; ?>">\n</div>\n';
+		reply_form += '<div class="hashover-email-input">\n<input type="text" name="email" class="hashover-input-info" title="<?php echo $this->setup->text['email_tip']; ?>" value="<?php if (!empty($_COOKIE['email'])) echo $_COOKIE['email']; ?>" placeholder="<?php echo $this->setup->text['email']; ?>">\n</div>\n';
 	}
 
 	if (website_on) {
-		reply_form += '<div class="hashover-website-input">\n<input type="text" name="website" title="<?php echo $this->setup->text['website_tip']; ?>" value="<?php if (!empty($_COOKIE['website'])) echo $_COOKIE['website']; ?>" placeholder="<?php echo $this->setup->text['website']; ?>">\n</div>\n';
+		reply_form += '<div class="hashover-website-input">\n<input type="text" name="website" class="hashover-input-info" title="<?php echo $this->setup->text['website_tip']; ?>" value="<?php if (!empty($_COOKIE['website'])) echo $_COOKIE['website']; ?>" placeholder="<?php echo $this->setup->text['website']; ?>">\n</div>\n';
 	}
 
 	reply_form += '</div>\n';
 <?php } ?>
 	reply_form += '<div id="hashover-message-' + r + '" class="hashover-message"></div>\n';
-	reply_form += '<textarea rows="5" cols="62" name="comment" title="<?php echo $this->setup->text['cmt_tip']; ?>" placeholder="<?php echo $this->setup->text['reply_form']; ?>"></textarea>\n';
+	reply_form += '<textarea rows="5" cols="62" name="comment" class="hashover-textarea hashover-textarea-reply" title="<?php echo $this->setup->text['cmt_tip']; ?>" placeholder="<?php echo $this->setup->text['reply_form']; ?>"></textarea>\n';
 	reply_form += '<div class="hashover-form-buttons">\n';
 <?php
 
 	if (empty($_COOKIE['hashover-login']) or !empty($_COOKIE['email'])) {
 
 ?>
-	reply_form += '<label for="subscribe-' + r + '" title="<?php echo $this->setup->text['subscribe_tip']; ?>">\n';
+	reply_form += '<label for="subscribe-' + r + '" class="hashover-reply-label" title="<?php echo $this->setup->text['subscribe_tip']; ?>">\n';
 	reply_form += '<input type="checkbox" checked="true" id="subscribe-' + r + '" name="subscribe"> <?php echo $this->setup->text['subscribe']; ?>\n';
 	reply_form += '</label>\n';
 <?php } ?>
 	reply_form += '<input type="hidden" name="title" value="<?php echo $page_title; ?>">\n';
 	reply_form += '<input type="hidden" name="url" value="<?php echo $page_url; ?>">\n';
 	reply_form += '<input type="hidden" name="reply_to" value="' + f + '">\n';
-	reply_form += '<input class="hashover-submit" type="submit" value="<?php echo $this->setup->text['post_reply']; ?>" onclick="return hashover_submit(\'' + r + '\', this);" onsubmit="return hashover_submit(\'' + r + '\', this);">\n';
-	reply_form += '<input class="hashover-submit" type="button" value="<?php echo $this->setup->text['cancel']; ?>" title="<?php echo $this->setup->text['cancel']; ?>" onclick="hashover_cancel_reply(\'' + r + '\'); return false;">\n';
+	reply_form += '<input class="hashover-submit hashover-reply-post" type="submit" value="<?php echo $this->setup->text['post_reply']; ?>" onclick="return hashover_submit(\'' + r + '\', this);" onsubmit="return hashover_submit(\'' + r + '\', this);">\n';
+	reply_form += '<input class="hashover-submit hashover-reply-cancel" type="button" value="<?php echo $this->setup->text['cancel']; ?>" title="<?php echo $this->setup->text['cancel']; ?>" onclick="hashover_cancel_reply(\'' + r + '\'); return false;">\n';
 	reply_form += '</div>\n</div>';
 
 	document.getElementById('hashover-reply-' + r).className = 'hashover-comment hashover-reply';
@@ -223,12 +223,12 @@ function hashover_edit(e, f, s) {
 
 	var edit_form = '<div class="hashover-dashed-title hashover-title"><?php echo $this->setup->text['edit_cmt']; ?></div>\n';
 	edit_form += '<div class="hashover-inputs">\n';
-	edit_form += '<div class="hashover-name-input"><input type="text" name="name" title="<?php echo $this->setup->text['name_tip']; ?>" value="' + name + '" maxlength="30" placeholder="<?php echo $this->setup->text['name']; ?>"></div>\n';
-	edit_form += '<div class="hashover-password-input"><input type="password" name="password" title="<?php echo $this->setup->text['password_tip']; ?>" value="<?php if (!empty($_COOKIE['password'])) echo $_COOKIE['password']; ?>" placeholder="<?php echo $this->setup->text['password']; ?>"></div>\n';
-	edit_form += '<div class="hashover-email-input"><input type="text" name="email" title="<?php echo $this->setup->text['email_tip']; ?>" value="<?php if (!empty($_COOKIE['email'])) echo $_COOKIE['email']; ?>" placeholder="<?php echo $this->setup->text['email']; ?>"></div>\n';
-	edit_form += '<div class="hashover-website-input"><input type="text" name="website" title="<?php echo $this->setup->text['website_tip']; ?>" value="' + website + '" placeholder="<?php echo $this->setup->text['website']; ?>"></div>\n';
+	edit_form += '<div class="hashover-name-input"><input type="text" name="name" class="hashover-input-info" title="<?php echo $this->setup->text['name_tip']; ?>" value="' + name + '" maxlength="30" placeholder="<?php echo $this->setup->text['name']; ?>"></div>\n';
+	edit_form += '<div class="hashover-password-input"><input type="password" name="password" class="hashover-input-info" title="<?php echo $this->setup->text['password_tip']; ?>" value="<?php if (!empty($_COOKIE['password'])) echo $_COOKIE['password']; ?>" placeholder="<?php echo $this->setup->text['password']; ?>"></div>\n';
+	edit_form += '<div class="hashover-email-input"><input type="text" name="email" class="hashover-input-info" title="<?php echo $this->setup->text['email_tip']; ?>" value="<?php if (!empty($_COOKIE['email'])) echo $_COOKIE['email']; ?>" placeholder="<?php echo $this->setup->text['email']; ?>"></div>\n';
+	edit_form += '<div class="hashover-website-input"><input type="text" name="website" class="hashover-input-info" title="<?php echo $this->setup->text['website_tip']; ?>" value="' + website + '" placeholder="<?php echo $this->setup->text['website']; ?>"></div>\n';
 	edit_form += '</div>\n';
-	edit_form += '<textarea rows="10" cols="62" name="comment" title="<?php echo $this->setup->text['cmt_tip']; ?>">' + cmtdata + '</textarea>\n';
+	edit_form += '<textarea rows="10" cols="62" name="comment" class="hashover-textarea hashover-textarea-edit" title="<?php echo $this->setup->text['cmt_tip']; ?>">' + cmtdata + '</textarea>\n';
 	edit_form += '<div class="hashover-form-buttons">\n';
 	edit_form += '<label for="notify" title="<?php echo $this->setup->text['subscribe_tip']; ?>">\n';
 	edit_form += '<input type="checkbox"' + ((s != '0') ? ' checked="true"' : '') + ' id="notify" name="notify"> <?php echo $this->setup->text['subscribe']; ?>\n';
@@ -236,9 +236,9 @@ function hashover_edit(e, f, s) {
 	edit_form += '<input type="hidden" name="title" value="<?php echo $page_title; ?>">\n';
 	edit_form += '<input type="hidden" name="url" value="<?php echo $page_url; ?>">\n';
 	edit_form += '<input type="hidden" name="cmtfile" value="' + f + '">\n';
-	edit_form += '<input class="hashover-submit" type="submit" name="edit" value="<?php echo $this->setup->text['save_edit']; ?>">\n';
-	edit_form += '<input class="hashover-submit" type="button" value="<?php echo $this->setup->text['cancel']; ?>" onclick="hashover_cancel_edit(\'' + e + '\'); return false;">\n';
-	edit_form += '<input class="hashover-submit hashover-post-button" type="submit" name="delete" value="<?php echo $this->setup->text['delete']; ?>" onclick="return hashover_deletion_warning();">\n';
+	edit_form += '<input class="hashover-submit hashover-edit-post" type="submit" name="edit" value="<?php echo $this->setup->text['save_edit']; ?>">\n';
+	edit_form += '<input class="hashover-submit hashover-edit-cancel" type="button" value="<?php echo $this->setup->text['cancel']; ?>" onclick="hashover_cancel_edit(\'' + e + '\'); return false;">\n';
+	edit_form += '<input class="hashover-submit hashover-edit-delete" type="submit" name="delete" value="<?php echo $this->setup->text['delete']; ?>" onclick="return hashover_deletion_warning();">\n';
 	edit_form += '</div>\n';
 
 	document.getElementById('hashover-edit-' + e).innerHTML = edit_form;
@@ -519,15 +519,15 @@ function parse_template(object, count, sort, method, forpop) {
 
 		if (object['website'] == '') {
 			if (object['name'].match(/^@([a-zA-Z0-9_@]{1,29}$)/)) {
-				name = '<a id="hashover-name-' + permalink + '" href="http://twitter.com/' + name + '" target="_blank">' + name + '</a>';
+				name = '<a id="hashover-name-' + permalink + '"  class="hashover-name-twitter" href="http://twitter.com/' + name + '" target="_blank">' + name + '</a>';
 			} else {
-				name = '<span id="hashover-name-' + permalink + '">' + name + '</span>';
+				name = '<span id="hashover-name-' + permalink + '" class="hashover-name-plain">' + name + '</span>';
 			}
 		} else {
-			name = '<a id="hashover-name-' + permalink + '" href="' + object['website'] + '" target="_blank">' + name + '</a>';
+			name = '<a id="hashover-name-' + permalink + '" class="hashover-name-website" href="' + object['website'] + '" target="_blank">' + name + '</a>';
 		}
 
-		name = '<span class="hashover-name' + name_class + '">' + name_at + name + '</span>';
+		name = '<span class="hashover-name hashover-comment-name' + name_class + '">' + name_at + name + '</span>';
 
 <?php
 		// Load HTML template
@@ -800,28 +800,28 @@ hashover += '\t\t<div class="hashover-inputs">\n';
 // Display name input tag if told to
 if (name_on) {
 	hashover += '\t\t\t<div class="hashover-name-input">\n';
-	<?php echo $this->setup->escape_output('\t\t\t\t<input type="text" name="name" title="' . $this->setup->text['name_tip'] . '" value="' . ((!empty($_COOKIE['name'])) ? $_COOKIE['name'] : '') . '" maxlength="30" placeholder="' . $this->setup->text['name'] . '">\n'); ?>
+	<?php echo $this->setup->escape_output('\t\t\t\t<input type="text" name="name" class="hashover-input-info" title="' . $this->setup->text['name_tip'] . '" value="' . ((!empty($_COOKIE['name'])) ? $_COOKIE['name'] : '') . '" maxlength="30" placeholder="' . $this->setup->text['name'] . '">\n'); ?>
 	hashover += '\t\t\t</div>\n';
 }
 
 // Display password input tag if told to
 if (password_on) {
 	hashover += '\t\t\t<div class="hashover-password-input">\n';
-	<?php echo $this->setup->escape_output('\t\t\t\t<input type="password" name="password" title="' . $this->setup->text['password_tip'] . '" value="' . ((!empty($_COOKIE['password'])) ? $_COOKIE['password'] : '') . '" placeholder="' . $this->setup->text['password'] . '">\n'); ?>
+	<?php echo $this->setup->escape_output('\t\t\t\t<input type="password" name="password" class="hashover-input-info" title="' . $this->setup->text['password_tip'] . '" value="' . ((!empty($_COOKIE['password'])) ? $_COOKIE['password'] : '') . '" placeholder="' . $this->setup->text['password'] . '">\n'); ?>
 	hashover += '\t\t\t</div>\n';
 }
 
 // Display email input tag if told to
 if (email_on) {
 	hashover += '\t\t\t<div class="hashover-email-input">\n';
-	<?php echo $this->setup->escape_output('\t\t\t\t<input type="text" name="email" title="' . $this->setup->text['email_tip'] . '" value="' . ((!empty($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '" placeholder="' . $this->setup->text['email'] . '">\n'); ?>
+	<?php echo $this->setup->escape_output('\t\t\t\t<input type="text" name="email" class="hashover-input-info" title="' . $this->setup->text['email_tip'] . '" value="' . ((!empty($_COOKIE['email'])) ? $_COOKIE['email'] : '') . '" placeholder="' . $this->setup->text['email'] . '">\n'); ?>
 	hashover += '\t\t\t</div>\n';
 }
 
 // Display website input tag if told to
 if (website_on) {
 	hashover += '\t\t\t<div class="hashover-website-input">\n';
-	<?php echo $this->setup->escape_output('\t\t\t\t<input type="text" name="website" title="' . $this->setup->text['website_tip'] . '" value="' . ((!empty($_COOKIE['website'])) ? $_COOKIE['website'] : '') . '" placeholder="' . $this->setup->text['website'] . '">\n'); ?>
+	<?php echo $this->setup->escape_output('\t\t\t\t<input type="text" name="website" class="hashover-input-info" title="' . $this->setup->text['website_tip'] . '" value="' . ((!empty($_COOKIE['website'])) ? $_COOKIE['website'] : '') . '" placeholder="' . $this->setup->text['website'] . '">\n'); ?>
 	hashover += '\t\t\t</div>\n';
 }
 
@@ -838,7 +838,7 @@ hashover += '\t\t</div>\n';
 <?php
 
 	$replyborder = (isset($_COOKIE['success']) and $_COOKIE['success'] == 'no') ? ' style="border: 2px solid #FF0000 !important;"' : '';
-	echo $this->setup->escape_output('\t\t<textarea rows="5" cols="63" name="comment"' . $replyborder . ' title="' . $this->setup->text['cmt_tip'] . '" placeholder="' . $this->setup->text['comment_form'] . '"></textarea>\n');
+	echo $this->setup->escape_output('\t\t<textarea rows="5" cols="63" class="hashover-textarea hashover-textarea-main" name="comment"' . $replyborder . ' title="' . $this->setup->text['cmt_tip'] . '" placeholder="' . $this->setup->text['comment_form'] . '"></textarea>\n');
 	echo $this->setup->escape_output('\t\t<input type="hidden" name="title" value="' . $page_title . '">\n');
 	echo $this->setup->escape_output('\t\t<input type="hidden" name="url" value="' . $page_url . '">\n');
 
@@ -849,7 +849,7 @@ hashover += '\t\t</div>\n';
 	echo $this->setup->escape_output('\t\t<div class="hashover-main-buttons">\n');
 
 	if (empty($_COOKIE['hashover-login']) or !empty($_COOKIE['email'])) {
-		echo $this->setup->escape_output('\t\t\t<label for="hashover-subscribe" title="' . $this->setup->text['subscribe_tip'] . '">\n');
+		echo $this->setup->escape_output('\t\t\t<label for="hashover-subscribe" class="hashover-main-label" title="' . $this->setup->text['subscribe_tip'] . '">\n');
 		echo $this->setup->escape_output('\t\t\t\t<input id="hashover-subscribe" type="checkbox" name="subscribe" checked="true"> ' . $this->setup->text['subscribe'] . '\n');
 		echo $this->setup->escape_output('\t\t\t</label>\n');
 	}
@@ -935,7 +935,7 @@ hashover += '\t</div>\n</form>\n';
 			echo 'hashover += \'<span id="hashover-sort" style="display: none;">\n\';', PHP_EOL;
 		}
 
-		echo 'hashover += \'\t<select name="sort" size="1" onChange="sort_comments(this.value); return false;">\n\';', PHP_EOL;
+		echo 'hashover += \'\t<select class="hashover-select" name="sort" size="1" onChange="sort_comments(this.value); return false;">\n\';', PHP_EOL;
 		echo 'hashover += \'\t\t<option value="ascending">', $this->setup->text['sort_ascend'], '</option>\n\';', PHP_EOL;
 		echo 'hashover += \'\t\t<option value="descending">', $this->setup->text['sort_descend'], '</option>\n\';', PHP_EOL;
 		echo 'hashover += \'\t\t<option value="bydate">', $this->setup->text['sort_bydate'], '</option>\n\';', PHP_EOL;
