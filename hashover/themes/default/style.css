@@ -63,7 +63,6 @@ Copyright (C) 2014 Jacob Barkdull
 #hashover .hashover-comment .hashover-footer,
 #hashover .hashover-comment .hashover-message,
 #hashover .hashover-comment form,
-#hashover #hashover_form .hashover-balloon,
 #hashover .hashover-comment form .hashover-balloon {
 	overflow: hidden;
 }
@@ -106,12 +105,8 @@ Copyright (C) 2014 Jacob Barkdull
 }
 
 #hashover #hashover_form .hashover-inputs {
-	padding: 0em 1em 0px 1em;
+	padding: 1em;
 	margin-bottom: 0px;
-}
-
-#hashover #hashover_form textarea {
-	margin-top: 1em;
 }
 
 #hashover .hashover-inputs > * {
@@ -225,7 +220,6 @@ Copyright (C) 2014 Jacob Barkdull
 #hashover form textarea {
 	width: 100%;
 	padding: 1em;
-	margin-bottom: 1em;
 	border: none;
 	vertical-align: top;
 	resize: vertical;
@@ -351,12 +345,14 @@ Copyright (C) 2014 Jacob Barkdull
 	margin-top: -1px;
 }
 
-#hashover #hashover-subscribe {
-	margin-left: 1em;
+#hashover .hashover-main-buttons {
+	padding: 1em;
+	overflow: hidden;
 }
 
-#hashover .hashover-post-button {
-	margin-right: 1em;
+#hashover .hashover-form-buttons {
+	padding-top: 1em;
+	overflow: hidden;
 }
 
 #hashover #hashover-count,
@@ -391,7 +387,8 @@ Copyright (C) 2014 Jacob Barkdull
 	border: 0px;
 }
 
-#hashover a, #hashover a:link {
+#hashover a,
+#hashover a:link {
 	text-decoration: none;
 	color: #0000CC;
 	outline: none;
@@ -436,11 +433,7 @@ Copyright (C) 2014 Jacob Barkdull
 	/*background-color: #FAE6ED;*/ /* Light red (pink-ish) */
 }
 
-#hashover #hashover_form .hashover-balloon {
-	padding: 1em 0px 1em 0px;
-}
-
-#hashover #hashover_form .hashover-balloon,
+#hashover_form .hashover-inputs,
 #hashover .hashover-comment > .hashover-header {
 	background-color: rgba(255, 255, 255, 0.6);
 }
@@ -658,14 +651,14 @@ Copyright (C) 2014 Jacob Barkdull
 	margin-top: -1px;
 }
 
-#hashover .hashover-comment .hashover-date a,
-#hashover .hashover-comment .hashover-date a:visited,
+#hashover .hashover-comment .hashover-date-permalink,
+#hashover .hashover-comment .hashover-date-permalink:visited,
 #hashover .hashover-comment .hashover-date > * {
 	color: #606060;
 }
 
-#hashover .hashover-comment .hashover-date a:hover,
-#hashover .hashover-comment .hashover-date a:active {
+#hashover .hashover-comment .hashover-date-permalink:hover,
+#hashover .hashover-comment .hashover-date-permalink:active {
 	color: #101010;
 }
 
@@ -674,28 +667,28 @@ Copyright (C) 2014 Jacob Barkdull
 	border-top: 1px solid #808080;
 }
 
-#hashover .hashover-comment .hashover-footer a,
-#hashover .hashover-comment .hashover-footer .hashover-replies,
-#hashover .hashover-comment .hashover-footer .hashover-likes,
-#hashover .hashover-comment .hashover-footer .hashover-dislikes {
+#hashover .hashover-comment .hashover-date-permalink,
+#hashover .hashover-comment .hashover-replies,
+#hashover .hashover-comment .hashover-likes,
+#hashover .hashover-comment .hashover-dislikes {
 	display: inline-block;
 	vertical-align: middle;
 }
 
-#hashover .hashover-comment .hashover-footer .hashover-date a,
-#hashover .hashover-comment .hashover-footer .hashover-replies,
-#hashover .hashover-comment .hashover-footer .hashover-likes,
-#hashover .hashover-comment .hashover-footer .hashover-dislikes {
+#hashover .hashover-comment .hashover-date-permalink,
+#hashover .hashover-comment .hashover-replies,
+#hashover .hashover-comment .hashover-likes,
+#hashover .hashover-comment .hashover-dislikes {
 	float: left;
 }
 
-#hashover .hashover-comment .hashover-footer .hashover-replies,
-#hashover .hashover-comment .hashover-footer .hashover-likes,
-#hashover .hashover-comment .hashover-footer .hashover-dislikes {
+#hashover .hashover-comment .hashover-replies,
+#hashover .hashover-comment .hashover-likes,
+#hashover .hashover-comment .hashover-dislikes {
 	padding-left: 8px;
 }
 
-#hashover .hashover-comment .hashover-footer .hashover-buttons a {
+#hashover .hashover-comment .hashover-buttons a {
 	display: inline-block;
 	vertical-align: middle;
 	padding-left: 30px;
@@ -712,55 +705,55 @@ Copyright (C) 2014 Jacob Barkdull
 	-o-transition: opacity 150ms linear 0ms;
 }
 
-#hashover .hashover-comment .hashover-footer .hashover-buttons a:hover {
+#hashover .hashover-comment .hashover-buttons a:hover {
 	opacity: 1.0;
 	filter: alpha(opacity=100);
 }
 
-#hashover a.hashover-has-email {
+#hashover .hashover-has-email {
 	background-position: left -231px;
 }
 
-#hashover a.hashover-no-email {
+#hashover .hashover-no-email {
 	background-position: left -259px;
 }
 
-#hashover .hashover-comment .hashover-footer a.hashover-like,
-#hashover .hashover-comment .hashover-footer a.hashover-liked:active {
+#hashover .hashover-comment .hashover-like,
+#hashover .hashover-comment .hashover-liked:active {
 	background-position: left -175px;
 }
 
-#hashover .hashover-comment .hashover-footer a.hashover-like.dislikes {
+#hashover .hashover-comment .hashover-like.dislikes {
 	background-position: left -286px;
 }
 
-#hashover .hashover-comment .hashover-footer a.hashover-dislike {
+#hashover .hashover-comment .hashover-dislike {
 	background-position: left -314px;
 }
 
-#hashover .hashover-comment .hashover-footer a.hashover-liked,
-#hashover .hashover-comment .hashover-footer a.hashover-like:active {
+#hashover .hashover-comment .hashover-liked,
+#hashover .hashover-comment .hashover-like:active {
 	background-position: left -203px;
 }
 
-#hashover .hashover-comment .hashover-footer a.hashover-disliked,
-#hashover .hashover-comment .hashover-footer a.hashover-dislike:active {
+#hashover .hashover-comment .hashover-disliked,
+#hashover .hashover-comment .hashover-dislike:active {
 	background-position: left -370px;
 }
 
-#hashover .hashover-comment .hashover-footer a.hashover-liked.dislikes,
-#hashover .hashover-comment .hashover-footer a.hashover-like.dislikes:active {
+#hashover .hashover-comment .hashover-liked.dislikes,
+#hashover .hashover-comment .hashover-like.dislikes:active {
 	background-position: left -342px;
 }
 
-#hashover .hashover-comment .hashover-footer a.hashover-edit {
+#hashover .hashover-comment .hashover-edit {
 	background-position: 2px -147px;
 }
 
-#hashover .hashover-comment .hashover-footer a.hashover-like.dislikes,
-#hashover .hashover-comment .hashover-footer a.hashover-liked.dislikes,
-#hashover .hashover-comment .hashover-footer a.hashover-dislike,
-#hashover .hashover-comment .hashover-footer a.hashover-disliked {
+#hashover .hashover-comment .hashover-like.dislikes,
+#hashover .hashover-comment .hashover-liked.dislikes,
+#hashover .hashover-comment .hashover-dislike,
+#hashover .hashover-comment .hashover-disliked {
 	width: 20px;
 	height: 15px;
 	padding-left: 5px;
@@ -817,7 +810,7 @@ Copyright (C) 2014 Jacob Barkdull
 
 /* Handle HDPI */
 #hashover.hashover-mobile .hashover-inputs input,
-#hashover.hashover-mobile .hashover-comment .hashover-footer .hashover-buttons a {
+#hashover.hashover-mobile .hashover-comment .hashover-buttons a {
 	background-image: url('/hashover/images/svgs/inputs-and-buttons.svg');
 }
 
