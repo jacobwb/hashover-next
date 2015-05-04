@@ -444,11 +444,11 @@
 
 					// Notify commenter of reply
 					if (!empty($_POST['reply_to'])) {
-						$get_cmt = (object) $this->read_comments->data->read($_POST['reply_to']);
-						$op_cmt = wordwrap('    ' . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($get_cmt->body)), 76, "\n    ", true);
+						$get_cmt = $this->read_comments->data->read($_POST['reply_to']);
+						$op_cmt = wordwrap('    ' . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($get_cmt['body'])), 76, "\n    ", true);
 						$to_commenter = "In reply to:\n\n" . $op_cmt . "\n\n";
-						$to_webmaster = "In reply to " . $get_cmt->name . ":\n\n" . $op_cmt . "\n\n";
-						$decryto = $this->setup->encryption->decrypt($get_cmt->email, $get_cmt->encryption);
+						$to_webmaster = "In reply to " . $get_cmt['name'] . ":\n\n" . $op_cmt . "\n\n";
+						$decryto = $this->setup->encryption->decrypt($get_cmt['email'], $get_cmt['encryption']);
 
 						if (!empty($decryto) and $decryto != $this->setup->notification_email and $decryto != $this->email) {
 							if ($get_cmt['notifications'] == 'yes') {
