@@ -519,7 +519,7 @@ function parse_template(object, count, sort, method, forpop) {
 
 		if (object['website'] == '') {
 			if (object['name'].match(/^@([a-zA-Z0-9_@]{1,29}$)/)) {
-				name = '<a href="http://twitter.com/' + name + '" id="hashover-name-' + permalink + '"  class="hashover-name-twitter" target="_blank">' + name + '</a>';
+				name = '<a href="http://twitter.com/' + name + '" id="hashover-name-' + permalink + '" class="hashover-name-twitter" target="_blank">' + name + '</a>';
 			} else {
 				name = '<span id="hashover-name-' + permalink + '" class="hashover-name-plain">' + name + '</span>';
 			}
@@ -956,13 +956,14 @@ hashover += '\t</div>\n</form>\n';
 			echo '}', PHP_EOL, PHP_EOL;
 
 			echo 'if (!href.match(/#(hashover-(edit|reply)-|)c[1-9r]+/)) {', PHP_EOL;
-			$collapse_plural = ($this->read_comments->total_count != 1) ? 1 : 0;
 
 			if ($this->setup->collapse_limit >= 1) {
-				$collapse_num_cmts = (($this->read_comments->total_count - 1) - $this->setup->collapse_limit);
-				$collapse_link_text = str_replace('_NUM_', $collapse_num_cmts, $this->setup->text['other_cmts'][$collapse_plural]);
+				$collapse_num_cmts = ($this->read_comments->total_count - 1) - $this->setup->collapse_limit;
+				$collapse_link_text = $this->setup->text['other_cmts'][($collapse_num_cmts != 1)];
+				$collapse_link_text = str_replace('_NUM_', $collapse_num_cmts, $collapse_link_text);
 			} else {
-				$collapse_link_text = str_replace('_NUM_', $this->read_comments->total_count - 1, $this->setup->text['show_num_cmts'][$collapse_plural]);
+				$collapse_link_text = $this->setup->text['show_num_cmts'][($this->read_comments->total_count != 1)];
+				$collapse_link_text = str_replace('_NUM_', $this->read_comments->total_count - 1, $collapse_link_text);
 			}
 
 			echo "\t", $this->setup->escape_output('<a href="#" id="hashover-more-link" onclick="show_cmts(this); return false;">' . $collapse_link_text . '</a>');
