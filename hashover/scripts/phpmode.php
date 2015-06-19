@@ -86,8 +86,8 @@
 
 					$body = $comment['body'];
 					$body = preg_replace ($this->linkRegex, '\\1', $body);
-					$name = $comment['name'];
-					$website = $comment['website'];
+					$name = !empty ($comment['name']) ? $comment['name'] : '';
+					$website = !empty ($comment['website']) ? $comment['website'] : '';
 
 					$form = new HTMLTag ('form', false, false);
 					$form->createAttribute ('id', 'hashover-edit-' . $permalink);
