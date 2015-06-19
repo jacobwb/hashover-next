@@ -9,7 +9,7 @@
 
 
 	// Display source code
-	if (basename ($_SERVER['PHP_SELF']) == basename (__FILE__)) {
+	if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
@@ -18,16 +18,18 @@
 
 	// Polish text for forms, buttons, links, and tooltips
 	$locale = array (
-		'comment_form'	=> 'Napisz komentarz (pozostałe pola opcjonalne)',	// "Comment" field's default text
-		'reply_form'	=> 'Napisz odpowiedź (pozostałe pola opcjonalne)',	// "Reply" field's default text
-		'post_button'	=> 'Wyślij komentarz',					// "Post Comment" button's default text
-		'login'		=> 'Zaloguj Się',					// "Login" button
-		'login_tip'	=> 'Zaloguj Się (opcjonalne)',				// "Login" button tooltip
-		'logout'	=> 'Wyloguj Się',					// "Logout" button
-		'del_note'	=> 'Komentarz został usunięty.',			// Notice of deleted comment
-		'cmt_deleted'	=> 'Komentarz usunięty!',				// Notice of successful comment deletion
-		'options'	=> 'Opcje',						// "Options" button text
-		'cancel'	=> 'Anuluj',						// "Cancel" button text
+		'comment_form'	=> 'Napisz komentarz (pozostałe pola opcjonalne)',
+		'reply_form'	=> 'Napisz odpowiedź (pozostałe pola opcjonalne)',
+		'post_button'	=> 'Wyślij komentarz',
+		'login'		=> 'Zaloguj Się',
+		'login_tip'	=> 'Zaloguj Się (opcjonalne)',
+		'logout'	=> 'Wyloguj Się',
+		'pending_note'	=> 'Ten komentarz jest oczekujące na zatwierdzenie.',
+		'deleted_note'	=> 'Komentarz został usunięty.',
+		'cmt_pending'	=> 'Oczekujące',
+		'cmt_deleted'	=> 'Komentarz usunięty!',
+		'options'	=> 'Opcje',
+		'cancel'	=> 'Anuluj',
 		'reply_to_cmt'	=> 'Odpowiedz na komentarz',
 		'edit_your_cmt'	=> 'Edytuj Komentarz',
 		'name'		=> 'Imię',
@@ -72,6 +74,7 @@
 		'reply'		=> 'Odpowiedz',
 		'like'		=> array ('Like', 'Likes'),
 		'liked'		=> 'Liked',
+		'unlike'	=> 'Unlike',
 		'like_cmt'	=> '\'Like\' Ten Komentarz',
 		'liked_cmt'	=> 'Polubiłeś \'Liked\' Ten Komentarz',
 		'dislike'	=> array ('Dislike', 'Dislikes'),

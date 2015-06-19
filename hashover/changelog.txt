@@ -1,3 +1,262 @@
+Changes by Jacob Barkdull 2015-06-13
+--------------------------------------------------------------------------------
+* Most code has moved to the TildeHash Coding Standard
+
+	- Indention is done with tabs, only one per code block.
+	- Curly braces are to be used wherever possible, including switches.
+	- Class property and method names use camelCase.
+	- Function definition names in the global namespace use snake_case.
+	- All variable names, in any scope or namespace, use snake_case.
+	- Variable and function naming convention demands only real words.
+	- Strict comparisons are to be used wherever possible.
+	- Class and function curly braces go on their own line.
+	- There should be a space before any function parentheses.
+	- There should be a space before and after any equals.
+	- There should be a space after function parameters and array items.
+	- There should be a newline after class method keywords.
+	- There should be a blank line before a return following multiple lines.
+	- There should be a blank line before a break following multiple lines.
+
+	- This coding standard is not final. Complete and detailed 
+	  documentation and rationale is forthcoming.
+
+	  Discussion and suggestions are welcomed.
+
+
+* Major rewrite of JavaScript mode
+
+	- HashOver no longer adds any variables or functions to the global 
+	  namespace, this means HashOver is now isolated. HashOver won't 
+	  interfere with other JavaScript on the same page, and users and 
+	  malicious JavaScript won't be able to write to HashOver's variables 
+	  or execute its functions that aren't meant to be remotely executed.
+
+	- Image tags are no longer used, instead the "background-image" CSS 
+	  style attribute is used. This results in fewer HTTP requests, and 
+	  avoids many performance issues related to image tags that don't apply 
+	  to background image style, such as width and height calculations and 
+	  onload event handling. This also avoids performance issues associated 
+	  with ad-blockers, such as "Adblock Plus".
+
+	- Almost all inline HTML has been removed from the JavaScript code, 
+	  instead a new class has been added that generates the HTML for use in 
+	  both the JavaScript mode and in PHP mode. This means that inline HTML 
+	  is still present in the generated JavaScript code users receive, but 
+	  it's not present in the actual JavaScript source code. The code 
+	  doesn't make use of JavaScript's built-in functions such as 
+	  "document.createElement ()" as these functions executed hundreds or 
+	  thousands of times are far too slow.
+
+	- Inline JavaScript event attributes (onClick="", etc) have been 
+	  removed as well. Instead they are added after the comments are 
+	  appended to the page's DOM. This will allow for a "hybrid" mode in 
+	  the future, where HashOver will execute in PHP mode, but JavaScript 
+	  will also be executed to handle various interactive behaviors.
+
+	- When enabled, JavaScript code can now be returned to the user in a 
+	  minified form, however, this code is not obfuscated. The code also 
+	  includes a smaller Copyright notice and a link to the non-minified 
+	  JavaScript code, as such is a requirement of the AGPL.
+
+	- HashOver's JavaScript execution time is now displayed in the console 
+	  of modern web browsers, when present.
+
+	- JavaScript now uses Strict Mode.
+
+	- The JSON data for comments is now passed to the JavaScript after its 
+	  PHP code has executed, and -- when enabled -- after it's been 
+	  minified. This makes minification faster, as the JSON data is 
+	  returned without pretty print when JavaScript minification is 
+	  enabled, and therefore it doesn't need to be minified anyway.
+
+	- Element.classList.add () is used instead of appending classes to 
+	  Element.className. This allows for easy adding and removing of 
+	  classes by name, and is slightly faster.
+
+	- Improved how various warning messages are handled. Namely, error 
+	  messages now have a different class than normal messages.
+
+	- Reply, Edit, and Like links are no longer included in the JSON 
+	  comment data. This greatly reduces the size of the JavaScript.
+
+	- Reply and Edit links now change to "Cancel" links after opening their 
+	  respective forms when clicked. When clicked again, they remove their 
+	  respective form and revert back to their initial state.
+
+	- Specific fields can no longer be disabled via JavaScript, instead 
+	  they are enabled or disabled in the Settings class.
+
+
+* Major rewrite of PHP mode
+
+	- PHP mode is now a port of JavaScript mode. It should follow it 
+	  closely, excluding features that aren't possible with plain HTML, 
+	  such as interactive forms and sorting, likes, etc.
+
+	- PHP mode is implemented via object now. And should be instantiated 
+	  before any output is sent, as HashOver sets various cookies.
+
+	  You implement it like so:
+
+	      <?php
+
+	              $hashover = new HashOver ('php', 'title', 'URL');
+
+	      ?>
+	      <!DOCTYPE html>
+	      ...
+
+	      <div id="hashover">
+	              <?php
+
+	                      echo $hashover->displayComments ();
+
+	              ?>
+	      </div>
+
+
+* Changes to how comments are stored
+
+	- Comments no longer contain plain text "\n" nor "<br>" tags. Comments 
+	  are stored multi-lined and parsed upon reading. When displayed, 
+	  comments are first parsed by paragraph, with each paragraph getting 
+	  wrapped in a <p> tag, and then by line, with each line ending with a 
+	  <br> tag. This allows different paragraph spacing via CSS, and 
+	  reduces the size of the JavaScript output.
+
+
+* Changes to where HTML is located
+
+	- Most HTML has been moved to the new class HTMLOutput. This class 
+	  holds the HTML that is used in both JavaScript mode and PHP mode.
+
+
+* User login information
+
+	- User login information is no longer placed in the document as hidden 
+	  inputs, instead, when posting a comment the cookies set on the user's 
+	  browser will be used as their login credentials.
+
+
+* Password inputs no longer have cookie value
+
+	- This means that user passwords aren't placed in the value attribute 
+	  of the "Password" field of the various forms. This should, 
+	  technically provide some extra security from malicious JavaScript 
+	  that happens to be on the same page as HashOver.
+
+	  Users shouldn't notice any difference, since web browsers 
+	  automatically fill password type inputs anyway.
+
+
+* Changes to theme HTML templates
+
+	- HTML layout templates are now parsed by the new Templater class. The 
+	  structure of layout templates should be much easier to understand, as 
+	  the layout templates no longer use JavaScript variable concatenation.
+	  Instead, a curly brace format is used.
+
+	  For example:
+
+	      {hashover:name} displays the user's name.
+	      {comment:sort_date} displays the sort date from the JSON data.
+	      {placeholder:test} displays a "placeholder" span tag.
+
+
+* New settings
+
+	- Set whether users can enter their own name with:
+
+	      public bool $allowsNames = true;
+
+	- Set whether users can protect their comments with a password with:
+
+	      public bool $allowsPasswords = true;
+
+	- Set whether users can enter an e-mail address with:
+
+	      public bool $allowsEmails = true;
+
+	- Set whether users can enter a website with:
+
+	      public bool $allowsWebsites = true;
+
+	- Set whether comments must be approved before they appear with:
+
+	      public bool $usesModeration = false;
+
+	- Position for primary form; options: 'top' or 'bottom'
+
+	      public string $formPosition = 'top';
+
+	- Set whether to display labels above inputs with:
+
+	      public bool $usesLabels = false;
+
+	- Set whether forms have "Cancel" buttons with:
+
+	      public bool $usesCancelButtons = false;
+
+	- Set whether JavaScript output should be minified with:
+
+	      public bool $minifiesJavaScript = false;
+
+	- Set how much to minify JavaScript code, options: 1, 2, 3, 4
+
+	      public int $minifyLevel = 4;
+
+	- Set whether user deleted files are unlinked from the filesystem with:
+
+	      public bool $userDeletionsUnlink = false;
+
+
+* Removed unused public string $indention setting
+
+	Indention has been done using CSS for a while now.
+
+
+* Added files:
+
+	hashover/images/pngs/pending-icon.png,
+	hashover/images/svgs/pending-icon.svg,
+	hashover/scripts/locales/tr.php,
+	hashover/scripts/hashover.php,
+	hashover/scripts/htmloutput.php,
+	hashover/scripts/htmltag.php,
+	hashover/scripts/javascript-output.php,
+	hashover/scripts/jsminifier.php,
+	hashover/scripts/templater.php,
+
+
+* Renamed files:
+
+	hashover/images/pngs/delicon.png to deleted-icon.png
+	hashover/images/svgs/delicon.svg to deleted-icon.svg
+	hashover/api/count_link.php to count-link.php,
+	hashover/scripts/php-mode.php to phpmode.php,
+	hashover/scripts/displaycomments.php to commentparser.php
+
+
+* Deleted files:
+
+	hashover/hashover.php
+
+
+* Added Turkish locale by Tunay Eren Uyar (@T_E_U_Tunay)
+* RSS now uses DOMDocument.
+* Execution time is one-third lower with a large number of comments (1000+).
+* Execution time is now in milliseconds, or in seconds if >= 1 second.
+* Memory peak usage now properly stated as Mib.
+* Fixed embedded images losing their events after sorting comments.
+* Removed unused public string $parses_huge setting.
+* Many variables and functions have been renamed.
+* Improved SQL, table names are no longer snake_case'd thread directory names.
+* "hashover_form" renamed to "hashover-form" in both HTML and CSS.
+* Avatars no longer check Gravatar response codes.
+* Minor improvements to some images.
+* Other minor bug fixes.
+
+
 Changes by Jacob Barkdull 2015-04-03
 --------------------------------------------------------------------------------
 * hashover/scripts/javascript-mode.php,
@@ -1530,3 +1789,4 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
+

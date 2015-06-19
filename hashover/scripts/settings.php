@@ -1,6 +1,6 @@
 <?php
 
-	// Copyright (C) 2014 Jacob Barkdull
+	// Copyright (C) 2010-2015 Jacob Barkdull
 	//
 	//	I, Jacob Barkdull, hereby release this work into the public domain. 
 	//	This applies worldwide. If this is not legally possible, I grant any 
@@ -17,61 +17,77 @@
 	//
 	//	It is also important to choose UNIQUE values for the encryption key, 
 	//	admin name, and admin password, as not doing so puts HashOver at 
-	//	risk of being hijacking by someone, allowing them to delete comments, 
-	//	edit existing comments to post spam, and/or impersonate you or your 
+	//	risk of being hijacked. Allowing someone to delete comments and/or 
+	//	edit existing comments to post spam, impersonate you or your 
 	//	visitors in order to push some sort of agenda/propaganda, to defame 
 	//	you or your visitors, or to imply endorsement of some product(s), 
 	//	service(s), and/or political ideology.
+	//
+	//
+	// NOTE FOR NOOBS:
+	//
+	//	"true" means yes, "false" means no.
 
 
 	class Settings
 	{
 		// Required setup
-		public $notification_email	= 'example@example.com';	// E-mail for notification of new comments
-		protected $encryption_key	= '8CharKey';			// Unique encryption key
-		protected $admin_name		= 'admin';			// Login name to gain admin rights (case-sensitive)
-		protected $admin_password	= 'passwd';			// Login password to gain admin rights (case-sensitive)
+		public    $notificationEmail	= 'example@example.com';	// E-mail for notification of new comments
+		protected $encryptionKey	= '8CharKey';			// Unique encryption key
+		protected $adminName		= 'admin';			// Login name to gain admin rights (case-sensitive)
+		protected $adminPassword	= 'passwd';			// Login password to gain admin rights (case-sensitive)
 
-		// Various optional settings
+		// Primary settings
 		public $language		= 'en';				// Language used for forms, buttons, links, and tooltips
 		public $theme			= 'default';			// Comment Cascading Style Sheet (CSS)
-		public $default_name		= 'Anonymous';			// Nickname when one isn't given
-		public $display_title		= 'yes';			// Whether page title is shown or not
-		public $shows_count_total	= 'yes';			// Whether to show reply count separately from total
 		public $timezone		= 'America/Los_Angeles';	// Timezone
-		public $uses_12h_time		= 'yes';			// Whether to use 12 hour time format, otherwise use 24 hour format
-		public $icon_mode		= 'image';			// How to display avatar icons (either 'image', 'count' or 'none')
-		public $gravatar_default	= 'custom';			// Gravatar theme to use ('custom', 'identicon', 'monsterid', 'wavatar', or 'retro')
-		public $gravatar_force		= 'no';				// Whether to force the themed Gravatar images instead of an avatar image
-		public $icon_size		= '45';				// Size of Gravatar icons in pixels
-		public $allows_images		= 'yes';			// Whether external image URLs wrapped in [img] tags are embedded
-		public $allows_dislikes		= 'no';				// Whether a "Dislike" link is display; allowing Reddit-style voting
-		public $collapses_comments	= 'yes';			// Whether to hide comments and display a link to show them
-		public $collapse_limit		= 3;				// Number of comments that aren't hidden
-		public $pop_threshold		= 5;				// Minimum likes a comment needs to be popular
-		public $pop_limit		= 2;				// Number of comments allowed to become popular
-		public $reply_mode		= 'thread';			// Whether to display replies as a 'thread' or as a 'stream'
-		public $indention		= 'left';			// Side to add comment indention on
-		public $image_format		= 'png';			// Format for icons and other images (use 'svg' for HDPI)
-		public $stores_ip_addrs		= 'no';				// Whether to store users' IP addresses
-		public $spam_check_modes	= 'php';			// Perform IP spam check in 'javascript' or 'php' mode, or 'both'
-		public $spam_database		= 'remote';			// Whether to use a remote or local spam database
-		public $appends_css_link	= 'yes';			// Whether to automatically add a CSS <link> element to the page <head>
-		public $displays_rss_link	= 'yes';			// Whether a comment RSS feed link is displayed
+		public $usesModeration		= false;			// Whether comments must be approved before they appear to other visitors
+		public $dataFormat		= 'xml';			// Format comments will be stored in; options: xml, json, sql
+		public $allowsNames		= true;				// Whether users can enter their own name
+		public $defaultName		= 'Anonymous';			// Default name to use when one isn't given
+		public $allowsPasswords		= true;				// Whether users can protect their comments with a password (required for user logins)
+		public $allowsEmails		= true;				// Whether users can enter an e-mail address (required for user e-mail notifications)
+		public $allowsWebsites		= true;				// Whether users can enter a website
+		public $allowsImages		= true;				// Whether external image URLs wrapped in [img] tags are embedded
+		public $allowsDislikes		= false;			// Whether a "Dislike" link is display; allowing Reddit-style voting
+		public $collapsesComments	= true;				// Whether to hide comments and display a link to show them
+		public $collapseLimit		= 3;				// Number of comments that aren't hidden
+		public $popularityThreshold	= 5;				// Minimum likes a comment needs to be popular
+		public $popularityLimit		= 2;				// Number of comments allowed to become popular
+
+		// Behavior settings
+		public $displaysTitle		= true;				// Whether page title is shown or not
+		public $formPosition		= 'top';			// Position for primary form; options: 'top' or 'bottom'
+		public $showsReplyCount		= true;				// Whether to show reply count separately from total
+		public $uses12HourTime		= true;				// Whether to use 12 hour time format, otherwise use 24 hour format
+		public $usesShortDates		= true;				// Whether comment dates are shortened
+		public $iconMode		= 'image';			// How to display avatar icons (either 'image', 'count' or 'none')
+		public $iconSize		= '45';				// Size of Gravatar icons in pixels
+		public $imageFormat		= 'png';			// Format for icons and other images (use 'svg' for HDPI)
+		public $replyMode		= 'thread';			// Whether to display replies as a 'thread' or as a 'stream'
+		public $usesLabels		= false;			// Whether to display labels above inputs
+		public $usesCancelButtons	= true;				// Whether forms have "Cancel" buttons
+		public $appendsCSS		= true;				// Whether to automatically add a CSS <link> element to the page <head>
+		public $displaysRSSLink		= true;				// Whether a comment RSS feed link is displayed
 
 		// Technical settings
-		public $data_format		= 'xml';			// Format comments will be stored in; options: xml, json, sql
-		public $parses_huge		= 'yes';			// Whether to condense the XML data into a single string to parse
-		public $uses_short_dates	= 'yes';			// Whether comment dates are shortened
-		public $enable_api		= 'yes';			// API: 'yes' = fully-enabled, 'no' = fully disabled, or array of modes
-		public $secure_cookies		= 'no';				// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
-		public $latest_num		= 10;				// Number of comments to save as latest comments
-		public $latest_trimwidth	= 100;				// Number of characters to trim latest comments to, 0 for no trim
-		public $allows_user_replies	= 'no';				// Whether given e-mails are sent as reply-to address to users
-		public $noreply_email		= 'noreply@example.com';	// E-mail used when no e-mail is given
+		public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
+		public $storesIPAddress		= false;			// Whether to store users' IP addresses
+		public $allowsUserReplies	= false;			// Whether given e-mails are sent as reply-to address to users
+		public $noreplyEmail		= 'noreply@example.com';	// E-mail used when no e-mail is given
+		public $spamDatabase		= 'remote';			// Whether to use a remote or local spam database
+		public $spamCheckModes		= 'php';			// Perform IP spam check in 'javascript' or 'php' mode, or 'both'
+		public $gravatarDefault		= 'custom';			// Gravatar theme to use ('custom', 'identicon', 'monsterid', 'wavatar', or 'retro')
+		public $gravatarForce		= false;			// Whether to force the themed Gravatar images instead of an avatar image
+		public $minifiesJavaScript	= false;			// Whether JavaScript output should be minified
+		public $minifyLevel		= 4;				// How much to minify JavaScript code, options: 1, 2, 3, 4
+		public $enablesAPI		= true;				// API: true = fully-enabled, false = fully disabled, or array of modes
+		public $latestMax		= 10;				// Maximum number of comments to save as latest comments
+		public $latestTrimWidth		= 100;				// Number of characters to trim latest comments to, 0 for no trim
+		public $userDeletionsUnlink	= false;			// Whether user deleted files are actually unlinked from the filesystem
 
 		// Allowed image types when embedded images are allowed
-		public $image_types = array(
+		public $imageTypes = array (
 			'jpeg',
 			'jpg',
 			'png',
@@ -79,22 +95,50 @@
 		);
 
 		// General database options
-		public $dbtype			= 'sqlite';			// Type of database, sqlite or mysql
-		public $dbname			= 'hashover-pages';		// Database name
+		public $databaseType		= 'sqlite';			// Type of database, sqlite or mysql
+		public $databaseName		= 'hashover-pages';		// Database name
 
-		// MySQL database options
-		public $dbhost			= 'localhost';			// Database host name
-		public $dbuser			= 'root';			// Database login user
-		public $dbpass			= 'password';			// Database login password
+		// SQL database options
+		public $databaseHost		= 'localhost';			// Database host name
+		public $databaseUser		= 'root';			// Database login user
+		public $databasePassword	= 'password';			// Database login password
+		public $databaseCharset		= 'utf8';			// Database character set
 
-		public function __construct()
+		// Automated settings
+		public $isMobile		= false;
+
+		// Technical settings placeholders
+		public $rootDirectory;
+		public $httpDirectory;
+		public $cookieExpiration;
+		public $domain;
+
+		public
+		function __construct ()
 		{
-			$dirname = dirname(__DIR__);
+			// Set timezone
+			date_default_timezone_set ($this->timezone);
+
+			// Set encoding
+			mb_internal_encoding ('UTF-8');
+
+			// Get parent directory
+			$dirname = dirname (__DIR__);
 
 			// Technical settings
-			$this->root_dir		= '/' . basename($dirname);	// HTTP root directory for comments
-			$this->expire		= time() + 60 * 60 * 24 * 30;	// Cookies' expiration date
+			$this->rootDirectory	= $dirname;			// Root directory for script
+			$this->httpDirectory	= '/' . basename ($dirname);	// Root directory for HTTP
+			$this->cookieExpiration	= time () + 60 * 60 * 24 * 30;	// Cookie expiration date
 			$this->domain		= $_SERVER['HTTP_HOST'];	// Domain name for refer checking & notifications
+
+			// Check if visitor is on mobile device
+			if (!empty ($_SERVER['HTTP_USER_AGENT'])) {
+				if (preg_match ('/(android|blackberry|phone)/i', $_SERVER['HTTP_USER_AGENT'])) {
+					// Adjust settings to accommodate
+					$this->isMobile = true;
+					$this->imageFormat = 'svg';
+				}
+			}
 		}
 	}
 

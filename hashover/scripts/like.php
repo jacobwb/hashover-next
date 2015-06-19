@@ -1,19 +1,21 @@
 <?php
 
-	// Copyright (C) 2014 Jacob Barkdull
+	// Copyright (C) 2010-2015 Jacob Barkdull
 	//
-	//	This program is free software: you can redistribute it and/or modify
+	//	This file is part of HashOver.
+	//
+	//	HashOver is free software: you can redistribute it and/or modify
 	//	it under the terms of the GNU Affero General Public License as
 	//	published by the Free Software Foundation, either version 3 of the
 	//	License, or (at your option) any later version.
 	//
-	//	This program is distributed in the hope that it will be useful,
+	//	HashOver is distributed in the hope that it will be useful,
 	//	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	//	GNU Affero General Public License for more details.
 	//
 	//	You should have received a copy of the GNU Affero General Public License
-	//	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	//	along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 	//
 	//--------------------
 	//
@@ -26,104 +28,124 @@
 
 
 	// Display source code
-	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		if (isset($_GET['source'])) {
-			header('Content-type: text/plain; charset=UTF-8');
-			exit(file_get_contents(basename(__FILE__)));
+	if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
+		if (isset ($_GET['source'])) {
+			header ('Content-type: text/plain; charset=UTF-8');
+			exit (file_get_contents (basename (__FILE__)));
 		}
 	}
 
-	ini_set('display_errors', true);
-	error_reporting(E_ALL);
+	// Use UTF-8 character set
+	ini_set ('default_charset', 'UTF-8');
 
-	// Move up a directory
-	chdir('../');
+	// Enable display of PHP errors
+	ini_set ('display_errors', true);
+	error_reporting (E_ALL);
 
 	// Autoload class files
-	function __autoload($classname) {
-		$classname = strtolower($classname);
+	spl_autoload_register (function ($classname) {
+		$classname = strtolower ($classname);
 
-		if (!@include('./scripts/' . $classname . '.php')) {
-			exit('<b>HashOver</b>: "' . $classname . '.php" file could not be included!');
+		if (!@include ('./' . $classname . '.php')) {
+			exit ('<b>HashOver</b>: "' . $classname . '.php" file could not be included!');
+		}
+	});
+
+	function set_like (&$hashover, $like_cookie, $set, &$likes)
+	{
+		$hashover->cookies->set ($like_cookie, $set, mktime (0, 0, 0, 11, 26, 3468));
+		$likes = $likes + 1;
+	}
+
+	function like_decrease ($key, &$likes)
+	{
+		if ($likes > 0) {
+			$likes = $likes - 1;
+		}
+	}
+
+	function liker ($action, $like_cookie, &$hashover, &$comment)
+	{
+		$key = ($action === 'like') ? 'likes' : 'dislikes';
+		$set = ($action === 'like') ? 'liked' : 'disliked';
+
+		if (empty ($_COOKIE[$like_cookie])) {
+			set_like ($hashover, $like_cookie, $set, $comment[$key]);
+		} else {
+			$opposite_key = ($action === 'like') ? 'dislikes' : 'likes';
+			$opposite_set = ($action === 'like') ? 'disliked' : 'liked';
+
+			if ($_COOKIE[$like_cookie] === $set) {
+				$hashover->cookies->expireCookie ($like_cookie);
+				like_decrease ($key, $comment[$key]);
+			}
+
+			if ($_COOKIE[$like_cookie] === $opposite_set) {
+				set_like ($hashover, $like_cookie, $set, $comment[$key]);
+				like_decrease ($opposite_key, $comment[$opposite_key]);
+			}
 		}
 	}
 
 	// Function for liking a comment
-	if (isset($_SERVER['HTTP_REFERER']) and !empty($_GET['like'])) {
-		$setup = new Setup('api');
-		$read_comment = new ReadComments($setup);
-		$cookies = new Cookies($setup->domain, $setup->expire, $setup->secure_cookies);
-		$like_cookie = md5($setup->domain . $_GET['like']);
-		$file = './pages/' . str_replace('../', '', $_GET['like']) . '.' . $setup->data_format;
+	if (!empty ($_SERVER['HTTP_REFERER'])
+	    and !empty ($_POST['thread'])
+	    and !empty ($_POST['like'])
+	    and !empty ($_POST['action']))
+	{
+		// Instanciate HashOver class
+		$hashover = new HashOver ('api', $_SERVER['HTTP_REFERER']);
+		$storageMode =& $hashover->readComments->data->storageMode;
+		$file = str_replace ('../', '', $_POST['like']);
 
-		if (file_exists($file)) {
-			$comment = $read_comment->data->read($file, true);
+		// Exit with error is file doesn't exist
+		if ($storageMode === 'flat-file') {
+			$file = $_POST['thread'] . '/' . $file;
+			$file = '../pages/' . $file . '.' . $hashover->settings->dataFormat;
+
+			if (!file_exists ($file)) {
+				exit ('<b>HashOver</b>: File: "' . $file . '" non-existent!');
+			}
+		}
+
+		// Read comment
+		$comment = $hashover->readComments->data->read ($file, true);
+
+		// Exit with error if failed to read comment
+		if ($comment === false) {
+			exit ('<b>HashOver</b>: Failed to read file: "' . $file . '"');
+		}
+
+		// Check if liker isn't poster via login ID comparision
+		if ($hashover->setup->userIsLoggedIn and !empty ($comment['login_id'])) {
+			if ($_COOKIE['hashover-login'] === $comment['login_id']) {
+				// Exit with error if liker posted the comment
+				exit ('<b>HashOver</b>: Practice altruism!');
+			}
+		}
+
+		// Name of the cookie used to indicate liked comments
+		$like_cookie = md5 ($hashover->settings->domain . $_POST['thread'] . '/' . $_POST['like']);
+
+		// Action: like or dislike
+		$action = $_POST['action'] !== 'dislike' ? 'like' : 'dislike';
+
+		// Like or dislike the comment
+		liker ($action, $like_cookie, $hashover, $comment);
+
+		// Attempt to save file with updated like count
+		if ($hashover->readComments->data->save ($comment, $file, true, true)) {
+			// If successful, display number of likes and dislikes
+			if (!empty ($comment['likes'])) {
+				echo $comment['likes'], ' likes.', PHP_EOL;
+			}
+
+			if (!empty ($comment['dislikes'])) {
+				echo $comment['dislikes'], ' dislikes.';
+			}
 		} else {
-			exit('File: "' . $file . '" non-existent!');
-		}
-
-		if ($comment == false) {
-			exit('Failed to read file: "' . $file . '"');
-		}
-
-		if (isset($_COOKIE['email']) and $setup->encryption->encrypt($_COOKIE['email']) === $comment['email']) {
-			exit('Practice altruism!');
-		}
-
-		if (!empty($_GET['action'])) {
-			if ($_GET['action'] == 'like') {
-				if (empty($_COOKIE[$like_cookie])) {
-					$cookies->set($like_cookie, 'liked', mktime(0, 0, 0, 11, 26, 3468));
-					$comment['likes'] = $comment['likes'] + 1;
-				} else {
-					if ($_COOKIE[$like_cookie] == 'liked') {
-						$cookies->expire_cookie($like_cookie);
-
-						if ($comment['likes'] > 0) {
-							$comment['likes'] = $comment['likes'] - 1;
-						}
-					}
-
-					if ($_COOKIE[$like_cookie] == 'disliked') {
-						$cookies->set($like_cookie, 'liked', mktime(0, 0, 0, 11, 26, 3468));
-						$comment['likes'] = $comment['likes'] + 1;
-
-						if ($comment['dislikes'] > 0) {
-							$comment['dislikes'] = $comment['dislikes'] - 1;
-						}
-					}
-				}
-			}
-
-			if ($_GET['action'] == 'dislike') {
-				if (empty($_COOKIE[$like_cookie])) {
-					$cookies->set($like_cookie, 'disliked', mktime(0, 0, 0, 11, 26, 3468));
-					$comment['dislikes'] = $comment['dislikes'] + 1;
-				} else {
-					if ($_COOKIE[$like_cookie] == 'disliked') {
-						$cookies->expire_cookie($like_cookie);
-
-						if ($comment['dislikes'] > 0) {
-							$comment['dislikes'] = $comment['dislikes'] - 1;
-						}
-					}
-
-					if ($_COOKIE[$like_cookie] == 'liked') {
-						$cookies->set($like_cookie, 'disliked', mktime(0, 0, 0, 11, 26, 3468));
-						$comment['dislikes'] = $comment['dislikes'] + 1;
-
-						if ($comment['likes'] > 0) {
-							$comment['likes'] = $comment['likes'] - 1;
-						}
-					}
-				}
-			}
-
-			if ($_GET['action'] == 'like' or $_GET['action'] == 'dislike') {
-				if ($read_comment->data->save($comment, $file, true, true)) {
-					echo $comment['likes'], ' likes, ', $comment['dislikes'], ' dislikes';
-				}
-			}
+			// If failed, exit with error
+			echo '<b>HashOver</b>: Failed to save comment file!';
 		}
 	}
 

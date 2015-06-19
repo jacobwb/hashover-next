@@ -1,6 +1,6 @@
 <?php
 
-	// Copyright (C) 2014 Jacob Barkdull
+	// Copyright (C) 2015 Jacob Barkdull
 	//
 	//	I, Jacob Barkdull, hereby release this work into the public domain. 
 	//	This applies worldwide. If this is not legally possible, I grant any 
@@ -9,23 +9,25 @@
 
 
 	// Display source code
-	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		if (isset($_GET['source'])) {
-			header('Content-type: text/plain; charset=UTF-8');
-			exit(file_get_contents(basename(__FILE__)));
+	if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
+		if (isset ($_GET['source'])) {
+			header ('Content-type: text/plain; charset=UTF-8');
+			exit (file_get_contents (basename (__FILE__)));
 		}
 	}
 
 	// French text for forms, buttons, links, and tooltips
-	$locale = array(
+	$locale = array (
 		'comment_form'	=> 'Écrivez ici votre commentaire (les autres champs sont facultatifs)',
 		'reply_form'	=> 'Écrivez ici votre réponse (les autres champs sont facultatifs)',
 		'post_button'	=> 'Publier ce commentaire',
 		'login'		=> 'Connecté',
 		'login_tip'	=> 'Connecté (optionnel)',
 		'logout'	=> 'Déconnexion',
-		'del_note'	=> 'Ce commentaire a été supprimé.',
-		'cmt_deleted'	=> 'Commentaire supprimé !',
+		'pending_note'	=> 'Ce commentaire est en attente d\'approbation.',
+		'deleted_note'	=> 'Ce commentaire a été supprimé.',
+		'cmt_pending'	=> 'En attente',
+		'cmt_deleted'	=> 'Commentaire supprimé!',
 		'options'	=> 'Options',
 		'cancel'	=> 'Annuler',
 		'reply_to_cmt'	=> 'Répondre au commentaire',
@@ -53,11 +55,11 @@
 		'no_email_warn'	=> 'Vous ne recevrez pas de notifications en cas de réponse si vous ne fournissez pas d\'e-mail.',
 		'invalid_email'	=> 'L\'adresse e-mail que vous avez entré n\'est pas valide.',
 		'delete_cmt'	=> 'Confirmez-vous la suppression de ce commentaire ?',
-		'post_cmt_on'	=> array('Poster un Commentaire', ' sur "_TITLE_"'),
-		'popular_cmts'	=> array('Commentaire les Plus Populaires', 'Commentaires les Plus Populaires'),
-		'showing_cmts'	=> array('Montrer _NUM_ Commentaire', 'Montrer _NUM_ Commentaires'),
-		'count_link'	=> array('_NUM_ Commentaire', '_NUM_ Commentaires'),
-		'count_replies'	=> array('_NUM_ compter réponse', '_NUM_ compter réponses'),
+		'post_cmt_on'	=> array ('Poster un Commentaire', ' sur "_TITLE_"'),
+		'popular_cmts'	=> array ('Commentaire les Plus Populaires', 'Commentaires les Plus Populaires'),
+		'showing_cmts'	=> array ('Montrer _NUM_ Commentaire', 'Montrer _NUM_ Commentaires'),
+		'count_link'	=> array ('_NUM_ Commentaire', '_NUM_ Commentaires'),
+		'count_replies'	=> array ('_NUM_ compter réponse', '_NUM_ compter réponses'),
 		'sort'		=> 'Trier',
 		'sort_ascend'	=> 'Dans l\'ordre',
 		'sort_descend'	=> 'Dans l\'ordre inverse',
@@ -70,11 +72,12 @@
 		'replies'	=> 'Réponses',
 		'edit'		=> 'Éditer',
 		'reply'		=> 'Répondre',
-		'like'		=> array('J\'aime', 'Goûts'),
+		'like'		=> array ('J\'aime', 'Goûts'),
 		'liked'		=> 'Aimez',
+		'unlike'	=> 'Défaire',
 		'like_cmt'	=> '\'J\'aime\' ce commentaire',
-		'liked_cmt'	=> 'Vous \'aimez\' ce commentaire',
-		'dislike'	=> array('Détesté', 'dégoûts'),
+		'liked_cmt'	=> 'Défaire \'J\'aime\'',
+		'dislike'	=> array ('Détesté', 'dégoûts'),
 		'disliked'	=> 'Détester',
 		'dislike_cmt'	=> '\'Détesté\' ce commentaire',
 		'disliked_cmt'	=> 'Vous \'Détester\' ce commentaire',
@@ -82,11 +85,11 @@
 		'subbed_note'	=> 'sera notifié par e-mail',
 		'unsubbed_note' => 'n\'a pas souscrit aux notifications',
 		'first_cmt'	=> 'Soyez le premier à commenter!',
-		'other_cmts'	=> array('Afficher _NUM_ Autre Commentaire', 'Afficher _NUM_ Autres Commentaires'),
-		'show_num_cmts'	=> array('Afficher _NUM_ Commentaire', 'Afficher _NUM_ Commentaires'),
-		'date_years'	=> array('Il ya _NUM_ an', 'Il ya _NUM_ ans'),
-		'date_months'	=> array('Il ya _NUM_ un mois', 'Il ya _NUM_ mois'),
-		'date_days'	=> array('Il ya _NUM_ jour', 'Il ya _NUM_ jours'),
+		'other_cmts'	=> array ('Afficher _NUM_ Autre Commentaire', 'Afficher _NUM_ Autres Commentaires'),
+		'show_num_cmts'	=> array ('Afficher _NUM_ Commentaire', 'Afficher _NUM_ Commentaires'),
+		'date_years'	=> array ('Il ya _NUM_ an', 'Il ya _NUM_ ans'),
+		'date_months'	=> array ('Il ya _NUM_ un mois', 'Il ya _NUM_ mois'),
+		'date_days'	=> array ('Il ya _NUM_ jour', 'Il ya _NUM_ jours'),
 		'date_today'	=> '_TIME_ aujourd\'hui'
 	);
 

@@ -1,33 +1,29 @@
 <div class="hashover-header">
-	' + avatar + '' + name + '
-	' + thread + '
+	{hashover:avatar}{hashover:name}
+	{hashover:thread_link}
 </div>
 
 <div class="hashover-balloon">
-	<div id="hashover-content-' + permalink + '" class="hashover-content">
-		' + comment + '
+	<div id="hashover-content-{hashover:permalink}" class="hashover-content">
+		{hashover:comment}
 	</div>
 
-	<div id="hashover-footer-' + permalink + '" class="hashover-footer"' + hashover_footer_style + '>
+	{placeholder:edit_form}
+
+	<div class="hashover-footer">
 		<span class="hashover-date">
-			' + date + '
-			' + likes + '
-			' + dislikes + '
+			{hashover:date}
+			{hashover:like_count}
+			{hashover:dislike_count}
 		</span>
 
 		<span class="hashover-buttons">
-			' + like_link + '
-			' + dislike_link + '
-			' + edit_link + '
-			' + reply_link + '
+			{hashover:like_link}
+			{hashover:dislike_link}
+			{hashover:edit_link}
+			{hashover:reply_link}
 		</span>
 	</div>
-
-	<form id="hashover-edit-' + permalink + '" method="post" action="' + action + '">
-		' + edit_form + '
-	</form>
 </div>
 
-<form id="hashover-reply-' + permalink + '" method="post" action="' + action + '"' + hashover_reply_form_class + '>
-	' + reply_form + '
-</form>
+{placeholder:reply_form}

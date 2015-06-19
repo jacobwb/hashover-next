@@ -1,6 +1,6 @@
 <?php
 
-	// Copyright (C) 2014 Jacob Barkdull
+	// Copyright (C) 2015 Jacob Barkdull
 	//
 	//	I, Jacob Barkdull, hereby release this work into the public domain. 
 	//	This applies worldwide. If this is not legally possible, I grant any 
@@ -9,22 +9,24 @@
 
 
 	// Display source code
-	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		if (isset($_GET['source'])) {
-			header('Content-type: text/plain; charset=UTF-8');
-			exit(file_get_contents(basename(__FILE__)));
+	if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
+		if (isset ($_GET['source'])) {
+			header ('Content-type: text/plain; charset=UTF-8');
+			exit (file_get_contents (basename (__FILE__)));
 		}
 	}
 
 	// Spanish text for forms, buttons, links, and tooltips
-	$locale = array(
+	$locale = array (
 		'comment_form'	=> 'Escriba un comentario aquí (otros campos opcionales)',
 		'reply_form'	=> 'Escriba Reply Aquí (otros campos opcionales)',
 		'post_button'	=> 'Publicar Comentario',
 		'login'		=> 'Iniciar Sesión',
 		'login_tip'	=> 'Iniciar Sesión (opcional)',
 		'logout'	=> 'Cerrar Sesión',
-		'del_note'	=> 'Este comentario ha sido eliminado.',
+		'pending_note'	=> 'Este comentario está pendiente de aprobación.',
+		'deleted_note'	=> 'Este comentario ha sido eliminado.',
+		'cmt_pending'	=> 'Pendiente',
 		'cmt_deleted'	=> 'Comentario Eliminado!',
 		'options'	=> 'Opciones',
 		'cancel'	=> 'Cancelar',
@@ -53,11 +55,11 @@
 		'no_email_warn'	=> 'Usted no recibirá notificación de las respuestas a su comentario sin de suministrar un e-mail.',
 		'invalid_email'	=> 'La dirección de correo electrónico que ha introducido no es válido.',
 		'delete_cmt'	=> '¿Está seguro que desea eliminar este comentario?',
-		'post_cmt_on'	=> array('Publicar un Comentario', ' en "_TITLE_"'),
-		'popular_cmts'	=> array('Más Populares Comentario', 'Más Populares Comentarios'),
-		'showing_cmts'	=> array('Mostrando _NUM_ Comentario', 'Mostrando _NUM_ Comentarios'),
-		'count_link'	=> array('_NUM_ Comentario', '_NUM_ Comentarios'),
-		'count_replies'	=> array('_NUM_ contando respuesta', '_NUM_ contando respuestas'),
+		'post_cmt_on'	=> array ('Publicar un Comentario', ' en "_TITLE_"'),
+		'popular_cmts'	=> array ('Más Populares Comentario', 'Más Populares Comentarios'),
+		'showing_cmts'	=> array ('Mostrando _NUM_ Comentario', 'Mostrando _NUM_ Comentarios'),
+		'count_link'	=> array ('_NUM_ Comentario', '_NUM_ Comentarios'),
+		'count_replies'	=> array ('_NUM_ contando respuesta', '_NUM_ contando respuestas'),
 		'sort'		=> 'Ordenar',
 		'sort_ascend'	=> 'En el Orden',
 		'sort_descend'	=> 'En Orden Inverso',
@@ -70,11 +72,12 @@
 		'replies'	=> 'Respuestas',
 		'edit'		=> 'Editar',
 		'reply'		=> 'Responder',
-		'like'		=> array('Gustar', 'Gustos'),
+		'like'		=> array ('Gustar', 'Gustos'),
 		'liked'		=> 'Me gustó',
-		'like_cmt'	=> '\'Gusta\' Este Comentario',
-		'liked_cmt'	=> 'Usted \'Gusta\' Este Comentario',
-		'dislike'	=> array('Disgusta', 'Disgustos'),
+		'unlike'	=> 'Deshacer',
+		'like_cmt'	=> '\'Gustar\' Este Comentario',
+		'liked_cmt'	=> 'Deshacer \'Gustar\'',
+		'dislike'	=> array ('Disgusta', 'Disgustos'),
 		'disliked'	=> 'Disgustó',
 		'dislike_cmt'	=> '\'Disgustó\' Este Comentario',
 		'disliked_cmt'	=> 'Usted \'Disgustó\' Este Comentario',
@@ -82,11 +85,11 @@
 		'subbed_note'	=> 'será notificado vía e-mail',
 		'unsubbed_note' => 'no es suscrito a las notificaciones por correo electrónico',
 		'first_cmt'	=> '¡Ser el primero en comentar!',
-		'other_cmts'	=> array('Desde el _NUM_ Otras Comentario', 'Mostrar _NUM_ Otro Comentarios'),
-		'show_num_cmts'	=> array('Desde el _NUM_ Comentario', 'Mostrar _NUM_ Comentarios'),
-		'date_years'	=> array('Hace _NUM_ año', 'Hace _NUM_ años'),
-		'date_months'	=> array('Hace _NUM_ mes', 'Hace _NUM_ meses'),
-		'date_days'	=> array('Hace _NUM_ día', 'Hace _NUM_ días'),
+		'other_cmts'	=> array ('Desde el _NUM_ Otras Comentario', 'Mostrar _NUM_ Otro Comentarios'),
+		'show_num_cmts'	=> array ('Desde el _NUM_ Comentario', 'Mostrar _NUM_ Comentarios'),
+		'date_years'	=> array ('Hace _NUM_ año', 'Hace _NUM_ años'),
+		'date_months'	=> array ('Hace _NUM_ mes', 'Hace _NUM_ meses'),
+		'date_days'	=> array ('Hace _NUM_ día', 'Hace _NUM_ días'),
 		'date_today'	=> '_TIME_ de hoy'
 	);
 

@@ -1,183 +1,352 @@
 <?php
 
-	// Copyright (C) 2014 Jacob Barkdull
+	// Copyright (C) 2010-2015 Jacob Barkdull
 	//
-	//	This program is free software: you can redistribute it and/or modify
+	//	This file is part of HashOver.
+	//
+	//	HashOver is free software: you can redistribute it and/or modify
 	//	it under the terms of the GNU Affero General Public License as
 	//	published by the Free Software Foundation, either version 3 of the
 	//	License, or (at your option) any later version.
 	//
-	//	This program is distributed in the hope that it will be useful,
+	//	HashOver is distributed in the hope that it will be useful,
 	//	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	//	GNU Affero General Public License for more details.
 	//
 	//	You should have received a copy of the GNU Affero General Public License
-	//	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	//	along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
 	// Display source code
-	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		if (isset($_GET['source'])) {
-			header('Content-type: text/plain; charset=UTF-8');
-			exit(file_get_contents(basename(__FILE__)));
+	if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
+		if (isset ($_GET['source'])) {
+			header ('Content-type: text/plain; charset=UTF-8');
+			exit (file_get_contents (basename (__FILE__)));
 		}
 	}
 
-	class WriteComments
+	class WriteComments extends Settings
 	{
-		public $header,
-		       $kickback,
-		       $name = '',
-		       $password = '',
-		       $email = '',
-		       $website = '',
-		       $metalevels;
+		protected $readComments;
+		protected $commentData;
+		protected $setup;
+		protected $locales;
+		protected $cookies;
+		protected $encryption;
+		protected $metalevels;
+		protected $headers;
+		protected $userHeaders;
+		protected $kickbackURL;
+		protected $replyTo;
+		protected $name = '';
+		protected $password = '';
+		protected $email = '';
+		protected $website = '';
+		protected $writeComment = array ();
 
-		// Characters to be removed from name, email, and website fields
-		public $search = array('<', '>', "\n", "\r", "\t", '&nbsp;', '&lt;', '&gt;', '"', "'", '\\');
-		public $replace = array('', '', '', '', '', '', '', '', '&quot;', '&#39;', '');
+		// Fake inputs used as spam trap fields
+		protected $trap_fields = array (
+			'summary',
+			'age',
+			'lastname',
+			'address',
+			'zip'
+		);
 
-		public function __construct($read_comments, $cookies)
+		protected $postActions = array (
+			'login',
+			'logout',
+			'post',
+			'edit',
+			'delete'
+		);
+
+		// Characters to search for and replace with in comments
+		protected $data_search = array (
+			'\\',
+			'"',
+			'<',
+			'>',
+			"\r\n",
+			"\r",
+			"\n",
+			'  ',
+			'&lt;b&gt;',
+			'&lt;/b&gt;',
+			'&lt;u&gt;',
+			'&lt;/u&gt;',
+			'&lt;i&gt;',
+			'&lt;/i&gt;',
+			'&lt;s&gt;',
+			'&lt;/s&gt;',
+			'&lt;pre&gt;',
+			'&lt;/pre&gt;',
+			'&lt;code&gt;',
+			'&lt;/code&gt;',
+			'&lt;ul&gt;',
+			'&lt;/ul&gt;',
+			'&lt;ol&gt;',
+			'&lt;/ol&gt;',
+			'&lt;li&gt;',
+			'&lt;/li&gt;',
+			'&lt;blockquote&gt;',
+			'&lt;/blockquote&gt;'
+		);
+
+		// Replacements
+		protected $data_replace = array (
+			'&#92;',
+			'&quot;',
+			'&lt;',
+			'&gt;',
+			PHP_EOL,
+			PHP_EOL,
+			PHP_EOL,
+			' &nbsp;',
+			'<b>',
+			'</b>',
+			'<u>',
+			'</u>',
+			'<i>',
+			'</i>',
+			'<s>',
+			'</s>',
+			'<pre>',
+			'</pre>',
+			'<code>',
+			'</code>',
+			'<ul>',
+			'</ul>',
+			'<ol>',
+			'</ol>',
+			'<li>',
+			'</li>',
+			'<blockquote>',
+			'</blockquote>'
+		);
+
+		public
+		function __construct (ReadComments $read_comments, Locales $locales, Cookies $cookies)
 		{
-			$this->read_comments = $read_comments;
-			$this->setup = $read_comments->data->setup;
+			parent::__construct ();
+
+			$this->readComments = $read_comments;
+			$this->commentData = $read_comments->data;
+			$this->setup = $read_comments->setup;
+			$this->locales = $locales;
 			$this->cookies = $cookies;
-			$this->metalevels = array($this->setup->dir, './pages');
+			$this->encryption = new Encryption ($this->encryptionKey);
+
+			$this->metalevels = array (
+				$this->setup->dir,
+				$this->setup->rootDirectory . '/pages'
+			);
 
 			// Default email headers
-			$this->header = "From: " . $this->setup->noreply_email . "\r\nReply-To: " . $this->setup->noreply_email;
+			$this->headers  = 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
+			$this->headers .= 'From: ' . $this->noreplyEmail . "\r\n";
+			$this->headers .= 'Reply-To: ' . $this->noreplyEmail;
+
+			// Default email headers for users
+			$this->userHeaders = $this->headers;
 
 			// URL back to comment
-			$this->kickback = $this->setup->parse_url['path'];
-
-			// Set timezone to UTC
-			date_default_timezone_set('UTC');
+			$this->kickbackURL = $this->setup->parsedURL['path'];
 
 			// Add URL queries to kickback URL
-			if (!empty($this->setup->ref_queries)) {
-				$this->kickback .= '?' . $this->setup->ref_queries;
+			if (!empty ($this->setup->URLQueries)) {
+				$this->kickbackURL .= '?' . $this->setup->URLQueries;
 			}
 
-			foreach (array('cmtfile', 'reply_to') as $post_query) {
-				if (isset($_POST[$post_query])) {
-					$post_comment = (string) $_POST[$post_query];
+			// Clean POST data; Force data to UTF-8
+			foreach ($_POST as $name => $value) {
+				$_POST[$name] = $this->XMLSanitize ($value);
+			}
 
-					if (!in_array($post_comment, $read_comments->commentlist, true)) {
-						$this->cookies->set('message', $this->setup->text['cmt_needed']);
-						exit(header('Location: ' . $this->kickback . '#comments'));
+			// Get reply comment file
+			if (!empty ($_POST['reply_to'])) {
+				$this->replyTo = $_POST['reply_to'];
+			}
+
+			// Setup login information
+			if ($this->setup->userIsLoggedIn and !isset ($_POST['edit'])) {
+				$this->name = trim (html_entity_decode ($this->setup->userName, ENT_COMPAT, 'UTF-8'), " \r\n\t");
+				$this->password = trim (html_entity_decode ($this->setup->userPassword, ENT_COMPAT, 'UTF-8'), " \r\n\t");
+				$this->email = trim (html_entity_decode ($this->setup->userEmail, ENT_COMPAT, 'UTF-8'), " \r\n\t");
+				$this->website = trim (html_entity_decode ($this->setup->userWebsite, ENT_COMPAT, 'UTF-8'), " \r\n\t");
+			} else {
+				// Set name
+				if (!empty ($_POST['name'])) {
+					$this->name = trim ($_POST['name'], " \r\n\t");
+				}
+
+				// Set password
+				if (!empty ($_POST['password'])) {
+					$this->password = trim ($_POST['password'], " \r\n\t");
+				}
+
+				// Set e-mail address and mail headers
+				if (!empty ($_POST['email'])) {
+					if (filter_var ($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+						$this->email = trim ($_POST['email'], " \r\n\t");
+
+						// Set mail headers to user's e-mail address
+						$this->headers  = 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
+						$this->headers .= 'From: ' . $this->email . "\r\n";
+						$this->headers .= 'Reply-To: ' . $this->email;
+					}
+				}
+
+				// Set website URL
+				if (!empty ($_POST['website'])) {
+					$this->website = trim ($_POST['website'], " \r\n\t");
+
+					// Prepend "http://" to website URL if missing
+					if (!preg_match ('/htt(p|ps):\/\//i', $this->website)) {
+						$this->website = 'http://' . $this->website;
+					}
+				}
+
+				// Set cookies
+				if (empty ($_POST['edit'])) {
+					$this->cookies->set ('name', $this->name);
+					$this->cookies->set ('password', $this->password);
+					$this->cookies->set ('email', $this->email);
+					$this->cookies->set ('website', $this->website);
+				}
+			}
+
+			// Escape disallowed characters
+			$this->name = htmlentities ($this->name, ENT_COMPAT, 'UTF-8', false);
+			$this->password = htmlentities ($this->password, ENT_COMPAT, 'UTF-8', false);
+			$this->email = htmlentities ($this->email, ENT_COMPAT, 'UTF-8', false);
+			$this->website = htmlentities ($this->website, ENT_COMPAT, 'UTF-8', false);
+		}
+
+		// Confirm that attempted actions are to existing comments
+		protected
+		function verifyFile ($file)
+		{
+			if (!empty ($_POST[$file])) {
+				$comment_file =(string) $_POST[$file];
+
+				if (!in_array ($comment_file, $this->readComments->commentlist, true)) {
+					if ($file === 'reply_to') {
+						$this->cookies->set ('replied', $this->replyTo);
+					}
+
+					$this->cookies->set ('success', 'no');
+					$this->kickback ($this->locales->locale['cmt_needed'], true);
+				}
+			}
+		}
+
+		protected
+		function spamCheck ()
+		{
+			// Check trap fields
+			foreach ($this->trap_fields as $name) {
+				if (!empty ($_POST[$name])) {
+					$is_spam = true;
+					break;
+				}
+			}
+
+			// Block for filing trap fields
+			if (isset ($is_spam)) {
+				exit ('<b>HashOver</b>: You are blocked!');
+			} else {
+				$spam_check = new SpamCheck ($this->setup);
+				$spam_check_modes =& $this->spamCheckModes;
+
+				// Check user's IP address against stopforumspam.com
+				if ($spam_check_modes === 'both' or $spam_check_modes === $this->setup->mode) {
+					if ($spam_check->{$this->spamDatabase}()) {
+						exit ('<b>HashOver:</b> You are blocked!');
+					}
+
+					if (!empty ($spam_check->error)) {
+						exit ('<b>HashOver:</b> ' . $spam_check->error);
 					}
 				}
 			}
+		}
 
-			// Clean up name
-			if (!empty($_POST['name'])) {
-				$this->name = substr(str_replace($this->search, $this->replace, trim($_POST['name'])), 0, 30);
-			} else {
-				$this->name = $this->setup->default_name;
+		protected
+		function kickback ($text = '', $error = false, $anchor = 'comments')
+		{
+			// Set cookie to specified message or error
+			if (!empty ($text)) {
+				$this->cookies->set ($error ? 'error' : 'message', $text);
 			}
 
-			// Set name cookie
-			if (isset($_POST['edit'])) {
-				if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
-					$this->cookies->set('name', ($this->name != $this->setup->default_name) ? $this->name : '');
-				}
-			} else {
-				if (!isset($_POST['delete'])) {
-					$this->cookies->set('name', ($this->name != $this->setup->default_name) ? $this->name : '');
-				}
-			}
+			// Set header to redirect user to previous page
+			header ('Location: ' . $this->kickbackURL . '#' . $anchor);
+			exit;
+		}
 
-			// Set password cookie
-			if (isset($_POST['password'])) {
-				$this->password = $_POST['password'];
+		// Set login cookie; kick visitor back
+		public
+		function login ()
+		{
+			$this->spamCheck ();
+			$this->cookies->set ('hashover-login', hash ('ripemd160', $this->name . $this->password));
+			$this->kickback ($this->locales->locale['logged_in']);
+		}
 
-				if (isset($_POST['edit'])) {
-					if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
-						$this->cookies->set('password', str_replace('"', '&quot;', $this->password));
-					}
-				} else {
-					if (!isset($_POST['delete'])) {
-						$this->cookies->set('password', str_replace('"', '&quot;', $this->password));
-					}
-				}
-			}
-
-			// Clean up email
-			if (!empty($_POST['email']) and trim($_POST['email'], ' ') != '') {
-				$this->email = str_replace($this->search, '', $_POST['email']);
-				$this->header = (trim($_POST['email'], ' ') != '') ? "From: $this->email\r\nReply-To: $this->email" : $this->header;
-			}
-
-			// Set email cookie
-			if (isset($_POST['edit'])) {
-				if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
-					$this->cookies->set('email', $this->email);
-				}
-			} else {
-				if (!isset($_POST['delete'])) {
-					$this->cookies->set('email', $this->email);
-				}
-			}
-
-			// Clean up web address
-			if (!empty($_POST['website'])) {
-				$this->website = str_replace($this->search, $this->replace, trim($_POST['website']));
-				$this->website = (!preg_match('/htt[p|ps]:\/\//i', $this->website)) ? 'http://' . $this->website : $this->website;
-			}
-
-			// Set website cookie
-			if (isset($_POST['edit'])) {
-				if (!isset($_POST['delete']) and $this->setup->user_is_admin == false) {
-					$this->cookies->set('website', $this->website);
-				}
-			} else {
-				if (!isset($_POST['delete'])) {
-					$this->cookies->set('website', $this->website);
-				}
-			}
+		// Expire login cookie; kick visitor back
+		public
+		function logout ()
+		{
+			$this->cookies->expireCookie ('hashover-login');
+			$this->kickback ($this->locales->locale['logged_out']);
 		}
 
 		// Force a string to UTF-8 encoding and acceptable character range
-		public function xml_sanitize($string)
+		protected
+		function XMLSanitize ($string)
 		{
-			$string = mb_convert_encoding(mb_convert_encoding($string, 'UTF-16', 'UTF-8'), 'UTF-8', 'UTF-16');
-			$string = preg_replace('/[^\x{0009}\x{000A}\x{000D}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]/u', '?', $string);
+			$string = mb_convert_encoding ($string, 'UTF-16', 'UTF-8');
+			$string = mb_convert_encoding ($string, 'UTF-8', 'UTF-16');
+			$string = preg_replace ('/[^\x{0009}\x{000A}\x{000D}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]/u', '?', $string);
+
 			return $string;
 		}
 
-		public function add_latest_comment($file)
+		protected
+		function addLatestComment ($file)
 		{
-			if ($this->read_comments->data->storage_format != 'flat-file') {
+			if ($this->commentData->storageMode !== 'flat-file') {
 				return false;
 			}
 
 			foreach ($this->metalevels as $level => $metafile) {
 				$metafile .= '/.metadata';
-				$metadata = array();
-				$data = array('latest' => array());
+				$metadata = array ();
+				$data = array ('latest' => array ());
 
-				if ($level == 0) {
-					$metadata['title'] = $this->setup->page_title;
-					$metadata['url'] = $this->setup->page_url;
+				if ($level === 0) {
+					$metadata['title'] = $this->setup->pageTitle;
+					$metadata['url'] = $this->setup->pageURL;
 					$metadata['status'] = 'open';
 				}
 
-				if (file_exists($metafile) and is_writable($metafile)) {
-					$data = json_decode(file_get_contents($metafile), true);
+				if (file_exists ($metafile) and is_writable ($metafile)) {
+					$data = json_decode (file_get_contents ($metafile), true);
 
-					if ($level == 0) {
+					if ($level === 0) {
 						$metadata['status'] = $data['status'];
-						array_unshift($data['latest'], (string) $file);
+						array_unshift ($data['latest'], (string) $file);
 					} else {
-						$cmtdir = str_replace('./pages/', '', $this->metalevels[0]);
-						array_unshift($data['latest'], $cmtdir . '/' . $file);
+						$comment_directory = basename ($this->metalevels[0]);
+						array_unshift ($data['latest'], $comment_directory . '/' . $file);
 					}
 
-					if (count($data['latest']) >= 10) {
-						if (count($data['latest']) >= $this->setup->latest_num) {
-							$max = max(10, $this->setup->latest_num);
-							$data['latest'] = array_slice($data['latest'], 0, $max);
+					if (count ($data['latest']) >= 10) {
+						if (count ($data['latest']) >= $this->latestMax) {
+							$max = max (10, $this->latestMax);
+							$data['latest'] = array_slice ($data['latest'], 0, $max);
 						}
 					}
 				}
@@ -185,306 +354,377 @@
 				$metadata['latest'] = $data['latest'];
 
 				// Save metadata
-				$this->read_comments->data->save_metadata($metadata, $metafile);
+				$this->commentData->save_metadata ($metadata, $metafile);
 			}
 		}
 
-		public function remove_from_latest($file)
+		protected
+		function removeFromLatest ($file)
 		{
-			if ($this->read_comments->data->storage_format != 'flat-file') {
+			if ($this->commentData->storageMode !== 'flat-file') {
 				return false;
 			}
 
 			foreach ($this->metalevels as $level => $metafile) {
 				$metafile .= '/.metadata';
 
-				if (!file_exists($metafile) or !is_writable($metafile)) {
+				if (!file_exists ($metafile) or !is_writable ($metafile)) {
 					continue;
 				}
 
-				$metadata = json_decode(file_get_contents($metafile), true);
-				$file = str_replace('./pages/', '', $file);
-				$latest = array();
+				$metadata = json_decode (file_get_contents ($metafile), true);
+				$file = basename ($file);
+				$latest = array ();
 
-				for ($key = 0, $length = count($metadata['latest']); $key < $length; $key++) {
-					$cmtdir = str_replace('./pages/', '', $this->metalevels[0]);
-					$comment = ($level == 0) ? $file : $cmtdir . '/' . $file;
+				for ($key = 0, $length = count ($metadata['latest']); $key < $length; $key++) {
+					$comment_directory = basename ($this->metalevels[0]);
+					$comment = ($level === 0) ? $file : $comment_directory . '/' . $file;
 
-					if ($metadata['latest'][$key] != $comment) {
+					if ($metadata['latest'][$key] !== $comment) {
 						$latest[] = $metadata['latest'][$key];
 					}
 				}
 
 				$metadata['latest'] = $latest;
-				$this->read_comments->data->save_metadata($metadata, $metafile);
+				$this->commentData->save_metadata ($metadata, $metafile);
 			}
+		}
+
+		// Get password via post
+		protected
+		function getPassword ()
+		{
+			if (!empty ($_POST['password'])) {
+				$password = trim ($_POST['password'], " \r\n\t");
+				$password = htmlentities ($password, ENT_COMPAT, 'UTF-8', false);
+
+				return $password;
+			}
+
+			return '';
 		}
 
 		// Delete comment
-		public function delete_comment()
+		public
+		function deleteComment ()
 		{
-			$get_pass = $this->read_comments->data->read($_POST['cmtfile']);
+			$this->verifyFile ('file');
 
-			// Check if password matches the one in the file
-			if ($this->setup->encryption->verify_hash($this->password, $get_pass['password']) or $this->setup->user_is_admin == true) {
-				// Delete the comment file
-				if ($this->read_comments->data->delete($_POST['cmtfile'])) {
-					if ($this->read_comments->data->storage_format == 'flat-file') {
-						$this->remove_from_latest($_POST['cmtfile']);
+			if (!empty ($_POST['file'])) {
+				$get_pass = $this->commentData->read ($_POST['file']);
+				$passwords_match = $this->encryption->verifyHash ($this->getPassword (), $get_pass['password']);
+
+				// Check if password matches the one in the file
+				if ($passwords_match or $this->setup->userIsAdmin) {
+					// Delete the comment file
+					if ($this->commentData->delete ($_POST['file'], $this->userDeletionsUnlink)) {
+						$this->removeFromLatest ($_POST['file']);
+						$this->kickback ($this->locales->locale['cmt_deleted']);
 					}
-
-					$this->cookies->set('password', str_replace('"', '&quot;', $this->password));
-					$this->cookies->set('message', $this->setup->text['cmt_deleted']);
 				}
-			} else {
-				$this->cookies->set('message', $this->setup->text['post_fail']);
 			}
 
-			exit(header('Location: ' . $this->kickback . '#comments'));
+			$this->kickback ($this->locales->locale['post_fail'], true);
 		}
 
-		public function post_comment()
+		protected
+		function setupCommentData ()
 		{
-			// Check trap fields
-			if (!empty($_POST['summary'])) $is_spam = true;
-			if (!empty($_POST['age'])) $is_spam = true;
-			if (!empty($_POST['lastname'])) $is_spam = true;
-			if (!empty($_POST['address'])) $is_spam = true;
-			if (!empty($_POST['zip'])) $is_spam = true;
+			// Trim leading and trailing white space
+			$clean_code = trim ($_POST['comment'], "\r\n");
 
-			// Block for filing trap fields
-			if (isset($is_spam)) {
-				exit('<b>HashOver:</b> You are blocked!');
-			} else {
-				$spam_check = new SpamCheck($this->setup);
+			// Add space to end of URLs to separate '&' characters from escaped HTML tags
+			$clean_code = preg_replace ('/(((ftp|http|https){1}:\/\/)[a-z0-9-@:%_\+.~#?&\/=]+)/i', '\\1 ', $clean_code);
 
-				// Check user's IP address against stopforumspam.com
-				if ($this->setup->spam_check_modes == 'both') {
-					if ($spam_check->{$this->setup->spam_database}()) {
-						exit('<b>HashOver:</b> You are blocked!');
+			// Escape HTML tags
+			$clean_code = str_ireplace ($this->data_search, $this->data_replace, $clean_code);
+
+			// Collapse multiple newlines to three maximum
+			$clean_code = preg_replace ('/' . PHP_EOL . '{3,}/', str_repeat (PHP_EOL, 3), $clean_code);
+
+			// Escape HTML inside of <code> tags
+			$clean_code = preg_replace_callback ('/(<code>)(.*?)(<\/code>)/is', function ($grp) use ($clean_code) {
+				return $grp[1] . htmlspecialchars ($grp[2], null, null, false) . $grp[3];
+			}, $clean_code);
+
+			// HTML tags to automatically close
+			$tags = array (
+				'code',
+				'b',
+				'i',
+				'u',
+				's',
+				'li',
+				'pre',
+				'blockquote',
+				'ul',
+				'ol'
+			);
+
+			// Check if all allowed HTML tags have been closed, if not add them at the end
+			for ($tc = 0, $tcl = count ($tags); $tc < $tcl; $tc++) {
+				$open_tags = substr_count ($clean_code, '<' . $tags[$tc] . '>');
+				$close_tags = substr_count ($clean_code, '</' . $tags[$tc] . '>');
+
+				if ($open_tags !== $close_tags) {
+					while ($open_tags > $close_tags) {
+						$clean_code .= '</' . $tags[$tc] . '>';
+						$close_tags++;
 					}
-				} else {
-					if ($this->setup->spam_check_modes == $this->setup->mode) {
-						if ($spam_check->{$this->setup->spam_database}()) {
-							exit('<b>HashOver:</b> You are blocked!');
-						}
+
+					while ($close_tags > $open_tags) {
+						$clean_code = preg_replace ('/<\/' . $tags[$tc] . '>/i', '', $clean_code, 1);
+						$close_tags--;
 					}
 				}
 			}
 
-			// Set login cookie; kick visitor back
-			if (isset($_POST['login'])) {
-				$this->cookies->set('hashover-login', hash('ripemd160', $this->xml_sanitize($this->name) . $this->password));
-				$this->cookies->set('message', $this->setup->text['logged_in']);
-				exit(header('Location: ' . $this->kickback . '#comments'));
-			}
+			$this->writeComment['body'] = $clean_code;
+			$this->writeComment['status'] = $this->usesModeration ? 'pending' : 'approved';
+			$this->writeComment['date'] = date (DATE_ISO8601);
 
-			// Set login cookie; kick visitor back
-			if (isset($_POST['logout'])) {
-				$this->cookies->expire_cookie('hashover-login');
-				$this->cookies->set('message', $this->setup->text['logged_out']);
-				exit(header('Location: ' . $this->kickback . '#comments'));
-			}
-
-			// Check if a comment was posted
-			if (!empty($_POST['comment']) and trim($_POST['comment'], " \t\r\n") != '') {
-				// Check if comment thread directory exists
-				if ($this->read_comments->data->storage_format == 'flat-file') {
-					if (file_exists($this->setup->dir)) {
-						// If yes, exit with error if fail to make it writable
-						if (!is_writable($this->setup->dir) and !@chmod($this->setup->dir, 0755)) {
-							exit($this->setup->escape_output('<b>HashOver</b>: Comment thread directory at "' . $this->setup->dir . '" is not writable. Check directory permissions.', 'single'));
-						}
-					} else {
-						// If no, exit with error if it can't be created
-						if (!@mkdir($this->setup->dir, 0755, true) and !@chmod($this->setup->dir, 0755)) {
-							exit($this->setup->escape_output('<b>HashOver</b>: Failed to create comment thread directory at "' . $this->setup->dir . '"', 'single'));
-						}
-					}
+			if ($this->allowsNames) {
+				if (!empty ($this->name)) {
+					$this->writeComment['name'] = $this->name;
 				}
-
-				// Characters to search for and replace with in comments
-				$data_search = array('\\', '"', '<', '>', "\r\n", "\n", "\r", '  ', '&lt;b&gt;', '&lt;/b&gt;', '&lt;u&gt;', '&lt;/u&gt;', '&lt;i&gt;', '&lt;/i&gt;', '&lt;s&gt;', '&lt;/s&gt;', '&lt;pre&gt;', '&lt;/pre&gt;', '&lt;code&gt;', '&lt;/code&gt;', '&lt;ul&gt;', '&lt;/ul&gt;', '&lt;ol&gt;', '&lt;/ol&gt;', '&lt;li&gt;', '&lt;/li&gt;', '&lt;blockquote&gt;', '&lt;/blockquote&gt;');
-				$data_replace = array('&#92;', '&quot;', '&lt;', '&gt;', "\n", '<br>', '<br>', ' &nbsp;', '<b>', '</b>', '<u>', '</u>', '<i>', '</i>', '<s>', '</s>', '<pre>', '</pre>', '<code>', '</code>', '<ul>', '</ul>', '<ol>', '</ol>', '<li>', '</li>', '<blockquote>', '</blockquote>');
-
-				$clean_code = preg_replace('/(((ftp|http|https){1}:\/\/)[a-zA-Z0-9-@:%_\+.~#?&\/=]+)/i', '\\1 ', $_POST['comment']); // Add space to end of URLs to separate '&' characters from escaped HTML tags
-				$clean_code = str_ireplace($data_search, $data_replace, preg_replace('/\n{2,}/', "\n\n", preg_replace('/^\s+$/m', '', rtrim($clean_code, " \r\n")))); // Escape HTML tags; remove trailing new lines
-				$clean_code = preg_replace('/^(<br><br>)/', '', preg_replace('/(<br><br>)$/', '', preg_replace('/(<br>){2,}/i', '<br><br>', $clean_code))); // Remove repetitive and trailing HTML <br> tags
-
-				// HTML tags to automatically close
-				$tags = array('code', 'b', 'i', 'u', 's', 'li', 'pre', 'blockquote', 'ul', 'ol');
-				$cleantags = array('blockquote', 'ul', 'ol');
-
-				// Check if all allowed HTML tags have been closed, if not add them at the end
-				for ($tc = 0, $tcl = count($tags); $tc < $tcl; $tc++) {
-					$without_code_tags = strtolower(preg_replace('/<code>.*?<\/code>/i', '', $clean_code));
-					$open_tags = substr_count($without_code_tags, '<' . $tags[$tc] . '>');
-					$close_tags = substr_count($without_code_tags, '</' . $tags[$tc] . '>');
-
-					if ($open_tags != $close_tags) {
-						while ($open_tags > $close_tags) {
-							$clean_code .= '</' . $tags[$tc] . '>';
-							$close_tags++;
-						}
-
-						while ($close_tags > $open_tags) {
-							$clean_code = preg_replace('/' . str_replace('/', '\/', '</' . $tags[$tc] . '>') . '/i', '', $clean_code, 1);
-							$close_tags--;
-						}
-					}
-
-					if (in_array($tags[$tc], $cleantags)) {
-						$clean_code = str_ireplace(array('<' . $tags[$tc] . '><br>', '</' . $tags[$tc] . '><br>'), array('<' . $tags[$tc] . '>\n', '</' . $tags[$tc] . '>\n'), $clean_code);
-					}
-				}
-
-				$clean_code = str_ireplace(array('<code><br>', '<br></code>'), array('<code>', '</code>'), $clean_code);
-				$clean_code = str_ireplace(array('<pre><br>', '<br></pre>'), array('<pre>', '</pre>'), $clean_code);
-				$clean_code = preg_replace_callback('/(<code>)(.*?)(<\/code>){1,}/i', function($arr) { return '<code style="white-space: pre;">' . str_ireplace('&lt;br&gt;', '<br>', htmlspecialchars(preg_replace('/(<br>){1,}<img.*?title="(.*?)".*?>(<br>){1,}/', '\\2', preg_replace('/<\/?a(\s+.*?>|>)/', '', $arr[2])), null, null, false)) . $arr[3];}, $clean_code);
-				$clean_code = preg_replace_callback('/(<pre>)(.*?)(<\/pre>){1,}/i', function($arr) { return $arr[1] . preg_replace('/(<br>){1,}<img.*?title="(.*?)".*?>(<br>){1,}/', '\\2', $arr[2]) . $arr[3];}, $clean_code);
-				$clean_code = str_replace(array('<blockquote>\n<br>', '<br><br></blockquote>'), array('<blockquote>\n', '\n</blockquote>'), $clean_code);
-				$clean_code = str_ireplace('</li><br>', '</li>\n', $clean_code);
-
-				// Setup data from template; Store default information
-				$write_cmt = $this->setup->data_template;
-				$write_cmt['name'] = $this->xml_sanitize($this->name);
-				$write_cmt['date'] = date(DATE_ISO8601);
-				$write_cmt['body'] = $this->xml_sanitize($clean_code);
 
 				// Store password and login ID if a password is given
-				if (!empty($this->password)) {
-					$write_cmt['password'] = $this->setup->encryption->create_hash($this->password);
+				if ($this->allowsPasswords and !empty ($this->password)) {
+					$this->writeComment['password'] = $this->encryption->createHash ($this->password);
 
-					// Store login ID if it's not the same as the default name
-					if ($write_cmt['name'] != $this->setup->default_name) {
-						$write_cmt['login_id'] = hash('ripemd160', $write_cmt['name'] . $this->password);
+					// Store login ID if name given not the same as the default name
+					if ($this->writeComment['name'] !== $this->defaultName) {
+						$this->writeComment['login_id'] = hash ('ripemd160', $this->writeComment['name'] . $this->password);
 					}
 				}
+			}
 
-				// Store e-mail if one is given
-				if (!empty($_POST['email']) and filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-					$encryption_keys = $this->setup->encryption->encrypt($this->xml_sanitize($this->email));
-					$write_cmt['email'] = $encryption_keys['encrypted'];
-					$write_cmt['encryption'] = $encryption_keys['keys'];
+			// Store e-mail if one is given
+			if ($this->allowsEmails) {
+				if (!empty ($this->email)) {
+					$encryption_keys = $this->encryption->encrypt ($this->email);
+					$this->writeComment['email'] = $encryption_keys['encrypted'];
+					$this->writeComment['encryption'] = $encryption_keys['keys'];
+					$this->writeComment['email_hash'] = md5 (strtolower ($this->email));
 
 					// Set e-mail subscription if one is given
-					if (!empty($_POST['subscribe'])) {
-						$write_cmt['notifications'] = ($_POST['subscribe'] == 'on') ? 'yes' : 'no';
-					}
+					$this->writeComment['notifications'] = !empty ($_POST['subscribe']) ? 'yes' : 'no';
 				}
+			}
 
-				// Store website URL if one is given
-				if (!empty($this->website)) {
-					$write_cmt['website'] = $this->xml_sanitize(trim($this->website, ' '));
+			// Store website URL if one is given
+			if ($this->allowsWebsites) {
+				if (!empty ($this->website)) {
+					$this->writeComment['website'] = $this->website;
 				}
+			}
 
-				// Store user IP address if one is given
-				if ($this->setup->stores_ip_addrs == 'yes') {
-					$write_cmt['ipaddr'] = $_SERVER['REMOTE_ADDR'];
-				}
+			// Store user IP address if setup to and one is given
+			if ($this->storesIPAddress and !empty ($_SERVER['REMOTE_ADDR'])) {
+				$this->writeComment['ipaddr'] = $_SERVER['REMOTE_ADDR'];
+			}
+		}
 
-				// Edit comment
-				if (isset($_POST['edit']) and (!empty($this->password) and isset($_POST['cmtfile'])) and !isset($_POST['delete'])) {
-					$edit_cmt = $this->read_comments->data->read($_POST['cmtfile']);
+		public
+		function editComment ()
+		{
+			$this->verifyFile ('file');
+			$this->setupCommentData ();
 
-					// Check if password matches the one in the file
-					if ($this->setup->encryption->verify_hash($this->password, $edit_cmt['password']) or $this->setup->user_is_admin == true) {
-						$edit_cmt['name'] = $write_cmt['name'];
-						$edit_cmt['website'] = $write_cmt['website'];
+			// Edit comment
+			if (!empty ($this->password) and !empty ($_POST['file'])) {
+				$edit_comment = $this->commentData->read ($_POST['file']);
+				$passwords_match = $this->encryption->verifyHash ($this->getPassword (), $edit_comment['password']);
 
-						if ($this->setup->user_is_admin == false) {
-							$edit_cmt['email'] = $write_cmt['email'];
-							$edit_cmt['encryption'] = $write_cmt['encryption'];
-							$edit_cmt['password'] = $write_cmt['password'];
-						}
+				// Check if password matches the one in the file
+				if ($passwords_match or $this->setup->userIsAdmin) {
+					$edit_comment['body'] = $this->writeComment['body'];
 
-						if (!empty($_POST['notify'])) {
-							$edit_cmt['notifications'] = ($_POST['notify'] == 'on') ? 'yes' : 'no';
-						}
-
-						// Write edited comment to file
-						if ($clean_code != $edit_cmt['body']) {
-							$edit_cmt['body'] = $write_cmt['body'];
-						}
-
-						// Attempt to write edited comment
-						if ($this->read_comments->data->save($edit_cmt, $_POST['cmtfile'], true)) {
-							// Kick visitor back to comment(s)
-							exit(header('Location: ' . $this->kickback . '#c' . str_replace('-', 'r', $_POST['cmtfile'])));
-						} else {
-							$this->cookies->set('message', $this->setup->text['post_fail']);
-						}
-					} else {
-						$this->cookies->set('message', $this->setup->text['post_fail']);
+					if ($this->setup->userIsAdmin === false) {
+						$edit_comment['name'] = $this->writeComment['name'];
+						$edit_comment['website'] = $this->writeComment['website'];
+						$edit_comment['email'] = $this->writeComment['email'];
+						$edit_comment['email_hash'] = $this->writeComment['email_hash'];
+						$edit_comment['encryption'] = $this->writeComment['encryption'];
+						$edit_comment['password'] = $this->writeComment['password'];
 					}
 
-					exit(header('Location: ' . $this->kickback . '#comments'));
+					// Update e-mail subscription status
+					$edit_comment['notifications'] = !empty ($_POST['subscribe']) ? 'yes' : 'no';
+
+					// Attempt to write edited comment
+					if ($this->commentData->save ($edit_comment, $_POST['file'], true)) {
+						$this->kickback ('', false, 'c' . str_replace ('-', 'r', $_POST['file']));
+					}
+				}
+			}
+
+			$this->kickback ($this->locales->locale['post_fail'], true);
+		}
+
+		protected
+		function indentedWordwrap ($text)
+		{
+			$text = wordwrap ($text, 66, "\n", true);
+			$paragraphs = explode (PHP_EOL . PHP_EOL, $text);
+			$paragraphs = str_replace ("\n", "\n    ", $paragraphs);
+
+			array_walk ($paragraphs, function (&$paragraph) {
+				$paragraph = '    ' . $paragraph;
+			});
+
+			return implode (PHP_EOL . PHP_EOL, $paragraphs);
+		}
+
+		public
+		function postComment ()
+		{
+			$this->verifyFile ('reply_to');
+			$this->spamCheck ();
+			$this->setupCommentData ();
+
+			// Post fails when comment is empty
+			if (empty ($_POST['comment'])) {
+				$this->cookies->set ('success', 'no');
+
+				// Set reply cookie
+				if (!empty ($this->replyTo)) {
+					$this->cookies->set ('replied', $this->replyTo);
+
+					// Kick visitor back; display message of reply requirement
+					$this->kickback ($this->locales->locale['reply_needed'], true);
 				}
 
+				// Kick visitor back; display message of comment requirement
+				$this->kickback ($this->locales->locale['cmt_needed'], true);
+			}
+
+			// Check if comment thread directory exists
+			if ($this->commentData->storageMode === 'flat-file') {
+				if (file_exists ($this->setup->dir)) {
+					// If yes, check if it is or can be made to be writable
+					if (!is_writable ($this->setup->dir) and !@chmod ($this->setup->dir, 0755)) {
+						// Kick visitor back; display error
+						$this->kickback ('Comment thread directory at "' . $this->setup->dir . '" is not writable. Check directory permissions.', true);
+					}
+				} else {
+					// If no, attempt to create the directory
+					if (!@mkdir ($this->setup->dir, 0755, true) and !@chmod ($this->setup->dir, 0755)) {
+						// Kick visitor back; display error
+						$this->kickback ('Failed to create comment thread directory at "' . $this->setup->dir . '"', true);
+					}
+				}
+			}
+
+			// Set comment file name
+			if (!empty ($this->replyTo)) {
 				// Rename file for reply
-				if (!empty($_POST['reply_to'])) {
-					// Set reply directory information & "cookie" for successful reply
-					$cmt_file = $_POST['reply_to'] . '-' . $this->read_comments->subfile_count[$_POST['reply_to']];
-					$this->cookies->set('replied', $_POST['reply_to']);
-				} else {
-					$cmt_file = $this->read_comments->cmt_count;
+				$comment_file = $this->replyTo . '-' . $this->readComments->threadCount[$this->replyTo];
+			} else {
+				$comment_file = $this->readComments->primaryCount;
+			}
+
+			// Write comment to file
+			if ($this->commentData->save ($this->writeComment, $comment_file)) {
+				$this->addLatestComment ($comment_file);
+
+				// Send notification e-mails
+				$permalink = 'c' . str_replace ('-', 'r', $comment_file);
+				$from_line = !empty ($this->name) ? $this->name : $this->defaultName;
+				$mail_comment = $this->indentedWordwrap (html_entity_decode ($this->writeComment['body'], ENT_COMPAT, 'UTF-8'));
+				$webmaster_reply = '';
+
+				// Add user's e-mail address to "From" line
+				if (!empty ($this->email) and $this->allowsUserReplies) {
+					$from_line .= ' <' . $this->email . '>';
 				}
 
-				// Write comment to file
-				if ($this->read_comments->data->save($write_cmt, $cmt_file)) {
-					$this->add_latest_comment($cmt_file);
+				// Notify commenter of reply
+				if (!empty ($this->replyTo)) {
+					$reply_comment = $this->commentData->read ($this->replyTo);
+					$reply_body = $this->indentedWordwrap ($reply_comment['body']);
+					$webmaster_reply = 'In reply to ' . $reply_comment['name'] . ':' . "\n\n" . $reply_body . "\n\n";
+					$reply_email = $this->encryption->decrypt ($reply_comment['email'], $reply_comment['encryption']);
 
-					// Send notification e-mails
-					$permalink = 'c' . str_replace('-', 'r', $cmt_file);
-					$from_email = (!empty($_POST['email']) and $_POST['email'] != $this->setup->text['email'] and $this->setup->allows_user_replies == 'yes') ? $this->name . ' <' . $this->email . '>' : $this->name;
-					$reverse_datasearch = array('&quot;', '&lt;', '&gt;', '<br>\n', '\n', '<br>', '&nbsp;', '\r');
-					$reverse_datareplace = array('"', '<', '>', PHP_EOL, PHP_EOL, "\r", '  ', "\r");
-					$mail_cmt = wordwrap('    ' . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($clean_code)), 76, "\n    ", true);
-					$to_webmaster = '';
-
-					// Notify commenter of reply
-					if (!empty($_POST['reply_to'])) {
-						$get_cmt = $this->read_comments->data->read($_POST['reply_to']);
-						$op_cmt = wordwrap('    ' . str_replace($reverse_datasearch, $reverse_datareplace, strip_tags($get_cmt['body'])), 76, "\n    ", true);
-						$to_commenter = "In reply to:\n\n" . $op_cmt . "\n\n";
-						$to_webmaster = "In reply to " . $get_cmt['name'] . ":\n\n" . $op_cmt . "\n\n";
-						$decryto = $this->setup->encryption->decrypt($get_cmt['email'], $get_cmt['encryption']);
-
-						if (!empty($decryto) and $decryto != $this->setup->notification_email and $decryto != $this->email) {
-							if ($get_cmt['notifications'] == 'yes') {
-								if ($this->setup->allows_user_replies != 'yes') $this->header = "From: " . $this->setup->noreply_email . "\r\nReply-To: " . $this->setup->noreply_email;
-								mail($decryto, $_SERVER['HTTP_HOST'] . ' - New Reply', "From $from_email:\n\n" . $mail_cmt . "\n\n$to_commenter----\nPermalink: " . $this->setup->page_url . '#' . $permalink . "\nPage: " . $this->setup->page_url, $this->header);
+					if (!empty ($reply_email) and $reply_email !== $this->email) {
+						if ($reply_comment['notifications'] === 'yes') {
+							if ($this->allowsUserReplies) {
+								$this->userHeaders = $this->headers;
 							}
+
+							// Message body to original poster
+							$reply_message  = 'From ' . $from_line . ":\n\n";
+							$reply_message .= $mail_comment . "\n\n";
+							$reply_message .= 'In reply to:' . "\n\n" . $reply_body . "\n\n" . '----' . "\n";
+							$reply_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\n";
+							$reply_message .= 'Page: ' . $this->setup->pageURL;
+
+							// Send
+							mail ($reply_email, $this->domain . ' - New Reply', $reply_message, $this->userHeaders);
 						}
 					}
+				}
 
-					// Notify webmaster via e-mail
-					if ($this->email != $this->setup->notification_email) {
-						mail($this->setup->notification_email, 'New Comment', "From $from_email:\n\n" . $mail_cmt . "\n\n$to_webmaster----\nPermalink: " . $this->setup->page_url . '#' . $permalink . "\nPage: " . $this->setup->page_url, $this->header);
+				// Notify webmaster via e-mail
+				if ($this->email !== $this->notificationEmail) {
+					$webmaster_message  = 'From ' . $from_line . ":\n\n";
+					$webmaster_message .= $mail_comment . "\n\n";
+					$webmaster_message .= $webmaster_reply . '----' . "\n";
+					$webmaster_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\n";
+					$webmaster_message .= 'Page: ' . $this->setup->pageURL;
+
+					// Send
+					mail ($this->notificationEmail, 'New Comment', $webmaster_message, $this->headers);
+				}
+
+				// Set/update user login cookie, kick visitor back to comment
+				$this->cookies->set ('hashover-login', hash ('ripemd160', $this->name . $this->password));
+				$this->kickback ('', false, $permalink);
+			}
+
+			$this->kickback ($this->locales->locale['post_fail'], true);
+
+			if (!empty ($this->replyTo)) {
+				$this->cookies->set ('replied', $this->replyTo);
+			}
+		}
+
+		public
+		function getAction ()
+		{
+			foreach ($this->postActions as $action) {
+				if (empty ($_POST[$action])) {
+					continue;
+				}
+
+				switch ($action) {
+					case 'login': {
+						$this->login ();
+						break;
 					}
 
-					// Set blank cookie for successful comment, kick visitor back to comment
-					$this->cookies->set('replied', '');
-					$this->cookies->set('hashover-login', hash('ripemd160', $write_cmt['name'] . $this->password));
-					exit(header('Location: ' . $this->kickback . '#' . $permalink));
-				} else {
-					$this->cookies->set('message', $this->setup->text['post_fail']);
-					exit(header('Location: ' . $this->kickback . '#comments'));
-				}
-			} else {
-				// Set failed comment cookie
-				$this->cookies->set('success', 'no');
+					case 'logout': {
+						$this->logout ();
+						break;
+					}
 
-				// Set message cookie to comment or reply requirement notice
-				if (!empty($_POST['reply_to'])) {
-					$this->cookies->set('replied', $_POST['reply_to']);
-					$this->cookies->set('message', $this->setup->text['reply_needed']);
-				} else {
-					$this->cookies->set('message', $this->setup->text['cmt_needed']);
+					case 'post': {
+						$this->postComment ();
+						break;
+					}
+
+					case 'edit': {
+						$this->editComment ();
+						break;
+					}
+
+					case 'delete': {
+						$this->deleteComment ();
+						break;
+					}
 				}
 
-				// Kick visitor back to comment form
-				exit(header('Location: ' . $this->kickback . '#comments'));
+				break;
 			}
 		}
 	}

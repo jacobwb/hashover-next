@@ -1,131 +1,120 @@
 <?php
 
-	// Copyright (C) 2014 Jacob Barkdull
+	// Copyright (C) 2010-2015 Jacob Barkdull
 	//
-	//	This program is free software: you can redistribute it and/or modify
+	//	This file is part of HashOver.
+	//
+	//	HashOver is free software: you can redistribute it and/or modify
 	//	it under the terms of the GNU Affero General Public License as
 	//	published by the Free Software Foundation, either version 3 of the
 	//	License, or (at your option) any later version.
 	//
-	//	This program is distributed in the hope that it will be useful,
+	//	HashOver is distributed in the hope that it will be useful,
 	//	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	//	GNU Affero General Public License for more details.
 	//
 	//	You should have received a copy of the GNU Affero General Public License
-	//	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	//	along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
 	// Display source code
-	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		if (isset($_GET['source'])) {
-			header('Content-type: text/plain; charset=UTF-8');
-			exit(file_get_contents(basename(__FILE__)));
+	if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
+		if (isset ($_GET['source'])) {
+			header ('Content-type: text/plain; charset=UTF-8');
+			exit (file_get_contents (basename (__FILE__)));
 		}
 	}
 
 	class ReadComments
 	{
-		public $data,
-		       $commentlist,
-		       $subfile_count = array(),
-		       $total_count = 1,
-		       $cmt_count = 1,
-		       $show_count = '';
+		public $setup;
+		public $data;
+		public $commentlist;
+		public $threadCount = array ();
+		public $totalCount = 1;
+		public $primaryCount = 1;
 
-		public function __construct($setup)
+		public
+		function __construct (Setup $setup)
 		{
 			$this->setup = $setup;
 
 			// Instantiate necessary class data format class
-			$data_class = 'Parse' . strtoupper($setup->data_format);
-			$this->data = new $data_class($setup);
+			$data_class = 'Parse' . strtoupper ($setup->dataFormat);
+			$this->data = new $data_class ($setup);
 
 			// Query a list of comments
-			$this->commentlist = $this->data->query();
+			$this->commentlist = $this->data->query ();
 
 			// Check for missing comments
-			foreach (array_keys($this->commentlist) as $key) {
-				$key_parts = explode('-', $key);
-
-				// Start by checking for the first comment
+			foreach ($this->commentlist as $key) {
+				$key_parts = explode ('-', $key);
 				$cmt_tree = '';
 
 				foreach ($key_parts as $reply) {
-					// Then check for comments counting backward from the current
+					// Check for comments counting backward from the current
 					for ($i = 1; $i <= $reply; $i++) {
 						// Current level to check for
-						$current = $cmt_tree . (!empty($cmt_tree) ? '-' : '') . $i;
+						$current = $cmt_tree;
 
-						if (!isset($this->commentlist[$current])) {
-							// List missing comment
-							$this->commentlist[$current] = 'deleted';
-
-							// Count missing comment
-							$this->count_comments($current);
+						if (!empty ($cmt_tree)) {
+							$current .= '-';
 						}
+
+						$current .= $i;
+
+						if (isset ($this->commentlist[$current])) {
+							continue;
+						}
+
+						// List missing comment
+						$this->commentlist[$current] = 'deleted';
+
+						// Count missing comment
+						$this->countComments ($current);
 					}
 
 					// Add current reply level to tree
-					$cmt_tree .= (!empty($cmt_tree) ? '-' : '') . $reply;
+					if (!empty ($cmt_tree)) {
+						$cmt_tree .= '-';
+					}
+
+					$cmt_tree .= $reply;
 				}
 
 				// Count comment
-				$this->count_comments($key);
+				$this->countComments ($key);
 			}
 
 			// Sort comments by their keys alphabetically in ascending order
-			uksort($this->commentlist, 'strnatcasecmp');
-
-			// Format comment count
-			$prime_plural = ($this->cmt_count != 2) ? 1 : 0;
-			$locale_key = ($setup->mode == 'api') ? 'count_link' : 'showing_cmts';
-			$showing_cmts = $setup->text[$locale_key][$prime_plural];
-
-			if ($setup->shows_count_total == 'yes') {
-				$this->show_count = str_replace('_NUM_', $this->cmt_count - 1, $showing_cmts);
-
-				// Add reply count if there are any
-				if ($this->total_count != $this->cmt_count) {
-					$reply_plural = (abs($this->total_count - $this->cmt_count) > 1) ? 1 : 0;
-					$count_replies = str_replace('_NUM_', $this->total_count - 1, $setup->text['count_replies'][$reply_plural]);
-					$this->show_count .= ' (' . $count_replies . ')';
-				}
-			} else {
-				$this->show_count = str_replace('_NUM_', $this->total_count - 1, $showing_cmts);
-			}
+			uksort ($this->commentlist, 'strnatcasecmp');
 		}
 
 		// Read comments
-		public function read($skipdeleted = false, $fullpath = false)
+		public
+		function read ($skipdeleted = false, $fullpath = false)
 		{
-			$comments = array();
-			$url_regex = '(((ftp|http|https){1}:\/\/)[a-zA-Z0-9-@:%_\+.~#?&\/=]+)';
+			$comments = array ();
 
 			foreach ($this->commentlist as $key => $comment) {
-				if ($comment == 'deleted') {
+				if ($comment === 'deleted') {
 					if ($skipdeleted) {
 						continue;
 					}
 
 					$comments[$key]['status'] = 'deleted';
 				} else {
-					$read_comment = $this->data->read($comment, $fullpath);
+					$read_comment = $this->data->read ($comment, $fullpath);
 
+					// See if it read successfully
 					if ($read_comment) {
+						// If so, add the comment to output
 						$comments[$key] = $read_comment;
 					} else {
+						// If not, consider it deleted
 						$comments[$key]['status'] = 'deleted';
 						continue;
-					}
-
-					// Replace [img] tags with external image placeholder if enabled
-					if ($this->setup->mode != 'javascript') {
-						// Add HTML anchor tag to URLs (hyperlinks)
-						$comments[$key]['body'] = preg_replace('/' . $url_regex . '([\s]{0,})/i', '<a href="\\1" target="_blank">\\1</a>', $comments[$key]['body']);
-
-						// Replace [img] tags with hyperlinks
-						$comments[$key]['body'] = preg_replace('/\[img\]<a.*?>' . $url_regex . '<\/a>\[\/img\]/i', '<a href="\\1" target="_blank">\\1</a>', $comments[$key]['body']);
 					}
 				}
 			}
@@ -134,32 +123,33 @@
 		}
 
 		// Count the comments
-		public function count_comments($comment)
+		protected
+		function countComments ($comment)
 		{
 			// Count replies
-			if (strpos($comment, '-') !== false) {
-				$file_parts = explode('-', $comment);
-				$thread = basename($comment, '-' . end($file_parts));
+			if (strpos ($comment, '-') !== false) {
+				$file_parts = explode ('-', $comment);
+				$thread = basename ($comment, '-' . end ($file_parts));
 
-				if (isset($this->subfile_count["$thread"])) {
-					$this->subfile_count["$thread"]++;
+				if (isset ($this->threadCount[$thread])) {
+					$this->threadCount[$thread]++;
 				} else {
-					$this->subfile_count["$thread"] = 1;
+					$this->threadCount[$thread] = 1;
 				}
 			} else {
 				// Count top level comments
-				$this->cmt_count++;
+				$this->primaryCount++;
 			}
 
 			// Count replies
-			if (isset($this->subfile_count["$comment"])) {
-				$this->subfile_count["$comment"]++;
+			if (isset ($this->threadCount[$comment])) {
+				$this->threadCount[$comment]++;
 			} else {
-				$this->subfile_count["$comment"] = 1;
+				$this->threadCount[$comment] = 1;
 			}
 
 			// Count all comments
-			$this->total_count++;
+			$this->totalCount++;
 		}
 	}
 

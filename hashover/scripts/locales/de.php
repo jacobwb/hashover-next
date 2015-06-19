@@ -1,6 +1,6 @@
 <?php
 
-	// Copyright (C) 2014 Jacob Barkdull
+	// Copyright (C) 2015 Jacob Barkdull
 	//
 	//	I, Jacob Barkdull, hereby release this work into the public domain. 
 	//	This applies worldwide. If this is not legally possible, I grant any 
@@ -9,22 +9,24 @@
 
 
 	// Display source code
-	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		if (isset($_GET['source'])) {
-			header('Content-type: text/plain; charset=UTF-8');
-			exit(file_get_contents(basename(__FILE__)));
+	if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
+		if (isset ($_GET['source'])) {
+			header ('Content-type: text/plain; charset=UTF-8');
+			exit (file_get_contents (basename (__FILE__)));
 		}
 	}
 
 	// German text for forms, buttons, links, and tooltips
-	$locale = array(
+	$locale = array (
 		'comment_form'	=> 'Kommentar hier eingeben (andere Felder sind optional)',
 		'reply_form'	=> 'Antwort hier eingeben (andere Felder sind optional)',
 		'post_button'	=> 'Kommentar posten',
 		'login'		=> 'Einloggen',
 		'login_tip'	=> 'Einloggen (optional)',
 		'logout'	=> 'Ausloggen',
-		'del_note'	=> 'Dieser Kommentar wurde gelöscht.',
+		'pending_note'	=> 'Dieser Kommentar wird schwebend der Zustimmung.',
+		'deleted_note'	=> 'Dieser Kommentar wurde gelöscht.',
+		'cmt_pending'	=> 'Schwebend',
 		'cmt_deleted'	=> 'Kommentar gelöscht',
 		'options'	=> 'Optionen',
 		'cancel'	=> 'Abbrechen',
@@ -53,11 +55,11 @@
 		'no_email_warn'	=> 'Du wirst bei neuen Kommentaren keine Benachrichtigung erhalten, wenn du keine E-Mail angibst.',
 		'invalid_email'	=> 'Die von dir eingegebene E-Mail-Adresse ist ungültig.',
 		'delete_cmt'	=> 'Möchtest du diesen Kommentar wirklich löschen?',
-		'post_cmt_on'	=> array('Kommentar posten', ' auf "_TITLE_"'),
-		'popular_cmts'	=> array('Beliebteste Kommentar', 'Beliebteste Kommentare'),
-		'showing_cmts'	=> array('Anzeige von _NUM_ Kommentar', 'Anzeige von _NUM_ Kommentare'),
-		'count_link'	=> array('_NUM_ Kommentar', '_NUM_ Kommentare'),
-		'count_replies'	=> array('inklusive _NUM_ Antwort', 'inklusive _NUM_ Antworten'),
+		'post_cmt_on'	=> array ('Kommentar posten', ' auf "_TITLE_"'),
+		'popular_cmts'	=> array ('Beliebteste Kommentar', 'Beliebteste Kommentare'),
+		'showing_cmts'	=> array ('Anzeige von _NUM_ Kommentar', 'Anzeige von _NUM_ Kommentare'),
+		'count_link'	=> array ('_NUM_ Kommentar', '_NUM_ Kommentare'),
+		'count_replies'	=> array ('inklusive _NUM_ Antwort', 'inklusive _NUM_ Antworten'),
 		'sort'		=> 'Sortieren',
 		'sort_ascend'	=> 'In Reihenfolge',
 		'sort_descend'	=> 'In umgekehrter Reihenfolge',
@@ -70,23 +72,24 @@
 		'replies'	=> 'Antworten',
 		'edit'		=> 'Bearbeiten',
 		'reply'		=> 'Antworten',
-		'like'		=> array('Like', 'Likes'),
+		'like'		=> array ('Like', 'Likes'),
 		'liked'		=> 'Liked',
-		'like_cmt'	=> 'Diese Kommentar \'Like\'',
-		'liked_cmt'	=> 'Dir \'Liked\' dieser Kommentar',
-		'dislike'	=> array('Dislike', 'Dislikes'),
+		'unlike'	=> 'Unlike',
+		'like_cmt'	=> '\'Like\' Diese Kommentar',
+		'liked_cmt'	=> 'Unlike dieser Kommentar',
+		'dislike'	=> array ('Dislike', 'Dislikes'),
 		'disliked'	=> 'Disliked',
-		'dislike_cmt'	=> 'Diese Kommentar \'Dislike\'',
-		'disliked_cmt'	=> 'Dir \'Disliked\' dieser Kommentar',
+		'dislike_cmt'	=> '\'Dislike\' dieser Kommentar',
+		'disliked_cmt'	=> 'Du \'Disliked\' Diese Kommentar',
 		'op_cmt_note'	=> 'Du wirst nicht per E-Mail benachrichtigt',
 		'subbed_note'	=> 'wirst per E-Mail benachrichtigt',
 		'unsubbed_note'	=> 'hat E-Mail-Benachrichtigungen nicht abonniert',
 		'first_cmt'	=> 'Seien den ersten Kommentar!',
-		'other_cmts'	=> array('Zeige _NUM_ Andere Kommentar', 'Zeige _NUM_ Weitere Kommentare'),
-		'show_num_cmts'	=> array('Zeige _NUM_ Kommentar', 'Zeige _NUM_ Kommentare'),
-		'date_years'	=> array('Vor _NUM_ jahr', 'Vor _NUM_ jahren'),
-		'date_months'	=> array('Vor _NUM_ monat', 'Vor _NUM_ monaten'),
-		'date_days'	=> array('Vor _NUM_ tag', 'Vor _NUM_ tagen'),
+		'other_cmts'	=> array ('Zeige _NUM_ Andere Kommentar', 'Zeige _NUM_ Weitere Kommentare'),
+		'show_num_cmts'	=> array ('Zeige _NUM_ Kommentar', 'Zeige _NUM_ Kommentare'),
+		'date_years'	=> array ('Vor _NUM_ jahr', 'Vor _NUM_ jahren'),
+		'date_months'	=> array ('Vor _NUM_ monat', 'Vor _NUM_ monaten'),
+		'date_days'	=> array ('Vor _NUM_ tag', 'Vor _NUM_ tagen'),
 		'date_today'	=> '_TIME_ heute'
 	);
 

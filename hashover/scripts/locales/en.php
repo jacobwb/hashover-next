@@ -1,6 +1,6 @@
 <?php
 
-	// Copyright (C) 2014 Jacob Barkdull
+	// Copyright (C) 2015 Jacob Barkdull
 	//
 	//	I, Jacob Barkdull, hereby release this work into the public domain. 
 	//	This applies worldwide. If this is not legally possible, I grant any 
@@ -9,23 +9,25 @@
 
 
 	// Display source code
-	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		if (isset($_GET['source'])) {
-			header('Content-type: text/plain; charset=UTF-8');
-			exit(file_get_contents(basename(__FILE__)));
+	if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
+		if (isset ($_GET['source'])) {
+			header ('Content-type: text/plain; charset=UTF-8');
+			exit (file_get_contents (basename (__FILE__)));
 		}
 	}
 
 	// English text for forms, buttons, links, and tooltips
-	$locale = array(
+	$locale = array (
 		'comment_form'	=> 'Type Comment Here (other fields optional)',	// "Comment" field's default text
 		'reply_form'	=> 'Type Reply Here (other fields optional)',	// "Reply" field's default text
 		'post_button'	=> 'Post Comment',				// "Post Comment" button's default text
 		'login'		=> 'Login',					// "Login" button
 		'login_tip'	=> 'Login (optional)',				// "Login" button tooltip
 		'logout'	=> 'Logout',					// "Logout" button
-		'del_note'	=> 'This comment has been deleted.',		// Notice of deleted comment
-		'cmt_deleted'	=> 'Comment Deleted!',				// Notice of successful comment deletion
+		'pending_note'	=> 'This comment is pending approval.',		// Notice for pending comments
+		'deleted_note'	=> 'This comment has been deleted.',		// Notice for deleted comments
+		'cmt_pending'	=> 'Pending',					// Name of pending comments
+		'cmt_deleted'	=> 'Comment Deleted!',				// Name of deleted comments
 		'options'	=> 'Options',					// "Options" button text
 		'cancel'	=> 'Cancel',					// "Cancel" button text
 		'reply_to_cmt'	=> 'Reply To Comment',
@@ -53,11 +55,11 @@
 		'no_email_warn'	=> 'You will not receive notification of replies to your comment without supplying an e-mail.',
 		'invalid_email'	=> 'The e-mail address you entered is invalid.',
 		'delete_cmt'	=> 'Are you sure you want to delete this comment?',
-		'post_cmt_on'	=> array('Post a Comment', ' on "_TITLE_"'),
-		'popular_cmts'	=> array('Most Popular Comment', 'Most Popular Comments'),
-		'showing_cmts'	=> array('Showing _NUM_ Comment', 'Showing _NUM_ Comments'),
-		'count_link'	=> array('_NUM_ Comment', '_NUM_ Comments'),
-		'count_replies'	=> array('_NUM_ counting reply', '_NUM_ counting replies'),
+		'post_cmt_on'	=> array ('Post a Comment', ' on "_TITLE_"'),
+		'popular_cmts'	=> array ('Most Popular Comment', 'Most Popular Comments'),
+		'showing_cmts'	=> array ('Showing _NUM_ Comment', 'Showing _NUM_ Comments'),
+		'count_link'	=> array ('_NUM_ Comment', '_NUM_ Comments'),
+		'count_replies'	=> array ('_NUM_ counting reply', '_NUM_ counting replies'),
 		'sort'		=> 'Sort',
 		'sort_ascend'	=> 'In Order',
 		'sort_descend'	=> 'In Reverse Order',
@@ -70,11 +72,12 @@
 		'replies'	=> 'Replies',
 		'edit'		=> 'Edit',
 		'reply'		=> 'Reply',
-		'like'		=> array('Like', 'Likes'),
+		'like'		=> array ('Like', 'Likes'),
 		'liked'		=> 'Liked',
+		'unlike'	=> 'Unlike',
 		'like_cmt'	=> '\'Like\' This Comment',
-		'liked_cmt'	=> 'You \'Liked\' This Comment',
-		'dislike'	=> array('Dislike', 'Dislikes'),
+		'liked_cmt'	=> 'Unlike This Comment',
+		'dislike'	=> array ('Dislike', 'Dislikes'),
 		'disliked'	=> 'Disliked',
 		'dislike_cmt'	=> '\'Dislike\' This Comment',
 		'disliked_cmt'	=> 'You \'Disliked\' This Comment',
@@ -82,11 +85,11 @@
 		'subbed_note'	=> 'will be notified via e-mail',
 		'unsubbed_note' => 'is not subscribed to e-mail notifications',
 		'first_cmt'	=> 'Be the first to comment!',
-		'other_cmts'	=> array('Show _NUM_ Other Comment', 'Show _NUM_ Other Comments'),
-		'show_num_cmts'	=> array('Show _NUM_ Comment', 'Show _NUM_ Comments'),
-		'date_years'	=> array('_NUM_ year ago', '_NUM_ years ago'),
-		'date_months'	=> array('_NUM_ month ago', '_NUM_ months ago'),
-		'date_days'	=> array('_NUM_ day ago', '_NUM_ days ago'),
+		'other_cmts'	=> array ('Show _NUM_ Other Comment', 'Show _NUM_ Other Comments'),
+		'show_num_cmts'	=> array ('Show _NUM_ Comment', 'Show _NUM_ Comments'),
+		'date_years'	=> array ('_NUM_ year ago', '_NUM_ years ago'),
+		'date_months'	=> array ('_NUM_ month ago', '_NUM_ months ago'),
+		'date_days'	=> array ('_NUM_ day ago', '_NUM_ days ago'),
 		'date_today'	=> '_TIME_ today'
 	);
 

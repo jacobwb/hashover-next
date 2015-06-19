@@ -1,154 +1,176 @@
 <?php
 
-	// Copyright (C) 2014 Jacob Barkdull
+	// Copyright (C) 2010-2015 Jacob Barkdull
 	//
-	//	This program is free software: you can redistribute it and/or modify
+	//	This file is part of HashOver.
+	//
+	//	HashOver is free software: you can redistribute it and/or modify
 	//	it under the terms of the GNU Affero General Public License as
 	//	published by the Free Software Foundation, either version 3 of the
 	//	License, or (at your option) any later version.
 	//
-	//	This program is distributed in the hope that it will be useful,
+	//	HashOver is distributed in the hope that it will be useful,
 	//	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	//	GNU Affero General Public License for more details.
 	//
 	//	You should have received a copy of the GNU Affero General Public License
-	//	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	//	along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
 	// Display source code
-	if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-		if (isset($_GET['source'])) {
-			header('Content-type: text/plain; charset=UTF-8');
-			exit(file_get_contents(basename(__FILE__)));
+	if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
+		if (isset ($_GET['source'])) {
+			header ('Content-type: text/plain; charset=UTF-8');
+			exit (file_get_contents (basename (__FILE__)));
 		}
 	}
 
 	// Database! Database! Just living in the database! Wow! Wow!
 	class Database
 	{
-		public $open_db,
-		       $db_table,
-		       $setup,
-		       $subfile_count = array(),
-		       $total_count = 1,
-		       $cmt_count = 1,
-		       $storage_format;
+		public $database;
+		public $setup;
+		public $threadCount = array ();
+		public $totalCount = 1;
+		public $primaryCount = 1;
+		public $storageMode;
 
-		public function __construct($setup)
+		public
+		function __construct (Setup $setup)
 		{
-			$this->db_table = str_replace('-', '_', $setup->ref_path);
 			$this->setup = $setup;
+			$this->storageMode = $setup->databaseType;
 
 			try {
-				if ($setup->dbtype == 'sqlite') {
-					$this->open_db = new PDO('sqlite:./pages/' . $setup->dbname . '.sqlite');
+				if ($setup->databaseType === 'sqlite') {
+					$this->database = new PDO ('sqlite:' . $setup->rootDirectory . '/pages/' . $setup->databaseName . '.sqlite');
 				} else {
-					$this->open_db = new PDO('mysql:host=' . $setup->dbhost . ';dbname=' . $setup->dbname . ';charset=utf8', $setup->dbuser, $setup->dbpass);
+					$sql_connection = 'host=' . $setup->databaseHost . ';'
+					                . 'dbname=' . $setup->databaseName . ';'
+					                . 'charset=' . $setup->databaseCharset;
+
+					$this->database = new PDO (
+						$setup->databaseType . ':' . $sql_connection,
+						$setup->databaseUser,
+						$setup->databasePassword
+					);
 				}
 			} catch (PDOException $error) {
-				exit($setup->escape_output($error->getMessage(), 'single'));
+				exit ($setup->escapeOutput ($error->getMessage (), 'single'));
 			}
 
 			// Create comment tread table
-			$create = 'CREATE TABLE IF NOT EXISTS ' . $this->db_table . '
-				  (
-					id TEXT PRIMARY KEY,
-					name TEXT,
-					password TEXT,
-					email TEXT,
-					encryption TEXT,
-					website TEXT,
-					date TEXT,
-					body TEXT,
-					likes TEXT,
-					dislikes TEXT,
-					notifications TEXT,
-					ipaddr TEXT
-				  )';
+			$create = 'CREATE TABLE IF NOT EXISTS \'' . $setup->threadDirectory . '\' '
+			        . '(id TEXT PRIMARY KEY,'
+			        . ' name TEXT,'
+			        . ' password TEXT,'
+			        . ' login_id TEXT,'
+			        . ' email TEXT,'
+			        . ' encryption TEXT,'
+			        . ' website TEXT,'
+			        . ' date TEXT,'
+			        . ' likes TEXT,'
+			        . ' dislikes TEXT,'
+			        . ' notifications TEXT,'
+			        . ' ipaddr TEXT,'
+			        . ' status TEXT,'
+			        . ' body TEXT)';
 
-			$this->open_db->exec($create);
+			$this->database->exec ($create);
 		}
 
-		public function write_db($action, array $array)
+		public
+		function write ($action, array $array)
 		{
 			switch ($action) {
 				case 'insert': {
-					$query = 'INSERT INTO ' . $this->db_table . '
-						  VALUES (
-						  	:id,
-						  	:name,
-						  	:password,
-						  	:email,
-						  	:encryption,
-						  	:website,
-						  	:date,
-						  	:body,
-						  	:likes,
-						  	:dislikes,
-						  	:notifications,
-						  	:ipaddr
-						  )';
+					$query = 'INSERT INTO \'' . $this->setup->threadDirectory . '\' VALUES '
+					       . '(:id,'
+					       . ' :name,'
+					       . ' :password,'
+					       . ' :login_id,'
+					       . ' :email,'
+					       . ' :encryption,'
+					       . ' :website,'
+					       . ' :date,'
+					       . ' 0,'
+					       . ' 0,'
+					       . ' :notifications,'
+					       . ' :ipaddr,'
+					       . ' :status,'
+					       . ' :body)';
 
 					break;
 				}
 
 				case 'delete': {
-					$query = 'DELETE FROM ' . $this->db_table . ' WHERE id=:id';
+					if ($this->setup->userDeletionsUnlink) {
+						$query = 'DELETE FROM \'' . $this->setup->threadDirectory . '\' WHERE id=:id';
+					} else {
+						$query = 'UPDATE \'' . $this->setup->threadDirectory . '\' ';
+						$query .= 'SET status=:status WHERE id=:id';
+					}
+
 					break;
 				}
 
 				case 'update': {
-					$query = 'UPDATE ' . $this->db_table . '
-					          SET name=:name,
-					              password=:password,
-					              email=:email,
-					              encryption=:encryption,
-					              website=:website,
-					              body=:body,
-					              notifications=:notifications
-					          WHERE id=:id';
+					$query = 'UPDATE \'' . $this->setup->threadDirectory . '\' '
+					       . 'SET'
+					       . ' name=:name,'
+					       . ' password=:password,'
+					       . ' email=:email,'
+					       . ' encryption=:encryption,'
+					       . ' website=:website,'
+					       . ' likes=:likes,'
+					       . ' dislikes=:dislikes,'
+					       . ' notifications=:notifications,'
+					       . ' body=:body'
+					       . ' WHERE id=:id';
 
 					break;
 				}
 			}
 
 			try {
-				$prepare = $this->open_db->prepare($query);
-				$prepare->execute($array);
+				$prepare = $this->database->prepare ($query);
+				$prepare->execute ($array);
+
 				return true;
 			} catch (PDOException $error) {
-				exit($this->setup->escape_output($error->getMessage(), 'single'));
+				exit ($this->setup->escapeOutput ($error->getMessage (), 'single'));
 			}
 
 			return false;
 		}
 
-		public function count_comments($comment)
+		public
+		function countComments ($comment)
 		{
 			// Count all comments
-			if (strpos($comment, '-') !== false) {
-				$file_parts = explode('-', $comment);
-				$thread = basename($comment, '-' . end($file_parts));
+			if (strpos ($comment, '-') !== false) {
+				$file_parts = explode ('-', $comment);
+				$thread = basename ($comment, '-' . end ($file_parts));
 
-				if (isset($this->subfile_count["$thread"])) {
-					$this->subfile_count["$thread"]++;
+				if (isset ($this->threadCount[$thread])) {
+					$this->threadCount[$thread]++;
 				} else {
-					$this->subfile_count["$thread"] = 1;
+					$this->threadCount[$thread] = 1;
 				}
 			} else {
 				// Count top level comments
-				$this->cmt_count++;
+				$this->primaryCount++;
 			}
 
 			// Count replies
-			if (isset($this->subfile_count["$comment"])) {
-				$this->subfile_count["$comment"]++;
+			if (isset ($this->threadCount[$comment])) {
+				$this->threadCount[$comment]++;
 			} else {
-				$this->subfile_count["$comment"] = 1;
+				$this->threadCount[$comment] = 1;
 			}
 
-			$this->total_count++;
+			$this->totalCount++;
 		}
 	}
 
