@@ -38,7 +38,8 @@
 
 		protected $addcslashes;
 		protected $pageTitle;
-		protected $loginInputs;
+		protected $pageURL;
+		protected $defaultLoginInputs;
 
 		public
 		function __construct (ReadComments $read_comments, Locales $locales, $show_count, array $popularList)
@@ -1224,7 +1225,7 @@
 			$edit_form = new HTMLTag ('div');
 
 			// Create edit form title element
-			$edit_form_title = new HTMLTag ('div');
+			$edit_form_title = new HTMLTag ('div', false, false);
 			$edit_form_title->createAttribute ('class', 'hashover-title');
 			$edit_form_title->appendAttribute ('class', 'hashover-dashed-title');
 			$edit_form_title->innerHTML ($edit_comment);
