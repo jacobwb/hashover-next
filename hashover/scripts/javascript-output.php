@@ -659,9 +659,13 @@
 		// Get file
 		var file = reversePermalink (permalink);
 
+		// Get name and website
+		var name = comment.name || '';
+		var website = comment.website || '';
+
 		// Get and clean comment body
-		var commentBody = comment.body;
-		    commentBody = commentBody.replace (linkRegex, '$1');
+		var body = comment.body;
+		    body = body.replace (linkRegex, '$1');
 
 		// Create edit form element
 		var form = document.createElement ('form');
@@ -672,7 +676,7 @@
 
 <?php
 
-		echo $hashover->html->asJSVar ($hashover->html->editForm ('permalink', 'file', 'comment.name', 'comment.website', 'commentBody'), 'formHTML', "\t\t");
+		echo $hashover->html->asJSVar ($hashover->html->editForm ('permalink', 'file', 'name', 'website', 'body'), 'formHTML', "\t\t");
 
 ?>
 
