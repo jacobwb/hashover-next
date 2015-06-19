@@ -595,7 +595,7 @@
 		// Get login info inputs
 		var infoInputs = form.getElementsByClassName ('hashover-input-info');
 
-		// Set onSubmit to return false
+		// Set enter key press to return false
 		for (var i = 0, il = infoInputs.length; i < il; i++) {
 			infoInputs[i].onkeypress = function (event) {
 				return (event.keyCode === 13) ? false : true;
