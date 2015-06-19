@@ -1299,25 +1299,6 @@
 			$edit_form_buttons_wrapper = new HTMLTag ('span');
 			$edit_form_buttons_wrapper->createAttribute ('class', 'hashover-form-buttons');
 
-			// Create "Delete" button element
-			$delete_button = new HTMLTag ('input', true);
-
-			// Add ID attribute with JavaScript variable single quote break out
-			if (!empty ($permalink)) {
-				$delete_button->createAttribute ('id', 'hashover-edit-delete-' . $this->injectVar ($permalink));
-			}
-
-			// Continue with other attibutes
-			$delete_button->createAttribute ('class', 'hashover-submit');
-			$delete_button->appendAttribute ('class', 'hashover-edit-delete');
-			$delete_button->createAttribute ('type', 'submit');
-			$delete_button->createAttribute ('name', 'delete');
-			$delete_button->createAttribute ('value', $delete_comment);
-			$delete_button->createAttribute ('title', $delete_comment);
-
-			// Add "Delete" element to edit form footer element
-			$edit_form_buttons_wrapper->appendChild ($delete_button);
-
 			// Create "Cancel" link element
 			if ($this->setup->usesCancelButtons) {
 				$edit_cancel_button = new HTMLTag ('a', false, false);
@@ -1362,6 +1343,25 @@
 
 			// Add "Save Edit" element to edit form footer element
 			$edit_form_buttons_wrapper->appendChild ($save_edit_button);
+
+			// Create "Delete" button element
+			$delete_button = new HTMLTag ('input', true);
+
+			// Add ID attribute with JavaScript variable single quote break out
+			if (!empty ($permalink)) {
+				$delete_button->createAttribute ('id', 'hashover-edit-delete-' . $this->injectVar ($permalink));
+			}
+
+			// Continue with other attibutes
+			$delete_button->createAttribute ('class', 'hashover-submit');
+			$delete_button->appendAttribute ('class', 'hashover-edit-delete');
+			$delete_button->createAttribute ('type', 'submit');
+			$delete_button->createAttribute ('name', 'delete');
+			$delete_button->createAttribute ('value', $delete_comment);
+			$delete_button->createAttribute ('title', $delete_comment);
+
+			// Add "Delete" element to edit form footer element
+			$edit_form_buttons_wrapper->appendChild ($delete_button);
 
 			// Add edit form buttons wrapper to edit form footer element
 			$edit_form_footer->appendChild ($edit_form_buttons_wrapper);
