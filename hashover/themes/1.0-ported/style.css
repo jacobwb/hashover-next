@@ -239,6 +239,11 @@ Copyright (C) 2014 Jacob Barkdull
 	text-decoration: none;
 }
 
+#hashover .hashover-edit-delete {
+	margin: 0px 8px 0px 0px;
+	float: left;
+}
+
 #hashover textarea:hover {
 	border-color: #909090;
 }
@@ -519,10 +524,6 @@ Copyright (C) 2014 Jacob Barkdull
 }
 
 #hashover .hashover-comment .hashover-inputs > :first-child {
-	padding-left: 0px;
-}
-
-#hashover .hashover-inputs > :nth-child(2) {
 	padding-left: 0px;
 }
 
