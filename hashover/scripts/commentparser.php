@@ -77,18 +77,18 @@
 				foreach ($this->intervals as $i => $string) {
 					if ($interval->$i > 0) {
 						$date_locale = $this->locale[$string][($interval->$i !== 1)];
-						$cmt_date = str_replace ('_NUM_', $interval->$i, $date_locale);
+						$comment_date = str_replace ('_NUM_', $interval->$i, $date_locale);
 
 						break;
 					}
 				}
 
-				if (empty ($cmt_date)) {
+				if (empty ($comment_date)) {
 					$get_time = date ($this->ampm, $micro_date);
-					$cmt_date = str_replace ('_TIME_', $get_time, $this->locale['date_today']);
+					$comment_date = str_replace ('_TIME_', $get_time, $this->locale['date_today']);
 				}
 			} else {
-				$cmt_date = date ('m/d/Y \a\t ' . $this->ampm, $micro_date);
+				$comment_date = date ('m/d/Y \a\t ' . $this->ampm, $micro_date);
 			}
 
 			// Add name to comment data
@@ -180,9 +180,9 @@
 				}
 			}
 
-			$output['date'] = $cmt_date;
+			$output['date'] =(string) $comment_date;
 			$output['sort_date'] =(int) $micro_date;
-			$output['body'] = $comment['body'];
+			$output['body'] =(string) $comment['body'];
 
 			return $output;
 		}
