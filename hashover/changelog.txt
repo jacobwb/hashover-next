@@ -1,4 +1,4 @@
-Changes by Jacob Barkdull 2015-06-13
+Changes by Jacob Barkdull 2015-06-19
 --------------------------------------------------------------------------------
 * Most code has moved to the TildeHash Coding Standard
 
