@@ -303,6 +303,8 @@ Copyright (C) 2015 Jacob Barkdull
 }
 
 #hashover .hashover-edit-delete {
+	float: left;
+	margin-right: 12px;
 	background-color: #FF8C8C;
 	border-color: #AA0000;
 	color: #FCFCFC;
@@ -402,10 +404,6 @@ Copyright (C) 2015 Jacob Barkdull
 
 #hashover .hashover-edit-form .hashover-form-footer {
 	padding-bottom: 12px;
-}
-
-#hashover .hashover-edit-delete {
-	margin-right: 12px;
 }
 
 #hashover #hashover-count,
