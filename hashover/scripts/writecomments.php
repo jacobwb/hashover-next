@@ -430,6 +430,22 @@
 		protected
 		function setupCommentData ()
 		{
+			// Post fails when comment is empty
+			if (empty ($_POST['comment'])) {
+				$this->cookies->set ('success', 'no');
+
+				// Set reply cookie
+				if (!empty ($this->replyTo)) {
+					$this->cookies->set ('replied', $this->replyTo);
+
+					// Kick visitor back; display message of reply requirement
+					$this->kickback ($this->locales->locale['reply_needed'], true);
+				}
+
+				// Kick visitor back; display message of comment requirement
+				$this->kickback ($this->locales->locale['cmt_needed'], true);
+			}
+
 			// Trim leading and trailing white space
 			$clean_code = trim ($_POST['comment'], "\r\n");
 
@@ -582,22 +598,6 @@
 			$this->verifyFile ('reply_to');
 			$this->spamCheck ();
 			$this->setupCommentData ();
-
-			// Post fails when comment is empty
-			if (empty ($_POST['comment'])) {
-				$this->cookies->set ('success', 'no');
-
-				// Set reply cookie
-				if (!empty ($this->replyTo)) {
-					$this->cookies->set ('replied', $this->replyTo);
-
-					// Kick visitor back; display message of reply requirement
-					$this->kickback ($this->locales->locale['reply_needed'], true);
-				}
-
-				// Kick visitor back; display message of comment requirement
-				$this->kickback ($this->locales->locale['cmt_needed'], true);
-			}
 
 			// Check if comment thread directory exists
 			if ($this->commentData->storageMode === 'flat-file') {
