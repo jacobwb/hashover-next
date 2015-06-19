@@ -589,6 +589,20 @@
 <?php } ?>
 	}
 
+	// Prevents enter key on inputs from submitting form
+	function preventSubmit (form)
+	{
+		// Get login info inputs
+		var infoInputs = form.getElementsByClassName ('hashover-input-info');
+
+		// Set onSubmit to return false
+		for (var i = 0, il = infoInputs.length; i < il; i++) {
+			infoInputs[i].onkeypress = function (event) {
+				return (event.keyCode === 13) ? false : true;
+			};
+		}
+	}
+
 	// Displays reply form
 	function hashoverReply (permalink)
 	{
@@ -613,6 +627,9 @@
 
 		// Place reply fields into form
 		form.innerHTML = formHTML;
+
+		// Prevent input submission
+		preventSubmit (form)
 
 		// Add form to page
 		var reply_form = $('hashover-placeholder-reply_form-' + permalink, true);
@@ -682,6 +699,9 @@
 
 		// Place edit form fields into form
 		form.innerHTML = formHTML;
+
+		// Prevent input submission
+		preventSubmit (form)
 
 		// Add edit form to page
 		var edit_form = $('hashover-placeholder-edit_form-' + permalink, true);
