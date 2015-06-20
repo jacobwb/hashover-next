@@ -644,7 +644,7 @@
 		form.innerHTML = formHTML;
 
 		// Prevent input submission
-		preventSubmit (form)
+		preventSubmit (form);
 
 		// Add form to page
 		var reply_form = $('hashover-placeholder-reply_form-' + permalink, true);
@@ -716,7 +716,7 @@
 		form.innerHTML = formHTML;
 
 		// Prevent input submission
-		preventSubmit (form)
+		preventSubmit (form);
 
 		// Add edit form to page
 		var edit_form = $('hashover-placeholder-edit_form-' + permalink, true);
