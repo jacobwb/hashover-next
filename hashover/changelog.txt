@@ -5,6 +5,11 @@ Changes by Jacob Barkdull 2015-06-20
 	- Minor performance and memory optimizations.
 
 
+* hashover/scripts/jsminifier.php
+
+	- Smarter newline removal.
+
+
 Changes by Jacob Barkdull 2015-06-19
 --------------------------------------------------------------------------------
 * Most code has moved to the TildeHash Coding Standard
