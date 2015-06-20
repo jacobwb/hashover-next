@@ -59,8 +59,8 @@
 			}
 
 			if ($level >= 3) {
-				// Remove newlines
-				$js = preg_replace ('/[\r\n]/', '', $js);
+				// Remove unnecessary newlines
+				$js = preg_replace ('/[\r\n]*([,;{}]+)[\r\n]+/', '\\1', $js);
 			}
 
 			if ($level >= 4) {
