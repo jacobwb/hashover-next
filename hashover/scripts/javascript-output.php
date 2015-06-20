@@ -101,9 +101,18 @@
 
 	// Tags that will have their innerHTML trimmed
 	var trimTagRegexes = {
-		'blockquote': /(<blockquote>)([\s\S]*?)(<\/blockquote>)/ig,
-		'ul': /(<ul>)([\s\S]*?)(<\/ul>)/ig,
-		'ol': /(<ol>)([\s\S]*?)(<\/ol>)/ig
+		'blockquote': {
+			'test': /<blockquote>/,
+			'replace': /(<blockquote>)([\s\S]*?)(<\/blockquote>)/ig
+		},
+		'ul': {
+			'test': /<ul>/,
+			'replace': /(<ul>)([\s\S]*?)(<\/ul>)/ig
+		},
+		'ol': {
+			'test': /<ol>/,
+			'replace': /(<ol>)([\s\S]*?)(<\/ol>)/ig
+		}
 	};
 
 	var locale = {
@@ -228,6 +237,12 @@
 
 	// Content passed from PHP
 	var PHPContent = HASHOVER_PHP_CONTENT;
+
+	// Trims whitespace from an HTML tag's inner HTML
+	function tagTrimmer (fullTag, openTag, innerHTML, closeTag)
+	{
+		return openTag + innerHTML.trim (serverEOL) + closeTag;
+	}
 
 	// Add comment content to HTML template
 	function parseComment (json, collapse, sort, method, forpop)
@@ -457,6 +472,7 @@
 				// Replace code tags with placeholder text
 				body = body.replace (codeTagRegex, function (fullTag, openTag, innerHTML, closeTag) {
 					var codePlaceholder = openTag + 'CODE_TAG[' + codeTagCount + ']' + closeTag;
+
 					codeTags[codeTagCount] = innerHTML.trim (serverEOL);
 					codeTagCount++;
 
@@ -469,6 +485,7 @@
 				// Replace pre tags with placeholder text
 				body = body.replace (preTagRegex, function (fullTag, openTag, innerHTML, closeTag) {
 					var prePlaceholder = openTag + 'PRE_TAG[' + preTagCount + ']' + closeTag;
+
 					preTags[preTagCount] = innerHTML.trim (serverEOL);
 					preTagCount++;
 
@@ -477,12 +494,10 @@
 			}
 
 			// Check for various multi-line tags
-			for (var trimTagRegex in trimTagRegexes) {
-				if (new RegExp ('<' + trimTagRegex + '>').test (body)) {
-					// Trim leading and trailing whitespace
-					body = body.replace (trimTagRegexes[trimTagRegex], function (fullTag, openTag, innerHTML, closeTag) {
-						return openTag + innerHTML.trim (serverEOL) + closeTag;
-					});
+			for (var trimTag in trimTagRegexes) {
+				if (trimTagRegexes[trimTag]['test'].test (body)) {
+					// Trim whitespace
+					body = body.replace (trimTagRegexes[trimTag]['replace'], tagTrimmer);
 				}
 			}
 
@@ -816,6 +831,13 @@
 			});
 <?php } ?>
 		}
+
+		// Recursively execute this function on replies
+		if (json.replies) {
+			for (var reply in json.replies) {
+				addControls (json.replies[reply]);
+			}
+		}
 	}
 
 	// Run all comments in JSON data through parseComment function
@@ -827,14 +849,8 @@
 		var comments = '';
 
 		// Parse every comment
-		if (forPop === false) {
-			for (var comment in json) {
-				comments += parseComment (json[comment], collapse, sort, method);
-			}
-		} else {
-			for (var comment in json) {
-				comments += parseComment (json[comment], false, false, false, true);
-			}
+		for (var comment in json) {
+			comments += parseComment (json[comment], collapse, sort, method, forPop);
 		}
 
 		// Add comments to element's innerHTML
@@ -844,20 +860,9 @@
 			element.innerHTML = comments;
 		}
 
-		// Add various controls and events to comments
-		function descend (comment)
-		{
-			addControls (comment);
-
-			if (comment.replies) {
-				for (var reply in comment.replies) {
-					descend (comment.replies[reply]);
-				}
-			}
-		}
-
+		// Add control events
 		for (var comment in json) {
-			descend (json[comment]);
+			addControls (json[comment]);
 		}
 	}
 
@@ -1275,27 +1280,27 @@
 	}
 
 	// Display reply or edit form when the proper URL queries are set
-	if (URLHref.match (/hashover_reply=/) || URLHref.match (/hashover_edit=/)) {
-		var urlForm = !URLHref.match (/hashover_edit=/) ? 'hashover_reply' : 'hashover_edit';
+	if (URLHref.match (/hashover_(reply|edit)=/)) {
 		var permalink = URLHref.replace (/.*?hashover_(edit|reply)=(c[0-9r_pop]+).*?/, '$2');
 
-		if (urlForm === 'hashover_reply') {
+		if (!URLHref.match (/hashover_edit=/)) {
 			// Reply form
 			hashoverReply (permalink);
 		} else {
 			// Get permalink from URL hash
-			var permalink_parts = permalink.slice (1);
-			    permalink_parts = permalink_parts.split ('r');
+			var commentKey = permalink.slice (1);
+			    commentKey = commentKey.split ('r');
 
-			// Get parent comment from JSON data
-			var parent_key = (permalink_parts[0] - 1);
-			var comment = PHPContent['comments'][parent_key];
-			permalink_parts.shift ();
+			// Get parent comment by key
+			var comment = PHPContent['comments'][(commentKey[0] - 1)];
+
+			// Remove parent key
+			commentKey.shift ();
 
 			// Descend into parent replies
-			if (permalink_parts.length >= 1) {
-				for (var reply in permalink_parts) {
-					comment = comment.replies[(permalink_parts[reply]) - 1];
+			if (commentKey.length >= 1) {
+				for (var reply in commentKey) {
+					comment = comment.replies[(commentKey[reply]) - 1];
 				}
 			}
 
