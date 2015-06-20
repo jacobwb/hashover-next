@@ -190,11 +190,6 @@
 				if (!empty ($_POST['email'])) {
 					if (filter_var ($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 						$this->email = trim ($_POST['email'], " \r\n\t");
-
-						// Set mail headers to user's e-mail address
-						$this->headers  = 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
-						$this->headers .= 'From: ' . $this->email . "\r\n";
-						$this->headers .= 'Reply-To: ' . $this->email;
 					}
 				}
 
@@ -215,6 +210,13 @@
 					$this->cookies->set ('email', $this->email);
 					$this->cookies->set ('website', $this->website);
 				}
+			}
+
+			// Set mail headers to user's e-mail address
+			if (!empty ($this->email)) {
+				$this->headers  = 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
+				$this->headers .= 'From: ' . $this->email . "\r\n";
+				$this->headers .= 'Reply-To: ' . $this->email;
 			}
 
 			// Escape disallowed characters
@@ -631,18 +633,15 @@
 				// Send notification e-mails
 				$permalink = 'c' . str_replace ('-', 'r', $comment_file);
 				$from_line = !empty ($this->name) ? $this->name : $this->defaultName;
-				$mail_comment = $this->indentedWordwrap (html_entity_decode ($this->writeComment['body'], ENT_COMPAT, 'UTF-8'));
+				$mail_comment = html_entity_decode (strip_tags ($this->writeComment['body']), ENT_COMPAT, 'UTF-8');
+				$mail_comment = $this->indentedWordwrap ($mail_comment);
 				$webmaster_reply = '';
-
-				// Add user's e-mail address to "From" line
-				if (!empty ($this->email) and $this->allowsUserReplies) {
-					$from_line .= ' <' . $this->email . '>';
-				}
 
 				// Notify commenter of reply
 				if (!empty ($this->replyTo)) {
 					$reply_comment = $this->commentData->read ($this->replyTo);
-					$reply_body = $this->indentedWordwrap ($reply_comment['body']);
+					$reply_body = html_entity_decode (strip_tags ($reply_comment['body']), ENT_COMPAT, 'UTF-8');
+					$reply_body = $this->indentedWordwrap ($reply_body);
 					$webmaster_reply = 'In reply to ' . $reply_comment['name'] . ':' . "\n\n" . $reply_body . "\n\n";
 					$reply_email = $this->encryption->decrypt ($reply_comment['email'], $reply_comment['encryption']);
 
@@ -650,6 +649,11 @@
 						if ($reply_comment['notifications'] === 'yes') {
 							if ($this->allowsUserReplies) {
 								$this->userHeaders = $this->headers;
+
+								// Add user's e-mail address to "From" line
+								if (!empty ($this->email)) {
+									$from_line .= ' <' . $this->email . '>';
+								}
 							}
 
 							// Message body to original poster
@@ -667,6 +671,11 @@
 
 				// Notify webmaster via e-mail
 				if ($this->email !== $this->notificationEmail) {
+					// Add user's e-mail address to "From" line
+					if (!empty ($this->email)) {
+						$from_line .= ' <' . $this->email . '>';
+					}
+
 					$webmaster_message  = 'From ' . $from_line . ":\n\n";
 					$webmaster_message .= $mail_comment . "\n\n";
 					$webmaster_message .= $webmaster_reply . '----' . "\n";
