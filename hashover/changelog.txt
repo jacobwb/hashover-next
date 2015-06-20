@@ -1,3 +1,10 @@
+Changes by Jacob Barkdull 2015-06-20
+--------------------------------------------------------------------------------
+* hashover/scripts/javascript-output.php
+
+	- Minor performance and memory optimizations.
+
+
 Changes by Jacob Barkdull 2015-06-19
 --------------------------------------------------------------------------------
 * Most code has moved to the TildeHash Coding Standard
@@ -1789,4 +1796,3 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
-
