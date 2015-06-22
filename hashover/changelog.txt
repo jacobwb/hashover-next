@@ -1,3 +1,11 @@
+Changes by Jacob Barkdull 2015-06-21
+--------------------------------------------------------------------------------
+* hashover/themes/default/style.css
+
+	- Fixed: Mobile CSS SVG background-image being applied to actual login 
+	  inputs element, instead of :before selector.
+
+
 Changes by Jacob Barkdull 2015-06-20
 --------------------------------------------------------------------------------
 * hashover/scripts/javascript-output.php
@@ -1801,3 +1809,4 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
+

@@ -904,11 +904,10 @@ Copyright (C) 2015 Jacob Barkdull
 }
 
 /* Handle HDPI */
-#hashover.hashover-mobile .hashover-inputs input,
+#hashover.hashover-mobile .hashover-name-input:before,
+#hashover.hashover-mobile .hashover-password-input:before,
+#hashover.hashover-mobile .hashover-email-input:before,
+#hashover.hashover-mobile .hashover-website-input:before,
 #hashover.hashover-mobile .hashover-comment .hashover-buttons a {
 	background-image: url('/hashover/images/svgs/inputs-and-buttons.svg');
-}
-
-#hashover.hashover-mobile #hashover-form .hashover-avatar-image {
-	min-width: 54px;
 }
