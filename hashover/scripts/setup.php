@@ -106,7 +106,7 @@
 				$this->pageTitle = $page_title;
 			}
 
-			// Instanciate encryption class
+			// instantiate encryption class
 			$this->encryption = new Encryption ($this->encryptionKey);
 
 			// Cookie replacement search patterns
