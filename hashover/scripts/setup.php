@@ -31,10 +31,12 @@
 		public $mode;
 		public $pageURL;
 		public $pageTitle;
-		public $userName;
-		public $userPassword;
-		public $userEmail;
-		public $userWebsite;
+		public $encryption;
+		public $userName = '';
+		public $userPassword = '';
+		public $userEmail = '';
+		public $userEncryption = '';
+		public $userWebsite = '';
 		public $userIsLoggedIn = false;
 		public $userIsAdmin = false;
 		public $parsedURL;
@@ -104,6 +106,9 @@
 				$this->pageTitle = $page_title;
 			}
 
+			// Instanciate encryption class
+			$this->encryption = new Encryption ($this->encryptionKey);
+
 			// Cookie replacement search patterns
 			$cookie_search = array (
 				'&',
@@ -129,11 +134,31 @@
 				$_COOKIE[$name] = str_replace ($cookie_search, $cookie_replace, $value);
 			}
 
-			// Setup user data via cookies
-			$this->userName = !empty ($_COOKIE['name']) ? $_COOKIE['name'] : '';
-			$this->userPassword = !empty ($_COOKIE['password']) ? $_COOKIE['password'] : '';
-			$this->userEmail = !empty ($_COOKIE['email']) ? $_COOKIE['email'] : '';
-			$this->userWebsite = !empty ($_COOKIE['website']) ? $_COOKIE['website'] : '';
+			// Setup user name via cookie
+			if (!empty ($_COOKIE['name']) and $_COOKIE['name'] !== $this->defaultName) {
+				$this->userName = $_COOKIE['name'];
+			}
+
+			// Setup user password via cookie
+			if (!empty ($_COOKIE['password'])) {
+				$this->userPassword = $_COOKIE['password'];
+			}
+
+			// Setup user e-mail via cookie
+			if (!empty ($_COOKIE['email'])) {
+				$encrypted_email = trim (html_entity_decode ($_COOKIE['email'], ENT_COMPAT, 'UTF-8'), " \r\n\t");
+				$encryption_keys = !empty ($_COOKIE['encryption']) ? $_COOKIE['encryption'] : '';
+				$decrypted_email = $this->encryption->decrypt ($encrypted_email, $encryption_keys);
+
+				if (filter_var ($decrypted_email, FILTER_VALIDATE_EMAIL)) {
+					$this->userEmail = $decrypted_email;
+				}
+			}
+
+			// Setup user website via cookie
+			if (!empty ($_COOKIE['website'])) {
+				$this->userWebsite = $_COOKIE['website'];
+			}
 
 			// Check if user is logged in
 			if (!empty ($_COOKIE['hashover-login'])) {

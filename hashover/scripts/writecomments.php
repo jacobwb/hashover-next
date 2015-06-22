@@ -26,14 +26,14 @@
 		}
 	}
 
-	class WriteComments extends Settings
+	class WriteComments
 	{
 		protected $readComments;
 		protected $commentData;
 		protected $setup;
 		protected $locales;
 		protected $cookies;
-		protected $encryption;
+		protected $spamCheck;
 		protected $metalevels;
 		protected $headers;
 		protected $userHeaders;
@@ -41,12 +41,14 @@
 		protected $replyTo;
 		protected $name = '';
 		protected $password = '';
+		protected $editPassword = '';
+		protected $loginHash = '';
 		protected $email = '';
 		protected $website = '';
 		protected $writeComment = array ();
 
 		// Fake inputs used as spam trap fields
-		protected $trap_fields = array (
+		protected $trapFields = array (
 			'summary',
 			'age',
 			'lastname',
@@ -63,7 +65,7 @@
 		);
 
 		// Characters to search for and replace with in comments
-		protected $data_search = array (
+		protected $dataSearch = array (
 			'\\',
 			'"',
 			'<',
@@ -95,7 +97,7 @@
 		);
 
 		// Replacements
-		protected $data_replace = array (
+		protected $dataReplace = array (
 			'&#92;',
 			'&quot;',
 			'&lt;',
@@ -129,14 +131,12 @@
 		public
 		function __construct (ReadComments $read_comments, Locales $locales, Cookies $cookies)
 		{
-			parent::__construct ();
-
 			$this->readComments = $read_comments;
 			$this->commentData = $read_comments->data;
 			$this->setup = $read_comments->setup;
 			$this->locales = $locales;
 			$this->cookies = $cookies;
-			$this->encryption = new Encryption ($this->encryptionKey);
+			$this->spamCheck = new SpamCheck ($this->setup);
 
 			$this->metalevels = array (
 				$this->setup->dir,
@@ -145,8 +145,8 @@
 
 			// Default email headers
 			$this->headers  = 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
-			$this->headers .= 'From: ' . $this->noreplyEmail . "\r\n";
-			$this->headers .= 'Reply-To: ' . $this->noreplyEmail;
+			$this->headers .= 'From: ' . $this->setup->noreplyEmail . "\r\n";
+			$this->headers .= 'Reply-To: ' . $this->setup->noreplyEmail;
 
 			// Default email headers for users
 			$this->userHeaders = $this->headers;
@@ -159,7 +159,7 @@
 				$this->kickbackURL .= '?' . $this->setup->URLQueries;
 			}
 
-			// Clean POST data; Force data to UTF-8
+			// Force POST data to UTF-8
 			foreach ($_POST as $name => $value) {
 				$_POST[$name] = $this->XMLSanitize ($value);
 			}
@@ -173,42 +173,52 @@
 			if ($this->setup->userIsLoggedIn and !isset ($_POST['edit'])) {
 				$this->name = trim (html_entity_decode ($this->setup->userName, ENT_COMPAT, 'UTF-8'), " \r\n\t");
 				$this->password = trim (html_entity_decode ($this->setup->userPassword, ENT_COMPAT, 'UTF-8'), " \r\n\t");
+				$this->loginHash = trim (html_entity_decode ($_COOKIE['hashover-login'], ENT_COMPAT, 'UTF-8'), " \r\n\t");
 				$this->email = trim (html_entity_decode ($this->setup->userEmail, ENT_COMPAT, 'UTF-8'), " \r\n\t");
 				$this->website = trim (html_entity_decode ($this->setup->userWebsite, ENT_COMPAT, 'UTF-8'), " \r\n\t");
 			} else {
 				// Set name
-				if (!empty ($_POST['name'])) {
+				if (!empty ($_POST['name']) and $_POST['name'] !== $this->setup->defaultName) {
 					$this->name = trim ($_POST['name'], " \r\n\t");
 				}
 
 				// Set password
 				if (!empty ($_POST['password'])) {
-					$this->password = trim ($_POST['password'], " \r\n\t");
+					$this->password = $this->setup->encryption->createHash (trim ($_POST['password'], " \r\n\t"));
 				}
 
-				// Set e-mail address and mail headers
+				// RIPEMD-160 hash used to indicate user login
+				if (isset ($_POST['name']) and isset ($_POST['password'])) {
+					$this->loginHash = hash ('ripemd160', $_POST['name'] . $_POST['password']);
+				}
+
+				// Set e-mail address
 				if (!empty ($_POST['email'])) {
-					if (filter_var ($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-						$this->email = trim ($_POST['email'], " \r\n\t");
-					}
+					$this->email = trim ($_POST['email'], " \r\n\t");
 				}
 
 				// Set website URL
 				if (!empty ($_POST['website'])) {
 					$this->website = trim ($_POST['website'], " \r\n\t");
-
-					// Prepend "http://" to website URL if missing
-					if (!preg_match ('/htt(p|ps):\/\//i', $this->website)) {
-						$this->website = 'http://' . $this->website;
-					}
 				}
 
 				// Set cookies
 				if (empty ($_POST['edit'])) {
+					// Generate encrypted string / decryption key from e-mail
+					$encryption_keys = $this->setup->encryption->encrypt ($this->email);
+
 					$this->cookies->set ('name', $this->name);
 					$this->cookies->set ('password', $this->password);
-					$this->cookies->set ('email', $this->email);
+					$this->cookies->set ('email', $encryption_keys['encrypted']);
+					$this->cookies->set ('encryption', $encryption_keys['keys']);
 					$this->cookies->set ('website', $this->website);
+				}
+			}
+
+			// Validate e-mail address
+			if (!empty ($this->email)) {
+				if (!filter_var ($this->email, FILTER_VALIDATE_EMAIL)) {
+					$this->email = '';
 				}
 			}
 
@@ -219,11 +229,25 @@
 				$this->headers .= 'Reply-To: ' . $this->email;
 			}
 
+			// Prepend "http://" to website URL if missing
+			if (!empty ($this->website)) {
+				if (!preg_match ('/htt(p|ps):\/\//i', $this->website)) {
+					$this->website = 'http://' . $this->website;
+				}
+			}
+
 			// Escape disallowed characters
 			$this->name = htmlentities ($this->name, ENT_COMPAT, 'UTF-8', false);
 			$this->password = htmlentities ($this->password, ENT_COMPAT, 'UTF-8', false);
+			$this->loginHash = htmlentities ($this->loginHash, ENT_COMPAT, 'UTF-8', false);
 			$this->email = htmlentities ($this->email, ENT_COMPAT, 'UTF-8', false);
 			$this->website = htmlentities ($this->website, ENT_COMPAT, 'UTF-8', false);
+
+			// Get password from edit form via post
+			if (!empty ($_POST['password'])) {
+				$edit_password = trim ($_POST['password'], " \r\n\t");
+				$this->editPassword = htmlentities ($edit_password, ENT_COMPAT, 'UTF-8', false);
+			}
 		}
 
 		// Confirm that attempted actions are to existing comments
@@ -239,7 +263,7 @@
 					}
 
 					$this->cookies->set ('success', 'no');
-					$this->kickback ($this->locales->locale['cmt_needed'], true);
+					$this->kickback ($this->locales->locale['comment_needed'], true);
 				}
 			}
 		}
@@ -248,29 +272,23 @@
 		function spamCheck ()
 		{
 			// Check trap fields
-			foreach ($this->trap_fields as $name) {
+			foreach ($this->trapFields as $name) {
 				if (!empty ($_POST[$name])) {
-					$is_spam = true;
-					break;
+					// Block for filing trap fields
+					exit ('<b>HashOver</b>: You are blocked!');
 				}
 			}
 
-			// Block for filing trap fields
-			if (isset ($is_spam)) {
-				exit ('<b>HashOver</b>: You are blocked!');
-			} else {
-				$spam_check = new SpamCheck ($this->setup);
-				$spam_check_modes =& $this->spamCheckModes;
+			// Check user's IP address against stopforumspam.com
+			if ($this->setup->spamCheckModes === 'both'
+			    or $this->setup->spamCheckModes === $this->setup->mode)
+			{
+				if ($this->spamCheck->{$this->setup->spamDatabase}()) {
+					exit ('<b>HashOver:</b> You are blocked!');
+				}
 
-				// Check user's IP address against stopforumspam.com
-				if ($spam_check_modes === 'both' or $spam_check_modes === $this->setup->mode) {
-					if ($spam_check->{$this->spamDatabase}()) {
-						exit ('<b>HashOver:</b> You are blocked!');
-					}
-
-					if (!empty ($spam_check->error)) {
-						exit ('<b>HashOver:</b> ' . $spam_check->error);
-					}
+				if (!empty ($this->spamCheck->error)) {
+					exit ('<b>HashOver:</b> ' . $this->spamCheck->error);
 				}
 			}
 		}
@@ -288,20 +306,25 @@
 			exit;
 		}
 
-		// Set login cookie; kick visitor back
+		// Set cookies
 		public
 		function login ()
 		{
-			$this->spamCheck ();
-			$this->cookies->set ('hashover-login', hash ('ripemd160', $this->name . $this->password));
+			// Set login cookie
+			$this->cookies->set ('hashover-login', $this->loginHash);
+
+			// Kick visitor back
 			$this->kickback ($this->locales->locale['logged_in']);
 		}
 
-		// Expire login cookie; kick visitor back
+		// Expire cookies
 		public
 		function logout ()
 		{
+			// Expire login cookie
 			$this->cookies->expireCookie ('hashover-login');
+
+			// Kick visitor back
 			$this->kickback ($this->locales->locale['logged_out']);
 		}
 
@@ -346,8 +369,8 @@
 					}
 
 					if (count ($data['latest']) >= 10) {
-						if (count ($data['latest']) >= $this->latestMax) {
-							$max = max (10, $this->latestMax);
+						if (count ($data['latest']) >= $this->setup->latestMax) {
+							$max = max (10, $this->setup->latestMax);
 							$data['latest'] = array_slice ($data['latest'], 0, $max);
 						}
 					}
@@ -392,20 +415,6 @@
 			}
 		}
 
-		// Get password via post
-		protected
-		function getPassword ()
-		{
-			if (!empty ($_POST['password'])) {
-				$password = trim ($_POST['password'], " \r\n\t");
-				$password = htmlentities ($password, ENT_COMPAT, 'UTF-8', false);
-
-				return $password;
-			}
-
-			return '';
-		}
-
 		// Delete comment
 		public
 		function deleteComment ()
@@ -414,14 +423,14 @@
 
 			if (!empty ($_POST['file'])) {
 				$get_pass = $this->commentData->read ($_POST['file']);
-				$passwords_match = $this->encryption->verifyHash ($this->getPassword (), $get_pass['password']);
+				$passwords_match = $this->setup->encryption->verifyHash ($this->editPassword, $get_pass['password']);
 
 				// Check if password matches the one in the file
 				if ($passwords_match or $this->setup->userIsAdmin) {
 					// Delete the comment file
-					if ($this->commentData->delete ($_POST['file'], $this->userDeletionsUnlink)) {
+					if ($this->commentData->delete ($_POST['file'], $this->setup->userDeletionsUnlink)) {
 						$this->removeFromLatest ($_POST['file']);
-						$this->kickback ($this->locales->locale['cmt_deleted']);
+						$this->kickback ($this->locales->locale['comment_deleted']);
 					}
 				}
 			}
@@ -445,7 +454,7 @@
 				}
 
 				// Kick visitor back; display message of comment requirement
-				$this->kickback ($this->locales->locale['cmt_needed'], true);
+				$this->kickback ($this->locales->locale['comment_needed'], true);
 			}
 
 			// Trim leading and trailing white space
@@ -455,7 +464,7 @@
 			$clean_code = preg_replace ('/(((ftp|http|https){1}:\/\/)[a-z0-9-@:%_\+.~#?&\/=]+)/i', '\\1 ', $clean_code);
 
 			// Escape HTML tags
-			$clean_code = str_ireplace ($this->data_search, $this->data_replace, $clean_code);
+			$clean_code = str_ireplace ($this->dataSearch, $this->dataReplace, $clean_code);
 
 			// Collapse multiple newlines to three maximum
 			$clean_code = preg_replace ('/' . PHP_EOL . '{3,}/', str_repeat (PHP_EOL, 3), $clean_code);
@@ -498,29 +507,27 @@
 			}
 
 			$this->writeComment['body'] = $clean_code;
-			$this->writeComment['status'] = $this->usesModeration ? 'pending' : 'approved';
+			$this->writeComment['status'] = $this->setup->usesModeration ? 'pending' : 'approved';
 			$this->writeComment['date'] = date (DATE_ISO8601);
 
-			if ($this->allowsNames) {
-				if (!empty ($this->name)) {
-					$this->writeComment['name'] = $this->name;
-				}
+			if ($this->setup->allowsNames and !empty ($this->name)) {
+				$this->writeComment['name'] = $this->name;
 
 				// Store password and login ID if a password is given
-				if ($this->allowsPasswords and !empty ($this->password)) {
-					$this->writeComment['password'] = $this->encryption->createHash ($this->password);
+				if ($this->setup->allowsPasswords and !empty ($this->password)) {
+					$this->writeComment['password'] = $this->password;
 
-					// Store login ID if name given not the same as the default name
-					if ($this->writeComment['name'] !== $this->defaultName) {
-						$this->writeComment['login_id'] = hash ('ripemd160', $this->writeComment['name'] . $this->password);
+					// Store login ID if login hash is non-empty
+					if (!empty ($this->loginHash)) {
+						$this->writeComment['login_id'] = $this->loginHash;
 					}
 				}
 			}
 
 			// Store e-mail if one is given
-			if ($this->allowsEmails) {
+			if ($this->setup->allowsEmails) {
 				if (!empty ($this->email)) {
-					$encryption_keys = $this->encryption->encrypt ($this->email);
+					$encryption_keys = $this->setup->encryption->encrypt ($this->email);
 					$this->writeComment['email'] = $encryption_keys['encrypted'];
 					$this->writeComment['encryption'] = $encryption_keys['keys'];
 					$this->writeComment['email_hash'] = md5 (strtolower ($this->email));
@@ -531,15 +538,17 @@
 			}
 
 			// Store website URL if one is given
-			if ($this->allowsWebsites) {
+			if ($this->setup->allowsWebsites) {
 				if (!empty ($this->website)) {
 					$this->writeComment['website'] = $this->website;
 				}
 			}
 
 			// Store user IP address if setup to and one is given
-			if ($this->storesIPAddress and !empty ($_SERVER['REMOTE_ADDR'])) {
-				$this->writeComment['ipaddr'] = $_SERVER['REMOTE_ADDR'];
+			if ($this->setup->storesIPAddress) {
+				if (!empty ($_SERVER['REMOTE_ADDR'])) {
+					$this->writeComment['ipaddr'] = $_SERVER['REMOTE_ADDR'];
+				}
 			}
 		}
 
@@ -552,7 +561,7 @@
 			// Edit comment
 			if (!empty ($this->password) and !empty ($_POST['file'])) {
 				$edit_comment = $this->commentData->read ($_POST['file']);
-				$passwords_match = $this->encryption->verifyHash ($this->getPassword (), $edit_comment['password']);
+				$passwords_match = $this->setup->encryption->verifyHash ($this->editPassword, $edit_comment['password']);
 
 				// Check if password matches the one in the file
 				if ($passwords_match or $this->setup->userIsAdmin) {
@@ -607,7 +616,7 @@
 					// If yes, check if it is or can be made to be writable
 					if (!is_writable ($this->setup->dir) and !@chmod ($this->setup->dir, 0755)) {
 						// Kick visitor back; display error
-						$this->kickback ('Comment thread directory at "' . $this->setup->dir . '" is not writable. Check directory permissions.', true);
+						$this->kickback ('Comment thread directory at "' . $this->setup->dir . '" is not writable.', true);
 					}
 				} else {
 					// If no, attempt to create the directory
@@ -632,7 +641,7 @@
 
 				// Send notification e-mails
 				$permalink = 'c' . str_replace ('-', 'r', $comment_file);
-				$from_line = !empty ($this->name) ? $this->name : $this->defaultName;
+				$from_line = !empty ($this->name) ? $this->name : $this->setup->defaultName;
 				$mail_comment = html_entity_decode (strip_tags ($this->writeComment['body']), ENT_COMPAT, 'UTF-8');
 				$mail_comment = $this->indentedWordwrap ($mail_comment);
 				$webmaster_reply = '';
@@ -643,34 +652,35 @@
 					$reply_body = html_entity_decode (strip_tags ($reply_comment['body']), ENT_COMPAT, 'UTF-8');
 					$reply_body = $this->indentedWordwrap ($reply_body);
 					$webmaster_reply = 'In reply to ' . $reply_comment['name'] . ':' . "\n\n" . $reply_body . "\n\n";
-					$reply_email = $this->encryption->decrypt ($reply_comment['email'], $reply_comment['encryption']);
+					$reply_email = $this->setup->encryption->decrypt ($reply_comment['email'], $reply_comment['encryption']);
 
-					if (!empty ($reply_email) and $reply_email !== $this->email) {
-						if ($reply_comment['notifications'] === 'yes') {
-							if ($this->allowsUserReplies) {
-								$this->userHeaders = $this->headers;
+					if (!empty ($reply_email)
+					    and $reply_email !== $this->email
+					    and $reply_comment['notifications'] === 'yes')
+					{
+						if ($this->setup->allowsUserReplies) {
+							$this->userHeaders = $this->headers;
 
-								// Add user's e-mail address to "From" line
-								if (!empty ($this->email)) {
-									$from_line .= ' <' . $this->email . '>';
-								}
+							// Add user's e-mail address to "From" line
+							if (!empty ($this->email)) {
+								$from_line .= ' <' . $this->email . '>';
 							}
-
-							// Message body to original poster
-							$reply_message  = 'From ' . $from_line . ":\n\n";
-							$reply_message .= $mail_comment . "\n\n";
-							$reply_message .= 'In reply to:' . "\n\n" . $reply_body . "\n\n" . '----' . "\n";
-							$reply_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\n";
-							$reply_message .= 'Page: ' . $this->setup->pageURL;
-
-							// Send
-							mail ($reply_email, $this->domain . ' - New Reply', $reply_message, $this->userHeaders);
 						}
+
+						// Message body to original poster
+						$reply_message  = 'From ' . $from_line . ":\n\n";
+						$reply_message .= $mail_comment . "\n\n";
+						$reply_message .= 'In reply to:' . "\n\n" . $reply_body . "\n\n" . '----' . "\n";
+						$reply_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\n";
+						$reply_message .= 'Page: ' . $this->setup->pageURL;
+
+						// Send
+						mail ($reply_email, $this->setup->domain . ' - New Reply', $reply_message, $this->userHeaders);
 					}
 				}
 
 				// Notify webmaster via e-mail
-				if ($this->email !== $this->notificationEmail) {
+				if ($this->email !== $this->setup->notificationEmail) {
 					// Add user's e-mail address to "From" line
 					if (!empty ($this->email)) {
 						$from_line .= ' <' . $this->email . '>';
@@ -683,11 +693,11 @@
 					$webmaster_message .= 'Page: ' . $this->setup->pageURL;
 
 					// Send
-					mail ($this->notificationEmail, 'New Comment', $webmaster_message, $this->headers);
+					mail ($this->setup->notificationEmail, 'New Comment', $webmaster_message, $this->headers);
 				}
 
 				// Set/update user login cookie, kick visitor back to comment
-				$this->cookies->set ('hashover-login', hash ('ripemd160', $this->name . $this->password));
+				$this->cookies->set ('hashover-login', $this->loginHash);
 				$this->kickback ('', false, $permalink);
 			}
 

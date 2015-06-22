@@ -96,13 +96,13 @@
 			$prime_plural = ($this->readComments->primaryCount !== 2) ? 1 : 0;
 
 			// Format comment count; Include "Showing" in non-API usages
-			$locale_key = ($mode === 'api') ? 'count_link' : 'showing_cmts';
-			$showing_cmts = $this->locales->locale[$locale_key][$prime_plural];
+			$locale_key = ($mode === 'api') ? 'count_link' : 'showing_comments';
+			$showing_comments = $this->locales->locale[$locale_key][$prime_plural];
 
 			// Whether to show reply count separately
 			if ($this->settings->showsReplyCount) {
 				// If so, inject top level comment count into count locale string
-				$this->commentCount = str_replace ('_NUM_', $this->readComments->primaryCount - 1, $showing_cmts);
+				$this->commentCount = str_replace ('_NUM_', $this->readComments->primaryCount - 1, $showing_comments);
 
 				// Check if there are any replies
 				if ($this->readComments->totalCount !== $this->readComments->primaryCount) {
@@ -115,7 +115,7 @@
 				}
 			} else {
 				// If not, inject total comment count into count locale string
-				$this->commentCount = str_replace ('_NUM_', $this->readComments->totalCount - 1, $showing_cmts);
+				$this->commentCount = str_replace ('_NUM_', $this->readComments->totalCount - 1, $showing_comments);
 			}
 		}
 
@@ -159,7 +159,7 @@
 							break;
 						}
 
-						$parsed['date'] .= ' (' . strtolower ($this->locales->locale['cmt_pending']) . ')';
+						$parsed['date'] .= ' (' . strtolower ($this->locales->locale['comment_pending']) . ')';
 						$level = $parsed;
 						$last_date = $level['sort_date'];
 
@@ -209,10 +209,10 @@
 			} else {
 				// If no comments were found, setup a default message comment
 				$this->comments['comments'][] = array (
-					'title' => $this->locales->locale['first_cmt'],
+					'title' => $this->locales->locale['first_comment'],
 					'avatar' => '/images/' . $this->settings->imageFormat . 's/first-comment.' . $this->settings->imageFormat,
 					'permalink' => 'c1',
-					'notice' => $this->locales->locale['first_cmt'],
+					'notice' => $this->locales->locale['first_comment'],
 					'notice_class' => 'hashover-first'
 				);
 			}

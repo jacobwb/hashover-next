@@ -207,7 +207,7 @@
 
 				if (isset ($comment['user_owned'])) {
 					// Define "Reply" link with original poster title
-					$replyTitle = $this->locales->locale ('op_cmt_note');
+					$replyTitle = $this->locales->locale ('commenter_tip');
 					$replyClass = 'hashover-no-email';
 
 					// Add "Reply" hyperlink to template
@@ -220,11 +220,11 @@
 					// Check if commenter is subscribed
 					if (isset ($comment['subscribed'])) {
 						// If so, set subscribed title
-						$replyTitle = $comment['name'] . ' ' . $this->locales->locale['subbed_note'];
+						$replyTitle = $comment['name'] . ' ' . $this->locales->locale['subscribed_tip'];
 						$replyClass = 'hashover-has-email';
 					} else{
 						// If not, set unsubscribed title
-						$replyTitle = $comment['name'] . ' ' . $this->locales->locale['unsubbed_note'];
+						$replyTitle = $comment['name'] . ' ' . $this->locales->locale['unsubscribed_tip'];
 						$replyClass = 'hashover-no-email';
 					}
 				}

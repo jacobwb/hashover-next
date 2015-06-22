@@ -102,7 +102,7 @@
 	// Create channel description element
 	$description = $xml->createElement ('description');
 	$count_plural = ($hashover->readComments->totalCount !== 1);
-	$count_locale = str_replace ('_NUM_', $hashover->readComments->totalCount - 1, $hashover->locales->locale['showing_cmts'][$count_plural]);
+	$count_locale = str_replace ('_NUM_', $hashover->readComments->totalCount - 1, $hashover->locales->locale['showing_comments'][$count_plural]);
 	$description_value = $xml->createTextNode ($count_locale);
 	$description->appendChild ($description_value);
 

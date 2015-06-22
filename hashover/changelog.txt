@@ -1,3 +1,31 @@
+Changes by Jacob Barkdull 2015-06-22
+--------------------------------------------------------------------------------
+* hashover/scripts/writecomments.php
+
+	- Password cookie now stored as Blowfish hash (requires a re-login).
+	- E-mail cookie now stored as Mcrypt string (requires a re-login).
+	- Valid e-mail and HTTP prefix checks now also performed for cookies.
+	- Login no longer performs spam check.
+
+
+* hashover/scripts/encryption.php
+
+	- `decrypt ()` now fails if any encryption hash offset is undefined.
+
+
+* hashover/scripts/htmloutput.php
+
+	- Password input placeholder and title changes to "Confirm Password" 
+	  when editing a comment, as this is what that field is actually for. 
+	  It is normally automatically filled by the browser.
+
+
+* hashover/scripts/cookies.php
+
+	- `clear ()` function now uses `expireCookie ($cookie)` function.
+	- `expireCookie ($cookie)` now uses `set ($name [, $value, $date]).
+
+
 Changes by Jacob Barkdull 2015-06-21
 --------------------------------------------------------------------------------
 * hashover/themes/default/style.css

@@ -30,11 +30,11 @@
 	if ($hashover->settings->collapseLimit >= 1) {
 		$collapse_num_cmts = ($hashover->readComments->totalCount - 1) - $hashover->settings->collapseLimit;
 		$collapse_link_plural = ($collapse_num_cmts !== 1) ? 1 : 0;
-		$collapse_link_text = $hashover->locales->locale['other_cmts'][$collapse_link_plural];
+		$collapse_link_text = $hashover->locales->locale['show_other_comments'][$collapse_link_plural];
 		$collapse_link_text = str_replace ('_NUM_', $collapse_num_cmts, $collapse_link_text);
 	} else {
 		$collapse_link_plural = ($hashover->readComments->totalCount !== 1) ? 1 : 0;
-		$collapse_link_text = $hashover->locales->locale['show_num_cmts'][$collapse_link_plural];
+		$collapse_link_text = $hashover->locales->locale['show_number_comments'][$collapse_link_plural];
 		$collapse_link_text = str_replace ('_NUM_', $hashover->readComments->totalCount - 1, $collapse_link_text);
 	}
 
@@ -120,12 +120,12 @@
 		'like':		['<?php echo $like_locale[0] ?>', '<?php echo $like_locale[1]; ?>'],
 		'liked':	'<?php echo $hashover->locales->locale ('liked', true); ?>',
 		'unlike':	'<?php echo $hashover->locales->locale ('unlike', true); ?>',
-		'likeCmt':	'<?php echo $hashover->locales->locale ('like_cmt', true); ?>',
-		'likedCmt':	'<?php echo $hashover->locales->locale ('liked_cmt', true); ?>',
+		'likeCmt':	'<?php echo $hashover->locales->locale ('like_comment', true); ?>',
+		'likedCmt':	'<?php echo $hashover->locales->locale ('liked_comment', true); ?>',
 		'dislike':	['<?php echo $dislike_locale[0]; ?>', '<?php echo $dislike_locale[1]; ?>'],
 		'disliked':	'<?php echo $hashover->locales->locale ('disliked', true); ?>',
-		'dislikeCmt':	'<?php echo $hashover->locales->locale ('dislike_cmt', true); ?>',
-		'dislikedCmt':	'<?php echo $hashover->locales->locale ('disliked_cmt', true); ?>'
+		'dislikeCmt':	'<?php echo $hashover->locales->locale ('dislike_comment', true); ?>',
+		'dislikedCmt':	'<?php echo $hashover->locales->locale ('disliked_comment', true); ?>'
 	};
 <?php if ($hashover->settings->appendsCSS) { ?>
 
@@ -336,7 +336,7 @@
 
 			if (json.user_owned) {
 				// Define "Reply" link with original poster title
-				var replyTitle = '<?php echo $hashover->locales->locale ('op_cmt_note', true); ?>';
+				var replyTitle = '<?php echo $hashover->locales->locale ('commenter_tip', true); ?>';
 				var replyClass = 'hashover-no-email';
 
 				// Add "Reply" hyperlink to template
@@ -345,11 +345,11 @@
 				// Check if commenter is subscribed
 				if (json.subscribed) {
 					// If so, set subscribed title
-					var replyTitle = json.name + ' <?php echo $hashover->locales->locale ('subbed_note', true); ?>';
+					var replyTitle = json.name + ' <?php echo $hashover->locales->locale ('subscribed_tip', true); ?>';
 					var replyClass = 'hashover-has-email';
 				} else{
 					// If not, set unsubscribed title
-					var replyTitle = json.name + ' <?php echo $hashover->locales->locale ('unsubbed_note', true); ?>';
+					var replyTitle = json.name + ' <?php echo $hashover->locales->locale ('unsubscribed_tip', true); ?>';
 					var replyClass = 'hashover-no-email';
 				}
 
@@ -728,7 +728,7 @@
 
 		// Displays onClick confirmation dialog for comment deletion
 		$('hashover-edit-delete-' + permalink, true).onclick = function () {
-			return confirm ('<?php echo $hashover->locales->locale ('delete_cmt', true); ?>');
+			return confirm ('<?php echo $hashover->locales->locale ('delete_comment', true); ?>');
 		};
 
 		// Change "Edit" link to "Cancel" link
@@ -945,7 +945,7 @@
 			if (hashoverForm.comment.value === '') {
 				var primaryMessage = $('hashover-message', true);
 
-				showMessage (primaryMessage, '<?php echo $hashover->locales->locale ('cmt_needed', true); ?>');
+				showMessage (primaryMessage, '<?php echo $hashover->locales->locale ('comment_needed', true); ?>');
 				hashoverForm.comment.focus ();
 
 				return false;
@@ -995,7 +995,7 @@
 			}
 
 			if (formEmail.value === '') {
-				if (!confirm ('<?php echo $hashover->locales->locale ('no_email_warn', true); ?>')) {
+				if (!confirm ('<?php echo $hashover->locales->locale ('no_email_warning', true); ?>')) {
 					hashoverForm.email.focus ();
 
 					return false;
@@ -1020,7 +1020,7 @@
 			}
 
 			if (replyForms.email.value === '') {
-				if (!confirm ('<?php echo $hashover->locales->locale ('no_email_warn', true); ?>')) {
+				if (!confirm ('<?php echo $hashover->locales->locale ('no_email_warning', true); ?>')) {
 					replyForms.email.focus ();
 
 					return false;

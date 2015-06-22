@@ -47,7 +47,7 @@
 
 		// Set a cookie, with either a specific expiration date or the one in Settings
 		public
-		function set ($name, $value, $date = '')
+		function set ($name, $value = '', $date = '')
 		{
 			$date = !empty ($date) ? $date : $this->expire;
 			setcookie ($name, $value, $date, '/', $this->domain, $this->secure, true);
@@ -58,7 +58,7 @@
 		function expireCookie ($cookie)
 		{
 			if (isset ($_COOKIE[$cookie])) {
-				setcookie ($cookie, '', 1, '/', $this->domain, $this->secure, true);
+				$this->set ($cookie, '', 1);
 			}
 		}
 
@@ -67,23 +67,16 @@
 		function clear ()
 		{
 			// Expire message cookie
-			if (isset ($_COOKIE['message'])) {
-				setcookie ('message', '', 1, '/', $this->domain, $this->secure, true);
-			}
+			$this->expireCookie ('message');
 
 			// Expire error cookie
-			if (isset ($_COOKIE['error'])) {
-				setcookie ('error', '', 1, '/', $this->domain, $this->secure, true);
-			}
+			$this->expireCookie ('error');
 
-			// Expire comment and reply failure cookie(s)
-			if (isset ($_COOKIE['success']) and $_COOKIE['success'] === 'no') {
-				setcookie ('success', '', 1, '/', $this->domain, $this->secure, true);
+			// Expire comment failure cookie
+			$this->expireCookie ('success');
 
-				if (!empty ($_COOKIE['replied'])) {
-					setcookie ('replied', '', 1, '/', $this->domain, $this->secure, true);
-				}
-			}
+			// Expire reply failure cookie
+			$this->expireCookie ('replied');
 		}
 	}
 

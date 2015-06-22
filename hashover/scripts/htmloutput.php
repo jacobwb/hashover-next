@@ -131,6 +131,8 @@
 			if ($editForm === true) {
 				$login_input_attributes['name']['input_value'] = $this->injectVar ($name);
 				$login_input_attributes['website']['input_value'] = $this->injectVar ($website);
+				$login_input_attributes['password']['placeholder'] = $this->locales->locale ('confirm_password', $this->addcslashes);
+				$login_input_attributes['password']['input_title'] = $this->locales->locale ('confirm_password', $this->addcslashes);
 			}
 
 			// Create wrapper element for styling login inputs
@@ -366,7 +368,7 @@
 			$reply_link->createAttribute ('id', 'hashover-reply-link-' . $this->injectVar ($permalink));
 			$reply_link->createAttribute ('class', 'hashover-comment-reply');
 			$reply_link->appendAttribute ('class', $this->injectVar ($class));
-			$reply_link->createAttribute ('title', $this->locales->locale ('reply_to_cmt', true));
+			$reply_link->createAttribute ('title', $this->locales->locale ('reply_to_comment', true));
 			$reply_link->appendAttribute ('title', '- ' . $this->injectVar ($title));
 			$reply_link->innerHTML ($this->locales->locale ('reply', true));
 
@@ -389,7 +391,7 @@
 			$edit_link->appendAttribute ('href', '#hashover-edit-' . $this->injectVar ($permalink), false);
 			$edit_link->createAttribute ('id', 'hashover-edit-link-' . $this->injectVar ($permalink));
 			$edit_link->createAttribute ('class', 'hashover-comment-edit hashover-edit');
-			$edit_link->createAttribute ('title', $this->locales->locale ('edit_your_cmt', true));
+			$edit_link->createAttribute ('title', $this->locales->locale ('edit_your_comment', true));
 			$edit_link->innerHTML ($this->locales->locale ('edit', true));
 
 			return $edit_link->asHTML ();
@@ -489,12 +491,12 @@
 			$post_title->createAttribute ('class', 'hashover-title');
 			$post_title->appendAttribute ('class', 'hashover-main-title');
 			$post_title->appendAttribute ('class', 'hashover-dashed-title');
-			$post_cmt_on = $this->locales->locale ('post_cmt_on', $this->addcslashes);
-			$post_title->innerHTML ($post_cmt_on[0]);
+			$post_comment_locale = $this->locales->locale ('post_comment_on', $this->addcslashes);
+			$post_title->innerHTML ($post_comment_locale[0]);
 
 			// Add optional "on <page title>" to "Post Comment" title
 			if ($this->setup->displaysTitle) {
-				$on_title = str_replace ('_TITLE_', $this->pageTitle, $post_cmt_on[1]);
+				$on_title = str_replace ('_TITLE_', $this->pageTitle, $post_comment_locale[1]);
 				$post_title->appendInnerHTML ($on_title, false);
 			}
 
@@ -661,7 +663,7 @@
 			$main_textarea->createAttribute ('cols', '63');
 			$main_textarea->createAttribute ('name', 'comment');
 			$main_textarea->createAttribute ('rows', '5');
-			$main_textarea->createAttribute ('title', $this->locales->locale ('cmt_tip', $this->addcslashes));
+			$main_textarea->createAttribute ('title', $this->locales->locale ('form_tip', $this->addcslashes));
 			$main_textarea->createAttribute ('placeholder', $this->locales->locale ('comment_form', $this->addcslashes));
 
 			// Add a red border to main textarea upon posting error
@@ -779,8 +781,8 @@
 				$pop_count_element = new HTMLTag ('span');
 				$pop_count_element->createAttribute ('class', 'hashover-title');
 				$popPlural = (count ($this->popularList) !== 1) ? 1 : 0;
-				$popular_cmts = $this->locales->locale ('popular_cmts', $this->addcslashes);
-				$pop_count_element->innerHTML ($popular_cmts[$popPlural]);
+				$popular_comments_locale = $this->locales->locale ('popular_comments', $this->addcslashes);
+				$pop_count_element->innerHTML ($popular_comments_locale[$popPlural]);
 
 				// Add popular comments title element to wrapper element
 				$pop_count_wrapper->appendChild ($pop_count_element);
@@ -1091,7 +1093,7 @@
 			$reply_textarea->createAttribute ('cols', '62');
 			$reply_textarea->createAttribute ('name', 'comment');
 			$reply_textarea->createAttribute ('rows', '5');
-			$reply_textarea->createAttribute ('title', $this->locales->locale ('cmt_tip', $this->addcslashes));
+			$reply_textarea->createAttribute ('title', $this->locales->locale ('form_tip', $this->addcslashes));
 			$reply_textarea->createAttribute ('placeholder', $this->locales->locale ('reply_form', $this->addcslashes));
 
 			// Add reply textarea element to form element
@@ -1210,7 +1212,7 @@
 		function editForm ($permalink, $file, $name = '', $website = '', $body, $subscribed = true)
 		{
 			// "Edit Comment" locale string
-			$edit_comment = $this->locales->locale ('edit_cmt', $this->addcslashes);
+			$edit_comment = $this->locales->locale ('edit_comment', $this->addcslashes);
 
 			// "Save Edit" locale string
 			$save_edit = $this->locales->locale ('save_edit', $this->addcslashes);
@@ -1255,7 +1257,7 @@
 			$edit_textarea->createAttribute ('cols', '62');
 			$edit_textarea->createAttribute ('name', 'comment');
 			$edit_textarea->createAttribute ('rows', '10');
-			$edit_textarea->createAttribute ('title', $this->locales->locale ('cmt_tip', $this->addcslashes));
+			$edit_textarea->createAttribute ('title', $this->locales->locale ('form_tip', $this->addcslashes));
 			$edit_textarea->innerHTML ($this->injectVar ($body));
 
 			// Add edit textarea element to form element

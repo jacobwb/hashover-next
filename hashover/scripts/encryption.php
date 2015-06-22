@@ -112,6 +112,10 @@
 
 				// Get mcrypt key from array
 				foreach (explode (',', $encrypted) as $value) {
+					if (!isset ($this->encryptionHash[$value])) {
+						return '';
+					}
+
 					$key .= $this->encryptionHash[$value];
 				}
 

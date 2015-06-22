@@ -192,11 +192,11 @@
 		function notice ($type, $key, &$last_date)
 		{
 			$output = array ();
-			$imageFormat =& $this->setup->imageFormat;
-			$output['title'] = $this->locale['cmt_' . $type];
+			$output['title'] = $this->locale['comment_' . $type];
 			$last_date++;
 
 			if ($this->setup->iconMode !== 'none') {
+				$imageFormat =& $this->setup->imageFormat;
 				$output['avatar'] = '/images/' . $imageFormat . 's/' . $type . '-icon.' . $imageFormat;
 			}
 
