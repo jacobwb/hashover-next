@@ -334,7 +334,8 @@ Copyright (C) 2015 Jacob Barkdull
 }
 
 #hashover .hashover-submit[disabled] {
-	background-color: #E8E8E8 ! important;
+	background-color: #E0E0E0 ! important;
+	color: #222222 ! important;
 }
 
 #hashover .hashover-inputs input {
