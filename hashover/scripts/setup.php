@@ -109,6 +109,13 @@
 			// Instantiate encryption class
 			$this->encryption = new Encryption ($this->encryptionKey);
 
+			// Strip escape slashes from POST, GET, and COOKIE data
+			if (get_magic_quotes_gpc ()) {
+				$_GET = array_map ('stripslashes', $_GET);
+				$_COOKIE = array_map ('stripslashes', $_COOKIE);
+				$_POST = array_map ('stripslashes', $_POST);
+			}
+
 			// Cookie replacement search patterns
 			$cookie_search = array (
 				'&',

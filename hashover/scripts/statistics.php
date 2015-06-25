@@ -29,11 +29,11 @@
 	class Statistics
 	{
 		public $mode;
-		public $exec_start;
-		public $exec_end;
-		public $exec_time;
-		public $script_memory;
-		public $system_memory;
+		public $executionStart;
+		public $executionEnd;
+		public $executionTime;
+		public $scriptMemory;
+		public $systemMemory;
 
 		public
 		function __construct ($mode = 'javascript')
@@ -46,7 +46,7 @@
 		function executionStart ()
 		{
 			// Start time in seconds
-			$this->exec_start = microtime (true);
+			$this->executionStart = microtime (true);
 		}
 
 		// Script execution ending time
@@ -54,39 +54,39 @@
 		function executionEnd ()
 		{
 			// End time in seconds
-			$this->exec_end = microtime (true);
+			$this->executionEnd = microtime (true);
 
 			// Difference between start time and end time in seconds
-			$this->exec_time = $this->exec_end - $this->exec_start;
+			$this->executionTime = $this->executionEnd - $this->executionStart;
 
 			// Unit to divided memory bytes by (1,024² for mibibytes)
 			$division_unit = pow (1024, 2);
 
 			// Memory the script consumed divided by division unit
-			$this->script_memory = round (memory_get_peak_usage () / $division_unit, 2);
+			$this->scriptMemory = round (memory_get_peak_usage () / $division_unit, 2);
 
 			// Memory the system consumed divided by division unit
-			$this->system_memory = round (memory_get_peak_usage (true) / $division_unit, 2);
+			$this->systemMemory = round (memory_get_peak_usage (true) / $division_unit, 2);
 
 			// Display execution time in millisecond(s)
-			if ($this->exec_time < 1) {
-				$exec_stat = round ($this->exec_time * 1000, 5) . ' ms';
+			if ($this->executionTime < 1) {
+				$execution_stat = round ($this->executionTime * 1000, 5) . ' ms';
 			} else {
 				// Display execution time in seconds
-				$exec_stat = round ($this->exec_time, 5) . ' Second';
+				$execution_stat = round ($this->executionTime, 5) . ' Second';
 
 				// Add plural to any execution time other than one
-				if ($this->exec_time !== 1) {
-					$exec_stat .= 's';
+				if ($this->executionTime !== 1) {
+					$execution_stat .= 's';
 				}
 			}
 
 			// Statistics inner-comment
 			$statistics = PHP_EOL . PHP_EOL;
 			$statistics .= "\t" . 'HashOver Statistics:' . PHP_EOL . PHP_EOL;
-			$statistics .= "\t\t" . 'Execution Time     : ' . $exec_stat . PHP_EOL;
-			$statistics .= "\t\t" . 'Script Memory Peak : ' . $this->script_memory . ' MiB' . PHP_EOL;
-			$statistics .= "\t\t" . 'System Memory Peak : ' . $this->system_memory . ' MiB';
+			$statistics .= "\t\t" . 'Execution Time     : ' . $execution_stat . PHP_EOL;
+			$statistics .= "\t\t" . 'Script Memory Peak : ' . $this->scriptMemory . ' MiB' . PHP_EOL;
+			$statistics .= "\t\t" . 'System Memory Peak : ' . $this->systemMemory . ' MiB';
 			$statistics .= PHP_EOL . PHP_EOL;
 
 			// Return statistics as HTML comment in PHP mode
