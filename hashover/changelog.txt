@@ -1,3 +1,22 @@
+Changes by Jacob Barkdull 2015-07-10
+--------------------------------------------------------------------------------
+* hashover.js,
+  hashover/scripts/javascript-mode.php,
+  hashover/scripts/javascript-output.php
+
+	- javascript-mode.php renamed to hashover-javascript.php.
+	- javascript-output.php renamed to javascript-mode.php.
+	- `head` variable now only defined when needed.
+	- `body` variable removed.
+	- Conform to coding standard.
+	- Minor bug fixes.
+
+
+* hashover/api/count-link.php
+
+	- Use strict comparison.
+
+
 Changes by Jacob Barkdull 2015-06-25
 --------------------------------------------------------------------------------
 * hashover/scripts/setup.php
@@ -7,7 +26,7 @@ Changes by Jacob Barkdull 2015-06-25
 
 * hashover/scripts/statistics.php
 
-	- Confirm to coding standard.
+	- Conform to coding standard.
 
 
 Changes by Jacob Barkdull 2015-06-22

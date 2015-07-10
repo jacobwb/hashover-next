@@ -100,7 +100,7 @@ var hashoverScript = 'hashover-script-<?php echo $_GET['hashover-script']; ?>';
 var thisScript = document.getElementById (hashoverScript);
 
 // Display count link
-if (thisScript) {
+if (thisScript !== null) {
 	thisScript.parentNode.insertBefore (countLink, thisScript);
 }
 <?php } else { ?>
