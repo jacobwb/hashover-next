@@ -981,7 +981,7 @@
 				$end_links_wrapper->appendInnerHTML (' &middot;', false);
 
 				$hashover_javascript_link = new HTMLTag ('a', false, false);
-				$hashover_javascript_link->createAttribute ('href', $this->setup->httpDirectory . '/scripts/javascript-mode.php');
+				$hashover_javascript_link->createAttribute ('href', $this->setup->httpDirectory . '/scripts/hashover-javascript.php');
 				$hashover_javascript_link->appendAttribute ('href', '?url=' . urlencode ($this->setup->pageURL), false);
 				$hashover_javascript_link->appendAttribute ('href', '&title=' . urlencode ($this->setup->pageTitle), false);
 

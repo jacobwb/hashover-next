@@ -1,3 +1,29 @@
+Changes by Jacob Barkdull 2015-07-29
+--------------------------------------------------------------------------------
+* hashover/scripts/javascript-mode.php
+
+	- The JSON object for comment data is now iterated over by array key, 
+	  instead of enumerable properties. When the comment data consisted of 
+	  nested objects, enumerable property iteration was necessary, however, 
+	  the nested objects were replaced with arrays a while ago.
+
+	  Although bad practice, developers sometimes add custom Prototype 
+	  methods to all Objects, Arrays, and/or Strings in the document. 
+	  Therefore iterating over the comment data by enumerable properties 
+	  isn't efficient and requires more work be done the more custom 
+	  methods are added to their Prototype.
+
+	  This change also means other JavaScript on the same page as HashOver 
+	  will not conflict with HashOver if it happens to modify Prototypes.
+
+	- Changed some variable names.
+
+
+* hashover/scripts/htmloutput.php
+
+	- Fixed "JavaScipt" hyperlink pointing to the wrong (old) filename.
+
+
 Changes by Jacob Barkdull 2015-07-10
 --------------------------------------------------------------------------------
 * hashover.js,

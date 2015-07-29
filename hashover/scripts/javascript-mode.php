@@ -245,14 +245,14 @@
 	}
 
 	// Add comment content to HTML template
-	function parseComment (json, collapse, sort, method, forpop)
+	function parseComment (comment, collapse, sort, method, forpop)
 	{
 		collapse = collapse || false;
 		sort = sort || false;
 		method = method || 'ascending';
 		forpop = forpop || false;
 
-		var permalink = json.permalink;
+		var permalink = comment.permalink;
 		var nameClass = 'hashover-name-plain';
 		var template = {permalink: permalink};
 		var is_reply = (permalink.indexOf ('r') > -1);
@@ -292,11 +292,11 @@
 		}
 
 		// Add avatar image to template
-		template.avatar = '<?php echo $hashover->html->userAvatar ('permatext', 'permalink', 'httpRoot + json.avatar'); ?>';
+		template.avatar = '<?php echo $hashover->html->userAvatar ('permatext', 'permalink', 'httpRoot + comment.avatar'); ?>';
 
-		if (!json.notice) {
-			var name = json.name || '<?php echo $hashover->settings->defaultName; ?>';
-			var website = json.website;
+		if (!comment.notice) {
+			var name = comment.name || '<?php echo $hashover->settings->defaultName; ?>';
+			var website = comment.website;
 			var is_twitter = false;
 
 			// Check if user's name is a Twitter handle
@@ -334,7 +334,7 @@
 				template.thread_link = '<?php echo $hashover->html->threadLink ('threadParent'); ?>';
 			}
 
-			if (json.user_owned) {
+			if (comment.user_owned) {
 				// Define "Reply" link with original poster title
 				var replyTitle = '<?php echo $hashover->locales->locale ('commenter_tip', true); ?>';
 				var replyClass = 'hashover-no-email';
@@ -343,18 +343,18 @@
 				template.edit_link = '<?php echo $hashover->html->editLink ('permalink'); ?>';
 			} else {
 				// Check if commenter is subscribed
-				if (json.subscribed) {
+				if (comment.subscribed) {
 					// If so, set subscribed title
-					var replyTitle = json.name + ' <?php echo $hashover->locales->locale ('subscribed_tip', true); ?>';
+					var replyTitle = comment.name + ' <?php echo $hashover->locales->locale ('subscribed_tip', true); ?>';
 					var replyClass = 'hashover-has-email';
 				} else{
 					// If not, set unsubscribed title
-					var replyTitle = json.name + ' <?php echo $hashover->locales->locale ('unsubscribed_tip', true); ?>';
+					var replyTitle = comment.name + ' <?php echo $hashover->locales->locale ('unsubscribed_tip', true); ?>';
 					var replyClass = 'hashover-no-email';
 				}
 
 				// Check whether this comment was liked by the visitor
-				if (json.liked) {
+				if (comment.liked) {
 					// If so, set various attributes to indicate comment was liked
 					var likeClass = 'hashover-liked';
 					var likeTitle = locale.likedCmt;
@@ -376,7 +376,7 @@
 
 <?php if ($hashover->settings->allowsDislikes) { ?>
 				// Check whether this comment was disliked by the visitor
-				if (json.disliked) {
+				if (comment.disliked) {
 					// If so, set various attributes to indicate comment was disliked
 					var dislikeClass = 'hashover-disliked';
 					var dislikeTitle = locale.dislikedCmt;
@@ -394,8 +394,8 @@
 			}
 
 			// Get number of likes, append "Like(s)" locale
-			if (json.likes) {
-				var likeCount = json.likes + ' ' + locale.like[(json.likes === 1 ? 0 : 1)];
+			if (comment.likes) {
+				var likeCount = comment.likes + ' ' + locale.like[(comment.likes === 1 ? 0 : 1)];
 			}
 
 			// Add like count to HTML template
@@ -403,8 +403,8 @@
 
 <?php if ($hashover->settings->allowsDislikes) { ?>
 			// Get number of dislikes, append "Dislike(s)" locale
-			if (json.dislikes) {
-				var dislikeCount = json.dislikes + ' ' + locale.dislike[(json.dislikes === 1 ? 0 : 1)];
+			if (comment.dislikes) {
+				var dislikeCount = comment.dislikes + ' ' + locale.dislike[(comment.dislikes === 1 ? 0 : 1)];
 			}
 
 			// Add dislike count to HTML template
@@ -415,14 +415,14 @@
 			template.name = '<?php echo $hashover->html->nameWrapper ('nameLink', 'nameClass'); ?>';
 
 			// Add date permalink hyperlink to template
-			template.date = '<?php echo $hashover->html->dateLink ('permalink', 'json.date'); ?>';
+			template.date = '<?php echo $hashover->html->dateLink ('permalink', 'comment.date'); ?>';
 
 			// Add "Reply" hyperlink to template
 			template.reply_link = '<?php echo $hashover->html->replyLink ('permalink', 'replyClass', 'replyTitle'); ?>';
 
 			// Add reply count to template
-			if (json.replies) {
-				template.reply_count = json.replies.length;
+			if (comment.replies) {
+				template.reply_count = comment.replies.length;
 
 				if (template.reply_count > 0) {
 					if (template.reply_count !== 1) {
@@ -434,7 +434,7 @@
 			}
 
 			// Add HTML anchor tag to URLs
-			var body = json.body.replace (linkRegex, '<a href="$1" target="_blank">$1</a>');
+			var body = comment.body.replace (linkRegex, '<a href="$1" target="_blank">$1</a>');
 
 			// Replace [img] tags with external image placeholder if enabled
 			body = body.replace (imageRegex, function (fullURL, url) {
@@ -495,7 +495,9 @@
 
 			// Check for various multi-line tags
 			for (var trimTag in trimTagRegexes) {
-				if (trimTagRegexes[trimTag]['test'].test (body)) {
+				if (trimTagRegexes.hasOwnProperty (trimTag)
+				    && trimTagRegexes[trimTag]['test'].test (body))
+				{
 					// Trim whitespace
 					body = body.replace (trimTagRegexes[trimTag]['replace'], tagTrimmer);
 				}
@@ -529,30 +531,30 @@
 			template.comment = pd_comment;
 		} else {
 			// Append notice class
-			cmtclass += ' hashover-notice ' + json.notice_class;
+			cmtclass += ' hashover-notice ' + comment.notice_class;
 
 			// Add notice to template
-			template.comment = json.notice;
+			template.comment = comment.notice;
 
 			// Add name HTML to template
-			template.name = '<?php echo $hashover->html->nameWrapper ('json.title', 'nameClass'); ?>';
+			template.name = '<?php echo $hashover->html->nameWrapper ('comment.title', 'nameClass'); ?>';
 		}
 
 		// Comment HTML template
 <?php
 
-		echo $hashover->html->asJSVar ($hashover->templater->parseTemplate (), 'comment', "\t\t");
+		echo $hashover->html->asJSVar ($hashover->templater->parseTemplate (), 'html', "\t\t");
 
 ?>
 
 		// Recursively parse replies
-		if (json.replies) {
-			for (var reply in json.replies) {
-				replies += parseComment (json.replies[reply], collapse);
+		if (comment.replies) {
+			for (var reply = 0, total = comment.replies.length; reply < total; reply++) {
+				replies += parseComment (comment.replies[reply], collapse);
 			}
 		}
 
-		return '<?php echo $hashover->html->commentWrapper ('permalink', 'cmtclass', 'comment + replies'); ?>';
+		return '<?php echo $hashover->html->commentWrapper ('permalink', 'cmtclass', 'html + replies'); ?>';
 	}
 
 	// Generate file from permalink
@@ -834,35 +836,35 @@
 
 		// Recursively execute this function on replies
 		if (json.replies) {
-			for (var reply in json.replies) {
+			for (var reply = 0, total = json.replies.length; reply < total; reply++) {
 				addControls (json.replies[reply]);
 			}
 		}
 	}
 
-	// Run all comments in JSON data through parseComment function
-	function parseAll (json, element, collapse, forPop, sort, method)
+	// Run all comments in array data through parseComment function
+	function parseAll (comments, element, collapse, forPop, sort, method)
 	{
 		forPop = forPop || false;
 		sort = sort || false;
 		method = method || 'ascending';
-		var comments = '';
+		var commentHTML = '';
 
 		// Parse every comment
-		for (var comment in json) {
-			comments += parseComment (json[comment], collapse, sort, method, forPop);
+		for (var comment = 0, total = comments.length; comment < total; comment++) {
+			commentHTML += parseComment (comments[comment], collapse, sort, method, forPop);
 		}
 
 		// Add comments to element's innerHTML
 		if ('insertAdjacentHTML' in element) {
-			element.insertAdjacentHTML ('beforeend', comments);
+			element.insertAdjacentHTML ('beforeend', commentHTML);
 		} else {
-			element.innerHTML = comments;
+			element.innerHTML = commentHTML;
 		}
 
 		// Add control events
-		for (var comment in json) {
-			addControls (json[comment]);
+		for (var comment = 0, total = comments.length; comment < total; comment++) {
+			addControls (comments[comment]);
 		}
 	}
 
@@ -1079,7 +1081,7 @@
 			output.push (comment);
 
 			if (comment.replies) {
-				for (var reply in comment.replies) {
+				for (var reply = 0, total = comment.replies.length; reply < total; reply++) {
 					descend (comment.replies[reply]);
 				}
 
@@ -1087,7 +1089,7 @@
 			}
 		}
 
-		for (var comment in commentsCopy) {
+		for (var comment = 0, total = commentsCopy.length; comment < total; comment++) {
 			descend (commentsCopy[comment]);
 		}
 
@@ -1299,7 +1301,7 @@
 
 			// Descend into parent replies
 			if (commentKey.length >= 1) {
-				for (var reply in commentKey) {
+				for (var reply = 0, total = commentKey.length; reply < total; reply++) {
 					comment = comment.replies[(commentKey[reply]) - 1];
 				}
 			}
