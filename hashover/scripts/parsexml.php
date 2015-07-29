@@ -52,7 +52,7 @@
 			$xml = @simplexml_load_string (file_get_contents ($file), 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOCDATA);
 
 			if ($xml !== false) {
-				$xml->body = preg_replace ('/^\t{0,2}/m', '', trim ($xml->body, "\n\t"));
+				$xml->body = preg_replace ('/^\t{0,2}/m', '', trim ($xml->body, "\r\n\t"));
 
 				return (array) $xml;
 			}

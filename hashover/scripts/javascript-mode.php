@@ -156,10 +156,24 @@
 	}
 <?php } ?>
 
+	// Shorthand for Document.getElementById ()
+	function getElement (id, force)
+	{
+		if (force) {
+			return document.getElementById (id);
+		}
+
+		if (!elementsById[id]) {
+			elementsById[id] = document.getElementById (id);
+		}
+
+		return elementsById[id];
+	}
+
 	// Put number of comments into "hashover-cmtcount" identified HTML element
 	if (totalCount !== 0) {
-		if ($('hashover-cmtcount')) {
-			$('hashover-cmtcount').textContent = totalCount;
+		if (getElement ('hashover-cmtcount')) {
+			getElement ('hashover-cmtcount').textContent = totalCount;
 		}
 <?php if ($hashover->setup->APIStatus ('rss') !== 'disabled') { ?>
 
@@ -175,26 +189,65 @@
 <?php } ?>
 	}
 
-	function $ (element, force)
+	// Execute callback function if element isn't false
+	function ifElement (element, callback)
 	{
-		if (force) {
-			return document.getElementById (element);
-		}
-
-		if (!elementsById[element]) {
-			elementsById[element] = document.getElementById (element);
-		}
-
-		return elementsById[element];
-	}
-
-	function ifCallback (element, callback)
-	{
-		if (element) {
+		if (element = getElement (element, true)) {
 			return callback (element);
 		}
 
 		return false;
+	}
+
+	// Check whether browser has classList support
+	if (document.documentElement.classList) {
+		// If so, wrap relevant functions
+		// classList.contains () method
+		var containsClass = function (element, className) {
+			return element.classList.contains (className);
+		};
+
+		// classList.add () method
+		var addClass = function (element, className) {
+			element.classList.add (className);
+		};
+
+		// classList.remove () method
+		var removeClass = function (element, className) {
+			element.classList.remove (className);
+		};
+	} else {
+		// If not, define fallback functions
+		// classList.contains () method
+		var containsClass = function (element, className) {
+			if (!element || !element.className) {
+				return false;
+			}
+
+			var regex = new RegExp ('(^|\\s)' + className + '(\\s|$)');
+			return element.className.match (regex);
+		};
+
+		// classList.add () method
+		var addClass = function (element, className) {
+			if (!element) {
+				return false;
+			}
+
+			if (!containsClass (element, className)) {
+				element.className += (element.className ? ' ' : '') + className;
+			}
+		};
+
+		// classList.remove () method
+		var removeClass = function (element, className) {
+			if (!element || !element.className) {
+				return false;
+			}
+
+			var regex = new RegExp ('(^|\\s)' + className + '(\\s|$)', 'g');
+			element.className = element.className.replace (regex, '$2');
+		};
 	}
 
 	// Initial HTML
@@ -211,7 +264,7 @@
 
 		// Place HashOver element on page
 		if (hashoverScript !== false) {
-			var thisScript = $('hashover-script-' + hashoverScript);
+			var thisScript = getElement ('hashover-script-' + hashoverScript);
 			    thisScript.parentNode.insertBefore (HashOverDiv, thisScript);
 		} else {
 			document.body.appendChild (HashOverDiv);
@@ -223,9 +276,9 @@
 
 	// Add class to indicate user login status
 	if (userIsLoggedIn) {
-		HashOverDiv.classList.add ('hashover-logged-in');
+		addClass (HashOverDiv, 'hashover-logged-in');
 	} else {
-		HashOverDiv.classList.add ('hashover-logged-out');
+		addClass (HashOverDiv, 'hashover-logged-out');
 	}
 
 	// Add initial HTML to page
@@ -596,7 +649,7 @@
 <?php if ($hashover->settings->usesCancelButtons) { ?>
 
 		// Attach event listeners to "Cancel" button
-		$('hashover-' + form + '-cancel-' + permalink, true).onclick = function () {
+		getElement ('hashover-' + form + '-cancel-' + permalink, true).onclick = function () {
 			// Remove fields from form wrapper
 			wrapper.textContent = '';
 			link.onclick ();
@@ -624,7 +677,7 @@
 	function hashoverReply (permalink)
 	{
 		// Get reply link element
-		var link = $('hashover-reply-link-' + permalink, true);
+		var link = getElement ('hashover-reply-link-' + permalink, true);
 
 		// Get file
 		var file = reversePermalink (permalink);
@@ -649,14 +702,14 @@
 		preventSubmit (form);
 
 		// Add form to page
-		var reply_form = $('hashover-placeholder-reply_form-' + permalink, true);
+		var reply_form = getElement ('hashover-placeholder-reply_form-' + permalink, true);
 		    reply_form.appendChild (form);
 
 		// Focus comment field
 		form.comment.focus ();
 
 		// Attach event listeners to "Post Reply" button
-		var postReply = $('hashover-reply-post-' + permalink, true);
+		var postReply = getElement ('hashover-reply-post-' + permalink, true);
 
 		// Onclick
 		postReply.onclick = function () {
@@ -688,7 +741,7 @@
 		var subscribed = comment.subscribed;
 
 		// Get edit link element
-		var link = $('hashover-edit-link-' + permalink, true);
+		var link = getElement ('hashover-edit-link-' + permalink, true);
 
 		// Get file
 		var file = reversePermalink (permalink);
@@ -721,15 +774,15 @@
 		preventSubmit (form);
 
 		// Add edit form to page
-		var edit_form = $('hashover-placeholder-edit_form-' + permalink, true);
+		var edit_form = getElement ('hashover-placeholder-edit_form-' + permalink, true);
 		    edit_form.appendChild (form);
 
 		if (!subscribed) {
-			$('hashover-subscribe-' + permalink, true).checked = null;
+			getElement ('hashover-subscribe-' + permalink, true).checked = null;
 		}
 
 		// Displays onClick confirmation dialog for comment deletion
-		$('hashover-edit-delete-' + permalink, true).onclick = function () {
+		getElement ('hashover-edit-delete-' + permalink, true).onclick = function () {
 			return confirm ('<?php echo $hashover->locales->locale ('delete_comment', true); ?>');
 		};
 
@@ -769,7 +822,7 @@
 		var permalink = json.permalink;
 
 		// Set onclick functions for external images
-		ifCallback ($('hashover-embedded-image-' + permalink, true), function (embeddedImg) {
+		ifElement ('hashover-embedded-image-' + permalink, function (embeddedImg) {
 			embeddedImg.onclick = function () {
 				if (this.src === this.dataset.url) {
 					this.src = this.dataset.placeholder;
@@ -789,7 +842,7 @@
 		});
 
 		// Get reply link of comment
-		ifCallback ($('hashover-reply-link-' + permalink, true), function (replyLink) {
+		ifElement ('hashover-reply-link-' + permalink, function (replyLink) {
 			// Add onClick event to "Reply" hyperlink
 			replyLink.onclick = function () {
 				hashoverReply (permalink);
@@ -800,7 +853,7 @@
 
 		// Check if logged in user owns the comment
 		if (json.user_owned) {
-			ifCallback ($('hashover-edit-link-' + permalink, true), function (editLink) {
+			ifElement ('hashover-edit-link-' + permalink, function (editLink) {
 				// Add onClick event to "Edit" hyperlinks
 				editLink.onclick = function () {
 					hashoverEdit (json);
@@ -809,7 +862,7 @@
 				};
 			});
 		} else {
-			ifCallback ($('hashover-like-' + permalink, true), function (likeLink) {
+			ifElement ('hashover-like-' + permalink, function (likeLink) {
 				// Add onClick event to "Like" hyperlinks
 				likeLink.onclick = function () {
 					likeComment ('like', permalink);
@@ -817,13 +870,13 @@
 					return false;
 				};
 
-				if (likeLink.classList.contains ('hashover-liked')) {
+				if (containsClass (likeLink, 'hashover-liked')) {
 					mouseOverChanger (likeLink, locale.unlike, locale.liked);
 				}
 			});
 <?php if ($hashover->settings->allowsDislikes) { ?>
 
-			ifCallback ($('hashover-dislike-' + permalink, true), function (dislikeLink) {
+			ifElement ('hashover-dislike-' + permalink, function (dislikeLink) {
 				// Add onClick event to "Dislike" hyperlinks
 				dislikeLink.onclick = function () {
 					likeComment ('dislike', permalink);
@@ -870,11 +923,11 @@
 
 	// Display most popular comments
 	if (PHPContent.pop_comments) {
-		parseAll (PHPContent.pop_comments, $('hashover-top-comments'), false, true);
+		parseAll (PHPContent.pop_comments, getElement ('hashover-top-comments'), false, true);
 	}
 
 	// Get sort div element
-	var sortDiv = $('hashover-sort-div');
+	var sortDiv = getElement ('hashover-sort-div');
 
 	// Get primary form element
 	var hashoverForm = document.getElementById('hashover-form');
@@ -896,11 +949,11 @@
 
 			setTimeout (function () {
 				sortDiv.removeChild (moreLink);
-				$('hashover-sort').style.display = '';
-				$('hashover-count').style.display = '';
+				getElement ('hashover-sort').style.display = '';
+				getElement ('hashover-count').style.display = '';
 
 				for (var i = collapsed.length - 1; i >= 0; i--) {
-					collapsed[i].classList.remove ('hashover-hidden');
+					removeClass (collapsed[i], 'hashover-hidden');
 				}
 			}, 350);
 
@@ -920,17 +973,17 @@
 			element.textContent = message;
 
 			if (error) {
-				element.classList.add ('hashover-message-error');
+				addClass (element, 'hashover-message-error');
 			}
 		}
 
 		setTimeout (function () {
-			element.classList.add ('hashover-message-open');
+			addClass (element, 'hashover-message-open');
 
 			setTimeout (function () {
 				if (messages <= 1) {
-					element.classList.remove ('hashover-message-open');
-					element.classList.remove ('hashover-message-error');
+					removeClass (element, 'hashover-message-open');
+					removeClass (element, 'hashover-message-error');
 				}
 
 				messages--;
@@ -945,7 +998,7 @@
 	{
 		if (permalink === undefined) {
 			if (hashoverForm.comment.value === '') {
-				var primaryMessage = $('hashover-message', true);
+				var primaryMessage = getElement ('hashover-message', true);
 
 				showMessage (primaryMessage, '<?php echo $hashover->locales->locale ('comment_needed', true); ?>');
 				hashoverForm.comment.focus ();
@@ -953,10 +1006,10 @@
 				return false;
 			}
 		} else {
-			var replyForms = $('hashover-reply-' + permalink, true);
+			var replyForms = getElement ('hashover-reply-' + permalink, true);
 
 			if (replyForms.comment.value === '') {
-				var replyMessage = $('hashover-message-' + permalink, true);
+				var replyMessage = getElement ('hashover-message-' + permalink, true);
 
 				showMessage (replyMessage, '<?php echo $hashover->locales->locale ('reply_needed', true); ?>');
 				replyForms.comment.focus ();
@@ -990,7 +1043,7 @@
 		if (permalink === undefined) {
 			var formEmail = hashoverForm.email;
 
-			if ($('hashover-subscribe', true).checked === false) {
+			if (getElement ('hashover-subscribe', true).checked === false) {
 				formEmail.value = '';
 
 				return true;
@@ -1004,7 +1057,7 @@
 				}
 			} else {
 				if (!formEmail.value.match (/\S+@\S+/)) {
-					var primaryMessage = $('hashover-message', true);
+					var primaryMessage = getElement ('hashover-message', true);
 
 					showMessage (primaryMessage, '<?php echo $hashover->locales->locale ('invalid_email', true); ?>');
 					hashoverForm.email.focus ();
@@ -1013,9 +1066,9 @@
 				}
 			}
 		} else {
-			var replyForms = $('hashover-reply-' + permalink, true);
+			var replyForms = getElement ('hashover-reply-' + permalink, true);
 
-			if ($('subscribe-' + permalink, true).checked === false) {
+			if (getElement ('subscribe-' + permalink, true).checked === false) {
 				replyForms.email.value = '';
 
 				return true;
@@ -1029,7 +1082,7 @@
 				}
 			} else {
 				if (!replyForms.email.value.match (/\S+@\S+/)) {
-					var replyMessage = $('hashover-message-' + permalink, true);
+					var replyMessage = getElement ('hashover-message-' + permalink, true);
 
 					showMessage (replyMessage, '<?php echo $hashover->locales->locale ('invalid_email', true); ?>');
 					replyForms.email.focus ();
@@ -1043,7 +1096,7 @@
 	}
 
 	// Attach event listeners to "Post Comment" button
-	var postButton = $('hashover-post-button');
+	var postButton = getElement ('hashover-post-button');
 
 	// Onclick
 	postButton.onclick = function () {
@@ -1057,7 +1110,7 @@
 
 	// Attach event listeners to "Login" button
 	if (!userIsLoggedIn) {
-		var loginButton = $('hashover-login-button');
+		var loginButton = getElement ('hashover-login-button');
 
 		// Onclick
 		loginButton.onclick = function () {
@@ -1206,7 +1259,7 @@
 	};
 
 	// Five method sort
-	var sortSelect = $('hashover-sort-select');
+	var sortSelect = getElement ('hashover-sort-select');
 
 	if (sortSelect) {
 		sortSelect.onchange = function () {
@@ -1221,8 +1274,8 @@
 		// Get file
 		var file = reversePermalink (permalink);
 
-		var actionLink = $('hashover-' + action + '-' + permalink);
-		var likesElement = $('hashover-' + action + 's-' + permalink);
+		var actionLink = getElement ('hashover-' + action + '-' + permalink);
+		var likesElement = getElement ('hashover-' + action + 's-' + permalink);
 		var dislikesClass = (action === 'like') ? '<?php if ($hashover->settings->allowsDislikes) echo ' hashover-dislikes-enabled'; ?>' : '';
 
 		// Load "like.php"
@@ -1318,9 +1371,9 @@
 
 	// Workaround for stupid Chrome bug
 	if (URLJumps || URLHash.match (/comments|hashover/)) {
-		if ($(URLHash)) {
+		if (getElement (URLHash)) {
 			var scroller = function () {
-				$(URLHash).scrollIntoView (true);
+				getElement (URLHash).scrollIntoView (true);
 			};
 
 			// Compatibility wrapper
@@ -1334,7 +1387,7 @@
 		}
 	}
 
-	if ($('hashover-message').textContent !== '') {
-		showMessage ($('hashover-message'));
+	if (getElement ('hashover-message').textContent !== '') {
+		showMessage (getElement ('hashover-message'));
 	}
 }) ();

@@ -2,21 +2,26 @@ Changes by Jacob Barkdull 2015-07-29
 --------------------------------------------------------------------------------
 * hashover/scripts/javascript-mode.php
 
-	- The JSON object for comment data is now iterated over by array key, 
-	  instead of enumerable properties. When the comment data consisted of 
-	  nested objects, enumerable property iteration was necessary, however, 
+	- The JSON object for comment data is now iterated over by array key,
+	  instead of enumerable properties. When the comment data consisted of
+	  nested objects, enumerable property iteration was necessary, however,
 	  the nested objects were replaced with arrays a while ago.
 
-	  Although bad practice, developers sometimes add custom Prototype 
-	  methods to all Objects, Arrays, and/or Strings in the document. 
-	  Therefore iterating over the comment data by enumerable properties 
-	  isn't efficient and requires more work be done the more custom 
+	  Although bad practice, developers sometimes add custom Prototype
+	  methods to all Objects, Arrays, and/or Strings in the document.
+	  Therefore iterating over the comment data by enumerable properties
+	  isn't efficient and requires more work be done the more custom
 	  methods are added to their Prototype.
 
-	  This change also means other JavaScript on the same page as HashOver 
+	  This change also means other JavaScript on the same page as HashOver
 	  will not conflict with HashOver if it happens to modify Prototypes.
 
 	- Changed some variable names.
+
+	- $() function breaks coding standard, renamed.
+
+	- Fixed: Early versions of Firefox, Chrome, and Internet Explorer don't
+	  support Element.classList, fallback functionality has been added.
 
 
 * hashover/scripts/htmloutput.php
@@ -28,6 +33,11 @@ Changes by Jacob Barkdull 2015-07-29
 * hashover/scripts/templater.php
 
 	- Convert template output to operating system's end of line style.
+
+
+* hashover/scripts/parsexml.php
+
+	- Fixed: Carriage returns not being trimmed from body.
 
 
 Changes by Jacob Barkdull 2015-07-10
