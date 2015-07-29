@@ -22,6 +22,12 @@ Changes by Jacob Barkdull 2015-07-29
 * hashover/scripts/htmloutput.php
 
 	- Fixed "JavaScipt" hyperlink pointing to the wrong (old) filename.
+	- Minify based on operating system's end of line, not just Unix-style.
+
+
+* hashover/scripts/templater.php
+
+	- Convert template output to operating system's end of line style.
 
 
 Changes by Jacob Barkdull 2015-07-10

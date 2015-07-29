@@ -1378,7 +1378,7 @@
 		function asJSVar ($html, $var_name, $indent = "\t")
 		{
 			if ($this->setup->minifiesJavaScript) {
-				$html = str_replace (array ("\t", "\n"), array ('', ' '), $html);
+				$html = str_replace (array ("\t", PHP_EOL), array ('', ' '), $html);
 			} else {
 				$html = str_replace ("\t", '\t', $html);
 			}

@@ -32,6 +32,9 @@
 		public $input;
 		public $comment;
 
+		protected $newline_search = array ("\r\n", "\r", "\n");
+		protected $newline_replace = array ("\n", "\n", PHP_EOL);
+
 		public
 		function __construct ($input, $mode = 'javascript')
 		{
@@ -109,6 +112,7 @@
 		{
 			$this->comment = $comment;
 			$template = preg_replace_callback ('/{([a-z]+):([a-z_-]+)}/i', 'self::mainCallback', $this->input);
+			$template = str_replace ($this->newline_search, $this->newline_replace, $template);
 
 			return str_replace ("+ '' +", '+', $template);
 		}
