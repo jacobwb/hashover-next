@@ -41,7 +41,17 @@ Changes by Jacob Barkdull 2015-08-02
 	  address field is disabled.
 
 	- Login button no longer shown when user logins are disabled, however,
-	  the logout button is still shown for user who are still logged in.
+	  the logout button is still shown for users who are still logged in.
+
+
+* hashover/api/count-link.php,
+  hashover/api/json.php,
+  hashover/api/latest.php,
+  hashover/scripts/hashover-javascript.php
+
+	- Now using application/javascript instead of text/javascript, this 
+	  helps ensure more servers will correctly compress HashOver's 
+	  JavaScipt and JSON output when compression is enabled on the server.
 
 
 Changes by Jacob Barkdull 2015-07-29

@@ -34,7 +34,7 @@
 	error_reporting (E_ALL);
 
 	// Tell browser this is JavaScript
-	header ('Content-Type: text/javascript');
+	header ('Content-Type: application/javascript');
 
 	// Autoload class files
 	spl_autoload_register (function ($classname) {

@@ -34,7 +34,7 @@
 	error_reporting (E_ALL);
 
 	// Tell browser this is JavaScript
-	header ('Content-Type: text/javascript');
+	header ('Content-Type: application/javascript');
 
 	// Disable browser cache
 	header ('Expires: Wed, 08 May 1991 12:00:00 GMT');
