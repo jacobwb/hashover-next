@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -170,7 +172,7 @@
 			}
 
 			// Setup login information
-			if ($this->setup->userIsLoggedIn and !isset ($_POST['edit'])) {
+			if ($this->setup->userIsLoggedIn === true and !isset ($_POST['edit'])) {
 				$this->name = trim (html_entity_decode ($this->setup->userName, ENT_COMPAT, 'UTF-8'), " \r\n\t");
 				$this->password = trim (html_entity_decode ($this->setup->userPassword, ENT_COMPAT, 'UTF-8'), " \r\n\t");
 				$this->loginHash = trim (html_entity_decode ($_COOKIE['hashover-login'], ENT_COMPAT, 'UTF-8'), " \r\n\t");
@@ -283,7 +285,7 @@
 			if ($this->setup->spamCheckModes === 'both'
 			    or $this->setup->spamCheckModes === $this->setup->mode)
 			{
-				if ($this->spamCheck->{$this->setup->spamDatabase}()) {
+				if ($this->spamCheck->{$this->setup->spamDatabase}() === true) {
 					exit ('<b>HashOver:</b> You are blocked!');
 				}
 
@@ -307,7 +309,7 @@
 		}
 
 		// Set cookies
-		public
+		protected
 		function login ()
 		{
 			// Set login cookie
@@ -318,7 +320,7 @@
 		}
 
 		// Expire cookies
-		public
+		protected
 		function logout ()
 		{
 			// Expire login cookie
@@ -416,7 +418,7 @@
 		}
 
 		// Delete comment
-		public
+		protected
 		function deleteComment ()
 		{
 			$this->verifyFile ('file');
@@ -426,7 +428,7 @@
 				$passwords_match = $this->setup->encryption->verifyHash ($this->editPassword, $get_pass['password']);
 
 				// Check if password matches the one in the file
-				if ($passwords_match or $this->setup->userIsAdmin) {
+				if ($passwords_match === true or $this->setup->userIsAdmin === true) {
 					// Delete the comment file
 					if ($this->commentData->delete ($_POST['file'], $this->setup->userDeletionsUnlink)) {
 						$this->removeFromLatest ($_POST['file']);
@@ -507,14 +509,14 @@
 			}
 
 			$this->writeComment['body'] = $clean_code;
-			$this->writeComment['status'] = $this->setup->usesModeration ? 'pending' : 'approved';
+			$this->writeComment['status'] = ($this->setup->usesModeration === true) ? 'pending' : 'approved';
 			$this->writeComment['date'] = date (DATE_ISO8601);
 
-			if ($this->setup->allowsNames and !empty ($this->name)) {
+			if ($this->setup->allowsNames === true and !empty ($this->name)) {
 				$this->writeComment['name'] = $this->name;
 
 				// Store password and login ID if a password is given
-				if ($this->setup->allowsPasswords and !empty ($this->password)) {
+				if ($this->setup->allowsPasswords === true and !empty ($this->password)) {
 					$this->writeComment['password'] = $this->password;
 
 					// Store login ID if login hash is non-empty
@@ -525,7 +527,7 @@
 			}
 
 			// Store e-mail if one is given
-			if ($this->setup->allowsEmails) {
+			if ($this->setup->allowsEmails === true) {
 				if (!empty ($this->email)) {
 					$encryption_keys = $this->setup->encryption->encrypt ($this->email);
 					$this->writeComment['email'] = $encryption_keys['encrypted'];
@@ -538,14 +540,14 @@
 			}
 
 			// Store website URL if one is given
-			if ($this->setup->allowsWebsites) {
+			if ($this->setup->allowsWebsites === true) {
 				if (!empty ($this->website)) {
 					$this->writeComment['website'] = $this->website;
 				}
 			}
 
 			// Store user IP address if setup to and one is given
-			if ($this->setup->storesIPAddress) {
+			if ($this->setup->storesIPAddress === true) {
 				if (!empty ($_SERVER['REMOTE_ADDR'])) {
 					$this->writeComment['ipaddr'] = $_SERVER['REMOTE_ADDR'];
 				}
@@ -658,7 +660,7 @@
 					    and $reply_email !== $this->email
 					    and $reply_comment['notifications'] === 'yes')
 					{
-						if ($this->setup->allowsUserReplies) {
+						if ($this->setup->allowsUserReplies === true) {
 							$this->userHeaders = $this->headers;
 
 							// Add user's e-mail address to "From" line
@@ -696,13 +698,19 @@
 					mail ($this->setup->notificationEmail, 'New Comment', $webmaster_message, $this->headers);
 				}
 
-				// Set/update user login cookie, kick visitor back to comment
-				$this->cookies->set ('hashover-login', $this->loginHash);
+				// Set/update user login cookie
+				if ($this->setup->allowsLogin !== false and $this->setup->usesAutoLogin !== false) {
+					$this->cookies->set ('hashover-login', $this->loginHash);
+				}
+
+				// Kick visitor back to comment
 				$this->kickback ('', false, $permalink);
 			}
 
+			// Kick visitor back with an error
 			$this->kickback ($this->locales->locale['post_fail'], true);
 
+			// Set reply cookie if comment was a reply
 			if (!empty ($this->replyTo)) {
 				$this->cookies->set ('replied', $this->replyTo);
 			}
@@ -718,6 +726,11 @@
 
 				switch ($action) {
 					case 'login': {
+						if ($this->setup->allowsLogin !== true) {
+							$this->postComment ();
+							break;
+						}
+
 						$this->login ();
 						break;
 					}

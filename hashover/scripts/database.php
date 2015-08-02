@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -60,23 +62,25 @@
 				exit ($setup->escapeOutput ($error->getMessage (), 'single'));
 			}
 
-			// Create comment tread table
+			// Statement for creating initial comment tread table
 			$create = 'CREATE TABLE IF NOT EXISTS \'' . $setup->threadDirectory . '\' '
 			        . '(id TEXT PRIMARY KEY,'
+			        . ' body TEXT,'
+			        . ' status TEXT,'
+			        . ' date TEXT,'
 			        . ' name TEXT,'
 			        . ' password TEXT,'
 			        . ' login_id TEXT,'
 			        . ' email TEXT,'
 			        . ' encryption TEXT,'
-			        . ' website TEXT,'
-			        . ' date TEXT,'
-			        . ' likes TEXT,'
-			        . ' dislikes TEXT,'
+			        . ' email_hash TEXT,'
 			        . ' notifications TEXT,'
+			        . ' website TEXT,'
 			        . ' ipaddr TEXT,'
-			        . ' status TEXT,'
-			        . ' body TEXT)';
+			        . ' likes TEXT,'
+			        . ' dislikes TEXT)';
 
+			// Execute statement
 			$this->database->exec ($create);
 		}
 
@@ -84,28 +88,31 @@
 		function write ($action, array $array)
 		{
 			switch ($action) {
+				// Action for posting a comment
 				case 'insert': {
 					$query = 'INSERT INTO \'' . $this->setup->threadDirectory . '\' VALUES '
 					       . '(:id,'
+					       . ' :body,'
+					       . ' :status,'
+					       . ' :date,'
 					       . ' :name,'
 					       . ' :password,'
 					       . ' :login_id,'
 					       . ' :email,'
 					       . ' :encryption,'
-					       . ' :website,'
-					       . ' :date,'
-					       . ' 0,'
-					       . ' 0,'
+					       . ' :email_hash,'
 					       . ' :notifications,'
+					       . ' :website,'
 					       . ' :ipaddr,'
-					       . ' :status,'
-					       . ' :body)';
+					       . ' 0,'
+					       . ' 0)';
 
 					break;
 				}
 
+				// Action for deleting a comment
 				case 'delete': {
-					if ($this->setup->userDeletionsUnlink) {
+					if ($this->setup->userDeletionsUnlink === true) {
 						$query = 'DELETE FROM \'' . $this->setup->threadDirectory . '\' WHERE id=:id';
 					} else {
 						$query = 'UPDATE \'' . $this->setup->threadDirectory . '\' ';
@@ -115,18 +122,20 @@
 					break;
 				}
 
+				// Action for editing a comment
 				case 'update': {
 					$query = 'UPDATE \'' . $this->setup->threadDirectory . '\' '
 					       . 'SET'
+					       . ' body=:body,'
 					       . ' name=:name,'
 					       . ' password=:password,'
 					       . ' email=:email,'
 					       . ' encryption=:encryption,'
+					       . ' email_hash=:email_hash,'
+					       . ' notifications=:notifications,'
 					       . ' website=:website,'
 					       . ' likes=:likes,'
-					       . ' dislikes=:dislikes,'
-					       . ' notifications=:notifications,'
-					       . ' body=:body'
+					       . ' dislikes=:dislikes'
 					       . ' WHERE id=:id';
 
 					break;

@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -151,12 +153,12 @@
 			$comment_wrapper = $this->html->commentWrapper ($comment['permalink']);
 
 			// Check if this comment is a popular comment
-			if ($forpop) {
+			if ($forpop === true) {
 				// Remove "_pop" from text for avatar
 				$permatext = str_replace ('_pop', '', $permatext);
 			} else {
 				// Check if comment is a reply
-				if ($is_reply) {
+				if ($is_reply === true) {
 					// Append class to indicate comment is a reply
 					$comment_wrapper->appendAttribute ('class', 'hashover-reply');
 				}
@@ -200,7 +202,7 @@
 				}
 
 				// Add "Top of Thread" hyperlink to template
-				if ($is_reply) {
+				if ($is_reply === true) {
 					$parent = preg_replace ('/^(c[0-9r]+)r[0-9]+$/', '\\1', $comment['permalink']);
 					$template['thread_link'] = $this->html->threadLink ($parent);
 				}
@@ -241,7 +243,7 @@
 				$template['like_count'] = $this->html->likeCount ($comment['permalink'], $likeCount);
 
 				// Get number of dislikes, append "Dislike(s)" locale
-				if ($this->settings->allowsDislikes) {
+				if ($this->settings->allowsDislikes === true) {
 					if (isset ($comment['dislikes'])) {
 						$plural = ($comment['dislikes'] === 1 ? 0 : 1);
 						$dislikeCount = $comment['dislikes'] . ' ' . $this->locales->locale['dislike'][$plural];

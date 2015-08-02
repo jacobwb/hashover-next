@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -151,7 +153,7 @@
 				$input_wrapper->createAttribute ('class', $attributes['wrapper_class']);
 
 				// Create label element for input
-				if ($this->setup->usesLabels) {
+				if ($this->setup->usesLabels === true) {
 					$label = new HTMLTag ('label', false, false);
 					$label->createAttribute ('for', $attributes['input_id']);
 					$label->createAttribute ('class', $attributes['label_class']);
@@ -189,7 +191,7 @@
 				$avatar_src = $this->setup->httpDirectory;
 
 				// Logged in
-				if ($this->setup->userIsLoggedIn and !empty ($this->setup->userEmail)) {
+				if ($this->setup->userIsLoggedIn === true and !empty ($this->setup->userEmail)) {
 					// Image source is local script that handles avatar images
 					$avatar_src .= '/scripts/avatars.php';
 					$avatar_src .= '?hash=' . md5 (strtolower (trim ($this->setup->userEmail)));
@@ -454,6 +456,45 @@
 			}
 		}
 
+		protected
+		function subscribeLabel ($id = '', $class = 'main', $checked = true)
+		{
+			// Create subscribe checkbox label element
+			$subscribe_label = new HTMLTag ('label');
+			$subscribe_label->createAttribute ('for', 'hashover-subscribe');
+
+			if (!empty ($id)) {
+				$subscribe_label->appendAttribute ('for', '-' . $this->injectVar ($id), false);
+			}
+
+			$subscribe_label->createAttribute ('class', 'hashover-' . $class . '-label');
+			$subscribe_label->createAttribute ('title', $this->locales->locale ('subscribe_tip', $this->addcslashes));
+
+			// Create subscribe element checkbox
+			$subscribe = new HTMLTag ('input', true);
+			$subscribe->createAttribute ('id', 'hashover-subscribe');
+
+			if (!empty ($id)) {
+				$subscribe->appendAttribute ('id', '-' . $this->injectVar ($id), false);
+			}
+
+			$subscribe->createAttribute ('type', 'checkbox');
+			$subscribe->createAttribute ('name', 'subscribe');
+
+			// Check checkbox
+			if ($checked === true) {
+				$subscribe->createAttribute ('checked', 'true');
+			}
+
+			// Add subscribe checkbox element to subscribe checkbox label element
+			$subscribe_label->appendChild ($subscribe);
+
+			// Add text to subscribe checkbox label element
+			$subscribe_label->appendInnerHTML ($this->locales->locale ('subscribe', $this->addcslashes));
+
+			return $subscribe_label;
+		}
+
 		public
 		function initialHTML ($hashover_wrapper = true)
 		{
@@ -462,14 +503,14 @@
 			$hashover_element->createAttribute ('id', 'hashover');
 
 			// Add class for differentiating desktop and mobile styling
-			if ($this->setup->isMobile) {
+			if ($this->setup->isMobile === true) {
 				$hashover_element->appendAttribute ('class', 'hashover-mobile');
 			} else {
 				$hashover_element->appendAttribute ('class', 'hashover-desktop');
 			}
 
 			// Add class to indicate user login status
-			if ($this->setup->userIsLoggedIn) {
+			if ($this->setup->userIsLoggedIn === true) {
 				$hashover_element->appendAttribute ('class', 'hashover-logged-in');
 			} else {
 				$hashover_element->appendAttribute ('class', 'hashover-logged-out');
@@ -495,7 +536,7 @@
 			$post_title->innerHTML ($post_comment_locale[0]);
 
 			// Add optional "on <page title>" to "Post Comment" title
-			if ($this->setup->displaysTitle) {
+			if ($this->setup->displaysTitle === true) {
 				$on_title = str_replace ('_TITLE_', $this->pageTitle, $post_comment_locale[1]);
 				$post_title->appendInnerHTML ($on_title, false);
 			}
@@ -555,7 +596,7 @@
 			}
 
 			// Logged in
-			if ($this->setup->userIsLoggedIn) {
+			if ($this->setup->userIsLoggedIn === true) {
 				if (!empty ($this->setup->userName)) {
 					$user_name = $this->setup->userName;
 				} else {
@@ -645,7 +686,7 @@
 			$main_form->appendChild ($required_fields);
 
 			// Create label element for comment textarea
-			if ($this->setup->usesLabels) {
+			if ($this->setup->usesLabels === true) {
 				$main_comment_label = new HTMLTag ('label', false, false);
 				$main_comment_label->createAttribute ('for', 'hashover-main-comment');
 				$main_comment_label->createAttribute ('class', 'hashover-comment-label');
@@ -709,8 +750,10 @@
 			$main_form_footer->createAttribute ('class', 'hashover-form-footer');
 
 			// Add checkbox label element to main form buttons wrapper element
-			if (!empty ($this->setup->userEmail) or $this->setup->userIsLoggedIn === false) {
-				$main_form_footer->appendChild ($this->subscribeLabel ());
+			if ($this->setup->allowsEmails !== false) {
+				if ($this->setup->userIsLoggedIn === false or !empty ($this->setup->userEmail)) {
+					$main_form_footer->appendChild ($this->subscribeLabel ());
+				}
 			}
 
 			// Create wrapper for form buttons
@@ -718,27 +761,29 @@
 			$main_form_buttons_wrapper->createAttribute ('class', 'hashover-form-buttons');
 
 			// Create "Login" / "Logout" button element
-			$login_button = new HTMLTag ('input', true);
-			$login_button->createAttribute ('id', 'hashover-login-button');
-			$login_button->createAttribute ('class', 'hashover-submit');
-			$login_button->createAttribute ('type', 'submit');
+			if ($this->setup->allowsLogin !== false or $this->setup->userIsLoggedIn === true) {
+				$login_button = new HTMLTag ('input', true);
+				$login_button->createAttribute ('id', 'hashover-login-button');
+				$login_button->createAttribute ('class', 'hashover-submit');
+				$login_button->createAttribute ('type', 'submit');
 
-			// Logged in
-			if ($this->setup->userIsLoggedIn) {
-				$login_button->appendAttribute ('class', 'hashover-logout');
-				$login_button->createAttribute ('name', 'logout');
-				$login_button->createAttribute ('value', $this->locales->locale ('logout', $this->addcslashes));
-				$login_button->createAttribute ('title', $this->locales->locale ('logout', $this->addcslashes));
-			} else {
-				// Logged out
-				$login_button->appendAttribute ('class', 'hashover-login');
-				$login_button->createAttribute ('name', 'login');
-				$login_button->createAttribute ('value', $this->locales->locale ('login', $this->addcslashes));
-				$login_button->createAttribute ('title', $this->locales->locale ('login_tip', $this->addcslashes));
+				// Logged in
+				if ($this->setup->userIsLoggedIn === true) {
+					$login_button->appendAttribute ('class', 'hashover-logout');
+					$login_button->createAttribute ('name', 'logout');
+					$login_button->createAttribute ('value', $this->locales->locale ('logout', $this->addcslashes));
+					$login_button->createAttribute ('title', $this->locales->locale ('logout', $this->addcslashes));
+				} else {
+					// Logged out
+					$login_button->appendAttribute ('class', 'hashover-login');
+					$login_button->createAttribute ('name', 'login');
+					$login_button->createAttribute ('value', $this->locales->locale ('login', $this->addcslashes));
+					$login_button->createAttribute ('title', $this->locales->locale ('login_tip', $this->addcslashes));
+				}
+
+				// Add "Login" / "Logout" element to main form footer element
+				$main_form_buttons_wrapper->appendChild ($login_button);
 			}
-
-			// Add "Login" / "Logout" element to main form footer element
-			$main_form_buttons_wrapper->appendChild ($login_button);
 
 			// Create "Post Comment" button element
 			$main_post_button = new HTMLTag ('input', true);
@@ -1002,51 +1047,12 @@
 			$hashover_element->appendChild ($end_links_wrapper);
 
 			// Return all HTML with the HashOver wrapper element
-			if ($hashover_wrapper) {
+			if ($hashover_wrapper === true) {
 				return $hashover_element->asHTML ();
 			}
 
 			// Return just the HashOver wrapper element's innerHTML
 			return $hashover_element->innerHTML;
-		}
-
-		protected
-		function subscribeLabel ($id = '', $class = 'main', $checked = true)
-		{
-			// Create subscribe checkbox label element
-			$subscribe_label = new HTMLTag ('label');
-			$subscribe_label->createAttribute ('for', 'hashover-subscribe');
-
-			if (!empty ($id)) {
-				$subscribe_label->appendAttribute ('for', '-' . $this->injectVar ($id), false);
-			}
-
-			$subscribe_label->createAttribute ('class', 'hashover-' . $class . '-label');
-			$subscribe_label->createAttribute ('title', $this->locales->locale ('subscribe_tip', $this->addcslashes));
-
-			// Create subscribe element checkbox
-			$subscribe = new HTMLTag ('input', true);
-			$subscribe->createAttribute ('id', 'hashover-subscribe');
-
-			if (!empty ($id)) {
-				$subscribe->appendAttribute ('id', '-' . $this->injectVar ($id), false);
-			}
-
-			$subscribe->createAttribute ('type', 'checkbox');
-			$subscribe->createAttribute ('name', 'subscribe');
-
-			// Check checkbox
-			if ($checked) {
-				$subscribe->createAttribute ('checked', 'true');
-			}
-
-			// Add subscribe checkbox element to subscribe checkbox label element
-			$subscribe_label->appendChild ($subscribe);
-
-			// Add text to subscribe checkbox label element
-			$subscribe_label->appendInnerHTML ($this->locales->locale ('subscribe', $this->addcslashes));
-
-			return $subscribe_label;
 		}
 
 		public
@@ -1075,7 +1081,7 @@
 			}
 
 			// Create label element for comment textarea
-			if ($this->setup->usesLabels) {
+			if ($this->setup->usesLabels === true) {
 				$reply_comment_label = new HTMLTag ('label', false, false);
 				$reply_comment_label->createAttribute ('for', 'hashover-reply-comment');
 				$reply_comment_label->createAttribute ('class', 'hashover-comment-label');
@@ -1146,8 +1152,10 @@
 			$reply_form_footer->createAttribute ('class', 'hashover-form-footer');
 
 			// Add checkbox label element to reply form footer element
-			if (!empty ($this->setup->userEmail) or $this->setup->userIsLoggedIn === false) {
-				$reply_form_footer->appendChild ($this->subscribeLabel ($permalink, 'reply', $subscribed));
+			if ($this->setup->allowsEmails !== false) {
+				if ($this->setup->userIsLoggedIn === false or !empty ($this->setup->userEmail)) {
+					$reply_form_footer->appendChild ($this->subscribeLabel ($permalink, 'reply', $subscribed));
+				}
 			}
 
 			// Create wrapper for form buttons
@@ -1155,7 +1163,7 @@
 			$reply_form_buttons_wrapper->createAttribute ('class', 'hashover-form-buttons');
 
 			// Create "Cancel" link element
-			if ($this->setup->usesCancelButtons) {
+			if ($this->setup->usesCancelButtons === true) {
 				$reply_cancel_button = new HTMLTag ('a', false, false);
 				$reply_cancel_button->createAttribute ('href', $this->setup->parsedURL['path']);
 
@@ -1239,7 +1247,7 @@
 			$edit_form->appendChild ($this->loginInputs (true, $name, $website));
 
 			// Create label element for comment textarea
-			if ($this->setup->usesLabels) {
+			if ($this->setup->usesLabels === true) {
 				$edit_comment_label = new HTMLTag ('label', false, false);
 				$edit_comment_label->createAttribute ('for', 'hashover-edit-comment');
 				$edit_comment_label->createAttribute ('class', 'hashover-comment-label');
@@ -1295,14 +1303,16 @@
 			$edit_form_footer->createAttribute ('class', 'hashover-form-footer');
 
 			// Add checkbox label element to edit form buttons wrapper element
-			$edit_form_footer->appendChild ($this->subscribeLabel ($permalink, 'edit', $subscribed));
+			if ($this->setup->allowsEmails !== false) {
+				$edit_form_footer->appendChild ($this->subscribeLabel ($permalink, 'edit', $subscribed));
+			}
 
 			// Create wrapper for form buttons
 			$edit_form_buttons_wrapper = new HTMLTag ('span');
 			$edit_form_buttons_wrapper->createAttribute ('class', 'hashover-form-buttons');
 
 			// Create "Cancel" link element
-			if ($this->setup->usesCancelButtons) {
+			if ($this->setup->usesCancelButtons === true) {
 				$edit_cancel_button = new HTMLTag ('a', false, false);
 				$edit_cancel_button->createAttribute ('href', $this->setup->parsedURL['path']);
 
@@ -1377,7 +1387,7 @@
 		public
 		function asJSVar ($html, $var_name, $indent = "\t")
 		{
-			if ($this->setup->minifiesJavaScript) {
+			if ($this->setup->minifiesJavaScript === true) {
 				$html = str_replace (array ("\t", PHP_EOL), array ('', ' '), $html);
 			} else {
 				$html = str_replace ("\t", '\t', $html);

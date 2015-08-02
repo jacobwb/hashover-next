@@ -49,6 +49,7 @@
 		public $allowsEmails		= true;				// Whether users can enter an e-mail address (required for user e-mail notifications)
 		public $allowsWebsites		= true;				// Whether users can enter a website
 		public $allowsImages		= true;				// Whether external image URLs wrapped in [img] tags are embedded
+		public $allowsLogin		= true;				// Whether users can login and logout (when false form cookies are still set)
 		public $allowsDislikes		= false;			// Whether a "Dislike" link is display; allowing Reddit-style voting
 		public $collapsesComments	= true;				// Whether to hide comments and display a link to show them
 		public $collapseLimit		= 3;				// Number of comments that aren't hidden
@@ -58,6 +59,7 @@
 		// Behavior settings
 		public $displaysTitle		= true;				// Whether page title is shown or not
 		public $formPosition		= 'top';			// Position for primary form; options: 'top' or 'bottom'
+		public $usesAutoLogin		= true;				// Whether a user's first comment automatically logs them in
 		public $showsReplyCount		= true;				// Whether to show reply count separately from total
 		public $uses12HourTime		= true;				// Whether to use 12 hour time format, otherwise use 24 hour format
 		public $usesShortDates		= true;				// Whether comment dates are shortened

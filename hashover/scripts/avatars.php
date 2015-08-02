@@ -61,7 +61,7 @@
 		}
 
 		// Force Gravatar default avatar if enabled
-		if ($settings->gravatarForce) {
+		if ($settings->gravatarForce === true) {
 			$gravatar .= '&f=y';
 		}
 

@@ -105,7 +105,7 @@
 	ob_end_clean ();
 
 	// Minify JavaScript if enabled, and non-minified version isn't requested
-	if ($hashover->settings->minifiesJavaScript) {
+	if ($hashover->settings->minifiesJavaScript === true) {
 		if (!isset ($_GET['hashover-unminified'])) {
 			$jsminifier = new JSMinifier ();
 			$javascript = $jsminifier->minify ($javascript, $hashover->settings->minifyLevel);

@@ -213,7 +213,7 @@
 				$item->appendChild ($item_likes);
 			}
 
-			if ($hashover->settings->allowsDislikes) {
+			if ($hashover->settings->allowsDislikes === true) {
 				if (!empty ($comment['dislikes'])) {
 					// Create item dislikes element
 					$item_dislikes = $xml->createElement ('dislikes');

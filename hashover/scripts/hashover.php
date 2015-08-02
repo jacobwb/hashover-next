@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -100,7 +102,7 @@
 			$showing_comments = $this->locales->locale[$locale_key][$prime_plural];
 
 			// Whether to show reply count separately
-			if ($this->settings->showsReplyCount) {
+			if ($this->settings->showsReplyCount === true) {
 				// If so, inject top level comment count into count locale string
 				$this->commentCount = str_replace ('_NUM_', $this->readComments->primaryCount - 1, $showing_comments);
 

@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -85,7 +87,7 @@
 			}
 
 			if (!empty ($this->attributes[$name])) {
-				if ($spaced) {
+				if ($spaced === true) {
 					$this->attributes[$name] .= ' ';
 				}
 			} else {
@@ -99,7 +101,7 @@
 		public
 		function innerHTML ($html = '')
 		{
-			if ($this->isSingleton) {
+			if ($this->isSingleton === true) {
 				$this->throwError ('Singleton tags do not have innerHTML.');
 				return false;
 			}
@@ -114,13 +116,13 @@
 		public
 		function appendInnerHTML ($html = '', $eol = true)
 		{
-			if ($this->isSingleton) {
+			if ($this->isSingleton === true) {
 				$this->throwError ('Singleton tags do not have innerHTML.');
 				return false;
 			}
 
 			if (!empty ($html)) {
-				if ($eol) {
+				if ($eol === true) {
 					$this->innerHTML .= PHP_EOL;
 				}
 
@@ -133,7 +135,7 @@
 		public
 		function appendChild (HTMLTag $object)
 		{
-			if ($this->isSingleton) {
+			if ($this->isSingleton === true) {
 				$this->throwError ('Singleton tags do not have innerHTML.');
 				return false;
 			}
@@ -169,12 +171,12 @@
 
 			$tag .= '>';
 
-			if ($this->isSingleton) {
+			if ($this->isSingleton === true) {
 				return $tag;
 			}
 
 			if (!empty ($this->innerHTML)) {
-				if ($this->usesPrettyPrint) {
+				if ($this->usesPrettyPrint === true) {
 					$tag .= PHP_EOL . "\t";
 					$tag .= str_replace (PHP_EOL, PHP_EOL . "\t", $this->innerHTML);
 					$tag .= PHP_EOL;

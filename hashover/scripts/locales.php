@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -54,7 +56,7 @@
 		public
 		function locale ($string, $addcslashes = false, $charlist = "'")
 		{
-			if ($addcslashes) {
+			if ($addcslashes === true) {
 				if (is_array ($this->locale[$string])) {
 					$escaped_array = array ();
 

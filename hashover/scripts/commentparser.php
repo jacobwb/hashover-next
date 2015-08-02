@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -50,7 +52,7 @@
 
 		// Parse comment files
 		public
-		function parse (array $comment, $key, $key_parts, $pop = false, $pop_listed = true)
+		function parse (array $comment, $key, $key_parts, $popular = false, $popular_listed = true)
 		{
 			$output = array ();
 			$micro_date = strtotime ($comment['date']);
@@ -64,12 +66,12 @@
 			}
 
 			// Append "_pop" to end of permalink if popular comment
-			if ($pop) {
+			if ($popular === true) {
 				$output['permalink'] .= '_pop';
 			}
 
 			// Format date and time
-			if ($this->setup->usesShortDates) {
+			if ($this->setup->usesShortDates === true) {
 				$make_cmtdate = new DateTime ($comment['date']);
 				$cur_date = new DateTime (date ('m/d/Y'));
 				$interval = $make_cmtdate->diff ($cur_date);
@@ -132,7 +134,7 @@
 			}
 
 			// If enabled, add number of dislikes to comment data
-			if ($this->setup->allowsDislikes) {
+			if ($this->setup->allowsDislikes === true) {
 				if (!empty ($comment['dislikes'])) {
 					$output['dislikes'] =(int) $comment['dislikes'];
 
@@ -142,17 +144,19 @@
 			}
 
 			// Add comment to popular comments list if popular enough
-			if ($pop_listed and $popularity >= $this->setup->popularityThreshold) {
-				$this->popularList[$popularity . '.' . $key] = array ($key, $key_parts);
+			if ($popular_listed === true) {
+				if ($popularity >= $this->setup->popularityThreshold) {
+					$this->popularList[$popularity . '.' . $key] = array ($key, $key_parts);
+				}
 			}
 
 			// Authenticate comment editing rights
-			if ($this->setup->userIsAdmin) {
+			if ($this->setup->userIsAdmin === true) {
 				// Admin owns every comment
 				$output['user_owned'] = true;
 			} else {
 				// Check this comment belongs to logged in user
-				if ($this->setup->userIsLoggedIn and !empty ($comment['login_id'])) {
+				if ($this->setup->userIsLoggedIn === true and !empty ($comment['login_id'])) {
 					if ($_COOKIE['hashover-login'] === $comment['login_id']) {
 						$output['user_owned'] = true;
 					}
@@ -171,7 +175,7 @@
 					}
 
 					case 'disliked': {
-						if ($this->setup->allowsDislikes) {
+						if ($this->setup->allowsDislikes === true) {
 							$output['disliked'] = true;
 						}
 

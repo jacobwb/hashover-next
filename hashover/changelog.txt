@@ -1,3 +1,49 @@
+Changes by Jacob Barkdull 2015-08-02
+--------------------------------------------------------------------------------
+* Conform to coding standard
+
+	- All class files now exit with a notice when executed directly.
+
+	- Now using strict comparisons instead of shorthand ifs. This prevents 
+	  unnecessary type juggling.
+
+	- Some variables have been renamed.
+
+
+* hashover/scripts/javascript-mode.php
+
+	- Fixed: Reply and Edit form actions set to wrong (old) filename. Form 
+	  action values are now set to `$_SERVER['PHP_SELF']`, which once this 
+	  file is included is `hashover-javascript.php`.
+
+
+* hashover/scripts/database.php,
+  hashover/scripts/parsesql.php
+
+	- SQL now stores and uses e-mail MD5 hash for Gravatar icons.
+	- Rearranged statements for easier reading.
+
+
+* New settings
+
+	- Set whether users can login and logout with:
+
+	      public bool $allowsLogin = true;
+
+	- Set whether a user's first comment automatically logs them in with:
+
+	      public bool $usesAutoLogin = true;
+
+
+* hashover/scripts/htmloutput.php
+
+	- Notification e-mail subscription checkbox no longer shown if e-mail
+	  address field is disabled.
+
+	- Login button no longer shown when user logins are disabled, however,
+	  the logout button is still shown for user who are still logged in.
+
+
 Changes by Jacob Barkdull 2015-07-29
 --------------------------------------------------------------------------------
 * hashover/scripts/javascript-mode.php

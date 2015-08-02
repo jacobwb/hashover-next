@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -99,7 +101,7 @@
 
 			foreach ($this->commentlist as $key => $comment) {
 				if ($comment === 'deleted') {
-					if ($skipdeleted) {
+					if ($skipdeleted === true) {
 						continue;
 					}
 
@@ -108,7 +110,7 @@
 					$read_comment = $this->data->read ($comment, $fullpath);
 
 					// See if it read successfully
-					if ($read_comment) {
+					if ($read_comment !== false) {
 						// If so, add the comment to output
 						$comments[$key] = $read_comment;
 					} else {

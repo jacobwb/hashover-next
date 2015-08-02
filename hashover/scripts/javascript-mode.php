@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This isn\'t a standalone file.');
 		}
 	}
 
@@ -127,7 +129,7 @@
 		'dislikeCmt':	'<?php echo $hashover->locales->locale ('dislike_comment', true); ?>',
 		'dislikedCmt':	'<?php echo $hashover->locales->locale ('disliked_comment', true); ?>'
 	};
-<?php if ($hashover->settings->appendsCSS) { ?>
+<?php if ($hashover->settings->appendsCSS === true) { ?>
 
 	// Check if comment theme stylesheet is already in page head
 	if (typeof (document.querySelector) === 'function') {
@@ -427,7 +429,7 @@
 				// Add like link to HTML template
 				template.like_link = '<?php echo $hashover->html->likeLink ('permalink', 'likeClass', 'likeTitle', 'likeText'); ?>';
 
-<?php if ($hashover->settings->allowsDislikes) { ?>
+<?php if ($hashover->settings->allowsDislikes === true) { ?>
 				// Check whether this comment was disliked by the visitor
 				if (comment.disliked) {
 					// If so, set various attributes to indicate comment was disliked
@@ -454,7 +456,7 @@
 			// Add like count to HTML template
 			template.like_count = '<?php echo $hashover->html->likeCount ('permalink', '(likeCount || \'\')'); ?>';
 
-<?php if ($hashover->settings->allowsDislikes) { ?>
+<?php if ($hashover->settings->allowsDislikes === true) { ?>
 			// Get number of dislikes, append "Dislike(s)" locale
 			if (comment.dislikes) {
 				var dislikeCount = comment.dislikes + ' ' + locale.dislike[(comment.dislikes === 1 ? 0 : 1)];
@@ -491,7 +493,7 @@
 
 			// Replace [img] tags with external image placeholder if enabled
 			body = body.replace (imageRegex, function (fullURL, url) {
-<?php if ($hashover->settings->allowsImages) { ?>
+<?php if ($hashover->settings->allowsImages === true) { ?>
 				// Get image extension from URL
 				var urlExtension = url.split ('#')[0];
 				    urlExtension = urlExtension.split ('?')[0];
@@ -646,7 +648,7 @@
 
 			return false;
 		};
-<?php if ($hashover->settings->usesCancelButtons) { ?>
+<?php if ($hashover->settings->usesCancelButtons === true) { ?>
 
 		// Attach event listeners to "Cancel" button
 		getElement ('hashover-' + form + '-cancel-' + permalink, true).onclick = function () {
@@ -687,7 +689,7 @@
 		    form.id = 'hashover-reply-' + permalink;
 		    form.className = 'hashover-reply-form';
 		    form.method = 'post';
-		    form.action = httpRoot + '/scripts/javascript-mode.php';
+		    form.action = '<?php echo $_SERVER['PHP_SELF']; ?>';
 
 <?php
 
@@ -759,7 +761,7 @@
 		    form.id = 'hashover-edit-' + permalink;
 		    form.className = 'hashover-edit-form';
 		    form.method = 'post';
-		    form.action = httpRoot + '/scripts/javascript-mode.php';
+		    form.action = '<?php echo $_SERVER['PHP_SELF']; ?>';
 
 <?php
 
@@ -874,7 +876,7 @@
 					mouseOverChanger (likeLink, locale.unlike, locale.liked);
 				}
 			});
-<?php if ($hashover->settings->allowsDislikes) { ?>
+<?php if ($hashover->settings->allowsDislikes === true) { ?>
 
 			ifElement ('hashover-dislike-' + permalink, function (dislikeLink) {
 				// Add onClick event to "Dislike" hyperlinks
@@ -1276,7 +1278,7 @@
 
 		var actionLink = getElement ('hashover-' + action + '-' + permalink);
 		var likesElement = getElement ('hashover-' + action + 's-' + permalink);
-		var dislikesClass = (action === 'like') ? '<?php if ($hashover->settings->allowsDislikes) echo ' hashover-dislikes-enabled'; ?>' : '';
+		var dislikesClass = (action === 'like') ? '<?php if ($hashover->settings->allowsDislikes === true) echo ' hashover-dislikes-enabled'; ?>' : '';
 
 		// Load "like.php"
 		var like = new XMLHttpRequest ();

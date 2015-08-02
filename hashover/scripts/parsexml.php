@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -121,13 +123,13 @@
 		public
 		function delete ($file, $hardUnlink = false)
 		{
-			if ($hardUnlink) {
+			if ($hardUnlink === true) {
 				return unlink ($this->setup->dir . '/' . $file . '.xml');
 			}
 
 			$xml = $this->read ($file);
 
-			if ($xml) {
+			if ($xml !== false) {
 				$xml['status'] = 'deleted';
 
 				if ($this->save ($xml, $file, true)) {

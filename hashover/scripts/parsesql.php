@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -35,7 +37,7 @@
 			$this->storageMode = 'sqlite';
 			$results = $this->database->query ('SELECT id FROM \'' . $this->setup->threadDirectory . '\'');
 
-			if ($results) {
+			if ($results !== false) {
 				$results->execute ();
 				$fetchAll = $results->fetchAll (PDO::FETCH_NUM);
 				$return_array = array ();
@@ -56,30 +58,31 @@
 		{
 			$result = $this->database->query (
 				'SELECT'
+				. ' body,'
+				. ' status,'
+				. ' date,'
 				. ' name,'
 				. ' password,'
 				. ' login_id,'
 				. ' email,'
 				. ' encryption,'
-				. ' website,'
-				. ' date,'
-				. ' likes,'
-				. ' dislikes,'
+				. ' email_hash,'
 				. ' notifications,'
+				. ' website,'
 				. ' ipaddr,'
-				. ' status,'
-				. ' body'
+				. ' likes,'
+				. ' dislikes'
 				. ' FROM \'' . $this->setup->threadDirectory . '\''
 				. ' WHERE id=\'' . $id . '\''
 			);
 
-			if ($result) {
-				$comment = $result->fetch (PDO::FETCH_ASSOC);
+			if ($result !== false) {
+				return (array) $result->fetch (PDO::FETCH_ASSOC);
 			} else {
 				exit ($this->setup->escapeOutput ('SQL query fail!', 'single'));
 			}
 
-			return (array) $comment;
+			return false;
 		}
 
 		public
@@ -89,15 +92,16 @@
 				return $this->write ('update',
 					array (
 						'id' => $id,
+						'body' => $contents['body'],
 						'name' => $contents['name'],
 						'password' => $contents['password'],
 						'email' => $contents['email'],
 						'encryption' => $contents['encryption'],
+						'email_hash' => $contents['email_hash'],
+						'notifications' => $contents['notifications'],
 						'website' => $contents['website'],
 						'likes' => $contents['likes'],
-						'dislikes' => $contents['dislikes'],
-						'notifications' => $contents['notifications'],
-						'body' => $contents['body']
+						'dislikes' => $contents['dislikes']
 					)
 				);
 			} else {

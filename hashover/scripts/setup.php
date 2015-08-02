@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -271,7 +273,7 @@
 		function APIStatus ($api)
 		{
 			// Check if all available APIs are fully enabled
-			if ($this->enablesAPI) {
+			if ($this->enablesAPI === true) {
 				return 'enabled';
 			}
 

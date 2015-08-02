@@ -23,6 +23,8 @@
 		if (isset ($_GET['source'])) {
 			header ('Content-type: text/plain; charset=UTF-8');
 			exit (file_get_contents (basename (__FILE__)));
+		} else {
+			exit ('<b>HashOver</b>: This is a class file.');
 		}
 	}
 
@@ -42,11 +44,7 @@
 				$file = $this->setup->dir . '/' . $file . '.json';
 			}
 
-			$json = @json_decode (file_get_contents ($file), true);
-
-			if ($json !== false) {
-				return $json;
-			}
+			return @json_decode (file_get_contents ($file), true);
 		}
 
 		public
@@ -75,13 +73,13 @@
 		public
 		function delete ($file, $hardUnlink = false)
 		{
-			if ($hardUnlink) {
+			if ($hardUnlink === true) {
 				return unlink ($this->setup->dir . '/' . $file . '.json');
 			}
 
 			$json = $this->read ($file);
 
-			if ($json) {
+			if ($json !== false) {
 				$json['status'] = 'deleted';
 
 				if ($this->save ($json, $file, true)) {
