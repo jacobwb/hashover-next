@@ -761,28 +761,30 @@
 			$main_form_buttons_wrapper->createAttribute ('class', 'hashover-form-buttons');
 
 			// Create "Login" / "Logout" button element
-			if ($this->setup->allowsLogin !== false or $this->setup->userIsLoggedIn === true) {
-				$login_button = new HTMLTag ('input', true);
-				$login_button->createAttribute ('id', 'hashover-login-button');
-				$login_button->createAttribute ('class', 'hashover-submit');
-				$login_button->createAttribute ('type', 'submit');
+			if ($this->setup->allowsNames !== false and $this->setup->allowsPasswords !== false) {
+				if ($this->setup->allowsLogin !== false or $this->setup->userIsLoggedIn === true) {
+					$login_button = new HTMLTag ('input', true);
+					$login_button->createAttribute ('id', 'hashover-login-button');
+					$login_button->createAttribute ('class', 'hashover-submit');
+					$login_button->createAttribute ('type', 'submit');
 
-				// Logged in
-				if ($this->setup->userIsLoggedIn === true) {
-					$login_button->appendAttribute ('class', 'hashover-logout');
-					$login_button->createAttribute ('name', 'logout');
-					$login_button->createAttribute ('value', $this->locales->locale ('logout', $this->addcslashes));
-					$login_button->createAttribute ('title', $this->locales->locale ('logout', $this->addcslashes));
-				} else {
-					// Logged out
-					$login_button->appendAttribute ('class', 'hashover-login');
-					$login_button->createAttribute ('name', 'login');
-					$login_button->createAttribute ('value', $this->locales->locale ('login', $this->addcslashes));
-					$login_button->createAttribute ('title', $this->locales->locale ('login_tip', $this->addcslashes));
+					// Logged in
+					if ($this->setup->userIsLoggedIn === true) {
+						$login_button->appendAttribute ('class', 'hashover-logout');
+						$login_button->createAttribute ('name', 'logout');
+						$login_button->createAttribute ('value', $this->locales->locale ('logout', $this->addcslashes));
+						$login_button->createAttribute ('title', $this->locales->locale ('logout', $this->addcslashes));
+					} else {
+						// Logged out
+						$login_button->appendAttribute ('class', 'hashover-login');
+						$login_button->createAttribute ('name', 'login');
+						$login_button->createAttribute ('value', $this->locales->locale ('login', $this->addcslashes));
+						$login_button->createAttribute ('title', $this->locales->locale ('login_tip', $this->addcslashes));
+					}
+
+					// Add "Login" / "Logout" element to main form footer element
+					$main_form_buttons_wrapper->appendChild ($login_button);
 				}
-
-				// Add "Login" / "Logout" element to main form footer element
-				$main_form_buttons_wrapper->appendChild ($login_button);
 			}
 
 			// Create "Post Comment" button element

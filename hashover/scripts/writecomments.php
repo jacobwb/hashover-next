@@ -567,15 +567,10 @@
 
 				// Check if password matches the one in the file
 				if ($passwords_match or $this->setup->userIsAdmin) {
-					$edit_comment['body'] = $this->writeComment['body'];
-
 					if ($this->setup->userIsAdmin === false) {
-						$edit_comment['name'] = $this->writeComment['name'];
-						$edit_comment['website'] = $this->writeComment['website'];
-						$edit_comment['email'] = $this->writeComment['email'];
-						$edit_comment['email_hash'] = $this->writeComment['email_hash'];
-						$edit_comment['encryption'] = $this->writeComment['encryption'];
-						$edit_comment['password'] = $this->writeComment['password'];
+						$edit_comment = array_merge ($edit_comment, $this->writeComment);
+					} else {
+						$edit_comment['body'] = $this->writeComment['body'];
 					}
 
 					// Update e-mail subscription status
@@ -594,9 +589,13 @@
 		protected
 		function indentedWordwrap ($text)
 		{
-			$text = wordwrap ($text, 66, "\n", true);
+			if (PHP_EOL !== "\r\n") {
+				$text = str_replace (PHP_EOL, "\r\n", $text);
+			}
+
+			$text = wordwrap ($text, 66, "\r\n", true);
 			$paragraphs = explode (PHP_EOL . PHP_EOL, $text);
-			$paragraphs = str_replace ("\n", "\n    ", $paragraphs);
+			$paragraphs = str_replace ("\r\n", "\r\n    ", $paragraphs);
 
 			array_walk ($paragraphs, function (&$paragraph) {
 				$paragraph = '    ' . $paragraph;
@@ -653,31 +652,35 @@
 					$reply_comment = $this->commentData->read ($this->replyTo);
 					$reply_body = html_entity_decode (strip_tags ($reply_comment['body']), ENT_COMPAT, 'UTF-8');
 					$reply_body = $this->indentedWordwrap ($reply_body);
-					$webmaster_reply = 'In reply to ' . $reply_comment['name'] . ':' . "\n\n" . $reply_body . "\n\n";
-					$reply_email = $this->setup->encryption->decrypt ($reply_comment['email'], $reply_comment['encryption']);
+					$reply_name = !empty ($reply_comment['name']) ? $reply_comment['name'] : $this->setup->defaultName;
+					$webmaster_reply = 'In reply to ' . $reply_name . ':' . "\r\n" . $reply_body . "\r\n";
 
-					if (!empty ($reply_email)
-					    and $reply_email !== $this->email
-					    and $reply_comment['notifications'] === 'yes')
-					{
-						if ($this->setup->allowsUserReplies === true) {
-							$this->userHeaders = $this->headers;
+					if (!empty ($reply_comment['email']) and !empty ($reply_comment['encryption'])) {
+						$reply_email = $this->setup->encryption->decrypt ($reply_comment['email'], $reply_comment['encryption']);
 
-							// Add user's e-mail address to "From" line
-							if (!empty ($this->email)) {
-								$from_line .= ' <' . $this->email . '>';
+						if ($reply_email !== $this->email
+						    and !empty ($reply_comment['notifications'])
+						    and $reply_comment['notifications'] === 'yes')
+						{
+							if ($this->setup->allowsUserReplies === true) {
+								$this->userHeaders = $this->headers;
+
+								// Add user's e-mail address to "From" line
+								if (!empty ($this->email)) {
+									$from_line .= ' <' . $this->email . '>';
+								}
 							}
+
+							// Message body to original poster
+							$reply_message  = 'From ' . $from_line . ":\r\n";
+							$reply_message .= $mail_comment . "\r\n";
+							$reply_message .= 'In reply to:' . "\r\n" . $reply_body . "\r\n" . '----' . "\r\n";
+							$reply_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n";
+							$reply_message .= 'Page: ' . $this->setup->pageURL;
+
+							// Send
+							mail ($reply_email, $this->setup->domain . ' - New Reply', $reply_message, $this->userHeaders);
 						}
-
-						// Message body to original poster
-						$reply_message  = 'From ' . $from_line . ":\n\n";
-						$reply_message .= $mail_comment . "\n\n";
-						$reply_message .= 'In reply to:' . "\n\n" . $reply_body . "\n\n" . '----' . "\n";
-						$reply_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\n";
-						$reply_message .= 'Page: ' . $this->setup->pageURL;
-
-						// Send
-						mail ($reply_email, $this->setup->domain . ' - New Reply', $reply_message, $this->userHeaders);
 					}
 				}
 
@@ -688,10 +691,10 @@
 						$from_line .= ' <' . $this->email . '>';
 					}
 
-					$webmaster_message  = 'From ' . $from_line . ":\n\n";
-					$webmaster_message .= $mail_comment . "\n\n";
-					$webmaster_message .= $webmaster_reply . '----' . "\n";
-					$webmaster_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\n";
+					$webmaster_message  = 'From ' . $from_line . ":\r\n";
+					$webmaster_message .= $mail_comment . "\r\n";
+					$webmaster_message .= $webmaster_reply . '----' . "\r\n";
+					$webmaster_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n";
 					$webmaster_message .= 'Page: ' . $this->setup->pageURL;
 
 					// Send

@@ -1,3 +1,18 @@
+Changes by Jacob Barkdull 2015-08-06
+--------------------------------------------------------------------------------
+* hashover/scripts/htmloutput.php
+
+	- Login button no longer shown if names and/or passwords are disabled.
+
+
+* hashover/scripts/writecomments.php
+
+	- Check for parent comment e-mail and encryption keys before using them.
+
+	- When editing a comment, the new comment data array is now merged with
+	  the old comment data array, instead of overriding each key.
+
+
 Changes by Jacob Barkdull 2015-08-02
 --------------------------------------------------------------------------------
 * Conform to coding standard
