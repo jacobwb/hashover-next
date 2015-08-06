@@ -7,6 +7,8 @@ Changes by Jacob Barkdull 2015-08-06
 
 * hashover/scripts/writecomments.php
 
+	- Now using proper CRLF (\r\n) for e-mail message body.
+
 	- Check for parent comment e-mail and encryption keys before using them.
 
 	- When editing a comment, the new comment data array is now merged with
@@ -1981,4 +1983,3 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
-
