@@ -1,5 +1,14 @@
 Changes by Jacob Barkdull 2015-08-06
 --------------------------------------------------------------------------------
+* hashover/api/count-link.php,
+  hashover/scripts/hashover-javascript.php
+
+	- Now taking port numbers into account for referer checking.
+	- Removed unnecessary preg_match () function call.
+
+
+Changes by Jacob Barkdull 2015-08-06
+--------------------------------------------------------------------------------
 * hashover/scripts/htmloutput.php
 
 	- Login button no longer shown if names and/or passwords are disabled.
@@ -1983,3 +1992,4 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
+

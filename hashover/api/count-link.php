@@ -52,21 +52,19 @@
 		}
 	});
 
-	// Attempt to obtain URL via GET or POST
+	// Attempt to obtain URL via GET
 	if (!empty ($_GET['url'])) {
 		$page_url = $_GET['url'];
 	} else {
-		if (!empty ($_SERVER['HTTP_REFERER'])) {
-			$page_url = $_SERVER['HTTP_REFERER'];
-
-			// Error if the script wasn't requested by this server
-			if (!preg_match ('/' . $_SERVER['HTTP_HOST'] . '/i', parse_url ($page_url, PHP_URL_HOST))) {
-				exit ('document.write (\'<b>HashOver</b>: External use not allowed.\');');
-			}
-		} else {
-			// Error on failure
-			exit ('document.write (\'<b>HashOver</b>: Failed to obtain page URL.\');');
+		// Attempt to obtain URL via POST
+		if (!empty ($_POST['url'])) {
+			$page_url = $_POST['url'];
 		}
+	}
+
+	// Error on failure
+	if (empty ($page_url)) {
+		exit ('document.write (\'<b>HashOver</b>: Failed to obtain page URL.\');');
 	}
 
 	// Instantiate HashOver class

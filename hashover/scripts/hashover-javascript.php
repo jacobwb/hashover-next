@@ -43,27 +43,37 @@
 	header ('Cache-Control: post-check=0, pre-check=0', false);
 	header ('Pragma: no-cache');
 
-	// Attempt to obtain URL via GET or POST
+	// Attempt to obtain URL via GET
 	if (!empty ($_GET['url'])) {
 		$page_url = $_GET['url'];
 	} else {
+		// Attempt to obtain URL via POST
 		if (!empty ($_POST['url'])) {
 			$page_url = $_POST['url'];
-		} else {
-			if (!empty ($_SERVER['HTTP_REFERER'])) {
-				$page_url = $_SERVER['HTTP_REFERER'];
-			} else {
-				// Error on failure
-				exit ('document.write (\'<b>HashOver</b>: Failed to obtain page URL.\');');
-			}
+		}
+	}
+
+	// Attempt to obtain URL via HTTP referer
+	if (empty ($page_url) and !empty ($_SERVER['HTTP_REFERER'])) {
+		$page_url = $_SERVER['HTTP_REFERER'];
+		$referer = parse_url ($page_url);
+		$referer_host = $referer['host'];
+		$http_host = $_SERVER['HTTP_HOST'];
+
+		// Add referer port to referer host
+		if (!empty ($referer['port'])) {
+			$referer_host .= ':' . $referer['port'];
 		}
 
 		// Error if the script wasn't requested by this server
-		if (!empty ($_SERVER['HTTP_REFERER'])) {
-			if (!preg_match ('/' . $_SERVER['HTTP_HOST'] . '/i', parse_url ($_SERVER['HTTP_REFERER'], PHP_URL_HOST))) {
-				exit ('document.write (\'<b>HashOver</b>: External use not allowed.\');');
-			}
+		if ($referer_host !== $http_host) {
+			exit ('document.getElementById (\'hashover\').innerHTML = \'<b>HashOver</b>: External use not allowed.\';');
 		}
+	}
+
+	// Error on failure
+	if (empty ($page_url)) {
+		exit ('document.getElementById (\'hashover\').innerHTML = \'<b>HashOver</b>: Failed to obtain page URL.\';');
 	}
 
 	// Attempt to obtain page title via GET or POST
@@ -74,7 +84,7 @@
 			$page_title = $_POST['title'];
 		} else {
 			// Error on failure
-			exit ('document.write (\'<b>HashOver</b>: Failed to obtain page title.\');');
+			exit ('document.getElementById (\'hashover\').innerHTML = \'<b>HashOver</b>: Failed to obtain page title.\';');
 		}
 	}
 
@@ -97,7 +107,7 @@
 	// Attempt to include JavaScript frontend code
 	if (!include ('./javascript-mode.php')) {
 		ob_end_clean ();
-		exit ('document.write (\'<b>HashOver - Error:</b> file "javascript-mode.php" could not be included!\');');
+		exit ('document.getElementById (\'hashover\').innerHTML = \'<b>HashOver - Error:</b> file "javascript-mode.php" could not be included!\';');
 	}
 
 	// Get output buffer contents and turn off output buffering
