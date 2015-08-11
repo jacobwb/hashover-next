@@ -1,4 +1,4 @@
-Changes by Jacob Barkdull 2015-08-06
+Changes by Jacob Barkdull 2015-08-11
 --------------------------------------------------------------------------------
 * hashover/api/count-link.php,
   hashover/scripts/hashover-javascript.php
