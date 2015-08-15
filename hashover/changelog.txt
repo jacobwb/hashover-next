@@ -1,3 +1,13 @@
+Changes by Jacob Barkdull 2015-08-15
+--------------------------------------------------------------------------------
+* hashover/scripts/writecomments.php
+
+	- Added 5 second delay to failed comment edit or deletion.
+
+	  This throttles login attempts by malicious users, making brute-force
+	  login attempts a less viable option for attackers.
+
+
 Changes by Jacob Barkdull 2015-08-11
 --------------------------------------------------------------------------------
 * hashover/api/count-link.php,

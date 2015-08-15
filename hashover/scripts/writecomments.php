@@ -434,6 +434,8 @@
 						$this->removeFromLatest ($_POST['file']);
 						$this->kickback ($this->locales->locale['comment_deleted']);
 					}
+				} else {
+					sleep (5);
 				}
 			}
 
@@ -580,6 +582,8 @@
 					if ($this->commentData->save ($edit_comment, $_POST['file'], true)) {
 						$this->kickback ('', false, 'c' . str_replace ('-', 'r', $_POST['file']));
 					}
+				} else {
+					sleep (5);
 				}
 			}
 
