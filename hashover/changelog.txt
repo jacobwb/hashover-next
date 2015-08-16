@@ -7,7 +7,7 @@ Changes by Jacob Barkdull 2015-08-15
 	  This throttles login attempts by malicious users, making brute-force
 	  login attempts a less viable option for attackers.
 
-	- Use two CRLF lines in e-mail notification messages.
+	- Two CRLF end of lines are now used in e-mail notification messages.
 
 
 Changes by Jacob Barkdull 2015-08-11
