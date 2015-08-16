@@ -657,7 +657,7 @@
 					$reply_body = html_entity_decode (strip_tags ($reply_comment['body']), ENT_COMPAT, 'UTF-8');
 					$reply_body = $this->indentedWordwrap ($reply_body);
 					$reply_name = !empty ($reply_comment['name']) ? $reply_comment['name'] : $this->setup->defaultName;
-					$webmaster_reply = 'In reply to ' . $reply_name . ':' . "\r\n" . $reply_body . "\r\n";
+					$webmaster_reply = 'In reply to ' . $reply_name . ':' . "\r\n\r\n" . $reply_body . "\r\n\r\n";
 
 					if (!empty ($reply_comment['email']) and !empty ($reply_comment['encryption'])) {
 						$reply_email = $this->setup->encryption->decrypt ($reply_comment['email'], $reply_comment['encryption']);
@@ -676,10 +676,10 @@
 							}
 
 							// Message body to original poster
-							$reply_message  = 'From ' . $from_line . ":\r\n";
-							$reply_message .= $mail_comment . "\r\n";
-							$reply_message .= 'In reply to:' . "\r\n" . $reply_body . "\r\n" . '----' . "\r\n";
-							$reply_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n";
+							$reply_message  = 'From ' . $from_line . ":\r\n\r\n";
+							$reply_message .= $mail_comment . "\r\n\r\n";
+							$reply_message .= 'In reply to:' . "\r\n\r\n" . $reply_body . "\r\n\r\n" . '----' . "\r\n\r\n";
+							$reply_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n\r\n";
 							$reply_message .= 'Page: ' . $this->setup->pageURL;
 
 							// Send
@@ -695,10 +695,10 @@
 						$from_line .= ' <' . $this->email . '>';
 					}
 
-					$webmaster_message  = 'From ' . $from_line . ":\r\n";
-					$webmaster_message .= $mail_comment . "\r\n";
-					$webmaster_message .= $webmaster_reply . '----' . "\r\n";
-					$webmaster_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n";
+					$webmaster_message  = 'From ' . $from_line . ":\r\n\r\n";
+					$webmaster_message .= $mail_comment . "\r\n\r\n";
+					$webmaster_message .= $webmaster_reply . '----' . "\r\n\r\n";
+					$webmaster_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n\r\n";
 					$webmaster_message .= 'Page: ' . $this->setup->pageURL;
 
 					// Send
