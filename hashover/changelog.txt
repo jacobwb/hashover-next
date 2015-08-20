@@ -42,7 +42,7 @@ Changes by Jacob Barkdull 2015-08-02
 
 	- All class files now exit with a notice when executed directly.
 
-	- Now using strict comparisons instead of shorthand ifs. This prevents 
+	- Now using strict comparisons instead of shorthand ifs. This prevents
 	  unnecessary type juggling.
 
 	- Some variables have been renamed.
@@ -50,8 +50,8 @@ Changes by Jacob Barkdull 2015-08-02
 
 * hashover/scripts/javascript-mode.php
 
-	- Fixed: Reply and Edit form actions set to wrong (old) filename. Form 
-	  action values are now set to `$_SERVER['PHP_SELF']`, which once this 
+	- Fixed: Reply and Edit form actions set to wrong (old) filename. Form
+	  action values are now set to `$_SERVER['PHP_SELF']`, which once this
 	  file is included is `hashover-javascript.php`.
 
 
@@ -87,8 +87,8 @@ Changes by Jacob Barkdull 2015-08-02
   hashover/api/latest.php,
   hashover/scripts/hashover-javascript.php
 
-	- Now using application/javascript instead of text/javascript, this 
-	  helps ensure more servers will correctly compress HashOver's 
+	- Now using application/javascript instead of text/javascript, this
+	  helps ensure more servers will correctly compress HashOver's
 	  JavaScipt and JSON output when compression is enabled on the server.
 
 
@@ -182,8 +182,8 @@ Changes by Jacob Barkdull 2015-06-22
 
 * hashover/scripts/htmloutput.php
 
-	- Password input placeholder and title changes to "Confirm Password" 
-	  when editing a comment, as this is what that field is actually for. 
+	- Password input placeholder and title changes to "Confirm Password"
+	  when editing a comment, as this is what that field is actually for.
 	  It is normally automatically filled by the browser.
 
 
@@ -197,7 +197,7 @@ Changes by Jacob Barkdull 2015-06-21
 --------------------------------------------------------------------------------
 * hashover/themes/default/style.css
 
-	- Fixed: Mobile CSS SVG background-image being applied to actual login 
+	- Fixed: Mobile CSS SVG background-image being applied to actual login
 	  inputs element, instead of :before selector.
 
 
@@ -232,7 +232,7 @@ Changes by Jacob Barkdull 2015-06-19
 	- There should be a blank line before a return following multiple lines.
 	- There should be a blank line before a break following multiple lines.
 
-	- This coding standard is not final. Complete and detailed 
+	- This coding standard is not final. Complete and detailed
 	  documentation and rationale is forthcoming.
 
 	  Discussion and suggestions are welcomed.
@@ -240,75 +240,75 @@ Changes by Jacob Barkdull 2015-06-19
 
 * Major rewrite of JavaScript mode
 
-	- HashOver no longer adds any variables or functions to the global 
-	  namespace, this means HashOver is now isolated. HashOver won't 
-	  interfere with other JavaScript on the same page, and users and 
-	  malicious JavaScript won't be able to write to HashOver's variables 
+	- HashOver no longer adds any variables or functions to the global
+	  namespace, this means HashOver is now isolated. HashOver won't
+	  interfere with other JavaScript on the same page, and users and
+	  malicious JavaScript won't be able to write to HashOver's variables
 	  or execute its functions that aren't meant to be remotely executed.
 
-	- Image tags are no longer used, instead the "background-image" CSS 
-	  style attribute is used. This results in fewer HTTP requests, and 
-	  avoids many performance issues related to image tags that don't apply 
-	  to background image style, such as width and height calculations and 
-	  onload event handling. This also avoids performance issues associated 
+	- Image tags are no longer used, instead the "background-image" CSS
+	  style attribute is used. This results in fewer HTTP requests, and
+	  avoids many performance issues related to image tags that don't apply
+	  to background image style, such as width and height calculations and
+	  onload event handling. This also avoids performance issues associated
 	  with ad-blockers, such as "Adblock Plus".
 
-	- Almost all inline HTML has been removed from the JavaScript code, 
-	  instead a new class has been added that generates the HTML for use in 
-	  both the JavaScript mode and in PHP mode. This means that inline HTML 
-	  is still present in the generated JavaScript code users receive, but 
-	  it's not present in the actual JavaScript source code. The code 
-	  doesn't make use of JavaScript's built-in functions such as 
-	  "document.createElement ()" as these functions executed hundreds or 
+	- Almost all inline HTML has been removed from the JavaScript code,
+	  instead a new class has been added that generates the HTML for use in
+	  both the JavaScript mode and in PHP mode. This means that inline HTML
+	  is still present in the generated JavaScript code users receive, but
+	  it's not present in the actual JavaScript source code. The code
+	  doesn't make use of JavaScript's built-in functions such as
+	  "document.createElement ()" as these functions executed hundreds or
 	  thousands of times are far too slow.
 
-	- Inline JavaScript event attributes (onClick="", etc) have been 
-	  removed as well. Instead they are added after the comments are 
-	  appended to the page's DOM. This will allow for a "hybrid" mode in 
-	  the future, where HashOver will execute in PHP mode, but JavaScript 
+	- Inline JavaScript event attributes (onClick="", etc) have been
+	  removed as well. Instead they are added after the comments are
+	  appended to the page's DOM. This will allow for a "hybrid" mode in
+	  the future, where HashOver will execute in PHP mode, but JavaScript
 	  will also be executed to handle various interactive behaviors.
 
-	- When enabled, JavaScript code can now be returned to the user in a 
-	  minified form, however, this code is not obfuscated. The code also 
-	  includes a smaller Copyright notice and a link to the non-minified 
+	- When enabled, JavaScript code can now be returned to the user in a
+	  minified form, however, this code is not obfuscated. The code also
+	  includes a smaller Copyright notice and a link to the non-minified
 	  JavaScript code, as such is a requirement of the AGPL.
 
-	- HashOver's JavaScript execution time is now displayed in the console 
+	- HashOver's JavaScript execution time is now displayed in the console
 	  of modern web browsers, when present.
 
 	- JavaScript now uses Strict Mode.
 
-	- The JSON data for comments is now passed to the JavaScript after its 
-	  PHP code has executed, and -- when enabled -- after it's been 
-	  minified. This makes minification faster, as the JSON data is 
-	  returned without pretty print when JavaScript minification is 
+	- The JSON data for comments is now passed to the JavaScript after its
+	  PHP code has executed, and -- when enabled -- after it's been
+	  minified. This makes minification faster, as the JSON data is
+	  returned without pretty print when JavaScript minification is
 	  enabled, and therefore it doesn't need to be minified anyway.
 
-	- Element.classList.add () is used instead of appending classes to 
-	  Element.className. This allows for easy adding and removing of 
+	- Element.classList.add () is used instead of appending classes to
+	  Element.className. This allows for easy adding and removing of
 	  classes by name, and is slightly faster.
 
-	- Improved how various warning messages are handled. Namely, error 
+	- Improved how various warning messages are handled. Namely, error
 	  messages now have a different class than normal messages.
 
-	- Reply, Edit, and Like links are no longer included in the JSON 
+	- Reply, Edit, and Like links are no longer included in the JSON
 	  comment data. This greatly reduces the size of the JavaScript.
 
-	- Reply and Edit links now change to "Cancel" links after opening their 
-	  respective forms when clicked. When clicked again, they remove their 
+	- Reply and Edit links now change to "Cancel" links after opening their
+	  respective forms when clicked. When clicked again, they remove their
 	  respective form and revert back to their initial state.
 
-	- Specific fields can no longer be disabled via JavaScript, instead 
+	- Specific fields can no longer be disabled via JavaScript, instead
 	  they are enabled or disabled in the Settings class.
 
 
 * Major rewrite of PHP mode
 
-	- PHP mode is now a port of JavaScript mode. It should follow it 
-	  closely, excluding features that aren't possible with plain HTML, 
+	- PHP mode is now a port of JavaScript mode. It should follow it
+	  closely, excluding features that aren't possible with plain HTML,
 	  such as interactive forms and sorting, likes, etc.
 
-	- PHP mode is implemented via object now. And should be instantiated 
+	- PHP mode is implemented via object now. And should be instantiated
 	  before any output is sent, as HashOver sets various cookies.
 
 	  You implement it like so:
@@ -332,42 +332,42 @@ Changes by Jacob Barkdull 2015-06-19
 
 * Changes to how comments are stored
 
-	- Comments no longer contain plain text "\n" nor "<br>" tags. Comments 
-	  are stored multi-lined and parsed upon reading. When displayed, 
-	  comments are first parsed by paragraph, with each paragraph getting 
-	  wrapped in a <p> tag, and then by line, with each line ending with a 
-	  <br> tag. This allows different paragraph spacing via CSS, and 
+	- Comments no longer contain plain text "\n" nor "<br>" tags. Comments
+	  are stored multi-lined and parsed upon reading. When displayed,
+	  comments are first parsed by paragraph, with each paragraph getting
+	  wrapped in a <p> tag, and then by line, with each line ending with a
+	  <br> tag. This allows different paragraph spacing via CSS, and
 	  reduces the size of the JavaScript output.
 
 
 * Changes to where HTML is located
 
-	- Most HTML has been moved to the new class HTMLOutput. This class 
+	- Most HTML has been moved to the new class HTMLOutput. This class
 	  holds the HTML that is used in both JavaScript mode and PHP mode.
 
 
 * User login information
 
-	- User login information is no longer placed in the document as hidden 
-	  inputs, instead, when posting a comment the cookies set on the user's 
+	- User login information is no longer placed in the document as hidden
+	  inputs, instead, when posting a comment the cookies set on the user's
 	  browser will be used as their login credentials.
 
 
 * Password inputs no longer have cookie value
 
-	- This means that user passwords aren't placed in the value attribute 
-	  of the "Password" field of the various forms. This should, 
-	  technically provide some extra security from malicious JavaScript 
+	- This means that user passwords aren't placed in the value attribute
+	  of the "Password" field of the various forms. This should,
+	  technically provide some extra security from malicious JavaScript
 	  that happens to be on the same page as HashOver.
 
-	  Users shouldn't notice any difference, since web browsers 
+	  Users shouldn't notice any difference, since web browsers
 	  automatically fill password type inputs anyway.
 
 
 * Changes to theme HTML templates
 
-	- HTML layout templates are now parsed by the new Templater class. The 
-	  structure of layout templates should be much easier to understand, as 
+	- HTML layout templates are now parsed by the new Templater class. The
+	  structure of layout templates should be much easier to understand, as
 	  the layout templates no longer use JavaScript variable concatenation.
 	  Instead, a curly brace format is used.
 
@@ -477,11 +477,11 @@ Changes by Jacob Barkdull 2015-04-03
 * hashover/scripts/javascript-mode.php,
   hashover/scripts/php-mode.php
 
-	- Inputs in the primary form are no longer separated into two divs on 
+	- Inputs in the primary form are no longer separated into two divs on
 	  mobile devices. Going forward, this should be done with CSS.
 
-	- Image format is no longer added as a class to the "hashover" div to 
-	  aid in styling on mobile devices. Instead "hashover-mobile" is, and 
+	- Image format is no longer added as a class to the "hashover" div to
+	  aid in styling on mobile devices. Instead "hashover-mobile" is, and
 	  the default class is "hashover-desktop".
 
 
@@ -591,7 +591,7 @@ Changes by Jacob Barkdull 2015-03-24
   hashover/themes/default/style.css,
   hashover/themes/1.0-ported/style.css
 
-	- Moved "hashover-first" and "hashover-deleted" CSS classes into 
+	- Moved "hashover-first" and "hashover-deleted" CSS classes into
 	  "hashover-comment" element class attribute.
 
 
@@ -638,12 +638,12 @@ Changes by Jacob Barkdull 2015-03-21
   hashover/scripts/widget-output.php,
   hashover/scripts/displaycomments.php
 
-	- Changes to accommodate `$uses_icons` variable name change and new 
+	- Changes to accommodate `$uses_icons` variable name change and new
 	  'none' `$icon_mode` option. Wrap avatar in span tag.
 
 	- Added workaround for Chrome bug.
 	
-		Anchor "jump" tags aren't followed if the linked element isn't 
+		Anchor "jump" tags aren't followed if the linked element isn't
 		on the page before the page begins loading.
 
 	- Added "Top of Thread" link back in PHP mode.
@@ -674,15 +674,15 @@ Changes by Jacob Barkdull 2015-03-16
 
 	- HTML for external images is no longer hard coded.
 
-	- External images no longer have an "onClick" attribute. Instead, 
+	- External images no longer have an "onClick" attribute. Instead,
 	  onclick is set using JavaScript.
 
-	- External images now have "Click to view external image" as their 
-	  title attribute, this title is set to "Loading..." while the image 
+	- External images now have "Click to view external image" as their
+	  title attribute, this title is set to "Loading..." while the image
 	  is loading and set to "Click to close" once the image is loaded.
 
-	  These changes will eventually allow a loading animation to be 
-	  displayed, as well as allow for an animation to play when the image 
+	  These changes will eventually allow a loading animation to be
+	  displayed, as well as allow for an animation to play when the image
 	  has finished loading, for example a fade or zoom effect.
 
 
@@ -690,10 +690,10 @@ Changes by Jacob Barkdull 2015-03-04
 --------------------------------------------------------------------------------
 * hashover/scripts/settings.php
 
-	- Code comments now reflect the fact that title-case is no longer 
+	- Code comments now reflect the fact that title-case is no longer
 	  required, but that both name and password are case-sensitive.
 
-	- Added secure cookie option 
+	- Added secure cookie option
 
 
 * hashover/scripts/javascript-mode.php
@@ -750,95 +750,95 @@ Changes by Jacob Barkdull 2015-02-19
 
 	Do not preserve your "settings.php" file.
 
-	You will need the new version to take advantage of the new and changed 
-	features listed below. Not using the new version will cause potentially 
-	harmful behavior, errors, and PHP error/warning messages that will 
+	You will need the new version to take advantage of the new and changed
+	features listed below. Not using the new version will cause potentially
+	harmful behavior, errors, and PHP error/warning messages that will
 	in-turn cause JavaScript syntax errors.
 
-	It is completely safe to simply move the values from your old 
-	"settings.php" file into the new version. We no longer store settings 
+	It is completely safe to simply move the values from your old
+	"settings.php" file into the new version. We no longer store settings
 	in an array, so all that is needed is for the new variables to exist.
 
 
 * Structure of data storage has changed
 
-	The structure of how comments are stored has changed a bit. Notably the 
-	"passwd" field is stored as proper "password" now. Unfortunately this 
-	means all old comments willn't be editable unless converted to the new 
+	The structure of how comments are stored has changed a bit. Notably the
+	"passwd" field is stored as proper "password" now. Unfortunately this
+	means all old comments willn't be editable unless converted to the new
 	structure. For which I have a script for anyone interested.
 
-	Please note that the data format storage structure will most definitely 
-	change more, and do so a few more times in the future. However, the 
-	changes should be minimal from version 2.0 onward, and in the event 
-	that there are big changes, 2.x releases will have backward 
+	Please note that the data format storage structure will most definitely
+	change more, and do so a few more times in the future. However, the
+	changes should be minimal from version 2.0 onward, and in the event
+	that there are big changes, 2.x releases will have backward
 	compatibility. As will 2.0 to 1.0.
 
 
 * Preliminary support for SQLite as a data storage format.
 
-	It's very early support, it shouldn't be considered stable nor secure. 
+	It's very early support, it shouldn't be considered stable nor secure.
 	It should be stable and secure by release, or be removed.
 
-	As I expected, SQLite isn't showing any better performance than XML nor 
-	JSON. Indeed, to the contrary, SQLite performs worse than XML, and 
-	especially worse than JSON. SQLite causes the script to use more memory 
-	and it appears to be that as the number of comments for any given page 
+	As I expected, SQLite isn't showing any better performance than XML nor
+	JSON. Indeed, to the contrary, SQLite performs worse than XML, and
+	especially worse than JSON. SQLite causes the script to use more memory
+	and it appears to be that as the number of comments for any given page
 	grows, the load time for every page also increases.
 
 
 * Added ability to "Dislike" comments. Allowing Reddit-style comment voting.
 
-	Before this change comments could only be liked, and then unliked, a 
-	comment's popularity was decided only by people who like the comment 
-	(as to agree with it), while people who dislike a comment (as to 
+	Before this change comments could only be liked, and then unliked, a
+	comment's popularity was decided only by people who like the comment
+	(as to agree with it), while people who dislike a comment (as to
 	disagree with it) had no power in its popularity.
 
-	The sort "By Likes" method remains in descending order, but is now 
+	The sort "By Likes" method remains in descending order, but is now
 	implemented by the number of likes minus the number of dislikes.
 
-	Using CSS, anyone should be able to choose how to present the 
-	Like/Dislike functionality to users, whether it's presented as 
-	"Voting", Thumbs Up/Down, or even heart/broken heart. In addition, 
-	disliking can be disabled to allow the old behavior of liking comments 
+	Using CSS, anyone should be able to choose how to present the
+	Like/Dislike functionality to users, whether it's presented as
+	"Voting", Thumbs Up/Down, or even heart/broken heart. In addition,
+	disliking can be disabled to allow the old behavior of liking comments
 	in a "Favorite"-esque manner, à la Tumblr and Twitter.
 
 
 * Added comment thread metadata files.
 
-	Stored in `hashover/pages/.metadata` and 
-	`hashover/pages/<page>/.metadata` these files serve as a way to 
-	retrieve information about the page and comment thread, such as the 
-	original page title and URL, as well as the status of thread and a list 
+	Stored in `hashover/pages/.metadata` and
+	`hashover/pages/<page>/.metadata` these files serve as a way to
+	retrieve information about the page and comment thread, such as the
+	original page title and URL, as well as the status of thread and a list
 	of an adjustable number of the most recent comments.
 
 
 * Moved comment parsing regular expressions into JavaScript.
 
-	The regular expressions for automatic URL links, embedded images, and 
-	comment clean-up, are now implemented in JavaScript via ".replace()" 
-	rather than in PHP via "preg_replace()" and "preg_replace_callback()" 
-	functions. This helps improve performance by delegating those tasks to 
+	The regular expressions for automatic URL links, embedded images, and
+	comment clean-up, are now implemented in JavaScript via ".replace()"
+	rather than in PHP via "preg_replace()" and "preg_replace_callback()"
+	functions. This helps improve performance by delegating those tasks to
 	the client-side (web browsers).
 
 
 * Added optional comment break point.
 
-	By "break point" I mean only a adjustable number of comments will be 
-	displayed (default 3) and then a link reading "Show X Other Comments" 
+	By "break point" I mean only an adjustable number of comments will be
+	displayed (default 3) and then a link reading "Show X Other Comments"
 	will be displayed, which after clicked will show the other comments.
 
-	It isn't implemented as efficiently as I'd like, as right now all it 
-	does is set the necessary HTML element class name that will hide the 
-	comments (or grey/blur them out, whatever you want to do to them via 
-	CSS), this means the comments are still being read and parsed by the 
+	It isn't implemented as efficiently as I'd like, as right now all it
+	does is set the necessary HTML element class name that will hide the
+	comments (or grey/blur them out, whatever you want to do to them via
+	CSS), this means the comments are still being read and parsed by the
 	server, and loaded by the browser just not being displayed.
 
-	Some -- meaning me -- would say that's fine, as the idea of a break 
-	point is to restrict the number of comments being displayed when the 
-	thread is very long, and the enduser should be not be burdened by 
-	waiting for secondary resources to load as would be the case if the 
-	comments were loaded asynchronously via AJAX. However, I do understand 
-	the benefits of only reading, parsing and loading the rest of the 
+	Some -- meaning me -- would say that's fine, as the idea of a break
+	point is to restrict the number of comments being displayed when the
+	thread is very long, and the enduser should be not be burdened by
+	waiting for secondary resources to load as would be the case if the
+	comments were loaded asynchronously via AJAX. However, I do understand
+	the benefits of only reading, parsing and loading the rest of the
 	comments once the user has actually requested them.
 
 	This feature will be improved to include that kind of functionality.
@@ -846,60 +846,60 @@ Changes by Jacob Barkdull 2015-02-19
 
 * Added threaded versions of each comment sorting method.
 
-	The new sorting methods leave comments threaded, that is to say the 
-	comments are sorted but their replies are unaffected, this for example, 
-	allows people to sort "By Commenter" and read each commenter's 
+	The new sorting methods leave comments threaded, that is to say the
+	comments are sorted but their replies are unaffected, this for example,
+	allows people to sort "By Commenter" and read each commenter's
 	conversations (the replies) in regular order.
 
-	This change is not final, pending discussion as to whether any make 
-	sense to users, they will either be kept in the form of new sort 
-	options under the "Threaded" label in the dropdown menu, replace the 
+	This change is not final, pending discussion as to whether any make
+	sense to users, they will either be kept in the form of new sort
+	options under the "Threaded" label in the dropdown menu, replace the
 	some of the unthreaded sorting methods or all be removed.
 
 
 * "javascript-mode.php" sets HTTP header to disable/expire browser cache.
 
-	In JavaScript mode, HashOver now tells the browser to disable/not set, 
-	or expire the cache of the JavaScript output so that the user actually 
-	receives the newest JavaScript content. It's very important for 
-	JavaScript that is dynamically generated not to be cached by web 
-	browsers, because depending on what the user is doing, the JavaScript 
+	In JavaScript mode, HashOver now tells the browser to disable/not set,
+	or expire the cache of the JavaScript output so that the user actually
+	receives the newest JavaScript content. It's very important for
+	JavaScript that is dynamically generated not to be cached by web
+	browsers, because depending on what the user is doing, the JavaScript
 	output might not always be the same.
 
 	For example:
 
-	    If the browser loads a cached version of the JavaScript after a 
-	    user posts a comment, the user will not see their comment unless 
-	    they force a uncached refresh on their browser. Although, sometimes 
-	    that's not enough to actually get the new file.
+	    If the browser loads a cached version of the JavaScript after a
+	    user posts a comment, the user will not see their comment unless
+	    they force an uncached refresh on their browser. Although,
+	    sometimes that's not enough to actually get the new file.
 
-	    The same thing applies after a user clicks "Login". They will not 
-	    appear to be logged in, since HashOver needs to generate one kind 
-	    of JavaScript when the user is logged out and a different 
+	    The same thing applies after a user clicks "Login". They will not
+	    appear to be logged in, since HashOver needs to generate one kind
+	    of JavaScript when the user is logged out and a different
 	    JavaScript when the user is logged in.
 
-	    Also, when editing or deleting a comment, if the cached JavaScript 
-	    is loaded, after saving their edit the user will see the old 
+	    Also, when editing or deleting a comment, if the cached JavaScript
+	    is loaded, after saving their edit the user will see the old
 	    comment, not the edited version of their comment.
 
 
 * Changes towards unifying JavaScript and PHP modes.
 
-	`json_encode()` is now used to create the necessary JavaScript comment 
-	objects, this means the `$hashover` variable is no longer a string in 
-	JavaScript mode (it's an array in both modes), and there's now less 
+	`json_encode()` is now used to create the necessary JavaScript comment
+	objects, this means the `$hashover` variable is no longer a string in
+	JavaScript mode (it's an array in both modes), and there's now less
 	differing work between the two modes.
 
-	The "Edit" and "Reply" links now use PHP mode's href attributes in both 
-	modes, that is to say they always point to "?hashover_edit=<permalink>" 
-	and "?hashover_reply=<permalink>", respectively, instead of "#". 
-	Necessary code has been added to run the respective functions when 
-	these URL queries are set. This allows people to middle-click or 
-	right click->Open Link in New Tab and actually get the desired form in 
+	The "Edit" and "Reply" links now use PHP mode's href attributes in both
+	modes, that is to say they always point to "?hashover_edit=<permalink>"
+	and "?hashover_reply=<permalink>", respectively, instead of "#".
+	Necessary code has been added to run the respective functions when
+	these URL queries are set. This allows people to middle-click or
+	right click->Open Link in New Tab and actually get the desired form in
 	JavaScript mode, which wasn't possible before.
 
-	These are small changes, but they're necessary first steps towards 
-	unifying the JavaScript and PHP modes once again. The two modes should 
+	These are small changes, but they're necessary first steps towards
+	unifying the JavaScript and PHP modes once again. The two modes should
 	be unified before 2.0's released, or be further separated.
 
 
@@ -907,23 +907,23 @@ Changes by Jacob Barkdull 2015-02-19
 
 	Basically logging in means something now.
 
-	There is now a single cookie used for login specific functions such as 
+	There is now a single cookie used for login specific functions such as
 	showing the "Edit" link and hiding the "Like"/"Dislike" links.
 
-	The "Name", "Password", "E-mail Address", and "Website" fields are now 
-	hidden when the user is logged in, however, they still show when 
+	The "Name", "Password", "E-mail Address", and "Website" fields are now
+	hidden when the user is logged in, however, they still show when
 	editing a comment, since the information is useful there.
 
 
 * Added optional animated loading GIFs.
 
-	When the JavaScript loading is deferred it can be useful to display a 
-	loading GIF, however, deferred JavaScript loading is about their only 
-	intended use. HashOver should never execute slowly enough to require or 
-	allow a loading image or message of any kind to be displayed, as 
-	HashOver's total execution time -- with one thousand comments -- should 
-	be in the tenths of a second. These loading GIFs are just temporary, 
-	improvements are welcomed and customization is encouraged, especially 
+	When the JavaScript loading is deferred it can be useful to display a
+	loading GIF, however, deferred JavaScript loading is about their only
+	intended use. HashOver should never execute slowly enough to require or
+	allow a loading image or message of any kind to be displayed, as
+	HashOver's total execution time -- with one thousand comments -- should
+	be in the tenths of a second. These loading GIFs are just temporary,
+	improvements are welcomed and customization is encouraged, especially
 	to fit them into the theme of your website.
 
 
@@ -1029,19 +1029,19 @@ Changes by Jacob Barkdull 2014-05-14
 
 	IMPORTANT NOTICE: Previous user e-mails and passwords no longer usable.
 
-	Users will NOT be able to edit any comments they posted before this 
-	change. Also, users will NOT be notified of replies and your server 
-	may complain of e-mail delivery failures for any replies to comments 
+	Users will NOT be able to edit any comments they posted before this
+	change. Also, users will NOT be notified of replies and your server
+	may complain of e-mail delivery failures for any replies to comments
 	posted before this change.
 
-	I've written a converter that will decrypt the old e-mail addresses 
-	and convert them to the new mcrypt format so that user comments 
-	posted before this change will still notify the poster of replies. 
-	However, passwords are always stored as irreversible hashes, and 
+	I've written a converter that will decrypt the old e-mail addresses
+	and convert them to the new mcrypt format so that user comments
+	posted before this change will still notify the poster of replies.
+	However, passwords are always stored as irreversible hashes, and
 	thus are LOST FOREVER.
 
-	The encryption method shouldn't change much after the official release 
-	of version 2.0. Breaking user functionality like comment editing and 
+	The encryption method shouldn't change much after the official release
+	of version 2.0. Breaking user functionality like comment editing and
 	reply notifications should not happen again.
 
 
@@ -1059,8 +1059,8 @@ Changes by Jacob Barkdull 2014-05-14
 	hashover/scripts/cookies.php,
 	hashover/scripts/statistics.php.
 
-	"spamcheck.php" contains new code for spam checking against a local 
-	database, and improved code for spam checking against a remote 
+	"spamcheck.php" contains new code for spam checking against a local
+	database, and improved code for spam checking against a remote
 	database. Both use databases provided by stopforumspam.com.
 
 
@@ -1073,40 +1073,40 @@ Changes by Jacob Barkdull 2014-05-14
 
 	Rationale:
 
-	They contained little code, too little to warrant their own files. I 
-	merged the code into "settings.php", "hashover.php" and 
+	They contained little code, too little to warrant their own files. I
+	merged the code into "settings.php", "hashover.php" and
 	"displaycomments.php", respectively.
 
 
-* Moved code towards a Object-Oriented Programming paradigm.
+* Moved code towards an Object-Oriented Programming paradigm.
 
 	Rationale:
 
-	HashOver's codebase will continue to grow and become more complex over 
-	time, an Object Oriented Programming paradigm allows for cleaner and 
-	more readable code, less code redundancy, better performance, 
-	deprecates use of global variables and doesn't pollute the namespace 
+	HashOver's codebase will continue to grow and become more complex over
+	time, an Object Oriented Programming paradigm allows for cleaner and
+	more readable code, less code redundancy, better performance,
+	deprecates use of global variables and doesn't pollute the namespace
 	of PHP applications implementing HashOver as much.
 
-	For anyone curious as to why the codebase is so ugly and procedural, 
-	let me answer with two numbers and an acronym... "PHP 5.2, 2009", the 
-	year and version of PHP I started HashOver on. PHP 5.2 didn't have true 
-	anonymous functions nor decent Object Oriented Programming support, and 
-	the following years didn't see PHP versions 5.3 and up become widely 
-	adopted, unfortunately. At this point the code has merely been moved 
-	into classes, there is probably still some redundant code and one or 
+	For anyone curious as to why the codebase is so ugly and procedural,
+	let me answer with two numbers and an acronym... "PHP 5.2, 2009", the
+	year and version of PHP I started HashOver on. PHP 5.2 didn't have true
+	anonymous functions nor decent Object Oriented Programming support, and
+	the following years didn't see PHP versions 5.3 and up become widely
+	adopted, unfortunately. At this point the code has merely been moved
+	into classes, there is probably still some redundant code and one or
 	two global variable statements. This will improve over time.
 
 
 * Preliminary support for JSON as a data storage format.
 
-	It's very early support, it shouldn't be considered stable nor secure. 
-	It should be stable and secure by release, or be removed. I've now ran 
-	real speed tests of using JSON vs. XML, and the results were just as I 
+	It's very early support, it shouldn't be considered stable nor secure.
+	It should be stable and secure by release, or be removed. I've now ran
+	real speed tests of using JSON vs. XML, and the results were just as I
 	had calculated, see: https://github.com/jacobwb/hashover-next/issues/32
 
 
-* In PHP mode when editing or replying to a comment users are now kicked down 
+* In PHP mode when editing or replying to a comment users are now kicked down
   to the respective forms instead of to the top of the comment.
 
 * Many minor changes to accommodate said and following changes.
@@ -1169,7 +1169,7 @@ Changes by Jacob Barkdull 2014-03-28
 
 Changes by Jacob Barkdull 2014-03-27
 --------------------------------------------------------------------------------
-* When "$icons" variable is set to "no", avatar icons no longer show in reply 
+* When "$icons" variable is set to "no", avatar icons no longer show in reply
   and edit forms. In the primary form a comment number is displayed instead.
 
 * Many CSS changes to facilitate theming, like comment count and page title.
@@ -1185,7 +1185,7 @@ Official mark of version 1.0!
 	ZIP archive: http://tildehash.com/hashover.zip
 	GitHub: https://github.com/jacobwb/hashover
 
-* Please commit your changes to GitHub and make sure to read the GitHub page 
+* Please commit your changes to GitHub and make sure to read the GitHub page
   carefully for coding guidelines and copyright information.
 
 * Added new comment sorting feature with five sorting methods:
@@ -1196,21 +1196,21 @@ Official mark of version 1.0!
 	By Date (newest first)
 	By Likes
 
-* Locale support, only three languages supported right now: English, Spanish, 
-  and Japanese. More languages will be added, those three are simply the ones 
-  of which I have at least some knowledge. More, further, and better 
+* Locale support, only three languages supported right now: English, Spanish,
+  and Japanese. More languages will be added, those three are simply the ones
+  of which I have at least some knowledge. More, further, and better
   translations are welcome and appreciated.
 
-* Individual IP addresses can now be blocked by adding them one per line to a 
-  file called "blocklist.txt" in the "hashover" directory. In addition to that, 
-  if the variable "$spam_IP_check" is set to 'php', 'javascript', or 'both' a 
+* Individual IP addresses can now be blocked by adding them one per line to a
+  file called "blocklist.txt" in the "hashover" directory. In addition to that,
+  if the variable "$spam_IP_check" is set to 'php', 'javascript', or 'both' a
   visitor's IP address will be checked against stopforumspam.com's database.
 
-* E-mail notifications per comment can now be disabled by unchecking the 
+* E-mail notifications per comment can now be disabled by unchecking the
   "Subscribe" checkbox in the "Edit Comment" form.
 
-* Added administration support for deletion and editing of all comments. Set 
-  the "$admin_nickname" and "$admin_password" variables in the "secrets.php" 
+* Added administration support for deletion and editing of all comments. Set
+  the "$admin_nickname" and "$admin_password" variables in the "secrets.php"
   file to appropriate values. Read the "IMPORTANT" notice carefully.
 
 * Many, many major changes to accommodate said and following changes.
@@ -1218,16 +1218,16 @@ Official mark of version 1.0!
 * Removed all JavaScript from PHP-mode (except code for liking a comment).
 * "Reply" and "Edit" forms are now part of the dynamically generated HTML.
 
-* Added "Login" button. It simply sets the necessary cookies that allow users 
+* Added "Login" button. It simply sets the necessary cookies that allow users
   to edit, delete, and (un)subscribe to/from email notifications.
 
-* Removed Jeremiah Stoddard as secondary copyright holder since his 
-  contributions are no longer present in the current codebase, or rather, the 
-  codebase has changed enough that he would have no legal precedent to claim 
+* Removed Jeremiah Stoddard as secondary copyright holder since his
+  contributions are no longer present in the current codebase, or rather, the
+  codebase has changed enough that he would have no legal precedent to claim
   ownership any longer. Not that I expect any trouble.
 
-* Fixed bug that caused a comment to become uneditable after you post another 
-  comment with a different e-mail address as the last. Cause: conditions to 
+* Fixed bug that caused a comment to become uneditable after you post another
+  comment with a different e-mail address as the last. Cause: conditions to
   display the "Edit" link were based on a name+e-mail+password scheme.
 
 * Renamed "comments.php" to "hashover.php".
@@ -1265,8 +1265,8 @@ Changes by Jacob Barkdull 2013-03-18
 Fixed bug causing "@username@identica" names to loss "@identica" when editing.
 Fixed bug causing all "@" symbols to be removed from names.
 
-Major changes to how HTML output is handled, most HTML has been moved 
-into "/comments/templates/default.html", allowing for multiple comment 
+Major changes to how HTML output is handled, most HTML has been moved
+into "/comments/templates/default.html", allowing for multiple comment
 styles and easy customization of HTML output and overall layout.
 
 
@@ -1307,38 +1307,38 @@ Twitter/Identi.ca at-handles no longer part of name links.
 Improved "<code>" tag method HTML character escaping.
 CSS added to style "<pre>" and "<code>" tags.
 
-Fixed bug causing "GET" requests to affect the file including "comments.php". 
+Fixed bug causing "GET" requests to affect the file including "comments.php".
 
 	Explanation:
 
 		File "phphome.php" includes "comments.php", like this:
 			<?php $mode = 'php'; include("comments.php"); ?>
 
-		Someone visits "phphome.php?rss=http://website.com/", the 
-		RSS feed XML would be output on "phphome.php". Similar was 
+		Someone visits "phphome.php?rss=http://website.com/", the
+		RSS feed XML would be output on "phphome.php". Similar was
 		true for "phphome.php?count_link=http://website.com/".
 
 Added loop to remove unwanted URL queries from comment directory names.
 
 	Explanation:
 
-		Add unwanted URL queries, one per line, to a file called 
+		Add unwanted URL queries, one per line, to a file called
 		"ignore_queries.txt" under the "comments" directory.
 
-		Adding just a query name without a value will remove the 
-		query from comment directory names no matter what its value 
-		is. Adding a query name with a value (name=value) will only 
-		remove that specific query with that specific value from 
+		Adding just a query name without a value will remove the
+		query from comment directory names no matter what its value
+		is. Adding a query name with a value (name=value) will only
+		remove that specific query with that specific value from
 		comment directory names.
 
 Content no longer written to document using JavaScript "document.write".
 
 	Explanation:
 
-		All content is now placed into the new "show_cmt" variable 
-		and then written via "getElementById("hashover").innerHTML". 
-		This allows the script to be deferrable (JavaScript 'defer' 
-		tag), which means the script executes after the page is done 
+		All content is now placed into the new "show_cmt" variable
+		and then written via "getElementById("hashover").innerHTML".
+		This allows the script to be deferrable (JavaScript 'defer'
+		tag), which means the script executes after the page is done
 		loading; a desirable behavior for some use cases.
 
 
@@ -1376,13 +1376,13 @@ Changed some error messages.
 
 Changes by Jacob Barkdull 2012-07-12
 --------------------------------------------------------------------------------
-Applied patches by InaTux Computers. No changelog, so I'll do my best 
+Applied patches by InaTux Computers. No changelog, so I'll do my best
 to list what has been changed.
 
-	Comment replies no longer stored in sub-directories, now stored in 
+	Comment replies no longer stored in sub-directories, now stored in
 	the same directory and named as <parent comment>-<reply number(s)>.
 
-	Rationale: Solves a permissions bug where sub-directories aren't 
+	Rationale: Solves a permissions bug where sub-directories aren't
 		   owned by a user who has permission to write to them.
 
 		   Only a single directory is read. Making it faster.
@@ -1396,14 +1396,14 @@ to list what has been changed.
 	Separated like functionality into "like.php" script.
 	Many, many minor changes to accommodate said and following changes.
 
-	Many "\n" newlines replaced with "PHP_EOL". This helps JavaScript 
+	Many "\n" newlines replaced with "PHP_EOL". This helps JavaScript
 	and HTML output look the same across different server platforms.
 
-	"like.php", "avatars.php" and "secrets.php" moved into new 
+	"like.php", "avatars.php" and "secrets.php" moved into new
 	"scripts" directory. All images moved into new "images" directory.
 
-	Fixed bug causing "Like" link to only be displayed when an 
-	"E-mail Address" cookie is set. Anyone who hadn't commented yet 
+	Fixed bug causing "Like" link to only be displayed when an
+	"E-mail Address" cookie is set. Anyone who hadn't commented yet
 	couldn't see the "Like" link.
 
 	Renamed a few variables.
@@ -1439,7 +1439,7 @@ Improved e-mail notifications.
 Improved automatic links.
 Fixed "Like" bugs.
 
-Comment count no longer innerHTML'd into "cmtcount" identified HTML 
+Comment count no longer innerHTML'd into "cmtcount" identified HTML
 element if there are no comments.
 
 Improved how comment and reply fields get their default text,
@@ -1450,7 +1450,7 @@ CSS changes.
 
 Changes by Jacob Barkdull 2012-07-01
 --------------------------------------------------------------------------------
-Changed "Like", "Edit", and "Reply" buttons into links, as well as 
+Changed "Like", "Edit", and "Reply" buttons into links, as well as
 many code adjustments to accommodate said change.
 
 Separated avatar functionality into "avatars.php" to decrease load time.
@@ -1475,7 +1475,7 @@ CSS changes.
 
 Changes by Jacob Barkdull 2012-06-29
 --------------------------------------------------------------------------------
-Added checkmark icon beside "Reply" to indicate presence of notification 
+Added checkmark icon beside "Reply" to indicate presence of notification
 email. Removed "Reply", "Edit", and "Like" CSS hoverover background colors.
 
 Changed Twitter/Identi.ca @handles character limit to from 20 to 29
@@ -1514,10 +1514,10 @@ Changes by Jacob Barkdull 2012-06-22
 --------------------------------------------------------------------------------
 CSS changes that improves use on mobile devices.
 
-Fixed bug causing "E-mail Address" to be written to comment file 
+Fixed bug causing "E-mail Address" to be written to comment file
 when a blank e-mail address is given.
 
-Fixed bug causing failed Twitter/Identi.ca at-handle profile 
+Fixed bug causing failed Twitter/Identi.ca at-handle profile
 linking if Website field is blank.
 
 
@@ -1526,13 +1526,13 @@ Changes by Jacob Barkdull 2012-06-18
 Minor changes to PHP, CSS, and mobile handling.
 Now using local image file as default avatar instead of Gravatar's.
 
-Now Twitter/Identi.ca avatars will be used if a Twitter/Identi.ca 
+Now Twitter/Identi.ca avatars will be used if a Twitter/Identi.ca
 profile URL is used as Website.
 
 
 Changes by Jacob Barkdull 2012-06-10
 --------------------------------------------------------------------------------
-Twitter avatars will now be displayed if an @username is used as Nickname, 
+Twitter avatars will now be displayed if an @username is used as Nickname,
 Identi.ca avatars will be displayed if an @username@identica is used.
 
 Names link to Twitter/Identi.ca profiles if @username(@identica) is used.
@@ -1542,7 +1542,7 @@ Other minor bug fixes & code changes.
 
 Changes by Jacob Barkdull 2012-06-08
 --------------------------------------------------------------------------------
-Now on page load a "cmtcount" identified HTML element will receive the 
+Now on page load a "cmtcount" identified HTML element will receive the
 comment count as content. Example: "<span id="cmtcount"></span> Comments".
 Useful to make a comment "widget"/"badge"/"button" thing.
 
@@ -1558,7 +1558,7 @@ Changes by Jacob Barkdull 2012-05-29
 --------------------------------------------------------------------------------
 Added Gravatar icons to the main comment form and reply forms.
 
-Major form redesign and layout, temporary values describe the various fields, 
+Major form redesign and layout, temporary values describe the various fields,
 along with image icons to the left of each field.
 
 Updated CSS.
@@ -1566,7 +1566,7 @@ Updated CSS.
 
 Changes by Jacob Barkdull 2012-05-26
 --------------------------------------------------------------------------------
-Fixed bug causing escaped HTML tags to become part of automatic links, 
+Fixed bug causing escaped HTML tags to become part of automatic links,
 which caused problems when the accepted tags were converted back.
 
 
@@ -1578,7 +1578,7 @@ Added "$popular" variable as popularity-via-likes threshold.
 Fixed bug causing conflicts between innerHTML actions.
 Now comment dates are removed when replying/editing.
 
-Now the "Edit" button only shows if the e-mail cookie and 
+Now the "Edit" button only shows if the e-mail cookie and
 e-mail address in the comment file match.
 
 
@@ -1761,23 +1761,23 @@ Fixed serious bugs.
 
 Changes by Jacob Barkdull 2011-21-08
 --------------------------------------------------------------------------------
-Added the "endtags" function for counting the number of open and closing HTML 
-tags, if the number of open and closing HTML tags aren't the same it adds as 
-many closing tags as necessary for each to the end of the file. Ensuring that 
-tags left unclosed by a commenter won't affect the rest of the page. The 
+Added the "endtags" function for counting the number of open and closing HTML
+tags, if the number of open and closing HTML tags aren't the same it adds as
+many closing tags as necessary for each to the end of the file. Ensuring that
+tags left unclosed by a commenter won't affect the rest of the page. The
 function only closes accepted HTML tags, as that's all that's necessary.
 
-Fixed a bug that caused the "Options" link to be displayed even when 
-the options were displayed or were never hidden upon first time use 
+Fixed a bug that caused the "Options" link to be displayed even when
+the options were displayed or were never hidden upon first time use
 or due to disabled/unaccepted cookies.
 
 
 Changes by Jacob Barkdull 2011-20-08
 --------------------------------------------------------------------------------
-Fixed a bug that allowed anyone to use a blank password to delete any comment 
+Fixed a bug that allowed anyone to use a blank password to delete any comment
 if a password wasn't given when the target comment was posted (thanks "Outis").
 
-Added code to display a "Delete" link on comments only if a password was given 
+Added code to display a "Delete" link on comments only if a password was given
 when the comment was posted. Subsequently added necessary JavaScript code.
 
 Added ID tags to HTML elements for better control of style.
@@ -1811,22 +1811,22 @@ Cleaned up code.
 
 Changes by Jacob Barkdull 2010-21-10
 --------------------------------------------------------------------------------
-Changed "Post a Comment" to include page title, automatically by default or 
+Changed "Post a Comment" to include page title, automatically by default or
 by specifying the title in the <script> tag via the "pagetitle" URL query.
 
 Fixed a bug that caused a blank name if the "Website" field was disabled.
 
-Fixed a bug that caused a message "You will not receive notification of 
-replies to your comment without supplying an e-mail" to appear even if the 
+Fixed a bug that caused a message "You will not receive notification of
+replies to your comment without supplying an e-mail" to appear even if the
 "Email" field is disabled.
 
-Now if all fields are disabled the "Options" link displays a message reading: 
+Now if all fields are disabled the "Options" link displays a message reading:
 "All Additional Options Disabled."
 
 
 Changes by Jacob Barkdull 2010-12-10
 --------------------------------------------------------------------------------
-Fixed a bug that caused JavaScript syntax errors if an encrypted password 
+Fixed a bug that caused JavaScript syntax errors if an encrypted password
 contained a quote.
 
 
@@ -1836,8 +1836,8 @@ Changed code indention from spaced to tabbed.
 Changed "Name" field to "Nickname".
 Changed "Password (?)" field to "Password (Optional)".
 
-Moved password field so as to appear right after the "Nickname" field, this 
-way web browsers will store the "Name" field as username and the "Password" 
+Moved password field so as to appear right after the "Nickname" field, this
+way web browsers will store the "Name" field as username and the "Password"
 field as password, as opposed to "Website" being stored as the username.
 
 Delete field is now auto-filled.
@@ -1845,11 +1845,11 @@ Delete field is now auto-filled.
 
 Changes by Jacob Barkdull 2010-12-03
 --------------------------------------------------------------------------------
-Merged the two occurring RecursiveDirectoryIterator classes. This should 
-make the comment system slightly more efficient as it will no longer read 
+Merged the two occurring RecursiveDirectoryIterator classes. This should
+make the comment system slightly more efficient as it will no longer read
 the "/comments" directory twice.
 
-Renamed the password input fields' names stored in each comment file to fix 
+Renamed the password input fields' names stored in each comment file to fix
 a bug where the decrypted password would be saved to the comment file.
 
 Renamed the "count_comments" function to "read_comments".
@@ -1857,7 +1857,7 @@ Renamed the "count_comments" function to "read_comments".
 
 Changes by Jacob Barkdull 2010-11-24
 --------------------------------------------------------------------------------
-Added functionality to display only the comment count by setting the 
+Added functionality to display only the comment count by setting the
 "display" URL query to the page filename.
 
 Added information about said functionality to the installation note.
@@ -1865,15 +1865,15 @@ Added information about said functionality to the installation note.
 
 Changes by Jacob Barkdull 2010-11-06 to 2010-11-10
 --------------------------------------------------------------------------------
-Altered the "count_comments" function to use RecursiveDirectoryIterator and 
+Altered the "count_comments" function to use RecursiveDirectoryIterator and
 merged Jeremiah Stoddard's modifications with the "count_comments" function.
 
-Added functionality to show a "This file has been deleted" note on first 
-replies and all underlying replies. In other words the deleted comment 
+Added functionality to show a "This file has been deleted" note on first
+replies and all underlying replies. In other words the deleted comment
 recreation with a notice of deletion is now recursive.
 
 Altered design implementations, like "Delete" comes before "Reply to Comments",
-"if($file->isFile())" is now "if(is_file($file))", individual padding on 
+"if($file->isFile())" is now "if(is_file($file))", individual padding on
 comments, "Delete" link is now red, number of comments is displayed as:
 "Showing 3 Comments (8 counting replies)" for example.
 
@@ -1885,7 +1885,7 @@ Changes by Jeremiah Stoddard 2010-11-06
 Altered the unlink line to replace the file contents with the note
 "This file has been deleted."
 
-Altered the `readfile()` in line 334 to make a comparison to that note and 
+Altered the `readfile()` in line 334 to make a comparison to that note and
 skip the reply/delete links if file contents match the note.
 
 Modified the script to find missing files and recreate them.
@@ -1895,18 +1895,18 @@ Changes by Jacob Barkdull 2010-11-06
 --------------------------------------------------------------------------------
 Beginning of comment deletion functionality.
 
-Added JavaScript function to display "Options" such as Name, Email, 
+Added JavaScript function to display "Options" such as Name, Email,
 Website, etc., when replying.
 
-Added a Password field, used to shore an encrypted password in each 
+Added a Password field, used to shore an encrypted password in each
 comment file for later use, such as deleting a comment.
 
 
 Changes by Jacob Barkdull 2010-11-05
 --------------------------------------------------------------------------------
-Made referrer checking stricter to avoid obscure directories created under 
-"/comments" via external usage. This happened on Google search cache and 
-other external websites that could remotely use the comment system by simply 
+Made referrer checking stricter to avoid obscure directories created under
+"/comments" via external usage. This happened on Google search cache and
+other external websites that could remotely use the comment system by simply
 including "tildehash.com" in the page name or as a URL query.
 
 
@@ -1918,13 +1918,13 @@ Now removing second queries from referring URLs.
 
 Changes by Jacob Barkdull 2010-11-03
 --------------------------------------------------------------------------------
-Fixed a bug that caused pages with URLs that contain numbers to include the 
+Fixed a bug that caused pages with URLs that contain numbers to include the
 numbers in the permalink.
 
-Fixed a bug that caused the first comment's first reply to have the same 
+Fixed a bug that caused the first comment's first reply to have the same
 permalink number as the 11th comment (1/1.txt = 11 & 11.txt = 11).
 
-Moved the reply link out of the "data" variable and into the "read_comments" 
+Moved the reply link out of the "data" variable and into the "read_comments"
 function, a reply link will no longer be written to each comment file.
 
 Made some small layout changes.
@@ -1938,28 +1938,28 @@ Added a <noscript> tag to the installation code.
 
 Changes by Jacob Barkdull 2010-09-10
 --------------------------------------------------------------------------------
-I'm sort of confused about the comment counting method used for displaying a 
-message when a comment has been deleted. There was (is?) a bug that caused it 
-to display a "Comment Deleted" message after replies. I believe I've fixed 
+I'm sort of confused about the comment counting method used for displaying a
+message when a comment has been deleted. There was (is?) a bug that caused it
+to display a "Comment Deleted" message after replies. I believe I've fixed
 this by adding the "deletedcomment" variable back in.
 
 
 Changes by Jacob Barkdull 2010-09-07
 --------------------------------------------------------------------------------
-Added encryption method for encrypting emails stored in comments; these emails 
+Added encryption method for encrypting emails stored in comments; these emails
 are used for notifying a commenter of replies to his/her comment(s).
 
-Added necessary form fields and code for storing encrypted emails and sending 
+Added necessary form fields and code for storing encrypted emails and sending
 mail to commenter when another commenter replies to his/her comment(s).
 
 
 Changes by Jacob Barkdull 2010-07-29
 --------------------------------------------------------------------------------
-Now we strip "../" from $_POST["reply_to"] thus "sanitizing" the value before 
+Now we strip "../" from $_POST["reply_to"] thus "sanitizing" the value before
 using it. This helps prevent malicious usage (thanks mysterious 89.248.91.145.)
 
-Added additional JavaScript functions for disabling comments, displaying 
-comment form on bottom, setting "Comments" field height, disabling "Name" 
+Added additional JavaScript functions for disabling comments, displaying
+comment form on bottom, setting "Comments" field height, disabling "Name"
 field, disabling "E-mail" field, and disabling "Website" field.
 
 $deletedcount removed, $commentcount now used for tracking deleted comments.
@@ -1967,38 +1967,38 @@ $deletedcount removed, $commentcount now used for tracking deleted comments.
 
 Changes by Jacob Barkdull 2010-07-28
 --------------------------------------------------------------------------------
-Added if statement to `mail()` so that if the email given is the same as the 
+Added if statement to `mail()` so that if the email given is the same as the
 email used for notification it won't send mail to the notification email.
 
 
 Changes by Jacob Barkdull 2010-07-24
 --------------------------------------------------------------------------------
-Made the reply link trigger a JavaScript function that replaces it with a 
-form to post a reply. This form also only shows the "Name", "E-mail 
-Address", and "Website" fields if they don't have content from previous 
-usage of the comments in the last month. 
+Made the reply link trigger a JavaScript function that replaces it with a
+form to post a reply. This form also only shows the "Name", "E-mail
+Address", and "Website" fields if they don't have content from previous
+usage of the comments in the last month.
 
 Changed BBCode to normal HTML.
 
 
 Changes by Jacob Barkdull 2010-07-22
 --------------------------------------------------------------------------------
-Added left padding to replies as indention, and added a closing div tag so 
-that each reply is in its own div. Permalinks are now based on file 
+Added left padding to replies as indention, and added a closing div tag so
+that each reply is in its own div. Permalinks are now based on file
 basenames+subdirectory names.
 
 
 Changes by Jeremiah Stoddard 2010-07-22
 --------------------------------------------------------------------------------
-Beginnings of a reply system. Need to indent replies. Also, the anchors now 
-need to take into account the directory structure: basename("$dir/$file", 
+Beginnings of a reply system. Need to indent replies. Also, the anchors now
+need to take into account the directory structure: basename("$dir/$file",
 ".txt") alone is not sufficient enough to remain unique.
 
 
 Changes by Jeremiah Stoddard 2010-07-21
 --------------------------------------------------------------------------------
-Removed line: header("Content-type: text/javascript"); from near the end of 
-script (former line 172) as output already sent by former line 101: 
+Removed line: header("Content-type: text/javascript"); from near the end of
+script (former line 172) as output already sent by former line 101:
 document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"post\">\n");
 
 Added brief installation note
