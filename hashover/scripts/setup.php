@@ -175,7 +175,10 @@
 
 				// Check if user is logged in as admin
 				if ($this->userName === $this->adminName) {
-					if ($this->userPassword === $this->adminPassword) {
+					$decoded_password = trim (html_entity_decode ($this->userPassword, ENT_COMPAT, 'UTF-8'), " \r\n\t");
+					$passwords_match = $this->encryption->verifyHash ($this->adminPassword, $decoded_password);
+
+					if ($passwords_match === true) {
 						$this->userIsAdmin = true;
 					}
 				}
