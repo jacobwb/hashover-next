@@ -1,3 +1,10 @@
+Changes by Jacob Barkdull 2015-08-23
+--------------------------------------------------------------------------------
+* hashover/scripts/setup.php
+
+	- Fixed administrative login.
+
+
 Changes by Jacob Barkdull 2015-08-15
 --------------------------------------------------------------------------------
 * hashover/scripts/writecomments.php
