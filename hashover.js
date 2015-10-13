@@ -75,7 +75,7 @@
 
 	// Add page title to script source
 	if (document.title !== '') {
-		scriptQueries += '&title=' + document.title;
+		scriptQueries += '&title=' + encodeURIComponent (document.title);
 	}
 
 	// Add additional script query strings

@@ -1,3 +1,12 @@
+Changes by Jacob Barkdull 2015-10-13
+--------------------------------------------------------------------------------
+* hashover.js,
+  hashover/scripts/htmloutput.php
+
+	- URL-encode URL queries as well as URLs in URL queries.
+	- URL-encode page title, improves handling of Unicode page titles.
+
+
 Changes by Jacob Barkdull 2015-08-23
 --------------------------------------------------------------------------------
 * hashover/scripts/setup.php

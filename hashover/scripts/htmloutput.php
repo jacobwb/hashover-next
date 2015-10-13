@@ -77,6 +77,13 @@
 			return $var;
 		}
 
+		// Re-encode a URL
+		protected
+		function safeURLEncode ($url)
+		{
+			return urlencode (urldecode ($url));
+		}
+
 		// Creates a inputs elements for user login information
 		protected
 		function loginInputs ($editForm = false, $name = '', $website = '')
@@ -362,7 +369,7 @@
 
 			// Add URL queries to link reference
 			if (!empty ($this->setup->URLQueries)) {
-				$reply_link->appendAttribute ('href', $this->setup->URLQueries . '&', false);
+				$reply_link->appendAttribute ('href', $this->safeURLEncode ($this->setup->URLQueries) . '&', false);
 			}
 
 			$reply_link->appendAttribute ('href', 'hashover_reply=' . $this->injectVar ($permalink), false);
@@ -386,7 +393,7 @@
 
 			// Add URL queries to link reference
 			if (!empty ($this->setup->URLQueries)) {
-				$edit_link->appendAttribute ('href', $this->setup->URLQueries . '&', false);
+				$edit_link->appendAttribute ('href', $this->safeURLEncode ($this->setup->URLQueries) . '&', false);
 			}
 
 			$edit_link->appendAttribute ('href', 'hashover_edit=' . $this->injectVar ($permalink), false);
@@ -409,7 +416,7 @@
 
 			// Add URL queries to link reference
 			if (!empty ($this->setup->URLQueries)) {
-				$cancel_link->appendAttribute ('href', '?' . $this->setup->URLQueries, false);
+				$cancel_link->appendAttribute ('href', '?' . $this->safeURLEncode ($this->setup->URLQueries), false);
 			}
 
 			// Continue with other attibutes
@@ -999,7 +1006,7 @@
 						// Create RSS feed link
 						$hashover_rss_link = new HTMLTag ('a', false, false);
 						$hashover_rss_link->createAttribute ('href', $this->setup->httpDirectory . '/api/rss.php');
-						$hashover_rss_link->appendAttribute ('href', '?url=' . urlencode ($this->setup->pageURL), false);
+						$hashover_rss_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
 						$hashover_rss_link->createAttribute ('id', 'hashover-rss-link');
 						$hashover_rss_link->createAttribute ('target', '_blank');
 						$hashover_rss_link->innerHTML ('RSS Feed');
@@ -1029,11 +1036,11 @@
 
 				$hashover_javascript_link = new HTMLTag ('a', false, false);
 				$hashover_javascript_link->createAttribute ('href', $this->setup->httpDirectory . '/scripts/hashover-javascript.php');
-				$hashover_javascript_link->appendAttribute ('href', '?url=' . urlencode ($this->setup->pageURL), false);
-				$hashover_javascript_link->appendAttribute ('href', '&title=' . urlencode ($this->setup->pageTitle), false);
+				$hashover_javascript_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
+				$hashover_javascript_link->appendAttribute ('href', '&title=' . $this->safeURLEncode ($this->setup->pageTitle), false);
 
 				if (!empty ($_GET['hashover-script'])) {
-					$hashover_javascript_link->appendAttribute ('href', '&hashover-script=' . $_GET['hashover-script'], false);
+					$hashover_javascript_link->appendAttribute ('href', '&hashover-script=' . $this->safeURLEncode ($_GET['hashover-script']), false);
 				}
 
 				$hashover_javascript_link->createAttribute ('id', 'hashover-javascript-link');
@@ -1171,7 +1178,7 @@
 
 				// Add URL queries to link reference
 				if (!empty ($this->setup->URLQueries)) {
-					$reply_cancel_button->appendAttribute ('href', '?' . $this->setup->URLQueries, false);
+					$reply_cancel_button->appendAttribute ('href', '?' . $this->safeURLEncode ($this->setup->URLQueries), false);
 				}
 
 				// Add ID attribute with JavaScript variable single quote break out
@@ -1320,7 +1327,7 @@
 
 				// Add URL queries to link reference
 				if (!empty ($this->setup->URLQueries)) {
-					$edit_cancel_button->appendAttribute ('href', '?' . $this->setup->URLQueries, false);
+					$edit_cancel_button->appendAttribute ('href', '?' . $this->safeURLEncode ($this->setup->URLQueries), false);
 				}
 
 				// Add ID attribute with JavaScript variable single quote break out
