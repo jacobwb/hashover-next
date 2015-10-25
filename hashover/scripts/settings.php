@@ -111,7 +111,7 @@
 
 		// Technical settings placeholders
 		public $rootDirectory		= null;
-		public $httpDirectoryx		= null;
+		public $httpDirectory		= null;
 		public $cookieExpiration;
 		public $domain;
 
