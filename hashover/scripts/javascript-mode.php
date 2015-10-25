@@ -473,7 +473,9 @@
 			template.date = '<?php echo $hashover->html->dateLink ('permalink', 'comment.date'); ?>';
 
 			// Add "Reply" hyperlink to template
+<?php if ($hashover->settings->allowsReply === true) { ?>
 			template.reply_link = '<?php echo $hashover->html->replyLink ('permalink', 'replyClass', 'replyTitle'); ?>';
+<?php } ?>
 
 			// Add reply count to template
 			if (comment.replies) {
