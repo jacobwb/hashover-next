@@ -1114,15 +1114,17 @@
 	if (!userIsLoggedIn) {
 		var loginButton = getElement ('hashover-login-button');
 
-		// Onclick
-		loginButton.onclick = function () {
-			return validateEmail ();
-		};
+		if (loginButton) {
+			// Onclick
+			loginButton.onclick = function () {
+				return validateEmail ();
+			};
 
-		// Onsubmit
-		loginButton.onsubmit = function () {
-			return validateEmail ();
-		};
+			// Onsubmit
+			loginButton.onsubmit = function () {
+				return validateEmail ();
+			};
+		}
 	}
 
 	// "Flatten" the comments object
