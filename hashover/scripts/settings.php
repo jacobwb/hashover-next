@@ -34,7 +34,6 @@
 		// Required setup
 		public    $notificationEmail	= 'example@example.com';	// E-mail for notification of new comments
 		protected $encryptionKey	= '8CharKey';			// Unique encryption key
-		protected $adminName		= 'admin';			// Login name to gain admin rights (case-sensitive)
 		protected $adminPassword	= 'passwd';			// Login password to gain admin rights (case-sensitive)
 
 		// Primary settings
@@ -73,6 +72,7 @@
 		public $displaysRSSLink		= true;				// Whether a comment RSS feed link is displayed
 
 		// Technical settings
+		protected $adminName		= 'admin';			// Login name to gain admin rights (case-sensitive)
 		public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 		public $storesIPAddress		= false;			// Whether to store users' IP addresses
 		public $allowsUserReplies	= false;			// Whether given e-mails are sent as reply-to address to users
