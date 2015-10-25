@@ -82,11 +82,6 @@
 				exit ($this->escapeOutput ('<b>HashOver</b>: You must use a UNIQUE notification e-mail in /hashover/scripts/settings.php', 'single'));
 			}
 
-			// Exit if administrative nickname is set to the default
-			if ($this->adminName === 'admin') {
-				exit ($this->escapeOutput ('<b>HashOver</b>: You must use a UNIQUE admin nickname in /hashover/scripts/settings.php', 'single'));
-			}
-
 			// Exit if administrative password is set to the default
 			if ($this->adminPassword === 'password') {
 				exit ($this->escapeOutput ('<b>HashOver</b>: You must use a UNIQUE admin password in /hashover/scripts/settings.php', 'single'));
