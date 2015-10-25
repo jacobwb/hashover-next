@@ -125,7 +125,7 @@
 			mb_internal_encoding ('UTF-8');
 
 			// Get parent directory
-			$dirname = dirname (__DIR__);
+			$parent_directory = dirname (__DIR__);
 
 			// Technical settings
 			if (!isset($this->rootDirectory)) {
