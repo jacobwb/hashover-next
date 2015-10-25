@@ -259,13 +259,17 @@
 				$template['name'] = $this->html->nameWrapper ($nameLink, $nameClass);
 
 				// Add date permalink hyperlink to template
-				$template['date'] = $this->html->dateLink ($comment['permalink'], $comment['date']);
+				if ($hashover->settings->allowsReply === true) {
+					$template['date'] = $this->html->dateLink ($comment['permalink'], $comment['date']);
 
-				// Add "Reply" hyperlink to template
-				if (!empty ($_GET['hashover_reply']) and $_GET['hashover_reply'] === $comment['permalink']) {
-					$template['reply_link'] = $this->html->cancelLink ($comment['permalink'], 'reply', $replyClass);
-				} else {
-					$template['reply_link'] = $this->html->replyLink ($comment['permalink'], $replyClass, $replyTitle);
+					// Add "Reply" hyperlink to template
+					if ($hashover->settings->allowsReply === true) {
+						if (!empty ($_GET['hashover_reply']) and $_GET['hashover_reply'] === $comment['permalink']) {
+							$template['reply_link'] = $this->html->cancelLink ($comment['permalink'], 'reply', $replyClass);
+						} else {
+							$template['reply_link'] = $this->html->replyLink ($comment['permalink'], $replyClass, $replyTitle);
+						}
+					}
 				}
 
 				// Add edit form HTML to template

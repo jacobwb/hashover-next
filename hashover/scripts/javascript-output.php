@@ -418,7 +418,9 @@
 			template.date = '<?php echo $hashover->html->dateLink ('permalink', 'json.date'); ?>';
 
 			// Add "Reply" hyperlink to template
+<?php if ($hashover->settings->allowsReply === true) { ?>
 			template.reply_link = '<?php echo $hashover->html->replyLink ('permalink', 'replyClass', 'replyTitle'); ?>';
+<?php } ?>
 
 			// Add reply count to template
 			if (json.replies) {
@@ -1057,15 +1059,17 @@
 	if (!userIsLoggedIn) {
 		var loginButton = $('hashover-login-button');
 
-		// Onclick
-		loginButton.onclick = function () {
-			return validateEmail ();
-		};
+		if (loginButton) {
+			// Onclick
+			loginButton.onclick = function () {
+				return validateEmail ();
+			};
 
-		// Onsubmit
-		loginButton.onsubmit = function () {
-			return validateEmail ();
-		};
+			// Onsubmit
+			loginButton.onsubmit = function () {
+				return validateEmail ();
+			};
+		}
 	}
 
 	// "Flatten" the comments object
