@@ -110,8 +110,8 @@
 		public $isMobile		= false;
 
 		// Technical settings placeholders
-		public $rootDirectory;
-		public $httpDirectory;
+		public $rootDirectory		= null;
+		public $httpDirectoryx		= null;
 		public $cookieExpiration;
 		public $domain;
 
@@ -128,8 +128,12 @@
 			$dirname = dirname (__DIR__);
 
 			// Technical settings
-			$this->rootDirectory	= $dirname;			// Root directory for script
-			$this->httpDirectory	= '/' . basename ($dirname);	// Root directory for HTTP
+			if (!isset($this->rootDirectory)) {
+				$this->rootDirectory	= $parent_directory;		// Root directory for script
+			}
+			if (!isset($this->httpDirectory)) {
+				$this->httpDirectory	= '/' . basename ($parent_directory);	// Root directory for HTTP
+			}
 			$this->cookieExpiration	= time () + 60 * 60 * 24 * 30;	// Cookie expiration date
 			$this->domain		= $_SERVER['HTTP_HOST'];	// Domain name for refer checking & notifications
 
