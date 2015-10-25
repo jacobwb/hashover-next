@@ -50,6 +50,7 @@
 		public $allowsWebsites		= true;				// Whether users can enter a website
 		public $allowsImages		= true;				// Whether external image URLs wrapped in [img] tags are embedded
 		public $allowsLogin		= true;				// Whether users can login and logout (when false form cookies are still set)
+		public $allowsReply		= true;				// Whether users can reply (or only add root comments)
 		public $allowsDislikes		= false;			// Whether a "Dislike" link is display; allowing Reddit-style voting
 		public $collapsesComments	= true;				// Whether to hide comments and display a link to show them
 		public $collapseLimit		= 3;				// Number of comments that aren't hidden
