@@ -1,3 +1,11 @@
+Changes by Jacob Barkdull 2015-10-25
+--------------------------------------------------------------------------------
+* hashover/scripts/settings.php,
+  hashover/scripts/setup.php
+
+	- Remove requirement of unique administrative login name.
+
+
 Changes by Jacob Barkdull 2015-10-13
 --------------------------------------------------------------------------------
 * hashover.js,

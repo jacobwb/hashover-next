@@ -72,19 +72,14 @@
 				exit ($this->escapeOutput ('<b>HashOver</b>: Failed to find CRYPT_BLOWFISH. Blowfish hashing support is required.', 'single'));
 			}
 
-			// Exit if encryption key is set to the default
-			if ($this->encryptionKey === '8CharKey') {
-				exit ($this->escapeOutput ('<b>HashOver</b>: You must use a UNIQUE encryption key in /hashover/scripts/settings.php', 'single'));
-			}
-
 			// Exit if notification email is set to the default
 			if ($this->notificationEmail === 'example@example.com') {
 				exit ($this->escapeOutput ('<b>HashOver</b>: You must use a UNIQUE notification e-mail in /hashover/scripts/settings.php', 'single'));
 			}
 
-			// Exit if administrative nickname is set to the default
-			if ($this->adminName === 'admin') {
-				exit ($this->escapeOutput ('<b>HashOver</b>: You must use a UNIQUE admin nickname in /hashover/scripts/settings.php', 'single'));
+			// Exit if encryption key is set to the default
+			if ($this->encryptionKey === '8CharKey') {
+				exit ($this->escapeOutput ('<b>HashOver</b>: You must use a UNIQUE encryption key in /hashover/scripts/settings.php', 'single'));
 			}
 
 			// Exit if administrative password is set to the default
