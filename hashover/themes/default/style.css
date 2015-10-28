@@ -134,7 +134,7 @@ Copyright (C) 2015 Jacob Barkdull
 	vertical-align: middle;
 	width: 32px;
 	height: 32px;
-	background-image: url('/hashover/images/pngs/inputs-and-buttons.png');
+	background-image: url('../../images/pngs/inputs-and-buttons.png');
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	border: 1px solid transparent;
@@ -790,7 +790,7 @@ Copyright (C) 2015 Jacob Barkdull
 	vertical-align: middle;
 	padding-left: 30px;
 	color: #111111;
-	background-image: url('/hashover/images/pngs/inputs-and-buttons.png');
+	background-image: url('../../images/pngs/inputs-and-buttons.png');
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	overflow: hidden ! important;
@@ -910,5 +910,5 @@ Copyright (C) 2015 Jacob Barkdull
 #hashover.hashover-mobile .hashover-email-input:before,
 #hashover.hashover-mobile .hashover-website-input:before,
 #hashover.hashover-mobile .hashover-comment .hashover-buttons a {
-	background-image: url('/hashover/images/svgs/inputs-and-buttons.svg');
+	background-image: url('../../images/svgs/inputs-and-buttons.svg');
 }
