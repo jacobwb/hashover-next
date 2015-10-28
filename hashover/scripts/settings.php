@@ -133,6 +133,11 @@
 			$this->cookieExpiration	= time () + 60 * 60 * 24 * 30;	// Cookie expiration date
 			$this->domain		= $_SERVER['HTTP_HOST'];	// Domain name for refer checking & notifications
 
+			// Disable login if names or passwords are disabled
+			if ($this->allowsNames === false or $this->allowsPasswords === false) {
+				$this->allowsLogin = false;
+			}
+
 			// Check if visitor is on mobile device
 			if (!empty ($_SERVER['HTTP_USER_AGENT'])) {
 				if (preg_match ('/(android|blackberry|phone)/i', $_SERVER['HTTP_USER_AGENT'])) {

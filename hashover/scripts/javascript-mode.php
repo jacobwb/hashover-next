@@ -1110,23 +1110,23 @@
 		return validateComment ();
 	};
 
+<?php if ($hashover->settings->allowsLogin === true) { ?>
 	// Attach event listeners to "Login" button
 	if (!userIsLoggedIn) {
 		var loginButton = getElement ('hashover-login-button');
 
-		if (loginButton) {
-			// Onclick
-			loginButton.onclick = function () {
-				return validateEmail ();
-			};
+		// Onclick
+		loginButton.onclick = function () {
+			return validateEmail ();
+		};
 
-			// Onsubmit
-			loginButton.onsubmit = function () {
-				return validateEmail ();
-			};
-		}
+		// Onsubmit
+		loginButton.onsubmit = function () {
+			return validateEmail ();
+		};
 	}
 
+<?php } ?>
 	// "Flatten" the comments object
 	function getAllComments (comments)
 	{
