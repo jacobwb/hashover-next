@@ -269,7 +269,7 @@ Copyright (C) 2014 Jacob Barkdull
 	font-size: 14px;
 	padding-left: 28px;
 	padding-right: 6px;
-	background-image: url('/hashover/themes/1.0-ported/images/inputs-and-buttons.png');
+	background-image: url('./images/inputs-and-buttons.png');
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	color: #808080;
@@ -354,7 +354,7 @@ Copyright (C) 2014 Jacob Barkdull
 	width: 31px;
 	background-color: #ECEEFF;
 	margin: 0px;
-	background-image: url('/hashover/themes/1.0-ported/images/inputs-and-buttons.png');
+	background-image: url('./images/inputs-and-buttons.png');
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	color: transparent;
