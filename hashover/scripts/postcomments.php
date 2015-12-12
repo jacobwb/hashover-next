@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2015 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ ini_set ('default_charset', 'UTF-8');
 ini_set ('display_errors', true);
 error_reporting (E_ALL);
 
-// Tell browser this is JavaScript
+// Tell browser output is JavaScript
 header ('Content-Type: application/javascript');
 
 // Disable browser cache
@@ -47,36 +47,92 @@ spl_autoload_register (function ($classname) {
 	$classname = strtolower ($classname);
 	$error = '"' . $classname . '.php" file could not be included!';
 
-	if (!@include ('../scripts/' . $classname . '.php')) {
+	if (!@include ('./' . $classname . '.php')) {
 		echo '(document.getElementById (\'hashover\') || document.body).innerHTML += \'' . $error . '\';';
 		exit;
 	}
 });
 
-// Instantiate HashOver class
-$hashover = new HashOver ('api');
+// Mode is based on whether request is AJAX
+$mode = isset ($_POST['ajax']) ? 'javascript' : 'php';
+$data = null;
 
-// Display error if the API is disabled
-if (!isset ($_POST['ajax']) and $hashover->setup->APIStatus ('json') === 'disabled') {
-	exit (json_encode (array ('error' => '<b>HashOver</b>: This API is not enabled.')));
+// Instantiate HashOver class
+$hashover = new HashOver ($mode);
+$hashover->setup->setPageURL ('request');
+$hashover->setup->setPageTitle ('request');
+$hashover->initiate ();
+$hashover->finalize ();
+
+// Instantiate class for writing and editing comments
+$write_comments = new WriteComments (
+	$hashover->readComments,
+	$hashover->locales,
+	$hashover->cookies,
+	$hashover->login
+);
+
+// Various POST data actions
+$post_actions = array (
+	'login',
+	'logout',
+	'post',
+	'edit',
+	'delete'
+);
+
+// Execute an action (write/edit/login/etc)
+foreach ($post_actions as $action) {
+	if (empty ($_POST[$action])) {
+		continue;
+	}
+
+	switch ($action) {
+		case 'login': {
+			if ($hashover->setup->allowsLogin !== true) {
+				$write_comments->postComment ();
+				break;
+			}
+
+			$write_comments->login ();
+			break;
+		}
+
+		case 'logout': {
+			$write_comments->logout ();
+			break;
+		}
+
+		case 'post': {
+			$data = $write_comments->postComment ();
+			break;
+		}
+
+		case 'edit': {
+			$data = $write_comments->editComment ();
+			break;
+		}
+
+		case 'delete': {
+			$write_comments->deleteComment ();
+			break;
+		}
+	}
+
+	break;
 }
 
-// Configure HashOver and load comments
-$hashover->setup->setPageURL ('request');
-$hashover->initiate ();
+// Returns comment being saved as JSON
+if (isset ($_POST['ajax']) and is_array ($data)) {
+	// Slit file into parts
+	$key_parts = explode ('-', $data['file']);
 
-// Setup where to start reading comments
-$start = !empty ($_POST['start']) ? $_POST['start'] : 0;
+	// Update comment count
+	$hashover->getCommentCount ();
 
-// Check for comments
-if ($hashover->readComments->totalCount > 1) {
-	// Parse primary comments
-	// TODO: Use starting point
-	$hashover->parsePrimary (false, 0);
-
-	// Display as JSON data
-	echo json_encode ($hashover->comments);
-} else {
-	// Return no comments message
-	echo json_encode (array ('No comments.'));
+	// Echo JSON array
+	echo json_encode (array (
+		'comment' => $hashover->commentParser->parse ($data['comment'], $data['file'], $key_parts),
+		'count' => $hashover->commentCount
+	));
 }

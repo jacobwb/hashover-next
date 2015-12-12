@@ -1,3 +1,175 @@
+Changes by Jacob Barkdull 2015-12-12
+--------------------------------------------------------------------------------
+* Locales
+
+	- Replaced "_TITLE_", "_NUM_", and "_TIME_" with format specifiers.
+	- Now using printf functions instead of str_replace for locale strings.
+	- "Top of Thread" changed to "In reply to %s".
+	- Merged improvements to Spanish locale.
+	- Added Brazilian Portuguese locale.
+	- Added Romanian locale.
+
+
+* hashover/scripts/writecomments.php
+
+	- Login code decoupled into separate files.
+	- `kickback ()` method no longer exits script.
+	- Class methods now have return values.
+
+	- Methods for posting and editing comments now return the comment as an
+	  array when AJAX requests are made. This allows the receiving code to
+	  encode the comment as JSON for AJAX requests.
+
+
+* Added new Login and DefaultLogin classes
+
+	- New login class for handling custom login mechanisms.
+	- New default login class for default login mechanism.
+
+
+* hashover/scripts/postcomments.php
+
+	- New file for posting comments, both the traditional way and via AJAX.
+	- This file also handles login.
+
+
+* hashover/scripts/javascript-mode.php
+
+	- Added AJAX comment posting and editing.
+	- Comment and e-mail form validation now applies to edit forms as well.
+	- Edit forms now have their own message element for displaying errors.
+	- Fixed: Onclick only attached to one embedded image per comment.
+	- Fixed: Only one of multiple open message dialogs closing.
+	- Reply parsing now has access to their parent comment.
+	- "Top of Thread" changed to "In reply to <parent comment name here>".
+	- Improved XSS escaping and utilizing it more.
+	- Very minor performance/memory improvements.
+	- Removed duplicate code.
+
+
+* hashover/scripts/settings.php,
+  hashover/scripts/hashover.php
+
+	- Logic for comment reply nesting modified to allow a configurable 
+	  number of indentation levels, after which the thread is flattened.
+
+	- Added public $usesAJAX setting.
+	- Added public $streamDepth setting.
+	- Added public $JSONSettingsFile setting.
+	- Added public $loginMethod setting.
+	- Settings can now be set in a local JSON file.
+
+
+* hashover/scripts/setup.php
+
+	- Merged in code to automatically adjust settings.
+
+
+* hashover/scripts/readcomments.php
+
+	- Missing comment search now ~60% faster (~100 ms for 1000 comments).
+
+
+* hashover/scripts/database.php,
+  hashover/scripts/parsesql.php
+
+	- Improved syntax of SQL statements.
+	- Tables are now created upon first posted comment.
+	- Conformed method return values to expected behavior.
+	- Removed redundant comment counting code.
+	- Bug fixes.
+
+
+* Users re-logged in when editing comments
+
+	- If the user editing a comment changes their name, they are now
+	  automatically logged in with that new name. This allows them to
+	  continue to edit or delete their comment after saving their initial
+	  edit, as otherwise they would still be logged in with the old name
+	  and not have editing or deletion rights.
+
+
+* Improved GET, POST, and COOKIE data filtering
+
+	- PHP code implementing HashOver should no longer see it affecting the
+	  GET, POST, or COOKIE data in the global namespace in any way, as this
+	  data is now filtered as required instead of all at once.
+
+
+* Improved error handling
+
+	- Classes now throw Exceptions, and try/catch blocks are used to display
+	  the error messages, `escapeOutput ()` has been removed and the new 
+	  `displayErrors ()` is used as a wrapper instead.
+
+
+* hashover/scripts/htmloutput.php
+
+	- Comment thread link function modified to include parent comment name.
+
+
+* hashover/scripts/hashover.php
+
+	- `initiate ()` split into two methods, an added `finalize ()` method.
+	- Comments are no longer automatically parsed during initialization.
+	- Fixed: Most popular comments being sorted in reverse order.
+
+
+* All images are now in a single directory
+
+	- Subdirectories "/pngs" and "/svgs" have been merged with "/images",
+	  this simplifies the generation of paths to these image files, and
+	  makes the pathnames easier to remember and type out.
+
+
+* hashover/scripts/cookies.php
+
+	- Fixed: Cookies set with port, causing issues on ports other than 80.
+
+
+* Removed closing PHP tags
+
+	- All class files and files intended for inclusion consisting entirely
+	  of PHP code no longer have a closing PHP tag, the developers of PHP
+	  recommend doing so for such files and it helps prevent a
+	  "headers already sent" error on poorly configured web servers.
+
+
+* Coding style changes
+
+	- Code following PHP opening tags is no longer indented one level,
+	  except where PHP code is being aligned with other text in the
+	  document, as with JavaScript code for example.
+
+	- My standard for function return types in languages like C, and other
+	  Object Oriented languages like Java, is to place a newline after the
+	  class method keywords and return type, which are to be on their own
+	  line. My hope was for PHP to eventually gain strict function return
+	  type declarations, and for my standard to apply to PHP as well.
+
+	  While PHP has gained scalar type declarations with version 7, the way
+	  it's implemented is to specify the type, preceded by a colon, after
+	  the function parameter list. This is ugly, and doesn't work well with
+	  my standard style, so a different approach will be taken, for now,
+	  the newlines will simply be done away with.
+
+	- Most associative array keys with underscores have been renamed to use
+	  dashes instead. This is for readability, ease of typing, and the
+	  separation in naming convention makes it easier to differentiate
+	  HashOver specific variables from PHP global variables, and allows for
+	  easier search and replace of just HashOver variables when necessary.
+
+
+* Added files:
+
+	hashover/scripts/locales/pt_br.php,
+	hashover/scripts/locales/ro.php,
+	hashover/scripts/defaultlogin.php,
+	hashover/scripts/login.php,
+	hashover/scripts/postcomments.php,
+	hashover/scripts/postdata.php
+
+
 Changes by Jacob Barkdull 2015-10-25
 --------------------------------------------------------------------------------
 * hashover/scripts/settings.php,
@@ -113,7 +285,7 @@ Changes by Jacob Barkdull 2015-08-02
 
 	- Now using application/javascript instead of text/javascript, this
 	  helps ensure more servers will correctly compress HashOver's
-	  JavaScipt and JSON output when compression is enabled on the server.
+	  JavaScript and JSON output when compression is enabled on the server.
 
 
 Changes by Jacob Barkdull 2015-07-29
@@ -144,7 +316,7 @@ Changes by Jacob Barkdull 2015-07-29
 
 * hashover/scripts/htmloutput.php
 
-	- Fixed "JavaScipt" hyperlink pointing to the wrong (old) filename.
+	- Fixed "JavaScript" hyperlink pointing to the wrong (old) filename.
 	- Minify based on operating system's end of line, not just Unix-style.
 
 
@@ -214,7 +386,7 @@ Changes by Jacob Barkdull 2015-06-22
 * hashover/scripts/cookies.php
 
 	- `clear ()` function now uses `expireCookie ($cookie)` function.
-	- `expireCookie ($cookie)` now uses `set ($name [, $value, $date]).
+	- `expireCookie ($cookie)` now uses `set ($name [, $value, $date])`.
 
 
 Changes by Jacob Barkdull 2015-06-21
@@ -2028,3 +2200,4 @@ document.write("\n<form action=\"<?php echo $_SERVER["PHP_SELF"]; ?>\" method=\"
 Added brief installation note
 
 Added additional comments throughout code
+

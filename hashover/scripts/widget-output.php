@@ -1,70 +1,68 @@
 <?php
 
-	// Copyright (C) 2010-2015 Jacob Barkdull
-	//
-	//	This file is part of HashOver.
-	//
-	//	HashOver is free software: you can redistribute it and/or modify
-	//	it under the terms of the GNU Affero General Public License as
-	//	published by the Free Software Foundation, either version 3 of the
-	//	License, or (at your option) any later version.
-	//
-	//	HashOver is distributed in the hope that it will be useful,
-	//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	//	GNU Affero General Public License for more details.
-	//
-	//	You should have received a copy of the GNU Affero General Public License
-	//	along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
+// Copyright (C) 2010-2015 Jacob Barkdull
+// This file is part of HashOver.
+//
+// HashOver is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// HashOver is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-	// Display source code
-	if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-		if (isset ($_GET['source'])) {
-			header ('Content-type: text/plain; charset=UTF-8');
-			exit (file_get_contents (basename (__FILE__)));
-		}
+// Display source code
+if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
+	if (isset ($_GET['source'])) {
+		header ('Content-type: text/plain; charset=UTF-8');
+		exit (file_get_contents (basename (__FILE__)));
 	}
+}
 
-	$js_avatar = '';
+$js_avatar = '';
 
-	if ($hashover->settings->iconMode !== 'none') {
-		if ($hashover->settings->iconMode === 'image') {
-			$js_avatar = '<img width="' . $hashover->settings->iconSize . '" height="' . $hashover->settings->iconSize . '" src="' . $hashover->settings->httpDirectory . '\' + object[\'avatar\'] + \'" alt="#\' + permatext + \'">';
-		} else {
-			$js_avatar = '<a href="#\' + permalink + \'" title="Permalink">#\' + permatext + \'</a>';
-		}
+if ($hashover->setup->iconMode !== 'none') {
+	if ($hashover->setup->iconMode === 'image') {
+		$js_avatar = '<img width="' . $hashover->setup->iconSize . '" height="' . $hashover->setup->iconSize . '" src="\' + object[\'avatar\'] + \'" alt="#\' + permatext + \'">';
+	} else {
+		$js_avatar = '<a href="#\' + permalink + \'" title="Permalink">#\' + permatext + \'</a>';
 	}
+}
 
 ?>
 // Copyright (C) 2010-2015 Jacob Barkdull
+// This file is part of HashOver.
 //
-//	This file is part of HashOver.
+// HashOver is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
 //
-//	HashOver is free software: you can redistribute it and/or modify
-//	it under the terms of the GNU Affero General Public License as
-//	published by the Free Software Foundation, either version 3 of the
-//	License, or (at your option) any later version.
+// HashOver is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
 //
-//	HashOver is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//	GNU Affero General Public License for more details.
-//
-//	You should have received a copy of the GNU Affero General Public License
-//	along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU Affero General Public License
+// along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
 var hashover_latest = '';
 var head = document.getElementsByTagName ('head')[0];
 var hashover_widget_div = document.getElementById ('hashover-widget');
 
-<?php if ($hashover->settings->appendsCSS) { ?>
+<?php if ($hashover->setup->appendsCSS) { ?>
 // Add comment stylesheet to page <head>
-if (document.querySelector ('link[href="<?php echo $hashover->settings->httpDirectory; ?>/themes/<?php echo $hashover->settings->theme; ?>/widget-style.css"]') == null) {
+if (document.querySelector ('link[href="<?php echo $hashover->setup->httpRoot; ?>/themes/<?php echo $hashover->setup->theme; ?>/widget-style.css"]') == null) {
 	link = document.createElement ('link');
 	link.rel = 'stylesheet';
-	link.href = '<?php echo $hashover->settings->httpDirectory; ?>/themes/<?php echo $hashover->settings->theme; ?>/widget-style.css';
+	link.href = '<?php echo $hashover->setup->httpRoot; ?>/themes/<?php echo $hashover->setup->theme; ?>/widget-style.css';
 	link.type = 'text/css';
 	head.appendChild (link);
 }
@@ -77,7 +75,7 @@ function parseTemplate (object, count, sort, method) {
 
 	var variable = 'hashover_latest';
 	var permalink = object['permalink'];
-	var permatext = permalink.replace ('_pop', '').slice (1).split ('r').pop ();
+	var permatext = permalink.replace ('-pop', '').slice (1).split ('r').pop ();
 	var cmtclass = (permalink.match ('r') && (sort == false || method == 'ascending')) ? ' ' + 'hashover-widget-reply' : '';
 	var avatar = '';
 
@@ -88,19 +86,19 @@ function parseTemplate (object, count, sort, method) {
 		avatar = '<span class="hashover-avatar"><?php echo $js_avatar; ?></span>';
 	}
 
-	if (!object['deletion_notice']) {
+	if (!object['deletion-notice']) {
 		// Add HTML anchor tag to URLs
 		var clean_code = object['body'].replace (/(((ftp|http|https){1}:\/\/)[a-zA-Z0-9-@:%_\+.~#?&\/=]+)([\s]{0,})/ig, '<a href="$1" target="_blank">$1</a>');
 
 		// Replace [img] tags with external image placeholder if enabled
 		clean_code = clean_code.replace (/\[img\]<a.*?>(((ftp|http|https){1}:\/\/)[a-zA-Z0-9-@:%_\+.~#?&\/=]+)<\/a>\[\/img\]/ig, function (fullURL, url) {
-<?php if ($hashover->settings->allowsImages) { ?>
-			var extensions = ['<?php echo implode ('\', \'', $hashover->settings->imageTypes); ?>'];
+<?php if ($hashover->setup->allowsImages) { ?>
+			var extensions = ['<?php echo implode ('\', \'', $hashover->setup->imageTypes); ?>'];
 			var urlExtension = url.split ('.').pop ().split (/\#|\?/)[0];
 
 			for (var ext = 0, length = extensions.length; ext < length; ext++) {
 				if (extensions[ext] == urlExtension) {
-					return '<br><br><img src="<?php echo $hashover->settings->httpDirectory, '/images/', $hashover->settings->imageFormat, 's/place-holder.', $hashover->settings->imageFormat; ?>" title="' + url +  '" alt="Loading..." onClick="((this.src==this.title) ? this.src=\'<?php echo $hashover->settings->httpDirectory, '/images/', $hashover->settings->imageFormat, 's/place-holder.', $hashover->settings->imageFormat; ?>\' : this.src=this.title);"><br><br>';
+					return '<br><br><img src="<?php echo $hashover->setup->httpImages, '/place-holder.', $hashover->setup->imageFormat; ?>" title="' + url +  '" alt="Loading..." onClick="((this.src==this.title) ? this.src=\'<?php echo $hashover->setup->httpImages, '/place-holder.', $hashover->setup->imageFormat; ?>\' : this.src=this.title);"><br><br>';
 				}
 			};
 
@@ -113,14 +111,14 @@ function parseTemplate (object, count, sort, method) {
 
 		var 
 			name = object['name'].replace (/^@(.*?)$/, '$1'),
-			thread = '<a href="' + object['thread_url'] + '#' + permalink + '" title="Permalink">' + object['thread_title'] + '</a>',
+			thread = '<a href="' + object['thread-url'] + '#' + permalink + '" title="Permalink">' + object['thread-title'] + '</a>',
 			date = object['date'],
 			likes = (object['likes']) ? object['likes'] + ' Like' + ((object['likes'] != 1) ? 's' : '') : '',
-			like_link = (object['like_link']) ? object['like_link'] : '',
+			like_link = (object['like-link']) ? object['like-link'] : '',
 			dislikes = (object['dislikes']) ? object['dislikes'] + ' Dislike' + ((object['likes'] != 1) ? 's' : '') : '',
-			dislike_link = (object['dislike_link']) ? object['dislike_link'] : '',
-			edit_link = (object['edit_link']) ? object['edit_link'] : '',
-			reply_link = object['reply_link'],
+			dislike_link = (object['dislike-link']) ? object['dislike-link'] : '',
+			edit_link = (object['edit-link']) ? object['edit-link'] : '',
+			reply_link = object['reply-link'],
 			comment = clean_code,
 			action = '/hashover.php',
 			form = '',
@@ -143,8 +141,9 @@ function parseTemplate (object, count, sort, method) {
 		name = '<span class="hashover-widget-name' + name_class + '">' + name_at + name + '</span>';
 
 <?php
+
 		// Load HTML template
-		$theme_layout = explode (PHP_EOL, file_get_contents ($hashover->settings->rootDirectory . '/themes/' . $hashover->settings->theme . '/widget-layout.html'));
+		$theme_layout = explode (PHP_EOL, file_get_contents ($hashover->setup->rootDirectory . '/themes/' . $hashover->setup->theme . '/widget-layout.html'));
 		$theme_layout = str_replace ("\t", '\t', $theme_layout);
 
 		for ($line = 0, $length = count ($theme_layout); $line < $length; $line++) {
@@ -152,6 +151,7 @@ function parseTemplate (object, count, sort, method) {
 				echo "\t\t", 'window[variable] += \'\t\t', $theme_layout[$line], '\n\';', PHP_EOL;
 			}
 		}
+
 ?>
 	} else {
 		if (object['avatar']) {
@@ -205,5 +205,5 @@ if (hashover_widget_div == null) {
 }
 
 // Place all content on page
-hashover_widget_div.className = '<?php echo $hashover->settings->imageFormat; ?>';
+hashover_widget_div.className = '<?php echo $hashover->setup->imageFormat; ?>';
 hashover_widget_div.innerHTML = hashover_latest;

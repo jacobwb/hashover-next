@@ -1,46 +1,45 @@
 // Copyright (C) 2010-2015 Jacob Barkdull
+// This file is part of HashOver.
 //
-//	This file is part of HashOver.
+// HashOver is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
 //
-//	HashOver is free software: you can redistribute it and/or modify
-//	it under the terms of the GNU Affero General Public License as
-//	published by the Free Software Foundation, either version 3 of the
-//	License, or (at your option) any later version.
+// HashOver is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
 //
-//	HashOver is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//	GNU Affero General Public License for more details.
-//
-//	You should have received a copy of the GNU Affero General Public License
-//	along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
-//
-//--------------------
-//
-// Get Complete Source Code
-//
-//	The source code for each PHP script used in HashOver is normally 
-//	accessible directly from each script. You can simply visit the script 
-//	file with the "source" query and the script will generate and display 
-//	its own source code.
-//
-//	Like so:
-//
-//	    http://tildehash.com/hashover/scripts/htmltag.php?source
-//
-//	Besides that, HashOver is available as a ZIP archive:
-//
-//	    http://tildehash.com/hashover.zip
-//
-//	Besides that, HashOver is available on GitHub:
-//
-//	    https://github.com/jacobwb/hashover
+// You should have received a copy of the GNU Affero General Public License
+// along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 //
 //--------------------
 //
-// Documentation
+// Get Complete Source Code:
 //
-//	http://tildehash.com/?page=hashover
+// The source code for each PHP script used in HashOver is normally 
+// accessible directly from each script. You can simply visit the script 
+// file with the "source" query and the script will generate and display 
+// its own source code.
+//
+// Like so:
+//
+//     http://tildehash.com/hashover/scripts/htmltag.php?source
+//
+// Besides that, HashOver is available as a ZIP archive:
+//
+//     http://tildehash.com/hashover.zip
+//
+// Besides that, HashOver is available on GitHub:
+//
+//     https://github.com/jacobwb/hashover
+//
+//--------------------
+//
+// Documentation:
+//
+//     http://tildehash.com/?page=hashover
 
 
 (function () {

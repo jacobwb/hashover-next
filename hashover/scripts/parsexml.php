@@ -1,144 +1,146 @@
 <?php
 
-	// Copyright (C) 2010-2015 Jacob Barkdull
-	//
-	//	This file is part of HashOver.
-	//
-	//	HashOver is free software: you can redistribute it and/or modify
-	//	it under the terms of the GNU Affero General Public License as
-	//	published by the Free Software Foundation, either version 3 of the
-	//	License, or (at your option) any later version.
-	//
-	//	HashOver is distributed in the hope that it will be useful,
-	//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	//	GNU Affero General Public License for more details.
-	//
-	//	You should have received a copy of the GNU Affero General Public License
-	//	along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
+// Copyright (C) 2010-2015 Jacob Barkdull
+// This file is part of HashOver.
+//
+// HashOver is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// HashOver is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-	// Display source code
-	if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-		if (isset ($_GET['source'])) {
-			header ('Content-type: text/plain; charset=UTF-8');
-			exit (file_get_contents (basename (__FILE__)));
-		} else {
-			exit ('<b>HashOver</b>: This is a class file.');
-		}
+// Display source code
+if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
+	if (isset ($_GET['source'])) {
+		header ('Content-type: text/plain; charset=UTF-8');
+		exit (file_get_contents (basename (__FILE__)));
+	} else {
+		exit ('<b>HashOver</b>: This is a class file.');
+	}
+}
+
+// Functions for reading and writing XML files
+class ParseXML extends ReadFiles
+{
+	public function __construct ($setup)
+	{
+		parent::__construct ($setup);
+		libxml_use_internal_errors (true);
 	}
 
-	// Functions for reading and writing XML files
-	class ParseXML extends ReadFiles
+	public function query (array $files = array (), $auto = true)
 	{
-		public
-		function __construct ($setup)
-		{
-			parent::__construct ($setup);
-			libxml_use_internal_errors (true);
+		// Return array of files
+		return $this->loadFiles ('xml', $files, $auto);
+	}
+
+	public function read ($file, $fullpath = false)
+	{
+		if ($fullpath === false) {
+			$file = $this->setup->dir . '/' . $file . '.xml';
 		}
 
-		public
-		function query (array $files = array (), $auto = true)
-		{
-			return $this->loadFiles ('xml', $files, $auto);
+		// Read and parse comment XML file
+		$xml = @simplexml_load_string (file_get_contents ($file), 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOCDATA);
+
+		// Check for XML parse error
+		if ($xml !== false) {
+			// Remove first two levels of indentation from comment
+			$xml->body = preg_replace ('/^\t{0,2}/m', '', trim ($xml->body, "\r\n\t"));
+
+			return (array) $xml;
 		}
 
-		public
-		function read ($file, $fullpath = false)
-		{
-			if ($fullpath === false) {
-				$file = $this->setup->dir . '/' . $file . '.xml';
-			}
+		return false;
+	}
 
-			$xml = @simplexml_load_string (file_get_contents ($file), 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOCDATA);
+	public function save (array $contents, $file, $editing = false, $fullpath = false)
+	{
+		if ($fullpath === false) {
+			$file = $this->setup->dir . '/' . $file . '.xml';
+		}
 
-			if ($xml !== false) {
-				$xml->body = preg_replace ('/^\t{0,2}/m', '', trim ($xml->body, "\r\n\t"));
-
-				return (array) $xml;
-			}
-
+		// Return false on attempts to override an existing file
+		if (file_exists ($file) and $editing === false) {
 			return false;
 		}
 
-		public
-		function save (array $contents, $file, $editing = false, $fullpath = false)
-		{
-			if ($fullpath === false) {
-				$file = $this->setup->dir . '/' . $file . '.xml';
-			}
+		// Create empty XML DOM document
+		$dom = new DOMDocument ('1.0', 'UTF-8');
+		$dom->preserveWhiteSpace = false;
+		$dom->formatOutput = true;
 
-			if (file_exists ($file) and $editing === false) {
-				return false;
-			}
+		// Create root element "comment"
+		$comment = $dom->createElement ('comment');
 
-			// Create empty XML DOM document
-			$dom = new DOMDocument ('1.0', 'UTF-8');
-			$dom->preserveWhiteSpace = false;
-			$dom->formatOutput = true;
+		// Add comment data to root "comment" element
+		foreach ($contents as $key => $value) {
+			$element = $dom->createElement ($key);
 
-			// Create root element "comment"
-			$comment = $dom->createElement ('comment');
+			if ($key === 'body') {
+				$newValue = '';
 
-			// Add comment data to root "comment" element
-			foreach ($contents as $key => $value) {
-				$element = $dom->createElement ($key);
-
-				if ($key === 'body') {
-					$newValue = '';
-
-					foreach (explode (PHP_EOL, trim ($value, PHP_EOL)) as $line) {
-						if (!empty ($line)) {
-							$newValue .= "\t\t";
-						}
-
-						$newValue .= $line . PHP_EOL;
+				foreach (explode (PHP_EOL, trim ($value, PHP_EOL)) as $line) {
+					if (!empty ($line)) {
+						$newValue .= "\t\t";
 					}
 
-					$value = PHP_EOL . $newValue . "\t";
+					$newValue .= $line . PHP_EOL;
 				}
 
-				$text_node = $dom->createTextNode ($value);
-				$element->appendChild ($text_node);
-				$comment->appendChild ($element);
+				$value = PHP_EOL . $newValue . "\t";
 			}
 
-			// Append root element "comment"
-			$dom->appendChild ($comment);
-
-			// Replace double spaces with single tab
-			$tabbed_dom = str_replace ('  ', "\t", $dom->saveXML ());
-
-			// Attempt to write file
-			if (file_put_contents ($file, $tabbed_dom, LOCK_EX)) {
-				chmod ($file, 0600);
-
-				return true;
-			}
-
-			return false;
+			$text_node = $dom->createTextNode ($value);
+			$element->appendChild ($text_node);
+			$comment->appendChild ($element);
 		}
 
-		public
-		function delete ($file, $hardUnlink = false)
-		{
-			if ($hardUnlink === true) {
-				return unlink ($this->setup->dir . '/' . $file . '.xml');
-			}
+		// Append root element "comment"
+		$dom->appendChild ($comment);
 
-			$xml = $this->read ($file);
+		// Replace double spaces with single tab
+		$tabbed_dom = str_replace ('  ', "\t", $dom->saveXML ());
 
-			if ($xml !== false) {
-				$xml['status'] = 'deleted';
+		// Attempt to write file
+		if (file_put_contents ($file, $tabbed_dom, LOCK_EX)) {
+			chmod ($file, 0600);
 
-				if ($this->save ($xml, $file, true)) {
-					return true;
-				}
-			}
-
-			return false;
+			return true;
 		}
+
+		return false;
 	}
 
-?>
+	public function delete ($file, $hardUnlink = false)
+	{
+		// Actually delete the comment file
+		if ($hardUnlink === true) {
+			return unlink ($this->setup->dir . '/' . $file . '.xml');
+		}
+
+		// Read comment file
+		$xml = $this->read ($file);
+
+		// Check for XML parse error
+		if ($xml !== false) {
+			// Change status to deleted
+			$xml['status'] = 'deleted';
+
+			// Attempt to save file
+			if ($this->save ($xml, $file, true)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+}
