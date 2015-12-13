@@ -30,6 +30,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 class Setup extends Settings
 {
 	public $mode = 'php';
+	public $misc;
 	public $pageURL;
 	public $pageTitle;
 	public $encryption;
@@ -67,29 +68,10 @@ class Setup extends Settings
 		' '
 	);
 
-	// XSS-unsafe characters to search for
-	protected $searchXSS = array (
-		'&',
-		'<',
-		'>',
-		'"',
-		"'",
-		'/'
-	);
-
-	// XSS-safe replacement character entities
-	protected $replaceXSS = array (
-		'&amp;',
-		'&lt;',
-		'&gt;',
-		'&quot;',
-		'&#x27;',
-		'&#x2F;'
-	);
-
-	public function __construct ($mode = 'php')
+	public function __construct ($mode = 'php', Misc $misc)
 	{
 		$this->mode = $mode;
+		$this->misc = $misc;
 
 		// Execute parent constructor
 		parent::__construct ();
@@ -124,7 +106,7 @@ class Setup extends Settings
 
 		// Error if the script wasn't requested by this server
 		if ($this->mode === 'javascript' and $this->refererCheck () === false) {
-			//throw new Exception ('External use not allowed.');
+			throw new Exception ('External use not allowed.');
 		}
 
 		// Instantiate encryption class
@@ -277,7 +259,7 @@ class Setup extends Settings
 				$this->pageURL = $this->getPageURL ();
 
 			} catch (Exception $error) {
-				$this->displayError ($error->getMessage ());
+				$this->misc->displayError ($error->getMessage ());
 			}
 		}
 
@@ -335,7 +317,7 @@ class Setup extends Settings
 			$this->pageURL  = $url_parts['scheme'] . '://';
 			$this->pageURL .= $url_parts['host'];
 		} else {
-			$this->displayError ('URL needs a hostname and scheme.');
+			$this->misc->displayError ('URL needs a hostname and scheme.');
 		}
 
 		// Add optional port to URL
@@ -416,34 +398,5 @@ class Setup extends Settings
 		}
 
 		return false;
-	}
-
-	// Make a string XSS-safe
-	public function makeXSSsafe ($string)
-	{
-		// Return cookie value without harmful characters
-		return str_replace ($this->searchXSS, $this->replaceXSS, $string);
-	}
-
-	// Returns error in HTML paragraph
-	public function displayError ($error)
-	{
-		if (empty ($error)) {
-			return;
-		}
-
-		// Wrap error in paragraph tag
-		$html = '<p>' . $error . '</p>';
-
-		// Return the paragraph tag alone in PHP mode
-		if ($this->mode === 'php') {
-			return $html;
-		}
-
-		// Element to add error message to
-		$element = '(document.getElementById (\'hashover\') || document.body)';
-
-		// Return JavaScript to display error message
-		exit ($element . '.innerHTML += \'' . addcslashes ($html, "'") . '\';');
 	}
 }

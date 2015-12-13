@@ -36,13 +36,13 @@ class ReadComments
 	public $totalCount = 1;
 	public $primaryCount = 1;
 
-	public function __construct (Setup $setup)
+	public function __construct (Setup $setup, Misc $misc)
 	{
 		$this->setup = $setup;
 
 		// Instantiate necessary class data format class
 		$data_class = 'Parse' . strtoupper ($setup->dataFormat);
-		$this->data = new $data_class ($setup);
+		$this->data = new $data_class ($setup, $misc);
 
 		// Query a list of comments
 		$this->commentList = $this->data->query ();

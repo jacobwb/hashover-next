@@ -100,7 +100,7 @@ Changes by Jacob Barkdull 2015-12-12
 
 	- Classes now throw Exceptions, and try/catch blocks are used to display
 	  the error messages, `escapeOutput ()` has been removed and the new 
-	  `displayErrors ()` is used as a wrapper instead.
+	  `displayErrors ()` in the new Misc class is used as a wrapper instead.
 
 
 * hashover/scripts/htmloutput.php
@@ -162,12 +162,13 @@ Changes by Jacob Barkdull 2015-12-12
 
 * Added files:
 
-	hashover/scripts/locales/pt_br.php,
-	hashover/scripts/locales/ro.php,
 	hashover/scripts/defaultlogin.php,
 	hashover/scripts/login.php,
+	hashover/scripts/misc.php,
 	hashover/scripts/postcomments.php,
-	hashover/scripts/postdata.php
+	hashover/scripts/postdata.php,
+	hashover/scripts/locales/pt_br.php,
+	hashover/scripts/locales/ro.php
 
 
 Changes by Jacob Barkdull 2015-10-25

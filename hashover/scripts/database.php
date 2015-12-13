@@ -32,11 +32,13 @@ class Database
 {
 	public $database;
 	public $setup;
+	public $misc;
 	public $storageMode;
 
-	public function __construct (Setup $setup)
+	public function __construct (Setup $setup, Misc $misc)
 	{
 		$this->setup = $setup;
+		$this->misc = $misc;
 		$this->storageMode = $setup->databaseType;
 
 		try {
@@ -54,7 +56,7 @@ class Database
 				);
 			}
 		} catch (PDOException $error) {
-			$this->setup->displayError ($error->getMessage ());
+			$this->misc->displayError ($error->getMessage ());
 		}
 	}
 
@@ -131,7 +133,7 @@ class Database
 			}
 
 		} catch (PDOException $error) {
-			$this->setup->displayError ($error->getMessage ());
+			$this->misc->displayError ($error->getMessage ());
 		}
 
 		return true;
@@ -174,7 +176,7 @@ class Database
 			}
 
 		} catch (PDOException $error) {
-			$this->setup->displayError ($error->getMessage ());
+			$this->misc->displayError ($error->getMessage ());
 		}
 
 		return true;

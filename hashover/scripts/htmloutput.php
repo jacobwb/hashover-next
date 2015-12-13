@@ -33,6 +33,7 @@ class HTMLOutput
 	public $readComments;
 	public $locales;
 	public $avatars;
+	public $misc;
 	public $login;
 	public $commentCount;
 	public $popularList;
@@ -44,13 +45,14 @@ class HTMLOutput
 	protected $pageURL;
 	protected $defaultLoginInputs;
 
-	public function __construct (ReadComments $read_comments, Login $login, Locales $locales, Avatars $avatars, $show_count, array $popularList)
+	public function __construct (ReadComments $read_comments, Login $login, Locales $locales, Avatars $avatars, Misc $misc, $show_count, array $popularList)
 	{
 		$this->setup = $read_comments->setup;
 		$this->login = $login;
 		$this->readComments = $read_comments;
 		$this->locales = $locales;
 		$this->avatars = $avatars;
+		$this->misc = $misc;
 		$this->commentCount = $show_count;
 		$this->popularList = $popularList;
 		$this->addcslashes = ($this->setup->mode !== 'php');
@@ -98,7 +100,7 @@ class HTMLOutput
 				'input-type' => 'text',
 				'input-name' => 'name',
 				'input-title' => $this->locales->locale ('name-tip', $this->addcslashes),
-				'input-value' => $this->setup->makeXSSsafe ($this->login->name)
+				'input-value' => $this->misc->makeXSSsafe ($this->login->name)
 			),
 			'password' => array (
 				'enabled' => ($this->setup->allowsPasswords and $this->setup->allowsNames),
@@ -120,7 +122,7 @@ class HTMLOutput
 				'input-type' => 'text',
 				'input-name' => 'email',
 				'input-title' => $this->locales->locale ('email-tip', $this->addcslashes),
-				'input-value' => $this->setup->makeXSSsafe ($this->login->email)
+				'input-value' => $this->misc->makeXSSsafe ($this->login->email)
 			),
 			'website' => array (
 				'enabled' => $this->setup->allowsWebsites,
@@ -131,7 +133,7 @@ class HTMLOutput
 				'input-type' => 'text',
 				'input-name' => 'website',
 				'input-title' => $this->locales->locale ('website-tip', $this->addcslashes),
-				'input-value' => $this->setup->makeXSSsafe ($this->login->website)
+				'input-value' => $this->misc->makeXSSsafe ($this->login->website)
 			)
 		);
 
@@ -546,9 +548,9 @@ class HTMLOutput
 			}
 
 			if (!empty ($_COOKIE['message'])) {
-				$message = $this->setup->makeXSSsafe ($_COOKIE['message']);
+				$message = $this->misc->makeXSSsafe ($_COOKIE['message']);
 			} else {
-				$message = $this->setup->makeXSSsafe ($_COOKIE['error']);
+				$message = $this->misc->makeXSSsafe ($_COOKIE['error']);
 				$message_element->appendAttribute ('class', 'hashover-message-error');
 			}
 
@@ -587,12 +589,12 @@ class HTMLOutput
 		// Logged in
 		if ($this->login->userIsLoggedIn === true) {
 			if (!empty ($this->login->name)) {
-				$user_name = $this->setup->makeXSSsafe ($this->login->name);
+				$user_name = $this->misc->makeXSSsafe ($this->login->name);
 			} else {
 				$user_name = $this->setup->defaultName;
 			}
 
-			$user_website = $this->setup->makeXSSsafe ($this->login->website);
+			$user_website = $this->misc->makeXSSsafe ($this->login->website);
 			$name_class = 'hashover-name-plain';
 			$is_twitter = false;
 
@@ -731,7 +733,7 @@ class HTMLOutput
 			$reply_to_input = new HTMLTag ('input', true);
 			$reply_to_input->createAttribute ('type', 'hidden');
 			$reply_to_input->createAttribute ('name', 'reply-to');
-			$reply_to_input->createAttribute ('value', $this->setup->makeXSSsafe ($_COOKIE['replied']));
+			$reply_to_input->createAttribute ('value', $this->misc->makeXSSsafe ($_COOKIE['replied']));
 
 			// Add hidden reply to input element to form element
 			$main_form->appendChild ($reply_to_input);
@@ -1025,7 +1027,7 @@ class HTMLOutput
 			$hashover_javascript_link->appendAttribute ('href', '&title=' . $this->safeURLEncode ($this->setup->pageTitle), false);
 
 			if (!empty ($_GET['hashover-script'])) {
-				$hashover_script = $this->setup->makeXSSsafe ($this->safeURLEncode ($_GET['hashover-script']));
+				$hashover_script = $this->misc->makeXSSsafe ($this->safeURLEncode ($_GET['hashover-script']));
 				$hashover_javascript_link->appendAttribute ('href', '&hashover-script=' . $hashover_script, false);
 			}
 

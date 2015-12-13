@@ -34,6 +34,8 @@ class WriteComments extends PostData
 	protected $setup;
 	protected $locales;
 	protected $cookies;
+	protected $login;
+	protected $misc;
 	protected $spamCheck;
 	protected $metalevels;
 	protected $headers;
@@ -121,7 +123,7 @@ class WriteComments extends PostData
 		'</blockquote>'
 	);
 
-	public function __construct (ReadComments $read_comments, Locales $locales, Cookies $cookies, Login $login)
+	public function __construct (ReadComments $read_comments, Locales $locales, Cookies $cookies, Login $login, Misc $misc)
 	{
 		parent::__construct ();
 
@@ -131,6 +133,7 @@ class WriteComments extends PostData
 		$this->locales = $locales;
 		$this->cookies = $cookies;
 		$this->login = $login;
+		$this->misc = $misc;
 		$this->spamCheck = new SpamCheck ($this->setup);
 
 		$this->metalevels = array (
@@ -528,7 +531,7 @@ class WriteComments extends PostData
 		// Store user IP address if setup to and one is given
 		if ($this->setup->storesIPAddress === true) {
 			if (!empty ($_SERVER['REMOTE_ADDR'])) {
-				$this->writeComment['ipaddr'] = $this->setup->makeXSSsafe ($_SERVER['REMOTE_ADDR']);
+				$this->writeComment['ipaddr'] = $this->misc->makeXSSsafe ($_SERVER['REMOTE_ADDR']);
 			}
 		}
 

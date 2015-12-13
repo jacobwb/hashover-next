@@ -69,7 +69,8 @@ $write_comments = new WriteComments (
 	$hashover->readComments,
 	$hashover->locales,
 	$hashover->cookies,
-	$hashover->login
+	$hashover->login,
+	$hashover->misc
 );
 
 // Various POST data actions

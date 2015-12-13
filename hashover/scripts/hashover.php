@@ -31,6 +31,7 @@ class HashOver
 {
 	public $mode;
 	public $statistics;
+	public $misc;
 	public $setup;
 	public $readComments;
 	public $locales;
@@ -50,12 +51,15 @@ class HashOver
 		$this->statistics = new Statistics ($mode);
 		$this->statistics->executionStart ();
 
+		// Instantiate class of miscellaneous functions
+		$this->misc = new Misc ($mode);
+
 		try {
 			// Instantiate general setup class
-			$this->setup = new Setup ($mode);
+			$this->setup = new Setup ($mode, $this->misc);
 
 		} catch (Exception $error) {
-			$this->setup->displayError ($error->getMessage ());
+			$this->misc->displayError ($error->getMessage ());
 		}
 	}
 
@@ -64,7 +68,7 @@ class HashOver
 		// Decide if comment count is pluralized
 		$prime_plural = ($this->readComments->primaryCount !== 2) ? 1 : 0;
 
-		// Format comment count; Include "Showing" in non-API usages
+		// Format comment count; Exclude "Showing" in API usages
 		$locale_key = ($this->mode === 'api') ? 'count-link' : 'showing-comments';
 		$showing_comments = $this->locales->locale[$locale_key][$prime_plural];
 
@@ -93,13 +97,13 @@ class HashOver
 	{
 		try {
 			// Instantiate class for reading comments
-			$this->readComments = new ReadComments ($this->setup);
+			$this->readComments = new ReadComments ($this->setup, $this->misc);
 
 			// Instantiate locales class
 			$this->locales = new Locales ($this->setup->language);
 
 		} catch (Exception $error) {
-			$this->setup->displayError ($error->getMessage ());
+			$this->misc->displayError ($error->getMessage ());
 		}
 
 		// Instantiate avatars class
@@ -275,6 +279,7 @@ class HashOver
 			$this->login,
 			$this->locales,
 			$this->avatars,
+			$this->misc,
 			$this->commentCount,
 			$this->commentParser->popularList
 		);
