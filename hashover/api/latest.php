@@ -58,7 +58,6 @@ $hashover = new HashOver ('api');
 $hashover->statistics->mode = 'javascript';
 $hashover->setup->setPageURL ('request');
 $hashover->initiate ();
-$hashover->parsePrimary ();
 
 // Display error if the API is disabled
 if ($hashover->setup->APIStatus ('latest') === 'disabled') {
@@ -114,23 +113,27 @@ if (!empty ($metadata)) {
 			$output_key++;
 		}
 	} else {
-		foreach ($hashover->readComments->data->query ($latest, false) as $key => $comment) {
-			$comment_data = $hashover->readComments->data->read ($comment);
+		$comment_list = $hashover->readComments->data->query ($latest, false);
 
-			if ($hashover->setup->latestTrimWidth > 0) {
-				$comment_data['body'] = rtrim (mb_strimwidth ($comment_data['body'], 0, $hashover->setup->latestTrimWidth, '...'));
+		if ($comment_list !== false) {
+			foreach ($comment_list as $key => $comment) {
+				$comment_data = $hashover->readComments->data->read ($comment);
+
+				if ($hashover->setup->latestTrimWidth > 0) {
+					$comment_data['body'] = rtrim (mb_strimwidth ($comment_data['body'], 0, $hashover->setup->latestTrimWidth, '...'));
+				}
+
+				$comments[$output_key] = $hashover->commentParser->parse ($comment_data, $key, false);
+				$comments[$output_key]['thread-url'] = $hashover->setup->metadata['url'];
+
+				if (!empty ($hashover->setup->metadata['title'])) {
+					$comments[$output_key]['thread-title'] = $hashover->setup->metadata['title'];
+				} else {
+					$comments[$output_key]['thread-title'] = $hashover->locales->locale['untitled'];
+				}
+
+				$output_key++;
 			}
-
-			$comments[$output_key] = $hashover->commentParser->parse ($comment_data, $key, false);
-			$comments[$output_key]['thread-url'] = $hashover->setup->metadata['url'];
-
-			if (!empty ($hashover->setup->metadata['title'])) {
-				$comments[$output_key]['thread-title'] = $hashover->setup->metadata['title'];
-			} else {
-				$comments[$output_key]['thread-title'] = $hashover->locales->locale['untitled'];
-			}
-
-			$output_key++;
 		}
 	}
 }

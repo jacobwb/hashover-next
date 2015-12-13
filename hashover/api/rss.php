@@ -152,7 +152,7 @@ function parse_comments (&$comment, &$rss, &$xml, &$hashover)
 {
 	// Skip deleted/unmoderated comments
 	if (isset ($comment['notice'])) {
-		continue;
+		return;
 	}
 
 	// Remove [img] tags

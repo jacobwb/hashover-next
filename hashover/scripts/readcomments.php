@@ -47,7 +47,7 @@ class ReadComments
 		// Query a list of comments
 		$this->commentList = $this->data->query ();
 
-		// Organize comments if comment could be queried
+		// Organize comments if comments could be queried
 		if ($this->commentList !== false) {
 			$this->organizeComments ();
 		}
