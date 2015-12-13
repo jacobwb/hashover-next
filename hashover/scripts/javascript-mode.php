@@ -30,10 +30,10 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 // Text for "Show X Other Comment(s)" link
 if ($hashover->setup->collapsesComments !== false) {
 	if ($hashover->setup->collapseLimit >= 1) {
-		$collapse_num_cmts = ($hashover->readComments->totalCount - 1) - $hashover->setup->collapseLimit;
-		$collapse_link_plural = ($collapse_num_cmts !== 1) ? 1 : 0;
+		$other_comment_count = ($hashover->readComments->totalCount - 1) - $hashover->setup->collapseLimit;
+		$collapse_link_plural = ($other_comment_count !== 1) ? 1 : 0;
 		$collapse_link_text = $hashover->locales->locale['show-other-comments'][$collapse_link_plural];
-		$collapse_link_text = sprintf ($collapse_link_text, $collapse_num_cmts);
+		$collapse_link_text = sprintf ($collapse_link_text, $other_comment_count);
 	} else {
 		$collapse_link_plural = ($hashover->readComments->totalCount !== 1) ? 1 : 0;
 		$collapse_link_text = $hashover->locales->locale['show-number-comments'][$collapse_link_plural];
@@ -129,16 +129,16 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	};
 
 	var locale = {
-		'cancel':	'<?php echo $hashover->locales->locale['cancel']; ?>',
-		'like':		['<?php echo implode ("', '", $like_locale); ?>'],
-		'liked':	'<?php echo $hashover->locales->locale ('liked', true); ?>',
-		'unlike':	'<?php echo $hashover->locales->locale ('unlike', true); ?>',
-		'likeCmt':	'<?php echo $hashover->locales->locale ('like-comment', true); ?>',
-		'likedCmt':	'<?php echo $hashover->locales->locale ('liked-comment', true); ?>',
-		'dislike':	['<?php echo implode ("', '", $dislike_locale); ?>'],
-		'disliked':	'<?php echo $hashover->locales->locale ('disliked', true); ?>',
-		'dislikeCmt':	'<?php echo $hashover->locales->locale ('dislike-comment', true); ?>',
-		'dislikedCmt':	'<?php echo $hashover->locales->locale ('disliked-comment', true); ?>'
+		'cancel':		'<?php echo $hashover->locales->locale['cancel']; ?>',
+		'like':			['<?php echo implode ("', '", $like_locale); ?>'],
+		'liked':		'<?php echo $hashover->locales->locale ('liked', true); ?>',
+		'unlike':		'<?php echo $hashover->locales->locale ('unlike', true); ?>',
+		'likeComment':		'<?php echo $hashover->locales->locale ('like-comment', true); ?>',
+		'likedComment':		'<?php echo $hashover->locales->locale ('liked-comment', true); ?>',
+		'dislike':		['<?php echo implode ("', '", $dislike_locale); ?>'],
+		'disliked':		'<?php echo $hashover->locales->locale ('disliked', true); ?>',
+		'dislikeComment':	'<?php echo $hashover->locales->locale ('dislike-comment', true); ?>',
+		'dislikedComment':	'<?php echo $hashover->locales->locale ('disliked-comment', true); ?>'
 	};
 
 	// Shorthand for Document.getElementById ()
@@ -223,7 +223,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		var codeTags = [];
 		var preTagCount = 0;
 		var preTags = [];
-		var cmtclass = '';
+		var commentClass = '';
 		var replies = '';
 
 		// Text for avatar image alt attribute
@@ -246,14 +246,14 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 				// Check that comments are being sorted
 				if (!sort || method === 'ascending') {
 					// Append class to indicate comment is a reply
-					cmtclass = ' hashover-reply';
+					commentClass = ' hashover-reply';
 				}
 			}
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
 
 			if (collapse) {
 				if (collapsedCount >= collapseLimit) {
-					cmtclass += ' hashover-hidden';
+					commentClass += ' hashover-hidden';
 				} else {
 					collapsedCount++;
 				}
@@ -330,12 +330,12 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 				if (comment.liked) {
 					// If so, set various attributes to indicate comment was liked
 					var likeClass = 'hashover-liked';
-					var likeTitle = locale.likedCmt;
+					var likeTitle = locale.likedComment;
 					var likeText = locale.liked;
 				} else {
 					// If not, set various attributes to indicate comment can be liked
 					var likeClass = 'hashover-like';
-					var likeTitle = locale.likeCmt;
+					var likeTitle = locale.likeComment;
 					var likeText = locale.like[0];
 				}
 
@@ -352,12 +352,12 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 				if (comment.disliked) {
 					// If so, set various attributes to indicate comment was disliked
 					var dislikeClass = 'hashover-disliked';
-					var dislikeTitle = locale.dislikedCmt;
+					var dislikeTitle = locale.dislikedComment;
 					var dislikeText = locale.disliked;
 				} else {
 					// If not, set various attributes to indicate comment can be disliked
 					var dislikeClass = 'hashover-dislike';
-					var dislikeTitle = locale.dislikeCmt;
+					var dislikeTitle = locale.dislikeComment;
 					var dislikeText = locale.dislike[0];
 				}
 
@@ -503,7 +503,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			template.comment = pdComment;
 		} else {
 			// Append notice class
-			cmtclass += ' hashover-notice ' + comment['notice-class'];
+			commentClass += ' hashover-notice ' + comment['notice-class'];
 
 			// Add notice to template
 			template.comment = comment.notice;
@@ -526,7 +526,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			}
 		}
 
-		return '<?php echo $hashover->html->commentWrapper ('permalink', 'cmtclass', 'html + replies'); ?>';
+		return '<?php echo $hashover->html->commentWrapper ('permalink', 'commentClass', 'html + replies'); ?>';
 	}
 
 	// Generate file from permalink
@@ -1360,7 +1360,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			if (actionLink.className === 'hashover-' + action + dislikesClass) {
 				// Change class to indicate the comment has been liked/disliked
 				actionLink.className = 'hashover-' + action + 'd' + dislikesClass;
-				actionLink.title = (action === 'like') ? locale.likedCmt : locale.dislikedCmt;
+				actionLink.title = (action === 'like') ? locale.likedComment : locale.dislikedComment;
 				actionLink.textContent = (action === 'like') ? locale.liked : locale.disliked;
 
 				if (action === 'like') {
@@ -1372,7 +1372,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			} else {
 				// Change class to indicate the comment is unliked
 				actionLink.className = 'hashover-' + action + dislikesClass;
-				actionLink.title = (action === 'like') ? locale.likeCmt : locale.dislikeCmt;
+				actionLink.title = (action === 'like') ? locale.likeComment : locale.dislikeComment;
 				actionLink.textContent = (action === 'like') ? locale.like[0] : locale.dislike[0];
 
 				if (action === 'like') {
@@ -1395,7 +1395,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		};
 
 		// Set request queries
-		queries  = 'url=' + pageURL;
+		queries  = 'url=' + encodeURIComponent (pageURL);
 		queries += '&thread=<?php echo $hashover->setup->threadDirectory; ?>';
 		queries += '&like=' + file;
 		queries += '&action=' + action;
@@ -1521,7 +1521,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 
 <?php if ($hashover->setup->usesAJAX !== false) { ?>
 		var httpRequest = new XMLHttpRequest ();
-		var queries = ['url=' + pageURL, 'start=' + collapseLimit, 'ajax=yes'];
+		var queries = ['url=' + encodeURIComponent (pageURL), 'start=' + collapseLimit, 'ajax=yes'];
 
 		// Handle AJAX request return data
 		httpRequest.onload = function () {
@@ -1742,10 +1742,10 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	}
 
 <?php } ?>
-	// Put number of comments into "hashover-cmtcount" identified HTML element
+	// Put number of comments into "hashover-comment-count" identified HTML element
 	if (totalCount !== 0) {
-		if (getElement ('hashover-cmtcount')) {
-			getElement ('hashover-cmtcount').textContent = totalCount;
+		if (getElement ('hashover-comment-count')) {
+			getElement ('hashover-comment-count').textContent = totalCount;
 		}
 <?php if ($hashover->setup->APIStatus ('rss') !== 'disabled') { ?>
 

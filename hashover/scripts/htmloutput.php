@@ -356,7 +356,7 @@ class HTMLOutput
 
 		// Add URL queries to link reference
 		if (!empty ($this->setup->URLQueries)) {
-			$reply_link->appendAttribute ('href', $this->safeURLEncode ($this->setup->URLQueries) . '&', false);
+			$reply_link->appendAttribute ('href', $this->setup->URLQueries . '&', false);
 		}
 
 		$reply_link->appendAttribute ('href', 'hashover-reply=' . $this->injectVar ($permalink), false);
@@ -379,7 +379,7 @@ class HTMLOutput
 
 		// Add URL queries to link reference
 		if (!empty ($this->setup->URLQueries)) {
-			$edit_link->appendAttribute ('href', $this->safeURLEncode ($this->setup->URLQueries) . '&', false);
+			$edit_link->appendAttribute ('href', $this->setup->URLQueries . '&', false);
 		}
 
 		$edit_link->appendAttribute ('href', 'hashover-edit=' . $this->injectVar ($permalink), false);
@@ -401,7 +401,7 @@ class HTMLOutput
 
 		// Add URL queries to link reference
 		if (!empty ($this->setup->URLQueries)) {
-			$cancel_link->appendAttribute ('href', '?' . $this->safeURLEncode ($this->setup->URLQueries), false);
+			$cancel_link->appendAttribute ('href', '?' . $this->setup->URLQueries, false);
 		}
 
 		// Continue with other attibutes
@@ -1163,7 +1163,7 @@ class HTMLOutput
 
 			// Add URL queries to link reference
 			if (!empty ($this->setup->URLQueries)) {
-				$reply_cancel_button->appendAttribute ('href', '?' . $this->safeURLEncode ($this->setup->URLQueries), false);
+				$reply_cancel_button->appendAttribute ('href', '?' . $this->setup->URLQueries, false);
 			}
 
 			// Add ID attribute with JavaScript variable single quote break out
@@ -1319,7 +1319,7 @@ class HTMLOutput
 
 			// Add URL queries to link reference
 			if (!empty ($this->setup->URLQueries)) {
-				$edit_cancel_button->appendAttribute ('href', '?' . $this->safeURLEncode ($this->setup->URLQueries), false);
+				$edit_cancel_button->appendAttribute ('href', '?' . $this->setup->URLQueries, false);
 			}
 
 			// Add ID attribute with JavaScript variable single quote break out
