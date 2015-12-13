@@ -1156,6 +1156,159 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 
 		return false;
 	}
+<?php if ($hashover->setup->collapsesComments !== false) { ?>
+
+	// For showing more comments, via AJAX or removing a class
+	function hideMoreLink (finishedCallback)
+	{
+		var finishedCallback = finishedCallback || null;
+
+		// Add class to hide the more hyperlink
+		moreLink.className = 'hashover-hide-morelink';
+
+		setTimeout (function () {
+			// Remove the more hyperlink from page
+			if (sortDiv.contains (moreLink)) {
+				sortDiv.removeChild (moreLink);
+			}
+
+			// Show comment count and sort options
+			getElement ('hashover-sort').style.display = '';
+			getElement ('hashover-count').style.display = '';
+
+			// Get each hidden comment element
+			var collapsed = sortDiv.getElementsByClassName ('hashover-hidden');
+
+			// Remove hidden comment class from each comment
+			for (var i = collapsed.length - 1; i >= 0; i--) {
+				removeClass (collapsed[i], 'hashover-hidden');
+			}
+
+			// Execute callback function
+			if (finishedCallback !== null) {
+				finishedCallback ();
+			}
+
+			showingMore = true;
+		}, 350);
+	}
+
+	// Returns the permalink of a comment's parent
+	function getParentPermalink (permalink)
+	{
+		var parent = permalink.split ('r');
+		var length = parent.length - 1;
+
+		// Limit depth if in stream mode
+		if (streamMode === true) {
+			length = Math.min (streamDepth, length);
+		}
+
+		// Remove child from permalink
+		parent = parent.slice (0, length);
+
+		// Return parent permalink as string
+		return parent.join ('r');
+	}
+
+	// For appending new comments to the thread on page
+	function appendComments (comments)
+	{
+		var comment;
+		var isReply;
+		var element;
+		var parent;
+
+		for (var i = 0, il = comments.length; i < il; i++) {
+			// Skip existing comments
+			if (findByPermalink (comments[i].permalink, PHPContent.comments) !== false) {
+				// Check comment's replies
+				if (comments[i].replies) {
+					appendComments (comments[i].replies);
+				}
+
+				continue;
+			}
+
+			// Parse comment, convert HTML to DOM node
+			comment = HTMLToNodeList (parseComment (comments[i], null, true));
+			isReply = (comments[i].permalink.indexOf ('r') > -1);
+
+			// Add comment to comments array
+			addComments (comments[i], isReply, i);
+
+			// Check that comment is not a reply
+			if (isReply !== true) {
+				// If so, append to primary comments
+				element = moreDiv;
+			} else {
+				// If not, append to its parent's element
+				parent = getParentPermalink (comments[i].permalink);
+				element = getElement (parent, true);
+			}
+
+			// Otherwise append it to the primary element
+			element.appendChild (comment[0]);
+
+			// Add controls to the comment
+			addControls (comments[i]);
+		}
+	}
+
+	// onClick event for more button
+	function showMoreComments (element, finishedCallback)
+	{
+		var finishedCallback = finishedCallback || null;
+
+		// Do nothing if already showing all comments
+		if (showingMore === true) {
+			// Execute callback function
+			if (finishedCallback !== null) {
+				finishedCallback ();
+			}
+
+			return;
+		}
+
+<?php if ($hashover->setup->usesAJAX !== false) { ?>
+		var httpRequest = new XMLHttpRequest ();
+		var queries = ['url=' + encodeURIComponent (pageURL), 'start=' + collapseLimit, 'ajax=yes'];
+
+		// Handle AJAX request return data
+		httpRequest.onload = function () {
+			// Do nothing if request wasn't successful in a meaningful way
+			if (this.readyState !== 4 || this.status !== 200) {
+				return;
+			}
+
+			// Parse AJAX response as JSON
+			var json = JSON.parse (this.responseText);
+
+			// Display the comments
+			appendComments (json.comments);
+
+			// Display most popular comments
+			ifElement ('hashover-top-comments', function (topComments) {
+				if (json.popularComments[0] !== undefined) {
+					parseAll (json.popularComments, topComments, false, true);
+				}
+			});
+
+			// Hide the more hyperlink and display the comments
+			hideMoreLink (finishedCallback);
+		}
+
+		httpRequest.open ('POST', httpRoot + '/api/json.php', true);
+		httpRequest.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
+		httpRequest.send (queries.join ('&'));
+<?php } else { ?>
+		// Hide the more hyperlink and display the comments
+		hideMoreLink (finishedCallback);
+<?php } ?>
+
+		return false;
+	}
+<?php } ?>
 
 	// Add various events to various elements in each comment
 	function addControls (json, popular)
@@ -1405,152 +1558,6 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		like.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
 		like.send (queries);
 	}
-<?php if ($hashover->setup->collapsesComments !== false) { ?>
-
-	// For showing more comments, via AJAX or removing a class
-	function hideMoreLink (finishedCallback)
-	{
-		var finishedCallback = finishedCallback || null;
-
-		// Add class to hide the more hyperlink
-		moreLink.className = 'hashover-hide-morelink';
-
-		setTimeout (function () {
-			// Remove the more hyperlink from page
-			if (sortDiv.contains (moreLink)) {
-				sortDiv.removeChild (moreLink);
-			}
-
-			// Show comment count and sort options
-			getElement ('hashover-sort').style.display = '';
-			getElement ('hashover-count').style.display = '';
-
-			// Get each hidden comment element
-			var collapsed = sortDiv.getElementsByClassName ('hashover-hidden');
-
-			// Remove hidden comment class from each comment
-			for (var i = collapsed.length - 1; i >= 0; i--) {
-				removeClass (collapsed[i], 'hashover-hidden');
-			}
-
-			// Execute callback function
-			if (finishedCallback !== null) {
-				finishedCallback ();
-			}
-
-			showingMore = true;
-		}, 350);
-	}
-
-	// Returns the permalink of a comment's parent
-	function getParentPermalink (permalink)
-	{
-		var parent = permalink.split ('r');
-		var length = parent.length - 1;
-
-		// Limit depth if in stream mode
-		if (streamMode === true) {
-			length = Math.min (streamDepth, length);
-		}
-
-		// Remove child from permalink
-		parent = parent.slice (0, length);
-
-		// Return parent permalink as string
-		return parent.join ('r');
-	}
-
-	// For appending new comments to the thread on page
-	function appendComments (comments)
-	{
-		var comment;
-		var isReply;
-		var element;
-		var parent;
-
-		for (var i = 0, il = comments.length; i < il; i++) {
-			// Skip existing comments
-			if (findByPermalink (comments[i].permalink, PHPContent.comments) !== false) {
-				// Check comment's replies
-				if (comments[i].replies) {
-					appendComments (comments[i].replies);
-				}
-
-				continue;
-			}
-
-			// Parse comment, convert HTML to DOM node
-			comment = HTMLToNodeList (parseComment (comments[i], null, true));
-			isReply = (comments[i].permalink.indexOf ('r') > -1);
-
-			// Add comment to comments array
-			addComments (comments[i], isReply, i);
-
-			// Check that comment is not a reply
-			if (isReply !== true) {
-				// If so, append to primary comments
-				element = moreDiv;
-			} else {
-				// If not, append to its parent's element
-				parent = getParentPermalink (comments[i].permalink);
-				element = getElement (parent, true);
-			}
-
-			// Otherwise append it to the primary element
-			element.appendChild (comment[0]);
-
-			// Add controls to the comment
-			addControls (comments[i]);
-		}
-	}
-
-	// onClick event for more button
-	function showMoreComments (element, finishedCallback)
-	{
-		var finishedCallback = finishedCallback || null;
-
-		// Do nothing if already showing all comments
-		if (showingMore === true) {
-			// Execute callback function
-			if (finishedCallback !== null) {
-				finishedCallback ();
-			}
-
-			return;
-		}
-
-<?php if ($hashover->setup->usesAJAX !== false) { ?>
-		var httpRequest = new XMLHttpRequest ();
-		var queries = ['url=' + encodeURIComponent (pageURL), 'start=' + collapseLimit, 'ajax=yes'];
-
-		// Handle AJAX request return data
-		httpRequest.onload = function () {
-			// Do nothing if request wasn't successful in a meaningful way
-			if (this.readyState !== 4 || this.status !== 200) {
-				return;
-			}
-
-			// Parse AJAX response as JSON
-			var json = JSON.parse (this.responseText);
-
-			// Display the comments
-			appendComments (json.comments);
-
-			// Hide the more hyperlink and display the comments
-			hideMoreLink (finishedCallback);
-		}
-
-		httpRequest.open ('POST', httpRoot + '/api/json.php', true);
-		httpRequest.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
-		httpRequest.send (queries.join ('&'));
-<?php } else { ?>
-		// Hide the more hyperlink and display the comments
-		hideMoreLink (finishedCallback);
-<?php } ?>
-
-		return false;
-	}
-<?php } ?>
 
 	// Sort methods
 	var sortMethods = {
@@ -1940,9 +1947,17 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	if (URLJumps || URLHash.match (/comments|hashover/)) {
 		var scroller = function () {
 			setTimeout (function () {
+<?php if ($hashover->setup->collapsesComments !== false) { ?>
+				showMoreComments (moreLink, function () {
+					ifElement (URLHash, function (comment) {
+						comment.scrollIntoView ({'behavior': 'smooth'});
+					});
+				});
+<?php } else { ?>
 				ifElement (URLHash, function (comment) {
 					comment.scrollIntoView ({'behavior': 'smooth'});
 				});
+<?php } ?>
 			}, 500);
 		};
 
