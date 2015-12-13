@@ -35,8 +35,8 @@ class Settings
 	// Required setup
 	public    $notificationEmail	= 'example@example.com';	// E-mail for notification of new comments
 	protected $encryptionKey	= '8CharKey';			// Unique encryption key
-	protected $adminPassword	= 'passwd';			// Login password to gain admin rights (case-sensitive)
 	protected $adminName		= 'admin';			// Login name to gain admin rights (case-sensitive)
+	protected $adminPassword	= 'passwd';			// Login password to gain admin rights (case-sensitive)
 
 	// Primary settings
 	public $language		= 'en';				// Language used for forms, buttons, links, and tooltips
