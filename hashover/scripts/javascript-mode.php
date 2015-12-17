@@ -101,8 +101,8 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	var threadRegex		= /^(c[0-9r]+)r[0-9\-pop]+$/;
 	var sortDiv		= null;
 	var HashOverForm	= null;
-	var postComment		= null;
-	var postEdit		= null;
+	var AJAXPost		= null;
+	var AJAXEdit		= null;
 	var httpScripts		= '<?php echo $hashover->setup->httpScripts; ?>';
 	var URLParts		= window.location.href.split ('#');
 	var URLHref		= URLParts[0];
@@ -596,6 +596,57 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		}
 	}
 
+	// Check whether browser has classList support
+	if (document.documentElement.classList) {
+		// If so, wrap relevant functions
+		// classList.contains () method
+		var containsClass = function (element, className) {
+			return element.classList.contains (className);
+		};
+
+		// classList.add () method
+		var addClass = function (element, className) {
+			element.classList.add (className);
+		};
+
+		// classList.remove () method
+		var removeClass = function (element, className) {
+			element.classList.remove (className);
+		};
+	} else {
+		// If not, define fallback functions
+		// classList.contains () method
+		var containsClass = function (element, className) {
+			if (!element || !element.className) {
+				return false;
+			}
+
+			var regex = new RegExp ('(^|\\s)' + className + '(\\s|$)');
+			return element.className.match (regex);
+		};
+
+		// classList.add () method
+		var addClass = function (element, className) {
+			if (!element) {
+				return false;
+			}
+
+			if (!containsClass (element, className)) {
+				element.className += (element.className ? ' ' : '') + className;
+			}
+		};
+
+		// classList.remove () method
+		var removeClass = function (element, className) {
+			if (!element || !element.className) {
+				return false;
+			}
+
+			var regex = new RegExp ('(^|\\s)' + className + '(\\s|$)', 'g');
+			element.className = element.className.replace (regex, '$2');
+		};
+	}
+
 	// Handle message element(s)
 	function showMessage (message, permalink, error, isReply, isEdit)
 	{
@@ -762,8 +813,8 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		return true;
 	}
 
-	// For AJAX requests
-	function AJAXPost (destination, form, button, callback, permalink, close, isReply, isEdit)
+	// For posting comments, both traditionally and via AJAX
+	function postComment (destination, form, button, callback, permalink, close, isReply, isEdit)
 	{
 		var permalink = permalink || '';
 		var close = close || null;
@@ -957,7 +1008,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	}
 
 	// For posting comments
-	postComment = function (json, permalink, destination)
+	AJAXPost = function (json, permalink, destination)
 	{
 		var parent = null;
 		var isReply = (json.comment.permalink.indexOf ('r') > -1);
@@ -991,7 +1042,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	}
 
 	// For editing comments
-	postEdit = function (json, permalink, destination)
+	AJAXEdit = function (json, permalink, destination)
 	{
 		// Get old comment element nodes
 		var comment = getElement (permalink, true);
@@ -1064,12 +1115,12 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 
 		// Onclick
 		postReply.onclick = function () {
-			return AJAXPost (destination, form, this, postComment, permalink, link.onclick, true, false);
+			return postComment (destination, form, this, AJAXPost, permalink, link.onclick, true, false);
 		};
 
 		// Onsubmit
 		postReply.onsubmit = function () {
-			return AJAXPost (destination, form, this, postComment, permalink, link.onclick, true, false);
+			return postComment (destination, form, this, AJAXPost, permalink, link.onclick, true, false);
 		};
 
 		// Focus comment field
@@ -1146,15 +1197,41 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 
 		// Onclick
 		saveEdit.onclick = function () {
-			return AJAXPost (destination, form, this, postEdit, permalink, link.onclick, false, true);
+			return postComment (destination, form, this, AJAXEdit, permalink, link.onclick, false, true);
 		};
 
 		// Onsubmit
 		saveEdit.onsubmit = function () {
-			return AJAXPost (destination, form, this, postEdit, permalink, link.onclick, false, true);
+			return postComment (destination, form, this, AJAXEdit, permalink, link.onclick, false, true);
 		};
 
 		return false;
+	}
+
+	// Run all comments in array data through parseComment function
+	function parseAll (comments, element, collapse, popular, sort, method)
+	{
+		var popular = popular || false;
+		var sort = sort || false;
+		var method = method || 'ascending';
+		var commentHTML = '';
+
+		// Parse every comment
+		for (var comment = 0, total = comments.length; comment < total; comment++) {
+			commentHTML += parseComment (comments[comment], null, collapse, sort, method, popular);
+		}
+
+		// Add comments to element's innerHTML
+		if ('insertAdjacentHTML' in element) {
+			element.insertAdjacentHTML ('beforeend', commentHTML);
+		} else {
+			element.innerHTML = commentHTML;
+		}
+
+		// Add control events
+		for (var comment = 0, total = comments.length; comment < total; comment++) {
+			addControls (comments[comment]);
+		}
 	}
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
 
@@ -1192,6 +1269,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			showingMore = true;
 		}, 350);
 	}
+<?php if ($hashover->setup->usesAJAX !== false) { ?>
 
 	// Returns the permalink of a comment's parent
 	function getParentPermalink (permalink)
@@ -1254,6 +1332,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			addControls (comments[i]);
 		}
 	}
+<?php } ?>
 
 	// onClick event for more button
 	function showMoreComments (element, finishedCallback)
@@ -1432,32 +1511,6 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			this.title = 'Click to close';
 			this.onload = null;
 		};
-	}
-
-	// Run all comments in array data through parseComment function
-	function parseAll (comments, element, collapse, popular, sort, method)
-	{
-		var popular = popular || false;
-		var sort = sort || false;
-		var method = method || 'ascending';
-		var commentHTML = '';
-
-		// Parse every comment
-		for (var comment = 0, total = comments.length; comment < total; comment++) {
-			commentHTML += parseComment (comments[comment], null, collapse, sort, method, popular);
-		}
-
-		// Add comments to element's innerHTML
-		if ('insertAdjacentHTML' in element) {
-			element.insertAdjacentHTML ('beforeend', commentHTML);
-		} else {
-			element.innerHTML = commentHTML;
-		}
-
-		// Add control events
-		for (var comment = 0, total = comments.length; comment < total; comment++) {
-			addControls (comments[comment]);
-		}
 	}
 
 	// "Flatten" the comments object
@@ -1668,59 +1721,6 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		}
 	};
 
-	// Check whether browser has classList support
-	if (document.documentElement.classList) {
-		// If so, wrap relevant functions
-		// classList.contains () method
-		var containsClass = function (element, className) {
-			return element.classList.contains (className);
-		};
-
-		// classList.add () method
-		var addClass = function (element, className) {
-			element.classList.add (className);
-		};
-
-		// classList.remove () method
-		var removeClass = function (element, className) {
-			element.classList.remove (className);
-		};
-	} else {
-		// If not, define fallback functions
-		// classList.contains () method
-		var containsClass = function (element, className) {
-			if (!element || !element.className) {
-				return false;
-			}
-
-			var regex = new RegExp ('(^|\\s)' + className + '(\\s|$)');
-			return element.className.match (regex);
-		};
-
-		// classList.add () method
-		var addClass = function (element, className) {
-			if (!element) {
-				return false;
-			}
-
-			if (!containsClass (element, className)) {
-				element.className += (element.className ? ' ' : '') + className;
-			}
-		};
-
-		// classList.remove () method
-		var removeClass = function (element, className) {
-			if (!element || !element.className) {
-				return false;
-			}
-
-			var regex = new RegExp ('(^|\\s)' + className + '(\\s|$)', 'g');
-			element.className = element.className.replace (regex, '$2');
-		};
-	}
-
-	
-
 <?php if ($hashover->setup->appendsCSS === true) { ?>
 	// Check if comment theme stylesheet is already in page head
 	if (typeof (document.querySelector) === 'function') {
@@ -1865,12 +1865,12 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 
 	// Onclick
 	postButton.onclick = function () {
-		return AJAXPost (sortDiv, HashOverForm, postButton, postComment);
+		return postComment (sortDiv, HashOverForm, postButton, AJAXPost);
 	};
 
 	// Onsubmit
 	postButton.onsubmit = function () {
-		return AJAXPost (sortDiv, HashOverForm, postButton, postComment);
+		return postComment (sortDiv, HashOverForm, postButton, AJAXPost);
 	};
 
 <?php if ($hashover->setup->allowsLogin === true) { ?>
