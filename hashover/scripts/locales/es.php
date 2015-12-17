@@ -47,6 +47,7 @@ $locale = array (
 	'logged-out'		=> '¡Cerraste sesión correctamente!',
 	'comment-needed'	=> 'No hiciste ningún comentario valido. Utilice el siguiente formulario.',
 	'reply-needed'		=> 'No hiciste ninguna respuesta valida. Utilice el siguiente formulario.',
+	'field-needed'		=> 'Los %s campo es requiere.',
 	'post-fail'		=> '¡Error! No tienes permisos suficientes.',
 	'post-reply'		=> 'Responder',
 	'delete'		=> 'Borrar',

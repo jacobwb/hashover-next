@@ -47,6 +47,7 @@ $locale = array (
 	'logged-out'		=> 'Çıkış yaptınız!',
 	'comment-needed'	=> 'Düzgün bir yorum olmadı bu? Lütfen aşağıdaki formu kullanın.',
 	'reply-needed'		=> 'Düzgün bir cevap olmadı bu? Lütfen aşağıdaki formu kullanın.',
+	'field-needed'		=> '%s alanı gerekiyor.',
 	'post-fail'		=> 'Gönderirken hatalar oluştu. Yeterli izinlere sahip değilsiniz.',
 	'post-reply'		=> 'Cevapla',
 	'delete'		=> 'Sil',

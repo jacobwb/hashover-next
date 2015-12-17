@@ -44,11 +44,7 @@ class Settings
 	public $timezone		= 'America/Los_Angeles';	// Timezone
 	public $usesModeration		= false;			// Whether comments must be approved before they appear to other visitors
 	public $dataFormat		= 'xml';			// Format comments will be stored in; options: xml, json, sql
-	public $allowsNames		= true;				// Whether users can enter their own name
 	public $defaultName		= 'Anonymous';			// Default name to use when one isn't given
-	public $allowsPasswords		= true;				// Whether users can protect their comments with a password (required for user logins)
-	public $allowsEmails		= true;				// Whether users can enter an e-mail address (required for user e-mail notifications)
-	public $allowsWebsites		= true;				// Whether users can enter a website
 	public $allowsImages		= true;				// Whether external image URLs wrapped in [img] tags are embedded
 	public $allowsLogin		= true;				// Whether users can login and logout (when false form cookies are still set)
 	public $allowsDislikes		= false;			// Whether a "Dislike" link is display; allowing Reddit-style voting
@@ -59,6 +55,15 @@ class Settings
 	public $streamDepth		= 3;				// In stream mode, the number of reply indentions to allow before the thread flattens
 	public $popularityThreshold	= 5;				// Minimum likes a comment needs to be popular
 	public $popularityLimit		= 2;				// Number of comments allowed to become popular
+
+	// Field options, use true/false to enable/disable a field,
+	// use 'required' to require a field be properly filled
+	public $fieldOptions = array (
+		'name'     => true,
+		'password' => true,
+		'email'    => true,
+		'website'  => true
+	);
 
 	// Behavior settings
 	public $displaysTitle		= true;				// Whether page title is shown or not
@@ -124,6 +129,13 @@ class Settings
 
 	public function __construct ()
 	{
+		// Setup default field options
+		foreach (array ('name', 'password', 'email', 'website') as $field) {
+			if (!isset ($this->fieldOptions[$field])) {
+				$this->fieldOptions[$field] = true;
+			}
+		}
+
 		// Set timezone
 		date_default_timezone_set ($this->timezone);
 

@@ -128,18 +128,27 @@ Copyright (C) 2015 Jacob Barkdull
 #hashover .hashover-name-input:before,
 #hashover .hashover-password-input:before,
 #hashover .hashover-email-input:before,
-#hashover .hashover-website-input:before {
+#hashover .hashover-website-input:before,
+#hashover .hashover-required-input:after {
 	content: "";
 	display: inline-block;
 	position: absolute;
-	vertical-align: middle;
-	width: 32px;
+	top: 50%;
+	left: 3px;
+	width: 28px;
 	height: 32px;
+	margin-top: -16px;
 	background-image: url('../../images/inputs-and-buttons.png');
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	border: 1px solid transparent;
 	pointer-events: none;
+}
+
+#hashover .hashover-required-input:after {
+	left: auto;
+	right: 3px;
+	background-position: 0px -391px;
 }
 
 #hashover.hashover-logged-out .hashover-inputs > *,
@@ -347,9 +356,13 @@ Copyright (C) 2015 Jacob Barkdull
 	width: 100%;
 	height: 32px;
 	font-size: 14px;
-	padding-left: 28px;
+	padding-left: 30px;
 	padding-right: 6px;
 	color: #808080;
+}
+
+#hashover .hashover-required-input input {
+	padding-right: 30px;
 }
 
 #hashover .hashover-inputs input:focus {
@@ -364,20 +377,39 @@ Copyright (C) 2015 Jacob Barkdull
 	padding-right: 0px;
 }
 
+#hashover .hashover-inputs > :first-child.hashover-input-wrapper:before {
+	left: 0px;
+}
+
+#hashover .hashover-inputs > :nth-last-child(1).hashover-required-input:after {
+	right: 0px;
+}
+
 #hashover .hashover-name-input:before {
-	background-position: 1px 1px;
+	background-position: 0px 1px;
 }
 
 #hashover .hashover-password-input:before {
-	background-position: 1px -27px;
+	background-position: 0px -27px;
 }
 
 #hashover .hashover-email-input:before {
-	background-position: 1px -55px;
+	background-position: 0px -55px;
 }
 
 #hashover .hashover-website-input:before {
-	background-position: 1px -83px;
+	background-position: 0px -83px;
+}
+
+#hashover .hashover-emphasized-input,
+#hashover input[type="text"].hashover-emphasized-input {
+	border-color: #CC0000 ! important;
+}
+
+#hashover .hashover-emphasized-input:focus,
+#hashover input[type="text"].hashover-emphasized-input:focus {
+	border-color: #FF0000 ! important;
+	box-shadow: 0px 0px 2px #FFBFBF !important;
 }
 
 #hashover form label {
@@ -913,6 +945,7 @@ Copyright (C) 2015 Jacob Barkdull
 #hashover.hashover-mobile .hashover-password-input:before,
 #hashover.hashover-mobile .hashover-email-input:before,
 #hashover.hashover-mobile .hashover-website-input:before,
+#hashover.hashover-mobile .hashover-required-input:after,
 #hashover.hashover-mobile .hashover-comment .hashover-buttons a {
 	background-image: url('../../images/inputs-and-buttons.svg');
 }

@@ -88,7 +88,8 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	var preTagRegex		= /(<pre>)([\s\S]*?)(<\/pre>)/ig;
 	var preTagMarkerRegex	= /PRE_TAG\[([0-9]+)\]/g;
 	var lineRegex		= new RegExp (serverEOL, 'g');
-	var messages		= 0;
+	var messageCounts	= {};
+	var fieldOptions	= <?php echo json_encode ($hashover->setup->fieldOptions); ?>;
 	var userIsLoggedIn	= <?php echo $hashover->login->userIsLoggedIn ? 'true' : 'false'; ?>;
 	var themeCSS		= httpRoot + '/themes/<?php echo $hashover->setup->theme; ?>/style.css';
 	var appendCSS		= true;
@@ -107,7 +108,6 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	var URLParts		= window.location.href.split ('#');
 	var URLHref		= URLParts[0];
 	var URLHash		= URLParts[1] || '';
-	var URLJumps		= URLHash.match (/hashover-(edit|reply)|c[0-9r]+/);
 	var moreDiv		= null;
 	var moreLink		= null;
 	var showingMore		= false;
@@ -138,7 +138,11 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		'dislike':		['<?php echo implode ("', '", $dislike_locale); ?>'],
 		'disliked':		'<?php echo $hashover->locales->locale ('disliked', true); ?>',
 		'dislikeComment':	'<?php echo $hashover->locales->locale ('dislike-comment', true); ?>',
-		'dislikedComment':	'<?php echo $hashover->locales->locale ('disliked-comment', true); ?>'
+		'dislikedComment':	'<?php echo $hashover->locales->locale ('disliked-comment', true); ?>',
+		'name':			'<?php echo $hashover->locales->locale ('name', true); ?>',
+		'password':		'<?php echo $hashover->locales->locale ('password', true); ?>',
+		'email':		'<?php echo $hashover->locales->locale ('email', true); ?>',
+		'website':		'<?php echo $hashover->locales->locale ('website', true); ?>'
 	};
 
 	// Shorthand for Document.getElementById ()
@@ -251,12 +255,10 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			}
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
 
-			if (collapse) {
-				if (collapsedCount >= collapseLimit) {
-					commentClass += ' hashover-hidden';
-				} else {
-					collapsedCount++;
-				}
+			if (collapse === true && collapsedCount >= collapseLimit) {
+				commentClass += ' hashover-hidden';
+			} else {
+				collapsedCount++;
 			}
 <?php } ?>
 		}
@@ -680,17 +682,24 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		// Add class to indicate message element is open
 		addClass (element, 'hashover-message-open');
 
-		// Add timeout to close (each) message element after 10 seconds
+		// Add the comment to message counts
+		if (messageCounts[permalink] === undefined) {
+			messageCounts[permalink] = 0;
+		}
+
+		// Add timeout to close message element after 10 seconds
 		setTimeout (function () {
-			if (messages > 0) {
+			if (messageCounts[permalink] <= 1) {
 				removeClass (element, 'hashover-message-open');
 				removeClass (element, 'hashover-message-error');
-				messages--;
 			}
+
+			// Decrease count of open message timeouts
+			messageCounts[permalink]--;
 		}, 10000);
 
-		// Increase count of open message elements
-		messages++;
+		// Increase count of open message timeouts
+		messageCounts[permalink]++;
 	}
 
 	// Handles display of various warnings when user attempts to post or login
@@ -726,7 +735,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	}
 
 	// Validate a comment form e-mail field
-	function validateEmail (permalink, isReply, isEdit)
+	function validateEmail (permalink, form, isReply, isEdit)
 	{
 		var permalink = permalink || null;
 		var isReply = isReply || false;
@@ -738,17 +747,14 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		// Check whether comment is an edit
 		if (isEdit === true) {
 			// If it is, validate edit form e-mail
-			form = getElement ('hashover-edit-' + permalink, true);
 			subscribe = 'hashover-subscribe-' + permalink;
 		} else {
 			// If it is not, validate as primary or reply
 			if (isReply !== true) {
 				// Validate primary form e-mail
-				form = HashOverForm;
 				subscribe = 'hashover-subscribe';
 			} else {
 				// Validate reply form e-mail
-				form = getElement ('hashover-reply-' + permalink, true);
 				subscribe = 'hashover-subscribe-' + permalink;
 			}
 		}
@@ -757,57 +763,107 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		return emailValidator (form, subscribe, permalink, isReply, isEdit);
 	}
 
-	// Validate a comment form
-	function commentValidator (form)
+	// Simplistic JavaScript port of sprintf function in C
+	function sprintf (string, args)
 	{
-		if (form.comment.value === '') {
+		var string = string || '';
+		var args = args || [];
+		var count = 0;
+
+		return string.replace (/%([cdfs])/g, function (match, type) {
+			if (args[count] === undefined) {
+				return match;
+			}
+
+			switch (type) {
+				case 'c': {
+					return args[count++][0];
+				}
+
+				case 'd': {
+					return parseInt (args[count++]);
+				}
+
+				case 'f': {
+					return parseFloat (args[count++]);
+				}
+
+				case 's': {
+					return args[count++];
+				}
+			}
+		});
+	}
+
+	// Validate a comment form
+	function commentValidator (form, skipComment)
+	{
+		var skipComment = skipComment || false;
+
+		// Check each input field for if they are required
+		for (var field in fieldOptions) {
+			// Skip other people's prototypes
+			if (fieldOptions.hasOwnProperty (field) !== true) {
+				continue;
+			}
+
+			// Check if the field is required, and that the input exists
+			if (fieldOptions[field] === 'required' && form[field] !== undefined) {
+				// Check if it has a value
+				if (form[field].value === '') {
+					// If not, add a class indicating a failed post
+					addClass (form[field], 'hashover-emphasized-input');
+
+					// Focus the input
+					form[field].focus ();
+
+					// Return a error message to display to the user
+					return sprintf ('<?php echo $hashover->locales->locale ('field-needed', true); ?>', [ locale[field].toLowerCase() ]);
+				}
+
+				// Remove class indicating a failed post
+				removeClass (form[field], 'hashover-emphasized-input');
+			}
+		}
+
+		// Check if a comment was given
+		if (skipComment !== true && form.comment.value === '') {
+			// If not, add a class indicating a failed post
+			addClass (form.comment, 'hashover-emphasized-input');
+
+			// Focus the comment textarea
 			form.comment.focus ();
-			return false;
+
+			// Return a error message to display to the user
+			return '<?php echo $hashover->locales->locale ('comment-needed', true); ?>';
 		}
 
 		return true;
 	}
 
 	// Validate required comment credentials
-	function validateComment (permalink, isReply, isEdit)
+	function validateComment (skipComment, form, permalink, isReply, isEdit)
 	{
+		var skipComment = skipComment || false;
 		var permalink = permalink || null;
 		var isReply = isReply || false;
 		var isEdit = isEdit || false;
 
-		var form;
-		var message;
+		// Validate comment form
+		var message = commentValidator (form, skipComment);
 
-		// Check whether comment is an edit
-		if (isEdit === true) {
-			// If so, validate as a primary comment
-			form = getElement ('hashover-edit-' + permalink, true);
-			message = '<?php echo $hashover->locales->locale ('comment-needed', true); ?>';
-		} else {
-			// If it is not, validate as primary or reply
-			if (isReply !== true) {
-				// Validate as a primary comment
-				form = HashOverForm;
-				message = '<?php echo $hashover->locales->locale ('comment-needed', true); ?>';
-			} else {
-				// Validate as a reply
-				form = getElement ('hashover-reply-' + permalink, true);
-				message = '<?php echo $hashover->locales->locale ('reply-needed', true); ?>';
-			}
+		// Display the validator's message
+		if (message !== true) {
+			showMessage (message, permalink, true, isReply, isEdit);
+			return false;
 		}
 
 		// Validate e-mail if user isn't logged in or is editing
 		if (userIsLoggedIn === false || isEdit === true) {
 			// Return false on any failure
-			if (validateEmail (permalink, isReply, isEdit) === false) {
+			if (validateEmail (permalink, form, isReply, isEdit) === false) {
 				return false;
 			}
-		}
-
-		// Validate comment form
-		if (commentValidator (form) === false) {
-			showMessage (message, permalink, true, isReply, isEdit);
-			return false;
 		}
 
 		return true;
@@ -822,7 +878,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		var isEdit = isEdit || false;
 
 		// Return false if comment is invalid
-		if (validateComment (permalink, isReply, isEdit) === false) {
+		if (validateComment (false, form, permalink, isReply, isEdit) === false) {
 			return false;
 		}
 
@@ -1823,7 +1879,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	HashOverForm = getElement ('hashover-form');
 
 	// Add initial event handlers
-	parseAll (PHPContent.comments, sortDiv, !URLJumps);
+	parseAll (PHPContent.comments, sortDiv);
 
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
 	// Check whether there are more than the collapse limit
@@ -1838,16 +1894,10 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		moreLink.id = 'hashover-more-link';
 		moreLink.textContent = '<?php echo $collapse_link_text; ?>';
 
-		// Check if a hash jump is present in the URL
-		if (!URLJumps) {
-			// If not, add onClick event to more button
-			moreLink.onclick = function () {
-				return showMoreComments (this);
-			};
-		} else {
-			// If so, immidiately show more comments
-			showMoreComments (moreLink);
-		}
+		// Add onClick event to more button
+		moreLink.onclick = function () {
+			return showMoreComments (this);
+		};
 
 		// Add more button link to sort div
 		sortDiv.appendChild (moreDiv);
@@ -1880,12 +1930,12 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 
 		// Onclick
 		loginButton.onclick = function () {
-			return validateEmail ();
+			return validateComment (true, HashOverForm);
 		};
 
 		// Onsubmit
 		loginButton.onsubmit = function () {
-			return validateEmail ();
+			return validateComment (true, HashOverForm);
 		};
 	}
 
@@ -1944,31 +1994,49 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	}
 
 	// Workaround for stupid Chrome bug
-	if (URLJumps || URLHash.match (/comments|hashover/)) {
-		var scroller = function () {
-			setTimeout (function () {
-<?php if ($hashover->setup->collapsesComments !== false) { ?>
-				showMoreComments (moreLink, function () {
-					ifElement (URLHash, function (comment) {
-						comment.scrollIntoView ({'behavior': 'smooth'});
-					});
+	var scroller = function () {
+		setTimeout (function () {
+			if (URLHash.match (/comments|hashover/)) {
+				ifElement (URLHash, function (comments) {
+					comments.scrollIntoView ({'behavior': 'smooth'});
 				});
+			}
+
+			// Jump to linked comment
+			if (URLHash.match (/c[0-9]+r*/)) {
+<?php if ($hashover->setup->collapsesComments !== false) { ?>
+				var existingComment = getElement (URLHash);
+
+				// Check if comment exists on the page and is visable
+				if (existingComment !== null
+				    && containsClass (existingComment, 'hashover-hidden') === false)
+				{
+					// If so, scroll the comment into view
+					existingComment.scrollIntoView ({'behavior': 'smooth'});
+				} else {
+					// If not, show more comments
+					showMoreComments (moreLink, function () {
+						ifElement (URLHash, function (comment) {
+							comment.scrollIntoView ({'behavior': 'smooth'});
+						});
+					});
+				}
 <?php } else { ?>
 				ifElement (URLHash, function (comment) {
 					comment.scrollIntoView ({'behavior': 'smooth'});
 				});
 <?php } ?>
-			}, 500);
-		};
+			}
+		}, 500);
+	};
 
-		// Compatibility wrapper
-		if (window.addEventListener) {
-			// Rest of the world
-			window.addEventListener ('load', scroller, false);
-		} else {
-			// IE ~8
-			window.attachEvent ('onload', scroller);
-		}
+	// Compatibility wrapper
+	if (window.addEventListener) {
+		// Rest of the world
+		window.addEventListener ('load', scroller, false);
+	} else {
+		// IE ~8
+		window.attachEvent ('onload', scroller);
 	}
 
 	// Open the message element if there's a message

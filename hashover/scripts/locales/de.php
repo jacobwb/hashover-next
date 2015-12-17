@@ -47,6 +47,7 @@ $locale = array (
 	'logged-out'		=> 'Du hast dich erfolgreich abgemeldet!',
 	'comment-needed'	=> 'Du hast den Kommentar falsch eingegeben. Bitte benutze das Formular unten.',
 	'reply-needed'		=> 'Du hast die Antwort falsch eingegeben. Bitte benutze das Formular unten.',
+	'field-needed'		=> 'Die %s ist erforderlich.',
 	'post-fail'		=> 'Ups, du hast nicht die erforderlichen Rechte!',
 	'post-reply'		=> 'Antwort absenden',
 	'delete'		=> 'Löschen',

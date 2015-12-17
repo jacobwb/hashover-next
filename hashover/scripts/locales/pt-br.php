@@ -47,6 +47,7 @@ $locale = array(
 	'logged-out'		=> 'Você tem saiu com sucesso!',
 	'comment-needed'	=> 'Você não enviou um comentário de maneira correta. Use o formulário abaixo.',
 	'reply-needed'		=> 'Você não respondeu ao comentário de maneira correta. Use o formulário abaixo.',
+	'field-needed'		=> 'O campo %s é obrigatório.',
 	'post-fail'		=> 'Falha! Você não possui permissões suficientes.',
 	'post-reply'		=> 'Enviar resposta',
 	'delete'		=> 'Apagar',

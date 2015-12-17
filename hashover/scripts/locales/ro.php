@@ -47,6 +47,7 @@ $locale = array(
 	'logged-out'		=> 'Conectare eșec!',
 	'comment-needed'	=> 'Tu nu a reușit să introduceți un comentariu adecvat. Foloseste formularul de mai jos.',
 	'reply-needed'		=> 'Tu nu a reușit să introduceți un reply adecvat. Foloseste formularul de mai jos.',
+	'field-needed'		=> 'Este nevoie Câmpul de %s.',
 	'post-fail'		=> 'Eșec! Tu lipse permisiunea suficientă.',
 	'post-reply'		=> 'Adauga Reply',
 	'delete'		=> 'Sterge',

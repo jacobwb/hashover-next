@@ -153,12 +153,8 @@ class WriteComments extends PostData
 		}
 
 		// Setup login information
-		if ($this->setup->allowsLogin !== false and $this->login->userIsLoggedIn === false) {
-			$this->login->setCredentials ();
-
-			if (isset ($_POST['edit'])) {
-				$this->login->setLogin ();
-			}
+		if (isset ($_POST['edit'])) {
+			$this->login->setLogin ();
 		}
 
 		// Escape disallowed characters
@@ -222,15 +218,17 @@ class WriteComments extends PostData
 		// Set header to redirect user to previous page
 		header ('Location: ' . $this->kickbackURL . '#' . $anchor);
 	}
-	
-	protected function setStatusCookies ($success, $try_reply)
+
+	// Set cookies for remembering state after post action
+	protected function setStatusCookies ($input, $try_reply = true)
 	{
+		// Don't set the cookies if the request is via AJAX
 		if ($this->AJAX === true) {
 			return;
 		}
 
 		// Set success status cookie
-		$this->cookies->set ('success', $success);
+		$this->cookies->set ('failed-on', $input);
 
 		// Set reply cookie
 		if ($try_reply === true and !empty ($this->replyTo)) {
@@ -250,7 +248,7 @@ class WriteComments extends PostData
 			}
 
 			// Set cookies to indicate failure
-			$this->setStatusCookies ('no', false);
+			$this->setStatusCookies ('comment', false);
 
 			// Throw exception as error message
 			throw new Exception ($this->locales->locale['comment-needed']);
@@ -291,6 +289,15 @@ class WriteComments extends PostData
 	// Set cookies
 	public function login ()
 	{
+		try {
+			// Check if required fields have values
+			$this->validateFields ();
+
+		} catch (Exception $error) {
+			$this->kickback ($error->getMessage (), true);
+			return false;
+		}
+
 		// Log the user in
 		$this->login->setLogin ();
 
@@ -398,7 +405,7 @@ class WriteComments extends PostData
 			return false;
 		}
 
-		if (!empty ($this->file)) {
+		if (!empty ($this->editPassword) and !empty ($this->file)) {
 			$get_pass = $this->commentData->read ($this->file);
 			$passwords_match = $this->setup->encryption->verifyHash ($this->editPassword, $get_pass['password']);
 
@@ -420,12 +427,31 @@ class WriteComments extends PostData
 		return false;
 	}
 
+	// Check if required fields have values
+	protected function validateFields ()
+	{
+		foreach ($this->setup->fieldOptions as $field => $status) {
+			if ($status === 'required' and empty ($this->postData[$field])) {
+				$this->setStatusCookies ($field);
+
+				throw new Exception (sprintf (
+					$this->locales->locale ('field-needed'), strtolower ($this->locales->locale ($field))
+				));
+
+				return false;
+			}
+		}
+	}
+
 	// Setup and test for necessary comment data
 	protected function setupCommentData ()
 	{
+		// Check if required fields have values
+		$this->validateFields ();
+
 		// Post fails when comment is empty
 		if (empty ($this->postData['comment'])) {
-			$this->setStatusCookies ('no', true);
+			$this->setStatusCookies ('comment');
 
 			// Set reply cookie
 			if (!empty ($this->replyTo)) {
@@ -494,11 +520,11 @@ class WriteComments extends PostData
 		$this->writeComment['status'] = ($this->setup->usesModeration === true) ? 'pending' : 'approved';
 		$this->writeComment['date'] = date (DATE_ISO8601);
 
-		if ($this->setup->allowsNames === true and !empty ($this->name)) {
+		if ($this->setup->fieldOptions['name'] === true and !empty ($this->name)) {
 			$this->writeComment['name'] = $this->name;
 
 			// Store password and login ID if a password is given
-			if ($this->setup->allowsPasswords === true and !empty ($this->password)) {
+			if ($this->setup->fieldOptions['password'] === true and !empty ($this->password)) {
 				$this->writeComment['password'] = $this->password;
 
 				// Store login ID if login hash is non-empty
@@ -509,7 +535,7 @@ class WriteComments extends PostData
 		}
 
 		// Store e-mail if one is given
-		if ($this->setup->allowsEmails === true) {
+		if ($this->setup->fieldOptions['email'] === true) {
 			if (!empty ($this->email)) {
 				$encryption_keys = $this->setup->encryption->encrypt ($this->email);
 				$this->writeComment['email'] = $encryption_keys['encrypted'];
@@ -522,7 +548,7 @@ class WriteComments extends PostData
 		}
 
 		// Store website URL if one is given
-		if ($this->setup->allowsWebsites === true) {
+		if ($this->setup->fieldOptions['website'] === true) {
 			if (!empty ($this->website)) {
 				$this->writeComment['website'] = $this->website;
 			}
@@ -550,39 +576,44 @@ class WriteComments extends PostData
 			return false;
 		}
 
-		// Edit comment
-		if (!empty ($this->password) and !empty ($this->file)) {
-			$edit_comment = $this->commentData->read ($this->file);
+		// Read original comment
+		$edit_comment = $this->commentData->read ($this->file);
+		$passwords_match = false;
+
+		// Compare passwords
+		if (!empty ($this->editPassword) and !empty ($this->file)) {
 			$passwords_match = $this->setup->encryption->verifyHash ($this->editPassword, $edit_comment['password']);
+		}
 
-			// Check if password matches the one in the file
-			if ($passwords_match or $this->login->userIsAdmin) {
-				if ($this->login->userIsAdmin === false) {
-					$edit_comment = array_merge ($edit_comment, $this->writeComment);
-				} else {
-					$edit_comment['body'] = $this->writeComment['body'];
-				}
-
-				// Update e-mail subscription status
-				$edit_comment['notifications'] = !empty ($_POST['subscribe']) ? 'yes' : 'no';
-
-				// Attempt to write edited comment
-				if ($this->commentData->save ($edit_comment, $this->file, true)) {
-					// Return the comment data on success via AJAX
-					if ($this->AJAX === true) {
-						return array (
-							'file' => $this->file,
-							'comment' => $edit_comment
-						);
+		// Check if password matches the one in the file
+		if ($passwords_match or $this->login->userIsAdmin) {
+			if ($this->login->userIsAdmin === false) {
+				foreach ($edit_comment as $key => $value) {
+					if (isset ($this->writeComment[$key])) {
+						$edit_comment[$key] = $this->writeComment[$key];
 					}
-
-					// Return with message on success
-					$this->kickback ('', false, 'c' . str_replace ('-', 'r', $this->file));
-					return true;
 				}
 			} else {
-				sleep (5);
+				$edit_comment['body'] = $this->writeComment['body'];
 			}
+
+			// Attempt to write edited comment
+			if ($this->commentData->save ($edit_comment, $this->file, true)) {
+
+				// Return the comment data on success via AJAX
+				if ($this->AJAX === true) {
+					return array (
+						'file' => $this->file,
+						'comment' => $edit_comment
+					);
+				}
+
+				// Return with message on success
+				$this->kickback ('', false, 'c' . str_replace ('-', 'r', $this->file));
+				return true;
+			}
+		} else {
+			sleep (5);
 		}
 
 		$this->kickback ($this->locales->locale['post-fail'], true);
@@ -734,9 +765,6 @@ class WriteComments extends PostData
 
 			return true;
 		}
-
-		// Set cookies for success
-		$this->setStatusCookies ('yes', true);
 
 		// Kick visitor back with an error on failure
 		$this->kickback ($this->locales->locale['post-fail'], true);

@@ -1,3 +1,26 @@
+Changes by Jacob Barkdull 2015-12-17
+--------------------------------------------------------------------------------
+* Added optional required field options
+
+	- The login inputs can now be individually set as required, meaning a
+	  user will not be able to post or edit a comment, or login, without
+	  properly filling the specific fields.
+
+
+* Fixed: Login inputs with empty values aren't passed to the login method.
+* Fixed: More comments are automatically shown when URL jump points to form.
+* Fixed: Messages close after 10 seconds of the first one opened, not the last.
+* Improved how failed comment post handling works.
+* Removed individual settings for enabled login fields in favor of an array.
+* Added locale string for individual required input error messages.
+* Added a CSS class for styling required login inputs.
+* Minor modifications to some icons.
+* Improved custom login code.
+* Renamed a couple variables.
+* Reordered some functions.
+* Improved default theme.
+
+
 Changes by Jacob Barkdull 2015-12-12
 --------------------------------------------------------------------------------
 * Locales

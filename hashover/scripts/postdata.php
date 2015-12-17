@@ -37,37 +37,37 @@ class PostData
 	public function __construct ()
 	{
 		// Set name
-		if (!empty ($_POST['name'])) {
+		if (isset ($_POST['name'])) {
 			$this->postData['name'] = $this->ForceUTF8 ($_POST['name']);
 		}
 
 		// Set password
-		if (!empty ($_POST['password'])) {
+		if (isset ($_POST['password'])) {
 			$this->postData['password'] = $this->ForceUTF8 ($_POST['password']);
 		}
 
 		// Set e-mail address
-		if (!empty ($_POST['email'])) {
+		if (isset ($_POST['email'])) {
 			$this->postData['email'] = $this->ForceUTF8 ($_POST['email']);
 		}
 
 		// Set website URL
-		if (!empty ($_POST['website'])) {
+		if (isset ($_POST['website'])) {
 			$this->postData['website'] = $this->ForceUTF8 ($_POST['website']);
 		}
 
 		// Set comment
-		if (!empty ($_POST['comment'])) {
+		if (isset ($_POST['comment'])) {
 			$this->postData['comment'] = $this->ForceUTF8 ($_POST['comment']);
 		}
 
 		// Get comment file
-		if (!empty ($_POST['file'])) {
+		if (isset ($_POST['file'])) {
 			$this->file = $_POST['file'];
 		}
 
 		// Get reply comment file
-		if (!empty ($_POST['reply-to'])) {
+		if (isset ($_POST['reply-to'])) {
 			$this->replyTo = $_POST['reply-to'];
 		}
 

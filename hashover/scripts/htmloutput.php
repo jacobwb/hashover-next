@@ -43,6 +43,7 @@ class HTMLOutput
 	protected $addcslashes;
 	protected $pageTitle;
 	protected $pageURL;
+	protected $emphasizedField;
 	protected $defaultLoginInputs;
 
 	public function __construct (ReadComments $read_comments, Login $login, Locales $locales, Avatars $avatars, Misc $misc, $show_count, array $popularList)
@@ -62,6 +63,11 @@ class HTMLOutput
 		if ($this->setup->mode !== 'php') {
 			$this->pageTitle = addcslashes ($this->pageTitle, "'");
 			$this->pageURL = addcslashes ($this->pageURL, "'");
+		}
+
+		// Set the field to emphasize after a failed post
+		if (!empty ($_COOKIE['failed-on'])) {
+			$this->emphasizedField = $_COOKIE['failed-on'];
 		}
 
 		$this->defaultLoginInputs = $this->loginInputs ();
@@ -92,7 +98,6 @@ class HTMLOutput
 		// Login input attribute information
 		$login_input_attributes = array (
 			'name' => array (
-				'enabled' => $this->setup->allowsNames,
 				'wrapper-class' => 'hashover-name-input',
 				'label-class' => 'hashover-name-label',
 				'placeholder' => $this->locales->locale ('name', $this->addcslashes),
@@ -103,7 +108,6 @@ class HTMLOutput
 				'input-value' => $this->misc->makeXSSsafe ($this->login->name)
 			),
 			'password' => array (
-				'enabled' => ($this->setup->allowsPasswords and $this->setup->allowsNames),
 				'wrapper-class' => 'hashover-password-input',
 				'label-class' => 'hashover-password-label',
 				'placeholder' => $this->locales->locale ('password', $this->addcslashes),
@@ -114,7 +118,6 @@ class HTMLOutput
 				'input-value' => ''
 			),
 			'email' => array (
-				'enabled' => $this->setup->allowsEmails,
 				'wrapper-class' => 'hashover-email-input',
 				'label-class' => 'hashover-email-label',
 				'placeholder' => $this->locales->locale ('email', $this->addcslashes),
@@ -125,7 +128,6 @@ class HTMLOutput
 				'input-value' => $this->misc->makeXSSsafe ($this->login->email)
 			),
 			'website' => array (
-				'enabled' => $this->setup->allowsWebsites,
 				'wrapper-class' => 'hashover-website-input',
 				'label-class' => 'hashover-website-label',
 				'placeholder' => $this->locales->locale ('website', $this->addcslashes),
@@ -150,15 +152,21 @@ class HTMLOutput
 		$login_inputs->createAttribute ('class', 'hashover-inputs');
 
 		// Create and append login input elements to main form inputs wrapper element
-		foreach ($login_input_attributes as $attributes) {
+		foreach ($login_input_attributes as $field => $attributes) {
 			// Skip disabled input tags
-			if ($attributes['enabled'] === false) {
+			if ($this->setup->fieldOptions[$field] === false) {
 				continue;
 			}
 
 			// Create wrapper element for inputs
 			$input_wrapper = new HTMLTag ('div');
-			$input_wrapper->createAttribute ('class', $attributes['wrapper-class']);
+			$input_wrapper->createAttribute ('class', 'hashover-input-wrapper');
+			$input_wrapper->appendAttribute ('class', $attributes['wrapper-class']);
+
+			// Add a class for indicating a required field
+			if ($this->setup->fieldOptions[$field] === 'required') {
+				$input_wrapper->appendAttribute ('class', 'hashover-required-input');
+			}
 
 			// Create label element for input
 			if ($this->setup->usesLabels === true) {
@@ -180,6 +188,11 @@ class HTMLOutput
 			$input->createAttribute ('title', $attributes['input-title']);
 			$input->createAttribute ('value', $attributes['input-value']);
 			$input->createAttribute ('placeholder', $attributes['placeholder']);
+
+			// Add a class for indicating a post failure
+			if ($this->emphasizedField === $field) {
+				$input->appendAttribute ('class', 'hashover-emphasized-input');
+			}
 
 			// Add input to wrapper element
 			$input_wrapper->appendChild ($input);
@@ -698,10 +711,11 @@ class HTMLOutput
 		$main_textarea->createAttribute ('title', $this->locales->locale ('form-tip', $this->addcslashes));
 		$main_textarea->createAttribute ('placeholder', $this->locales->locale ('comment-form', $this->addcslashes));
 
-		// Add a red border to main textarea upon posting error
-		if (isset ($_COOKIE['success']) and $_COOKIE['success'] === 'no') {
-			$main_textarea->createAttribute ('style', 'border: 2px solid #FF0000 !important;');
-			
+		// Add a class for indicating a post failure
+		if ($this->emphasizedField === 'comment') {
+			$main_textarea->appendAttribute ('class', 'hashover-emphasized-input');
+
+			// If the comment was a reply, have the main textarea use the reply textarea locale
 			if (!empty ($_COOKIE['replied'])) {
 				$main_textarea->createAttribute ('placeholder', $this->locales->locale ('reply-form', $this->addcslashes));
 			}
@@ -744,7 +758,7 @@ class HTMLOutput
 		$main_form_footer->createAttribute ('class', 'hashover-form-footer');
 
 		// Add checkbox label element to main form buttons wrapper element
-		if ($this->setup->allowsEmails !== false) {
+		if ($this->setup->fieldOptions['email'] !== false) {
 			if ($this->login->userIsLoggedIn === false or !empty ($this->login->email)) {
 				$main_form_footer->appendChild ($this->subscribeLabel ());
 			}
@@ -1148,7 +1162,7 @@ class HTMLOutput
 		$reply_form_footer->createAttribute ('class', 'hashover-form-footer');
 
 		// Add checkbox label element to reply form footer element
-		if ($this->setup->allowsEmails !== false) {
+		if ($this->setup->fieldOptions['email'] !== false) {
 			if ($this->login->userIsLoggedIn === false or !empty ($this->login->email)) {
 				$reply_form_footer->appendChild ($this->subscribeLabel ($permalink, 'reply', $subscribed));
 			}
@@ -1306,7 +1320,7 @@ class HTMLOutput
 		$edit_form_footer->createAttribute ('class', 'hashover-form-footer');
 
 		// Add checkbox label element to edit form buttons wrapper element
-		if ($this->setup->allowsEmails !== false) {
+		if ($this->setup->fieldOptions['email'] !== false) {
 			$edit_form_footer->appendChild ($this->subscribeLabel ($permalink, 'edit', $subscribed));
 		}
 

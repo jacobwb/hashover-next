@@ -112,8 +112,15 @@ class Setup extends Settings
 		// Instantiate encryption class
 		$this->encryption = new Encryption ($this->encryptionKey);
 
-		// Disable login if names or passwords are disabled
-		if ($this->allowsNames === false or $this->allowsPasswords === false) {
+		// Disable password if name is disabled
+		if ($this->fieldOptions['name'] === false) {
+			$this->fieldOptions['password'] = false;
+		}
+
+		// Disable login if name or password is disabled
+		if ($this->fieldOptions['name'] === false
+		    or $this->fieldOptions['password'] === false)
+		{
 			$this->allowsLogin = false;
 		}
 

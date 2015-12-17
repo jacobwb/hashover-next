@@ -47,6 +47,7 @@ $locale = array (
 	'logged-out'		=> 'You have been successfully logged out!',
 	'comment-needed'	=> 'You failed to enter a proper comment. Use the form below.',
 	'reply-needed'		=> 'You failed to enter a proper reply. Use the form below.',
+	'field-needed'		=> 'The %s field is required.',
 	'post-fail'		=> 'Failure! You lack sufficient permission.',
 	'post-reply'		=> 'Post Reply',
 	'delete'		=> 'Delete',

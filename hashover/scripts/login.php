@@ -83,12 +83,12 @@ class Login extends PostData
 	public function setCredentials ()
 	{
 		// Set name
-		if (!empty ($this->postData['name'])) {
+		if (isset ($this->postData['name'])) {
 			$this->loginMethod->name = $this->postData['name'];
 		}
 
 		// Set password
-		if (!empty ($this->postData['password'])) {
+		if (isset ($this->postData['password'])) {
 			$this->loginMethod->password = $this->setup->encryption->createHash ($this->postData['password']);
 		}
 
@@ -98,12 +98,12 @@ class Login extends PostData
 		}
 
 		// Set e-mail address
-		if (!empty ($this->postData['email'])) {
+		if (isset ($this->postData['email'])) {
 			$this->loginMethod->email = $this->postData['email'];
 		}
 
 		// Set website URL
-		if (!empty ($this->postData['website'])) {
+		if (isset ($this->postData['website'])) {
 			$this->loginMethod->website = $this->postData['website'];
 		}
 
@@ -124,6 +124,16 @@ class Login extends PostData
 	// Main login method
 	public function setLogin ()
 	{
+		// Set login method credentials
+		$this->setCredentials ();
+
+		// Check required fields, return false if any are empty
+		foreach ($this->setup->fieldOptions as $field => $status) {
+			if ($status === 'required' and empty ($this->$field)) {
+				return false;
+			}
+		}
+
 		if ($this->setup->allowsLogin !== false) {
 			$this->loginMethod->setLogin ();
 		}

@@ -92,7 +92,7 @@ class Cookies
 		$this->expireCookie ('error');
 
 		// Expire comment failure cookie
-		$this->expireCookie ('success');
+		$this->expireCookie ('failed-on');
 
 		// Expire reply failure cookie
 		$this->expireCookie ('replied');

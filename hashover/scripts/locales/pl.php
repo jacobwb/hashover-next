@@ -47,6 +47,7 @@ $locale = array (
 	'logged-out'		=> 'Zostałeś pomyślnie wylogowany!',
 	'comment-needed'	=> 'Wpisz komentarz do właściwego pola. Użyj formularza poniżej.',
 	'reply-needed'		=> 'Wpisz odpowiedź do właściwego pola. Użyj formularza poniżej.',
+	'field-needed'		=> '%s e-mail jest wymagane.',
 	'post-fail'		=> 'Komentarz nie wysłany! Nie masz wystarczających uprawnień.',
 	'post-reply'		=> 'Wyślij odpowiedź',
 	'delete'		=> 'Skasuj',
