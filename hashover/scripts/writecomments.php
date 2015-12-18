@@ -199,7 +199,7 @@ class WriteComments extends PostData
 		$message_type = ($error) ? 'error' : 'message';
 
 		// Return error as JSON if request is AJAX
-		if ($this->setup->AJAX === true) {
+		if ($this->viaAJAX === true) {
 			if (!empty ($text)) {
 				echo json_encode (array (
 					'message' => $text,
@@ -231,7 +231,7 @@ class WriteComments extends PostData
 			}
 
 			// Set cookies to indicate failure
-			if ($this->setup->AJAX !== true) {
+			if ($this->viaAJAX !== true) {
 				$this->cookies->setFailedOn ('comment', $this->replyTo, false);
 			}
 
@@ -420,7 +420,7 @@ class WriteComments extends PostData
 		// Post fails when comment is empty
 		if (empty ($this->postData['comment'])) {
 			// Set cookies to indicate failure
-			if ($this->setup->AJAX !== true) {
+			if ($this->viaAJAX !== true) {
 				$this->cookies->setFailedOn ('comment', $this->replyTo);
 			}
 
@@ -572,7 +572,7 @@ class WriteComments extends PostData
 			if ($this->commentData->save ($edit_comment, $this->file, true)) {
 
 				// Return the comment data on success via AJAX
-				if ($this->setup->AJAX === true) {
+				if ($this->viaAJAX === true) {
 					return array (
 						'file' => $this->file,
 						'comment' => $edit_comment
@@ -721,7 +721,7 @@ class WriteComments extends PostData
 			}
 
 			// Return the comment data on success via AJAX
-			if ($this->setup->AJAX === true) {
+			if ($this->viaAJAX === true) {
 				// Increase comment count(s)
 				$this->readComments->countComments ($comment_file);
 

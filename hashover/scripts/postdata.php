@@ -32,7 +32,7 @@ class PostData
 	public $postData = array ();
 	public $file;
 	public $replyTo;
-	public $AJAX = false;
+	public $viaAJAX = false;
 
 	public function __construct ()
 	{
@@ -71,9 +71,9 @@ class PostData
 			$this->replyTo = $_POST['reply-to'];
 		}
 
-		// Get whether request is for AJAX
+		// Set indicator of AJAX requests
 		if (isset ($_POST['ajax'])) {
-			$this->AJAX = true;
+			$this->viaAJAX = true;
 		}
 	}
 

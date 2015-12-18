@@ -31,7 +31,6 @@ class Setup extends Settings
 {
 	public $mode = 'php';
 	public $misc;
-	public $AJAX = false;
 	public $encryption;
 	public $pageURL;
 	public $pageTitle;
@@ -108,11 +107,6 @@ class Setup extends Settings
 		// Error if the script wasn't requested by this server
 		if ($this->mode === 'javascript' and $this->refererCheck () === false) {
 			throw new Exception ('External use not allowed.');
-		}
-
-		// Set indicator of AJAX requests
-		if (isset ($_POST['ajax'])) {
-			$this->AJAX = true;
 		}
 
 		// Instantiate encryption class
