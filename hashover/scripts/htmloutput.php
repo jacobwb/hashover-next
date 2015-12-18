@@ -173,15 +173,9 @@ class HTMLOutput
 				continue;
 			}
 
-			// Create wrapper element for inputs
-			$input_wrapper = new HTMLTag ('div');
-			$input_wrapper->createAttribute ('class', 'hashover-input-wrapper');
-			$input_wrapper->appendAttribute ('class', $attributes['wrapper-class']);
-
-			// Add a class for indicating a required field
-			if ($this->setup->fieldOptions[$field] === 'required') {
-				$input_wrapper->appendAttribute ('class', 'hashover-required-input');
-			}
+			// Create cell element for inputs
+			$input_cell = new HTMLTag ('div');
+			$input_cell->createAttribute ('class', 'hashover-input-cell');
 
 			// Create label element for input
 			if ($this->setup->usesLabels === true) {
@@ -190,8 +184,22 @@ class HTMLOutput
 				$label->createAttribute ('class', $attributes['label-class']);
 				$label->innerHTML ($attributes['placeholder']);
 
-				// Add label to wrapper element
-				$input_wrapper->appendChild ($label);
+				// Add label to cell element
+				$input_cell->appendChild ($label);
+			}
+
+			// Create wrapper element for input
+			$input_wrapper = new HTMLTag ('div');
+			$input_wrapper->createAttribute ('class', $attributes['wrapper-class']);
+
+			// Add a class for indicating a required field
+			if ($this->setup->fieldOptions[$field] === 'required') {
+				$input_wrapper->appendAttribute ('class', 'hashover-required-input');
+			}
+
+			// Add a class for indicating a post failure
+			if ($this->emphasizedField === $field) {
+				$input_wrapper->appendAttribute ('class', 'hashover-emphasized-input');
 			}
 
 			// Create input element
@@ -204,16 +212,14 @@ class HTMLOutput
 			$input->createAttribute ('value', $attributes['input-value']);
 			$input->createAttribute ('placeholder', $attributes['placeholder']);
 
-			// Add a class for indicating a post failure
-			if ($this->emphasizedField === $field) {
-				$input->appendAttribute ('class', 'hashover-emphasized-input');
-			}
-
 			// Add input to wrapper element
 			$input_wrapper->appendChild ($input);
 
-			// Add input wrapper to main inputs wrapper element
-			$login_inputs->appendChild ($input_wrapper);
+			// Add input to cell element
+			$input_cell->appendChild ($input_wrapper);
+
+			// Add input cell to main inputs wrapper element
+			$login_inputs->appendChild ($input_cell);
 		}
 
 		return $login_inputs;
