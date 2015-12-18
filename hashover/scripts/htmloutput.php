@@ -92,6 +92,21 @@ class HTMLOutput
 		return urlencode (urldecode ($url));
 	}
 
+	// Add optional or required to a string
+	protected function optionality ($field)
+	{
+		if ($this->setup->fieldOptions[$field] === 'required') {
+			$optionality = 'required';
+		} else {
+			$optionality = 'optional';
+		}
+
+		return sprintf (
+			$this->locales->locale ($field . '-tip', $this->addcslashes),
+			strtolower ($this->locales->locale ($optionality, $this->addcslashes))
+		);
+	}
+
 	// Creates a inputs elements for user login information
 	protected function loginInputs ($editForm = false, $name = '', $website = '')
 	{
@@ -104,7 +119,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-name',
 				'input-type' => 'text',
 				'input-name' => 'name',
-				'input-title' => $this->locales->locale ('name-tip', $this->addcslashes),
+				'input-title' => $this->optionality ('name'),
 				'input-value' => $this->misc->makeXSSsafe ($this->login->name)
 			),
 			'password' => array (
@@ -114,7 +129,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-password',
 				'input-type' => 'password',
 				'input-name' => 'password',
-				'input-title' => $this->locales->locale ('password-tip', $this->addcslashes),
+				'input-title' => $this->optionality ('password'),
 				'input-value' => ''
 			),
 			'email' => array (
@@ -124,7 +139,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-email',
 				'input-type' => 'text',
 				'input-name' => 'email',
-				'input-title' => $this->locales->locale ('email-tip', $this->addcslashes),
+				'input-title' => $this->optionality ('email'),
 				'input-value' => $this->misc->makeXSSsafe ($this->login->email)
 			),
 			'website' => array (
@@ -134,7 +149,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-website',
 				'input-type' => 'text',
 				'input-name' => 'website',
-				'input-title' => $this->locales->locale ('website-tip', $this->addcslashes),
+				'input-title' => $this->optionality ('website'),
 				'input-value' => $this->misc->makeXSSsafe ($this->login->website)
 			)
 		);

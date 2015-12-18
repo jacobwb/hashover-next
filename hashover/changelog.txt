@@ -14,6 +14,7 @@ Changes by Jacob Barkdull 2015-12-17
 * Removed individual settings for enabled login fields in favor of an array.
 * Added locale string for individual required input error messages.
 * Added a CSS class for styling required login inputs.
+* Changed locales to reflect optional and required fields.
 * Minor modifications to some icons.
 * Improved custom login code.
 * Renamed a couple variables.

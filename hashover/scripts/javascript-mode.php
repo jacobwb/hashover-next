@@ -799,6 +799,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	function commentValidator (form, skipComment)
 	{
 		var skipComment = skipComment || false;
+		var fieldNeeded = '<?php echo $hashover->locales->locale ('field-needed', true); ?>';
 
 		// Check each input field for if they are required
 		for (var field in fieldOptions) {
@@ -814,11 +815,14 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 					// If not, add a class indicating a failed post
 					addClass (form[field], 'hashover-emphasized-input');
 
+					// Error message to display to the user
+					fieldNeeded = sprintf (fieldNeeded, [ locale[field].toLowerCase () ]);
+
 					// Focus the input
 					form[field].focus ();
 
-					// Return a error message to display to the user
-					return sprintf ('<?php echo $hashover->locales->locale ('field-needed', true); ?>', [ locale[field].toLowerCase() ]);
+					// Return message in proper case
+					return fieldNeeded[0].toUpperCase () + fieldNeeded.slice (1);
 				}
 
 				// Remove class indicating a failed post
