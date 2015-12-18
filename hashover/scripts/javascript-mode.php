@@ -1307,8 +1307,6 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			if (finishedCallback !== null) {
 				finishedCallback ();
 			}
-
-			showingMore = true;
 		}, 350);
 	}
 <?php if ($hashover->setup->usesAJAX !== false) { ?>
@@ -1370,7 +1368,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 				finishedCallback ();
 			}
 
-			return;
+			return false;
 		}
 
 <?php if ($hashover->setup->usesAJAX !== false) { ?>
@@ -1408,6 +1406,9 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		// Hide the more hyperlink and display the comments
 		hideMoreLink (finishedCallback);
 <?php } ?>
+
+		// Set all comments as shown
+		showingMore = true;
 
 		return false;
 	}
@@ -1873,7 +1874,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		// Add more button link to sort div
 		sortDiv.appendChild (moreLink);
 	} else {
-		// If not, consider all comment shown
+		// If not, consider all comments shown
 		showingMore = true;
 	}
 
