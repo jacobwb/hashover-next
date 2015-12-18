@@ -31,16 +31,18 @@ class DefaultLogin
 {
 	public $setup;
 	public $cookies;
+	public $locales;
 	public $name;
 	public $password;
 	public $loginHash;
 	public $email;
 	public $website;
 
-	public function __construct (Setup $setup, Cookies $cookies)
+	public function __construct (Setup $setup, Cookies $cookies, Locales $locales)
 	{
 		$this->setup = $setup;
 		$this->cookies = $cookies;
+		$this->locales = $locales;
 	}
 
 	// Set login credentials

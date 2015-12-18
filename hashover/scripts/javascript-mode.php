@@ -175,39 +175,45 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		return openTag + innerHTML.trim (serverEOL) + closeTag;
 	}
 
-	// Find parent comment via permalink
-	function findParent (permalink)
+	// Find a comment by its permalink
+	function findByPermalink (permalink, comments)
 	{
-		var levels;
-		var currentLevel = PHPContent.comments;
-		var keys;
-		var currentKey;
+		// Default return value is false
+		var comment = false;
 
-		// Split permalink into keys
-		keys = permalink.slice (1);
-		keys = keys.split ('r');
+		// Loop through all comments
+		for (var i = 0, il = comments.length; i < il; i++) {
+			// Return comment if its permalink matches
+			if (comments[i].permalink === permalink) {
+				return comments[i];
+			}
 
-		// Remove last key
-		keys.pop ();
+			// Recursively check replies when present
+			if (comments[i].replies) {
+				comment = findByPermalink (permalink, comments[i].replies);
+			}
+		}
 
-		// Limit depth in stream mode
+		// Return comment or false
+		return comment;
+	}
+
+	// Returns the permalink of a comment's parent
+	function getParentPermalink (permalink)
+	{
+		var parent = permalink.split ('r');
+		var length = parent.length - 1;
+
+		// Limit depth if in stream mode
 		if (streamMode === true) {
-			levels = Math.min (streamDepth, keys.length) - 1;
-		} else {
-			levels = keys.length - 1;
+			length = Math.min (streamDepth, length);
 		}
 
-		// Return the comment if it's primary
-		if (levels <= 0) {
-			return currentLevel[(keys[0] - 1)];
-		}
+		// Remove child from permalink
+		parent = parent.slice (0, length);
 
-		// Get replies from each comment
-		for (currentKey = 0; currentKey < levels; currentKey++) {
-			currentLevel = currentLevel[(keys[currentKey] - 1)].replies;
-		}
-
-		return currentLevel[(keys[currentKey] - 1)];
+		// Return parent permalink as string
+		return parent.join ('r');
 	}
 
 	// Add comment content to HTML template
@@ -223,6 +229,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		var nameClass = 'hashover-name-plain';
 		var template = {permalink: permalink};
 		var isReply = (permalink.indexOf ('r') > -1);
+		var parentPermalink;
 		var codeTagCount = 0;
 		var codeTags = [];
 		var preTagCount = 0;
@@ -237,7 +244,8 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 
 		// Get parent comment via permalink
 		if (isReply && parent === null) {
-			parent = findParent (comment.permalink);
+			parentPermalink = getParentPermalink (permalink);
+			parent = findByPermalink (parentPermalink, PHPContent.comments);
 		}
 
 		// Check if this comment is a popular comment
@@ -935,7 +943,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			// Check if JSON includes a comment
 			if (json.comment) {
 				// If so, execute callback function
-				callback (json, permalink, destination);
+				callback (json, permalink, destination, isReply);
 
 				// Execute callback function if one was provided
 				if (close !== null) {
@@ -985,29 +993,6 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 <?php } ?>
 	}
 
-	// Find a comment by its permalink
-	function findByPermalink (permalink, comments)
-	{
-		// Default return value is false
-		var comment = false;
-
-		// Loop through all comments
-		for (var i = 0, il = comments.length; i < il; i++) {
-			// Return comment if its permalink matches
-			if (comments[i].permalink === permalink) {
-				return comments[i];
-			}
-
-			// Recursively check replies when present
-			if (comments[i].replies) {
-				comment = findByPermalink (permalink, comments[i].replies);
-			}
-		}
-
-		// Return comment or false
-		return comment;
-	}
-
 <?php if ($hashover->setup->usesAJAX !== false) { ?>
 	// Converts an HTML string to DOM NodeList
 	function HTMLToNodeList (html)
@@ -1049,7 +1034,8 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		}
 
 		// If not, fetch parent comment
-		parent = findParent (comment.permalink);
+		var parentPermalink = getParentPermalink (comment.permalink);
+		var parent = findByPermalink (parentPermalink, PHPContent.comments);
 
 		// Check if comment has replies
 		if (parent.replies) {
@@ -1068,12 +1054,8 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	}
 
 	// For posting comments
-	AJAXPost = function (json, permalink, destination)
+	AJAXPost = function (json, permalink, destination, isReply)
 	{
-		var parent = null;
-		var isReply = (json.comment.permalink.indexOf ('r') > -1);
-		var commentNode;
-
 		// If there aren't any comments, replace first comment message
 		if (totalCount === 0) {
 			PHPContent.comments[0] = json.comment;
@@ -1083,7 +1065,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			addComments (json.comment, isReply);
 
 			// Create div element for comment
-			commentNode = HTMLToNodeList (parseComment (json.comment, parent));
+			var commentNode = HTMLToNodeList (parseComment (json.comment));
 
 			// Append comment to parent element
 			if (streamMode === true && permalink.split('r').length > streamDepth) {
@@ -1102,7 +1084,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	}
 
 	// For editing comments
-	AJAXEdit = function (json, permalink, destination)
+	AJAXEdit = function (json, permalink, destination, isReply)
 	{
 		// Get old comment element nodes
 		var comment = getElement (permalink, true);
@@ -1330,24 +1312,6 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		}, 350);
 	}
 <?php if ($hashover->setup->usesAJAX !== false) { ?>
-
-	// Returns the permalink of a comment's parent
-	function getParentPermalink (permalink)
-	{
-		var parent = permalink.split ('r');
-		var length = parent.length - 1;
-
-		// Limit depth if in stream mode
-		if (streamMode === true) {
-			length = Math.min (streamDepth, length);
-		}
-
-		// Remove child from permalink
-		parent = parent.slice (0, length);
-
-		// Return parent permalink as string
-		return parent.join ('r');
-	}
 
 	// For appending new comments to the thread on page
 	function appendComments (comments)
@@ -1964,12 +1928,14 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		var permalink = URLHref.replace (/.*?hashover-(edit|reply)=(c[0-9r\-pop]+).*?/, '$2');
 
 		if (!URLHref.match ('hashover-edit=')) {
-			// Reply form
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
+			// Show more comments
 			showMoreComments (moreLink, function () {
+				// When display reply form
 				hashoverReply (permalink);
 			});
 <?php } else { ?>
+			// Display reply form
 			hashoverReply (permalink);
 <?php } ?>
 		} else {
@@ -1977,17 +1943,14 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			var comments = (isPop) ? PHPContent.popularComments : PHPContent.comments;
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
 
+			// Show more comment
 			showMoreComments (moreLink, function () {
-				var comment = findByPermalink (permalink, comments);
-
-				// Edit form
-				hashoverEdit (comment);
+				// When display edit form
+				hashoverEdit (findByPermalink (permalink, comments));
 			});
 <?php } else { ?>
-			var comment = findByPermalink (permalink, comments);
-
-			// Edit form
-			hashoverEdit (comment);
+			// Display edit form
+			hashoverEdit (findByPermalink (permalink, comments));
 <?php } ?>
 		}
 	}
@@ -1997,9 +1960,10 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		console.log ('HashOver executed in ' + (Date.now () - execStart) + ' ms.');
 	}
 
-	// Workaround for stupid Chrome bug
+	// Callback for scrolling a comment into view on page load
 	var scroller = function () {
 		setTimeout (function () {
+			// Workaround for stupid Chrome bug
 			if (URLHash.match (/comments|hashover/)) {
 				ifElement (URLHash, function (comments) {
 					comments.scrollIntoView ({'behavior': 'smooth'});
@@ -2034,7 +1998,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		}, 500);
 	};
 
-	// Compatibility wrapper
+	// Page onload compatibility wrapper
 	if (window.addEventListener) {
 		// Rest of the world
 		window.addEventListener ('load', scroller, false);

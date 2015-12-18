@@ -154,7 +154,7 @@ class WriteComments extends PostData
 
 		// Setup login information
 		if (isset ($_POST['edit'])) {
-			$this->login->setLogin ();
+			$this->login (false);
 		}
 
 		// Escape disallowed characters
@@ -199,7 +199,7 @@ class WriteComments extends PostData
 		$message_type = ($error) ? 'error' : 'message';
 
 		// Return error as JSON if request is AJAX
-		if ($this->AJAX === true) {
+		if ($this->setup->AJAX === true) {
 			if (!empty ($text)) {
 				echo json_encode (array (
 					'message' => $text,
@@ -219,23 +219,6 @@ class WriteComments extends PostData
 		header ('Location: ' . $this->kickbackURL . '#' . $anchor);
 	}
 
-	// Set cookies for remembering state after post action
-	protected function setStatusCookies ($input, $try_reply = true)
-	{
-		// Don't set the cookies if the request is via AJAX
-		if ($this->AJAX === true) {
-			return;
-		}
-
-		// Set success status cookie
-		$this->cookies->set ('failed-on', $input);
-
-		// Set reply cookie
-		if ($try_reply === true and !empty ($this->replyTo)) {
-			$this->cookies->set ('replied', $this->replyTo);
-		}
-	}
-
 	// Confirm that attempted actions are to existing comments
 	protected function verifyFile ($file)
 	{
@@ -248,7 +231,9 @@ class WriteComments extends PostData
 			}
 
 			// Set cookies to indicate failure
-			$this->setStatusCookies ('comment', false);
+			if ($this->setup->AJAX !== true) {
+				$this->cookies->setFailedOn ('comment', $this->replyTo, false);
+			}
 
 			// Throw exception as error message
 			throw new Exception ($this->locales->locale['comment-needed']);
@@ -287,22 +272,21 @@ class WriteComments extends PostData
 	}
 
 	// Set cookies
-	public function login ()
+	public function login ($kickback = true)
 	{
 		try {
-			// Check if required fields have values
-			$this->validateFields ();
+			// Log the user in
+			$this->login->setLogin ();
 
 		} catch (Exception $error) {
 			$this->kickback ($error->getMessage (), true);
 			return false;
 		}
 
-		// Log the user in
-		$this->login->setLogin ();
-
 		// Kick visitor back
-		$this->kickback ($this->locales->locale['logged-in']);
+		if ($kickback !== false) {
+			$this->kickback ($this->locales->locale['logged-in']);
+		}
 
 		return true;
 	}
@@ -427,31 +411,18 @@ class WriteComments extends PostData
 		return false;
 	}
 
-	// Check if required fields have values
-	protected function validateFields ()
-	{
-		foreach ($this->setup->fieldOptions as $field => $status) {
-			if ($status === 'required' and empty ($this->postData[$field])) {
-				$this->setStatusCookies ($field);
-
-				throw new Exception (sprintf (
-					$this->locales->locale ('field-needed'), strtolower ($this->locales->locale ($field))
-				));
-
-				return false;
-			}
-		}
-	}
-
 	// Setup and test for necessary comment data
 	protected function setupCommentData ()
 	{
 		// Check if required fields have values
-		$this->validateFields ();
+		$this->login->validateFields ();
 
 		// Post fails when comment is empty
 		if (empty ($this->postData['comment'])) {
-			$this->setStatusCookies ('comment');
+			// Set cookies to indicate failure
+			if ($this->setup->AJAX !== true) {
+				$this->cookies->setFailedOn ('comment', $this->replyTo);
+			}
 
 			// Set reply cookie
 			if (!empty ($this->replyTo)) {
@@ -601,7 +572,7 @@ class WriteComments extends PostData
 			if ($this->commentData->save ($edit_comment, $this->file, true)) {
 
 				// Return the comment data on success via AJAX
-				if ($this->AJAX === true) {
+				if ($this->setup->AJAX === true) {
 					return array (
 						'file' => $this->file,
 						'comment' => $edit_comment
@@ -746,11 +717,11 @@ class WriteComments extends PostData
 
 			// Set/update user login cookie
 			if ($this->setup->usesAutoLogin !== false) {
-				$this->login->setLogin ();
+				$this->login (false);
 			}
 
 			// Return the comment data on success via AJAX
-			if ($this->AJAX === true) {
+			if ($this->setup->AJAX === true) {
 				// Increase comment count(s)
 				$this->readComments->countComments ($comment_file);
 

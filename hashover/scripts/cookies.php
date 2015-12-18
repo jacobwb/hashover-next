@@ -57,6 +57,18 @@ class Cookies
 		setcookie ($name, $value, $date, '/', $this->domain, $this->secure, true);
 	}
 
+	// Set cookies for remembering state login actions
+	public function setFailedOn ($input, $reply_to, $replied = true)
+	{
+		// Set success status cookie
+		$this->set ('failed-on', $input);
+
+		// Set reply cookie
+		if ($replied === true and !empty ($reply_to)) {
+			$this->set ('replied', $reply_to);
+		}
+	}
+
 	// Expire a cookie by setting its expiration date to 1
 	public function expireCookie ($cookie)
 	{

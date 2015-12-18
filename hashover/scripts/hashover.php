@@ -117,7 +117,7 @@ class HashOver
 		);
 
 		// Instantiate login class
-		$this->login = new Login ($this->setup, $this->cookies);
+		$this->login = new Login ($this->setup, $this->cookies, $this->locales);
 
 		// Instantiate comment parser class
 		$this->commentParser = new CommentParser (

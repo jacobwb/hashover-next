@@ -31,7 +31,9 @@ class Login extends PostData
 {
 	public $setup;
 	public $cookies;
+	public $locales;
 	public $loginMethod;
+	public $fieldNeeded;
 	public $name;
 	public $password;
 	public $loginHash;
@@ -40,16 +42,20 @@ class Login extends PostData
 	public $userIsLoggedIn = false;
 	public $userIsAdmin = false;
 
-	public function __construct (Setup $setup, Cookies $cookies)
+	public function __construct (Setup $setup, Cookies $cookies, Locales $locales)
 	{
 		parent::__construct ();
 
 		$this->setup = $setup;
 		$this->cookies = $cookies;
+		$this->locales = $locales;
 
 		// Instantiate login method class
 		$login_class = $this->setup->loginMethod;
-		$this->loginMethod = new $login_class ($setup, $cookies);
+		$this->loginMethod = new $login_class ($setup, $cookies, $locales);
+
+		// Error message to display to the user
+		$this->fieldNeeded = $this->locales->locale ('field-needed');
 
 		// Check if user is logged in
 		$this->getLogin ();
@@ -88,8 +94,8 @@ class Login extends PostData
 		}
 
 		// Set password
-		if (isset ($this->postData['password'])) {
-			$this->loginMethod->password = $this->setup->encryption->createHash ($this->postData['password']);
+		if (isset ($_POST['password'])) {
+			$this->loginMethod->password = $this->setup->encryption->createHash ($_POST['password']);
 		}
 
 		// RIPEMD-160 hash used to indicate user login
@@ -121,19 +127,38 @@ class Login extends PostData
 		$this->updateCredentials ();
 	}
 
+	// Checks if required fields have values
+	public function validateFields ()
+	{
+		// Check required fields, throw error if any are empty
+		foreach ($this->setup->fieldOptions as $field => $status) {
+			if ($status === 'required' and empty ($this->$field)) {
+				// Don't set cookies if the request is via AJAX
+				if ($this->setup->AJAX !== true) {
+					$this->cookies->setFailedOn ($field, $this->replyTo, false);
+				}
+
+				throw new Exception (ucfirst (sprintf (
+					$this->fieldNeeded, strtolower ($this->locales->locale ($field))
+				)));
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	// Main login method
 	public function setLogin ()
 	{
 		// Set login method credentials
 		$this->setCredentials ();
 
-		// Check required fields, return false if any are empty
-		foreach ($this->setup->fieldOptions as $field => $status) {
-			if ($status === 'required' and empty ($this->$field)) {
-				return false;
-			}
-		}
+		// Check if required fields have values
+		$this->validateFields ();
 
+		// Execute login method's setLogin
 		if ($this->setup->allowsLogin !== false) {
 			$this->loginMethod->setLogin ();
 		}

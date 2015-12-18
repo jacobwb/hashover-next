@@ -124,7 +124,7 @@ foreach ($post_actions as $action) {
 }
 
 // Returns comment being saved as JSON
-if (isset ($_POST['ajax']) and is_array ($data)) {
+if ($hashover->setup->AJAX === true and is_array ($data)) {
 	// Slit file into parts
 	$key_parts = explode ('-', $data['file']);
 
