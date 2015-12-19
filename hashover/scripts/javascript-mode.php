@@ -1386,13 +1386,6 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			// Display the comments
 			appendComments (json.comments);
 
-			// Display most popular comments
-			ifElement ('hashover-top-comments', function (topComments) {
-				if (json.popularComments[0] !== undefined) {
-					parseAll (json.popularComments, topComments, false, true);
-				}
-			});
-
 			// Hide the more hyperlink and display the comments
 			hideMoreLink (finishedCallback);
 		};
