@@ -394,12 +394,12 @@ Copyright (C) 2015 Jacob Barkdull
 }
 
 #hashover .hashover-emphasized-input,
-#hashover input[type="text"].hashover-emphasized-input {
+#hashover input.hashover-emphasized-input {
 	border-color: #CC0000 ! important;
 }
 
 #hashover .hashover-emphasized-input:focus,
-#hashover input[type="text"].hashover-emphasized-input:focus {
+#hashover input.hashover-emphasized-input:focus {
 	border-color: #FF0000 ! important;
 	box-shadow: 0px 0px 2px #FFBFBF !important;
 }

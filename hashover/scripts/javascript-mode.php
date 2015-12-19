@@ -41,9 +41,23 @@ if ($hashover->setup->collapsesComments !== false) {
 	}
 }
 
-// Some locale plural arrays
-$like_locale = $hashover->locales->locale ('like', true);
-$dislike_locale = $hashover->locales->locale ('dislike', true);
+// Return a boolean as a string
+function stringBoolean ($boolean, $value = true)
+{
+	return ($boolean === $value) ? 'true' : 'false';
+}
+
+// Return a boolean as a string, preferring true
+function stringTrue ($boolean)
+{
+	return ($boolean !== false) ? 'true' : 'false';
+}
+
+// Return either a boolean as a string or just the normal string
+function stringOrBoolean ($value)
+{
+	echo is_bool ($value) ? stringTrue ($value) : "'{$value}'";
+}
 
 ?>
 // Copyright (C) 2010-2015 Jacob Barkdull
@@ -70,11 +84,12 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	var serverEOL		= '<?php echo str_replace (array ("\r", "\n"), array ('\r', '\n'), PHP_EOL); ?>';
 	var httpRoot		= '<?php echo $hashover->setup->httpRoot; ?>';
 	var elementsById	= {};
+	var collapseComments	= <?php echo stringTrue ($hashover->setup->collapsesComments); ?>;
 	var collapseLimit	= <?php echo $hashover->setup->collapseLimit; ?>;
 	var collapsedCount	= 0;
-	var streamMode		= <?php echo ($hashover->setup->replyMode === 'stream') ? 'true' : 'false'; ?>;
+	var streamMode		= <?php echo stringBoolean ($hashover->setup->replyMode, 'stream'); ?>;
 	var streamDepth		= <?php echo $hashover->setup->streamDepth; ?>;
-	var allowsDislikes	= <?php echo $hashover->setup->allowsDislikes ? 'true' : 'false'; ?>;
+	var allowsDislikes	= <?php echo stringTrue ($hashover->setup->allowsDislikes); ?>;
 	var head		= document.head || document.getElementsByTagName ('head')[0];
 	var imagePlaceholder	= '<?php echo $hashover->setup->httpImages; ?>/place-holder.<?php echo $hashover->setup->imageFormat; ?>';
 	var imageExtensions	= ['<?php echo implode ('\', \'', $hashover->setup->imageTypes); ?>'];
@@ -89,15 +104,14 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	var preTagMarkerRegex	= /PRE_TAG\[([0-9]+)\]/g;
 	var lineRegex		= new RegExp (serverEOL, 'g');
 	var messageCounts	= {};
-	var fieldOptions	= <?php echo json_encode ($hashover->setup->fieldOptions); ?>;
-	var userIsLoggedIn	= <?php echo $hashover->login->userIsLoggedIn ? 'true' : 'false'; ?>;
+	var userIsLoggedIn	= <?php echo stringBoolean ($hashover->login->userIsLoggedIn); ?>;
 	var themeCSS		= httpRoot + '/themes/<?php echo $hashover->setup->theme; ?>/style.css';
 	var appendCSS		= true;
 	var totalCount		= <?php echo $hashover->readComments->totalCount - 1; ?>;
 	var primaryCount	= <?php echo $hashover->readComments->primaryCount - 1; ?>;
 	var HashOverDiv		= document.getElementById ('hashover');
 	var hashoverScript	= <?php echo !empty ($_GET['hashover-script']) ? $hashover->misc->makeXSSsafe ($_GET['hashover-script']) : 'false'; ?>;
-	var deviceType		= '<?php echo $hashover->setup->isMobile ? 'mobile' : 'desktop'; ?>';
+	var deviceType		= '<?php echo $hashover->setup->isMobile === true ? 'mobile' : 'desktop'; ?>';
 	var pageURL		= '<?php echo $hashover->setup->pageURL; ?>';
 	var threadRegex		= /^(c[0-9r]+)r[0-9\-pop]+$/;
 	var sortDiv		= null;
@@ -111,6 +125,14 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	var moreDiv		= null;
 	var moreLink		= null;
 	var showingMore		= false;
+
+	// Field options
+	var fieldOptions = {
+		'name': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['name']); ?>,
+		'password': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['password']); ?>,
+		'email': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['email']); ?>,
+		'website': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['website']), PHP_EOL; ?>
+	};
 
 	// Tags that will have their innerHTML trimmed
 	var trimTagRegexes = {
@@ -128,14 +150,15 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		}
 	};
 
+	// Some locales, stored in JavaScript to avoid using a lot of PHP tags
 	var locale = {
 		'cancel':		'<?php echo $hashover->locales->locale['cancel']; ?>',
-		'like':			['<?php echo implode ("', '", $like_locale); ?>'],
+		'like':			['<?php echo implode ("', '", $hashover->locales->locale ('like', true)); ?>'],
 		'liked':		'<?php echo $hashover->locales->locale ('liked', true); ?>',
 		'unlike':		'<?php echo $hashover->locales->locale ('unlike', true); ?>',
 		'likeComment':		'<?php echo $hashover->locales->locale ('like-comment', true); ?>',
 		'likedComment':		'<?php echo $hashover->locales->locale ('liked-comment', true); ?>',
-		'dislike':		['<?php echo implode ("', '", $dislike_locale); ?>'],
+		'dislike':		['<?php echo implode ("', '", $hashover->locales->locale ('dislike', true)); ?>'],
 		'disliked':		'<?php echo $hashover->locales->locale ('disliked', true); ?>',
 		'dislikeComment':	'<?php echo $hashover->locales->locale ('dislike-comment', true); ?>',
 		'dislikedComment':	'<?php echo $hashover->locales->locale ('disliked-comment', true); ?>',
@@ -179,7 +202,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	function findByPermalink (permalink, comments)
 	{
 		// Default return value is false
-		var comment = false;
+		var comment = null;
 
 		// Loop through all comments
 		for (var i = 0, il = comments.length; i < il; i++) {
@@ -199,21 +222,27 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	}
 
 	// Returns the permalink of a comment's parent
-	function getParentPermalink (permalink)
+	function getParentPermalink (permalink, flatten)
 	{
+		var flatten = flatten || false;
 		var parent = permalink.split ('r');
 		var length = parent.length - 1;
 
 		// Limit depth if in stream mode
-		if (streamMode === true) {
+		if (streamMode === true && flatten === true) {
 			length = Math.min (streamDepth, length);
 		}
 
-		// Remove child from permalink
-		parent = parent.slice (0, length);
+		// Check if there is a parent after flatten
+		if (length > 0) {
+			// If so, remove child from permalink
+			parent = parent.slice (0, length);
 
-		// Return parent permalink as string
-		return parent.join ('r');
+			// Return parent permalink as string
+			return parent.join ('r');
+		}
+
+		return null;
 	}
 
 	// Add comment content to HTML template
@@ -228,7 +257,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		var permalink = comment.permalink;
 		var nameClass = 'hashover-name-plain';
 		var template = {permalink: permalink};
-		var isReply = (permalink.indexOf ('r') > -1);
+		var isReply = (parent !== null);
 		var parentPermalink;
 		var codeTagCount = 0;
 		var codeTags = [];
@@ -236,16 +265,18 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		var preTags = [];
 		var commentClass = '';
 		var replies = '';
+		var hasParent = false;
 
 		// Text for avatar image alt attribute
 		var permatext = permalink.slice (1);
 		    permatext = permatext.split ('r');
 		    permatext = permatext.pop ();
 
-		// Get parent comment via permalink
-		if (isReply && parent === null) {
+		if (permalink.indexOf ('r') > -1) {
+			// Get parent comment via permalink
 			parentPermalink = getParentPermalink (permalink);
 			parent = findByPermalink (parentPermalink, PHPContent.comments);
+			hasParent = (parent !== null);
 		}
 
 		// Check if this comment is a popular comment
@@ -309,7 +340,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 			}
 
 			// Construct thread hyperlink
-			if (isReply) {
+			if (hasParent) {
 				var parentThread = parent.permalink;
 				var parentName = parent.name || '<?php echo $hashover->setup->defaultName; ?>';
 
@@ -1038,7 +1069,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		var parent = findByPermalink (parentPermalink, PHPContent.comments);
 
 		// Check if comment has replies
-		if (parent.replies) {
+		if (parent !== null && parent.replies !== undefined) {
 			// If so, add comment to reply array
 			if (index !== null) {
 				parent.replies.splice (index, 0, comment);
@@ -1319,7 +1350,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 
 		for (var i = 0, il = comments.length; i < il; i++) {
 			// Skip existing comments
-			if (findByPermalink (comments[i].permalink, PHPContent.comments) !== false) {
+			if (findByPermalink (comments[i].permalink, PHPContent.comments) !== null) {
 				// Check comment's replies
 				if (comments[i].replies) {
 					appendComments (comments[i].replies);
@@ -1328,12 +1359,13 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 				continue;
 			}
 
-			// Parse comment, convert HTML to DOM node
-			comment = HTMLToNodeList (parseComment (comments[i], null, true));
-			isReply = (comments[i].permalink.indexOf ('r') > -1);
-
 			// Add comment to comments array
 			addComments (comments[i], isReply, i);
+
+			// Parse comment, convert HTML to DOM node
+			parent = getParentPermalink (comments[i].permalink, true);
+			comment = HTMLToNodeList (parseComment (comments[i], parent, true));
+			isReply = (parent !== null);
 
 			// Check that comment is not a reply
 			if (isReply !== true) {
@@ -1341,7 +1373,6 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 				element = moreDiv;
 			} else {
 				// If not, append to its parent's element
-				parent = getParentPermalink (comments[i].permalink);
 				element = getElement (parent, true);
 			}
 
@@ -1839,7 +1870,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	HashOverForm = getElement ('hashover-form');
 
 	// Add initial event handlers
-	parseAll (PHPContent.comments, sortDiv);
+	parseAll (PHPContent.comments, sortDiv, collapseComments);
 
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
 	// Check whether there are more than the collapse limit
