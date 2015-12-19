@@ -62,7 +62,7 @@ class JSMinifier
 			// Remove newlines
 			$js = preg_replace ('/[\r\n]+/', '', $js);
 
-			// Add optional semicolons to void
+			// Add optional semicolons to avoid syntax errors
 			$js = preg_replace ('/}([a-z])/i', '};\\1', $js);
 		}
 
