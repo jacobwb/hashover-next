@@ -61,9 +61,6 @@ class JSMinifier
 		if ($level >= 3) {
 			// Remove newlines
 			$js = preg_replace ('/[\r\n]+/', '', $js);
-
-			// Add optional semicolons to avoid syntax errors
-			$js = preg_replace ('/}([a-z])/i', '};\\1', $js);
 		}
 
 		if ($level >= 4) {
