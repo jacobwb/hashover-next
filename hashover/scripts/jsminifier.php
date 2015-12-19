@@ -59,8 +59,9 @@ class JSMinifier
 		}
 
 		if ($level >= 3) {
-			// Remove unnecessary newlines
-			$js = preg_replace ('/[\r\n]*([,;{}]+)[\r\n]+/', '\\1', $js);
+			// Remove newlines
+			$js = preg_replace ('/[\r\n]/', '', $js);
+			$js = preg_replace ('/}([a-z])/i', '};\\1', $js);
 		}
 
 		if ($level >= 4) {
@@ -99,7 +100,7 @@ class JSMinifier
 					$substring = str_replace (';}', '}', $substring);
 
 					// Remove spaces round operators
-					$substring = preg_replace ('/\s*([<>=+\-!\|{(},;&:?]+)\s*/', '\\1', $substring);
+					$substring = preg_replace ('/ *([<>=+\-!\|{(},;&:?]+) */', '\\1', $substring);
 				}
 
 				// Add substring to minified output

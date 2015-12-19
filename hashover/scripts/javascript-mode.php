@@ -1054,8 +1054,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 	}
 
 	// For posting comments
-	AJAXPost = function (json, permalink, destination, isReply)
-	{
+	AJAXPost = function (json, permalink, destination, isReply) {
 		// If there aren't any comments, replace first comment message
 		if (totalCount === 0) {
 			PHPContent.comments[0] = json.comment;
@@ -1081,11 +1080,10 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		// Update comment count
 		getElement ('hashover-count').textContent = json.count;
 		incrementCounts (isReply);
-	}
+	};
 
 	// For editing comments
-	AJAXEdit = function (json, permalink, destination, isReply)
-	{
+	AJAXEdit = function (json, permalink, destination, isReply) {
 		// Get old comment element nodes
 		var comment = getElement (permalink, true);
 		var oldNodes = comment.childNodes;
@@ -1111,7 +1109,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 		for (var attribute in json.comment) {
 			oldComment[attribute] = json.comment[attribute];
 		}
-	}
+	};
 
 <?php } ?>
 	// Displays reply form
@@ -1397,7 +1395,7 @@ $dislike_locale = $hashover->locales->locale ('dislike', true);
 
 			// Hide the more hyperlink and display the comments
 			hideMoreLink (finishedCallback);
-		}
+		};
 
 		httpRequest.open ('POST', httpRoot + '/api/json.php', true);
 		httpRequest.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
