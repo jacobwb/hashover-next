@@ -42,21 +42,21 @@ if ($hashover->setup->collapsesComments !== false) {
 }
 
 // Return a boolean as a string
-function stringBoolean ($boolean, $value = true)
+function string_boolean ($boolean, $value = true)
 {
 	return ($boolean === $value) ? 'true' : 'false';
 }
 
 // Return a boolean as a string, preferring true
-function stringTrue ($boolean)
+function string_true ($boolean)
 {
 	return ($boolean !== false) ? 'true' : 'false';
 }
 
 // Return either a boolean as a string or just the normal string
-function stringOrBoolean ($value)
+function string_or_boolean ($value)
 {
-	echo is_bool ($value) ? stringTrue ($value) : "'{$value}'";
+	echo is_bool ($value) ? string_true ($value) : "'{$value}'";
 }
 
 ?>
@@ -84,12 +84,12 @@ function stringOrBoolean ($value)
 	var serverEOL		= '<?php echo str_replace (array ("\r", "\n"), array ('\r', '\n'), PHP_EOL); ?>';
 	var httpRoot		= '<?php echo $hashover->setup->httpRoot; ?>';
 	var elementsById	= {};
-	var collapseComments	= <?php echo stringTrue ($hashover->setup->collapsesComments); ?>;
+	var collapseComments	= <?php echo string_true ($hashover->setup->collapsesComments); ?>;
 	var collapseLimit	= <?php echo $hashover->setup->collapseLimit; ?>;
 	var collapsedCount	= 0;
-	var streamMode		= <?php echo stringBoolean ($hashover->setup->replyMode, 'stream'); ?>;
+	var streamMode		= <?php echo string_boolean ($hashover->setup->replyMode, 'stream'); ?>;
 	var streamDepth		= <?php echo $hashover->setup->streamDepth; ?>;
-	var allowsDislikes	= <?php echo stringTrue ($hashover->setup->allowsDislikes); ?>;
+	var allowsDislikes	= <?php echo string_true ($hashover->setup->allowsDislikes); ?>;
 	var head		= document.head || document.getElementsByTagName ('head')[0];
 	var imagePlaceholder	= '<?php echo $hashover->setup->httpImages; ?>/place-holder.<?php echo $hashover->setup->imageFormat; ?>';
 	var imageExtensions	= ['<?php echo implode ('\', \'', $hashover->setup->imageTypes); ?>'];
@@ -104,7 +104,7 @@ function stringOrBoolean ($value)
 	var preTagMarkerRegex	= /PRE_TAG\[([0-9]+)\]/g;
 	var lineRegex		= new RegExp (serverEOL, 'g');
 	var messageCounts	= {};
-	var userIsLoggedIn	= <?php echo stringBoolean ($hashover->login->userIsLoggedIn); ?>;
+	var userIsLoggedIn	= <?php echo string_boolean ($hashover->login->userIsLoggedIn); ?>;
 	var themeCSS		= httpRoot + '/themes/<?php echo $hashover->setup->theme; ?>/style.css';
 	var appendCSS		= true;
 	var totalCount		= <?php echo $hashover->readComments->totalCount - 1; ?>;
@@ -162,10 +162,10 @@ function stringOrBoolean ($value)
 
 	// Field options
 	var fieldOptions = {
-		'name': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['name']); ?>,
-		'password': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['password']); ?>,
-		'email': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['email']); ?>,
-		'website': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['website']), PHP_EOL; ?>
+		'name': <?php echo string_or_boolean ($hashover->setup->fieldOptions['name']); ?>,
+		'password': <?php echo string_or_boolean ($hashover->setup->fieldOptions['password']); ?>,
+		'email': <?php echo string_or_boolean ($hashover->setup->fieldOptions['email']); ?>,
+		'website': <?php echo string_or_boolean ($hashover->setup->fieldOptions['website']), PHP_EOL; ?>
 	};
 
 	// Shorthand for Document.getElementById ()
