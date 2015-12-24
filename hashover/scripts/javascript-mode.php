@@ -126,12 +126,22 @@ function stringOrBoolean ($value)
 	var moreLink		= null;
 	var showingMore		= false;
 
-	// Field options
-	var fieldOptions = {
-		'name': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['name']); ?>,
-		'password': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['password']); ?>,
-		'email': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['email']); ?>,
-		'website': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['website']), PHP_EOL; ?>
+	// Some locales, stored in JavaScript to avoid using a lot of PHP tags
+	var locale = {
+		'cancel':		'<?php echo $hashover->locales->locale['cancel']; ?>',
+		'like':			['<?php echo implode ("', '", $hashover->locales->locale ('like', true)); ?>'],
+		'liked':		'<?php echo $hashover->locales->locale ('liked', true); ?>',
+		'unlike':		'<?php echo $hashover->locales->locale ('unlike', true); ?>',
+		'likeComment':		'<?php echo $hashover->locales->locale ('like-comment', true); ?>',
+		'likedComment':		'<?php echo $hashover->locales->locale ('liked-comment', true); ?>',
+		'dislike':		['<?php echo implode ("', '", $hashover->locales->locale ('dislike', true)); ?>'],
+		'disliked':		'<?php echo $hashover->locales->locale ('disliked', true); ?>',
+		'dislikeComment':	'<?php echo $hashover->locales->locale ('dislike-comment', true); ?>',
+		'dislikedComment':	'<?php echo $hashover->locales->locale ('disliked-comment', true); ?>',
+		'name':			'<?php echo $hashover->locales->locale ('name', true); ?>',
+		'password':		'<?php echo $hashover->locales->locale ('password', true); ?>',
+		'email':		'<?php echo $hashover->locales->locale ('email', true); ?>',
+		'website':		'<?php echo $hashover->locales->locale ('website', true); ?>'
 	};
 
 	// Tags that will have their innerHTML trimmed
@@ -150,22 +160,12 @@ function stringOrBoolean ($value)
 		}
 	};
 
-	// Some locales, stored in JavaScript to avoid using a lot of PHP tags
-	var locale = {
-		'cancel':		'<?php echo $hashover->locales->locale['cancel']; ?>',
-		'like':			['<?php echo implode ("', '", $hashover->locales->locale ('like', true)); ?>'],
-		'liked':		'<?php echo $hashover->locales->locale ('liked', true); ?>',
-		'unlike':		'<?php echo $hashover->locales->locale ('unlike', true); ?>',
-		'likeComment':		'<?php echo $hashover->locales->locale ('like-comment', true); ?>',
-		'likedComment':		'<?php echo $hashover->locales->locale ('liked-comment', true); ?>',
-		'dislike':		['<?php echo implode ("', '", $hashover->locales->locale ('dislike', true)); ?>'],
-		'disliked':		'<?php echo $hashover->locales->locale ('disliked', true); ?>',
-		'dislikeComment':	'<?php echo $hashover->locales->locale ('dislike-comment', true); ?>',
-		'dislikedComment':	'<?php echo $hashover->locales->locale ('disliked-comment', true); ?>',
-		'name':			'<?php echo $hashover->locales->locale ('name', true); ?>',
-		'password':		'<?php echo $hashover->locales->locale ('password', true); ?>',
-		'email':		'<?php echo $hashover->locales->locale ('email', true); ?>',
-		'website':		'<?php echo $hashover->locales->locale ('website', true); ?>'
+	// Field options
+	var fieldOptions = {
+		'name': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['name']); ?>,
+		'password': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['password']); ?>,
+		'email': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['email']); ?>,
+		'website': <?php echo stringOrBoolean ($hashover->setup->fieldOptions['website']), PHP_EOL; ?>
 	};
 
 	// Shorthand for Document.getElementById ()
