@@ -33,6 +33,7 @@ class PHPMode
 	public $html;
 	public $locales;
 	public $templater;
+	public $markdown;
 	public $comments;
 
 	protected $trimTagRegexes = array (
@@ -47,12 +48,13 @@ class PHPMode
 	protected $preTagCount = 0;
 	protected $preTags = array ();
 
-	public function __construct (Setup $setup, HTMLOutput $html, Locales $locales, Templater $templater, array $comments)
+	public function __construct (Setup $setup, HTMLOutput $html, Locales $locales, Templater $templater, Markdown $markdown, array $comments)
 	{
 		$this->setup = $setup;
 		$this->html = $html;
 		$this->locales = $locales;
 		$this->templater = $templater;
+		$this->markdown = $markdown;
 		$this->comments = $comments;
 	}
 
@@ -350,10 +352,9 @@ class PHPMode
 			$paragraphs = explode (PHP_EOL . PHP_EOL, $template['comment']);
 			$pd_comment = '';
 
-			// Wrap comment in paragraph tag
-			// Replace single line breaks with break tags
 			for ($i = 0, $il = count ($paragraphs); $i < $il; $i++) {
-				$pd_comment .= '<p>' . preg_replace ('/' . PHP_EOL . '/', '<br>', $paragraphs[$i]) . '</p>' . PHP_EOL;
+				// Wrap comment in paragraph tag, replace single line breaks with break tags
+				$pd_comment .= '<p>' . str_replace (PHP_EOL, '<br>', $paragraphs[$i]) . '</p>' . PHP_EOL;
 			}
 
 			// Replace code tag placeholders with original code tag HTML
@@ -365,6 +366,9 @@ class PHPMode
 			if ($this->preTagCount > 0) {
 				$pd_comment = preg_replace_callback ('/PRE_TAG\[([0-9]+)\]/', 'self::preTagReturn', $pd_comment);
 			}
+
+			// Parse markdown in comment
+			$pd_comment = $this->markdown->parseMarkdown ($pd_comment);
 
 			// Add paragraph'd comment data to template
 			$template['comment'] = $pd_comment;

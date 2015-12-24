@@ -53,10 +53,47 @@ function string_true ($boolean)
 	return ($boolean !== false) ? 'true' : 'false';
 }
 
-// Return either a boolean as a string or just the normal string
-function string_or_boolean ($value)
+// Encodes JSON, returns output that conforms to coding standard
+function coding_standard_json ($string, $pretty_print = true, $tabs = 1)
 {
-	echo is_bool ($value) ? string_true ($value) : "'{$value}'";
+	$search = array ('\\', "'", '"', '    ', PHP_EOL);
+	$replace = array ('', "\'", "'", "\t", PHP_EOL . str_repeat ("\t", $tabs));
+
+	// Encode string as JSON with pretty where possible
+	if ($pretty_print !== false and defined ('JSON_PRETTY_PRINT')) {
+		$json = json_encode ($string, JSON_PRETTY_PRINT);
+	} else {
+		$json = json_encode ($string);
+	}
+
+	// Conform JSON to coding standard
+	$json = str_replace ($search, $replace, $json);
+
+	return $json;
+}
+
+// Returns an array of regular expressions in JavaScript syntax
+function js_regex_array ($regexes, $strings, $tabs = "\t")
+{
+	// Convert capturing groups to JavaScript syntax
+	for ($i = 0, $il = count ($regexes); $i < $il; $i++) {
+		$regexes[$i] = preg_replace ('/\\\\([0-9]+)/', '$\\1', $regexes[$i]);
+
+		if ($strings !== true) {
+			$regexes[$i] = $regexes[$i] . 'g';
+		}
+	}
+
+	// Return array as strings in JavaScript syntax
+	if ($strings === true) {
+		return coding_standard_json ($regexes);
+	}
+
+	// Join array items as regular expressions
+	$js_array = implode (',' . PHP_EOL . $tabs . $tabs, $regexes);
+
+	// Return array in JavaScript syntax
+	return '[' . PHP_EOL . $tabs . $tabs .  $js_array . PHP_EOL . $tabs . ']';
 }
 
 ?>
@@ -82,6 +119,7 @@ function string_or_boolean ($value)
 
 	var execStart		= Date.now ();
 	var serverEOL		= '<?php echo str_replace (array ("\r", "\n"), array ('\r', '\n'), PHP_EOL); ?>';
+	var doubleEOL		= serverEOL + serverEOL;
 	var httpRoot		= '<?php echo $hashover->setup->httpRoot; ?>';
 	var elementsById	= {};
 	var collapseComments	= <?php echo string_true ($hashover->setup->collapsesComments); ?>;
@@ -102,6 +140,7 @@ function string_or_boolean ($value)
 	var preOpenRegex	= /<pre>/i;
 	var preTagRegex		= /(<pre>)([\s\S]*?)(<\/pre>)/ig;
 	var preTagMarkerRegex	= /PRE_TAG\[([0-9]+)\]/g;
+	var markdownCodeRegex	= /`(.*?)`/g;
 	var lineRegex		= new RegExp (serverEOL, 'g');
 	var messageCounts	= {};
 	var userIsLoggedIn	= <?php echo string_boolean ($hashover->login->userIsLoggedIn); ?>;
@@ -160,13 +199,14 @@ function string_or_boolean ($value)
 		}
 	};
 
+	// Markdown patterns to search for
+	var markdownSearch = <?php echo js_regex_array ($hashover->markdown->search, false); ?>;
+
+	// HTML replacements for markdown patterns
+	var markdownReplace = <?php echo js_regex_array ($hashover->markdown->replace, true); ?>;
+
 	// Field options
-	var fieldOptions = {
-		'name': <?php echo string_or_boolean ($hashover->setup->fieldOptions['name']); ?>,
-		'password': <?php echo string_or_boolean ($hashover->setup->fieldOptions['password']); ?>,
-		'email': <?php echo string_or_boolean ($hashover->setup->fieldOptions['email']); ?>,
-		'website': <?php echo string_or_boolean ($hashover->setup->fieldOptions['website']), PHP_EOL; ?>
-	};
+	var fieldOptions = <?php echo coding_standard_json ($hashover->setup->fieldOptions); ?>;
 
 	// Shorthand for Document.getElementById ()
 	function getElement (id, force)
@@ -243,6 +283,43 @@ function string_or_boolean ($value)
 		}
 
 		return null;
+	}
+
+	// Parses a string as markdown
+	function parseMarkdown (string)
+	{
+		var codeTagCount = 0;
+		var codeTags = [];
+
+		// Break string into paragraphs
+		var paragraphs = string.split (doubleEOL);
+
+		// Run through each paragraph replacing markdown patterns
+		for (var i = 0, il = paragraphs.length; i < il; i++) {
+			// Replace code tags with placeholder text
+			paragraphs[i] = paragraphs[i].replace (markdownCodeRegex, function (fullTag, code) {
+				var codePlaceholder = 'CODE_TAG[' + codeTagCount + ']';
+
+				codeTags[codeTagCount] = code.trim (serverEOL);
+				codeTagCount++;
+
+				return codePlaceholder;
+			});
+
+			// Perform each markdown regular expression on the current paragraph
+			for (var r = 0, rl = markdownSearch.length; r < rl; r++) {
+				// Replace markdown patterns
+				paragraphs[i] = paragraphs[i].replace (markdownSearch[r], markdownReplace[r]);
+			}
+
+			// Return the original markdown code with HTML replacement
+			paragraphs[i] = paragraphs[i].replace (codeTagMarkerRegex, function (placeholder, number) {
+				return '<code class="hashover-inline">' + codeTags[number] + '</code>';
+			});
+		}
+
+		// Return joined paragraphs
+		return paragraphs.join (doubleEOL);
 	}
 
 	// Add comment content to HTML template
@@ -517,13 +594,13 @@ function string_or_boolean ($value)
 			}
 
 			// Break comment into paragraphs
-			var paragraphs = body.split (serverEOL + serverEOL);
+			var paragraphs = body.split (doubleEOL);
 			var pdComment = '';
 
 			// Wrap comment in paragraph tag
 			// Replace single line breaks with break tags
 			for (var i = 0, il = paragraphs.length; i < il; i++) {
-				pdComment += '<p>' + paragraphs[i].replace (lineRegex, '<br>') + '</p>';
+				pdComment += '<p>' + paragraphs[i].replace (lineRegex, '<br>') + '</p>' + serverEOL;
 			}
 
 			// Replace code tag placeholders with original code tag HTML
@@ -539,6 +616,9 @@ function string_or_boolean ($value)
 					return preTags[number];
 				});
 			}
+
+			// Parse markdown in comment
+			pdComment = parseMarkdown (pdComment);
 
 			// Add comment data to template
 			template.comment = pdComment;

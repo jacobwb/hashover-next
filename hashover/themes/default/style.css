@@ -696,10 +696,14 @@ Copyright (C) 2015 Jacob Barkdull
 	position: relative;
 	overflow: hidden;
 	margin-top: -4px;
+	cursor: pointer;
+}
+
+#hashover #hashover-sort,
+#hashover code.hashover-inline {
 	-moz-border-radius: 4px 4px 4px 4px;
 	-webkit-border-radius: 4px 4px 4px 4px;
 	border-radius: 4px 4px 4px 4px;
-	cursor: pointer;
 }
 
 #hashover #hashover-sort:before {
@@ -757,6 +761,12 @@ Copyright (C) 2015 Jacob Barkdull
 	white-space: pre;
 	padding: 5px;
 	margin: 0px;
+}
+
+#hashover code.hashover-inline {
+	display: inline;
+	padding: 3px 4px 3px 4px;
+	border-radius
 }
 
 #hashover .hashover-comment blockquote,

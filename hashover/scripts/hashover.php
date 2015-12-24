@@ -37,6 +37,7 @@ class HashOver
 	public $locales;
 	public $avatars;
 	public $commentParser;
+	public $markdown;
 	public $cookies;
 	public $commentCount;
 	public $comments = array ();
@@ -129,6 +130,9 @@ class HashOver
 
 		// Generate comment count
 		$this->getCommentCount ();
+
+		// Instantiate markdown class
+		$this->markdown = new Markdown ();
 	}
 
 	// Get reply array from comments via key
@@ -300,6 +304,7 @@ class HashOver
 			$this->html,
 			$this->locales,
 			$this->templater,
+			$this->markdown,
 			$this->comments
 		);
 
