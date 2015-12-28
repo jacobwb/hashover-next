@@ -47,14 +47,17 @@ class Encryption
 	// Creates Blowfish hash for passwords
 	public function createHash ($str)
 	{
+		// Generate alphameric array
 		$alphabet = str_split ('aAbBcCdDeEfFgGhHiIjJkKlLmM.nNoOpPqQrRsStTuUvVwWxXyYzZ/0123456789');
 		shuffle ($alphabet);
 		$salt = '';
 
+		// Generate random 20 character alphameric string
 		foreach (array_rand ($alphabet, 20) as $alphameric) {
 			$salt .= $alphabet[$alphameric];
 		}
 
+		// Return hashed string
 		return crypt ($str, $this->prefix . $this->cost . $salt . '$$');
 	}
 
@@ -74,11 +77,13 @@ class Encryption
 		shuffle ($str);
 		$keys = array ();
 
+		// Generate random string from encryption key SHA-256 hash
 		for ($k = 0; $k < 16; $k++) {
 			$keys[] = array_search ($str[$k], $this->encryptionHash);
 			$key .= $str[$k];
 		}
 
+		// Return random string and list of encryption hash array keys
 		return array (
 			'key' => $key,
 			'keys' => join (',', $keys)
@@ -88,11 +93,15 @@ class Encryption
 	// Mcrypt with random key from SHA-256 hash for e-mails
 	public function encrypt ($str)
 	{
+		// Get a random encryption key
 		$key = $this->createMcryptKey ($this->encryptionHash);
+
+		// Encrypt using random encryption key
 		$iv = mcrypt_create_iv ($this->iv_size, MCRYPT_RAND);
 		$encrypted = mcrypt_encrypt ($this->cipher, $key['key'], $str, $this->mcryptMode, $iv);
 		$encrypted = $iv . $encrypted;
 
+		// Return encrypted value and list of encryption hash array keys
 		return array (
 			'encrypted' => base64_encode ($encrypted),
 			'keys' => $key['keys']
@@ -105,15 +114,20 @@ class Encryption
 		if (!empty ($str) and !empty ($encrypted)) {
 			$key = '';
 
-			// Get mcrypt key from array
+			// Retrieve Mcrypt key from array
 			foreach (explode (',', $encrypted) as $value) {
-				if (!isset ($this->encryptionHash[$value])) {
+				$hash_key =(int) $value;
+
+				// Give up if any array value isn't valid
+				if (!isset ($this->encryptionHash[$hash_key])) {
 					return '';
 				}
 
-				$key .= $this->encryptionHash[$value];
+				// Add character to decryption key
+				$key .= $this->encryptionHash[$hash_key];
 			}
 
+			// Decrypt using retrieved key
 			$decrypted = base64_decode ($str);
 			$iv = substr ($decrypted, 0, $this->iv_size);
 			$decrypted = substr ($decrypted, $this->iv_size);

@@ -1541,7 +1541,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			threadLink.onclick = function () {
 				showMoreComments (moreLink, function () {
 					var parentThread = permalink.replace (threadRegex, '$1');
-					var scrollToElement = getElement (parentThread);
+					var scrollToElement = getElement (parentThread, true);
 
 					// Scroll to the comment
 					scrollToElement.scrollIntoView ({'behavior': 'smooth'});
