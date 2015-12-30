@@ -33,49 +33,74 @@ class SpamCheck
 
 	public function __construct ()
 	{
-		$blocklist = './blocklist.txt';
+		// Blocklist file
+		$this->blocklist = '../blocklist.txt';
+	}
 
-		// Exit if visitor's IP address is in block list file
-		if (file_exists ($blocklist)) {
-			$ips = explode (PHP_EOL, file_get_contents ($blocklist));
+	// Return false if visitor's IP address is in block list file
+	public function checkList ()
+	{
+		// Check if blocklist file exists
+		if (file_exists ($this->blocklist)) {
+			// Convert blocklist into array
+			$ips = explode (PHP_EOL, file_get_contents ($this->blocklist));
 
+			// Run through each IP comparing them to user's IP
 			for ($ip = count ($ips) - 1; $ip >= 0; $ip--) {
+				// Return true if they match
 				if ($ips[$ip] === $_SERVER['REMOTE_ADDR']) {
-					$this->error = 'You are blocked!';
-					break;
+					return true;
 				}
 			}
 		}
+
+		return false;
 	}
 
+	// Stop Forum Spam remote spam database check
 	public function remote ()
 	{
+		// Stop Forum Spam API URL
 		$url = 'http://www.stopforumspam.com/api?ip=' . $_SERVER['REMOTE_ADDR'] . '&f=json';
 
+		// Check for cURL
 		if (function_exists ('curl_init')) {
+			// Initiate cURL
 			$ch = curl_init ();
 			$options = array (CURLOPT_URL => $url, CURLOPT_RETURNTRANSFER => true);
 			curl_setopt_array ($ch, $options);
+
+			// Fetch response from Stop Forum Spam database check
 			$output = curl_exec ($ch);
+
+			// Close cURL
 			curl_close ($ch);
+
+			// Parse response as JSON
 			$read_json = @json_decode ($output, true);
 		} else {
+			// Check if opening files via URL is enabled
 			if (ini_get ('allow_url_fopen')) {
+				// Open file via URL and parse response as JSON
 				$read_json = @json_decode (file_get_contents ($url), true);
 			}
 		}
 
+		// Set error message and return true if spam check failed
 		if (!isset ($read_json['success'])) {
 			$this->error = 'Spam check failed!';
 			return true;
 		}
 
+		// Set error message and return true if response was invalid
 		if (!isset ($read_json['ip']['appears'])) {
 			$this->error = 'Spam check received invalid JSON!';
 			return true;
 		}
 
+		// If spam check was successful
 		if ($read_json['success'] === 1) {
+			// Return true if user's IP appears in the database
 			if ($read_json['ip']['appears'] === 1) {
 				return true;
 			}
@@ -84,19 +109,26 @@ class SpamCheck
 		return false;
 	}
 
+	// Local CSV spam database check
 	public function local ()
 	{
-		$spam_database = './spam-database.csv';
+		// CSV spam database file
+		$spam_database = '../spam-database.csv';
 
+		// Check if CSV spam database file exists
 		if (file_exists ($spam_database)) {
+			// If so, convert CSV database into array
 			$ips = explode (',', file_get_contents ($spam_database));
 
+			// Run through each IP comparing them to user's IP
 			for ($ip = count ($ips) - 1; $ip >= 0; $ip--) {
+				// Return true if they match
 				if ($ips[$ip] === $_SERVER['REMOTE_ADDR']) {
 					return true;
 				}
 			}
 		} else {
+			// If not, set error message
 			$this->error = 'No local database found!';
 		}
 

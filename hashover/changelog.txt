@@ -1,3 +1,16 @@
+Changes by Jacob Barkdull 2015-12-30
+--------------------------------------------------------------------------------
+* Fixed: Local IP address blocklist not being checked.
+* Fixed: Comment post date not taking time into account.
+* Added code comments to SpamCheck class.
+
+
+Changes by Jacob Barkdull 2015-12-28
+--------------------------------------------------------------------------------
+* Fixed: "In reply to ..." link loses onClick event handler after sorting.
+* Added code comments for Encryption class.
+
+
 Changes by Jacob Barkdull 2015-12-24
 --------------------------------------------------------------------------------
 * Added basic markdown support.

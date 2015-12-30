@@ -242,7 +242,7 @@ class WriteComments extends PostData
 		return false;
 	}
 
-	protected function spamCheck ()
+	protected function checkForSpam ()
 	{
 		// Check trap fields
 		foreach ($this->trapFields as $name) {
@@ -253,15 +253,23 @@ class WriteComments extends PostData
 			}
 		}
 
-		// Check user's IP address against stopforumspam.com
+		// Check user's IP address against local blocklist
+		if ($this->spamCheck->checkList () === true) {
+			throw new Exception ('You are blocked!');
+			return false;
+		}
+
+		// Whether to check for spam in current mode
 		if ($this->setup->spamCheckModes === 'both'
 		    or $this->setup->spamCheckModes === $this->setup->mode)
 		{
+			// Check user's IP address against local or remote database
 			if ($this->spamCheck->{$this->setup->spamDatabase}() === true) {
 				throw new Exception ('You are blocked!');
 				return false;
 			}
 
+			// Throw any error message as exception
 			if (!empty ($this->spamCheck->error)) {
 				throw new Exception ($this->spamCheck->error);
 				return false;
@@ -632,7 +640,7 @@ class WriteComments extends PostData
 			$this->setupCommentData ();
 
 			// Check if comment is SPAM
-			$this->spamCheck ();
+			$this->checkForSpam ();
 
 			// Check if comment thread exists
 			$this->commentData->checkThread ();
