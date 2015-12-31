@@ -34,11 +34,11 @@ class Markdown
 
 	// Markdown patterns to search for
 	public $search = array (
-		'/__(.*?)__/',
-		'/\*\*([^\s])(.*?)([^\s])\*\*/',
-		'/\*([^\s\*])(.*?)([^\s\*])\*/',
-		'/([^a-z0-9])_(.*?)_([^a-z0-9])/i',
-		'/~~([^\s])(.*?)([^\s])~~/'
+		'/__([\s\S]*?)__/',
+		'/\*\*([^ ])([\s\S]*?)([^ ])\*\*/',
+		'/\*([^ \*])([\s\S]*?)([^ \*])\*/',
+		'/([^a-z0-9])_([\s\S]*?)_([^a-z0-9])/i',
+		'/~~([^ ])([\s\S]*?)([^ ])~~/'
 	);
 
 	// HTML replacements for markdown patterns
@@ -53,7 +53,7 @@ class Markdown
 	// Replaces markdown for code with a placeholder
 	protected function codeReplace ($grp)
 	{
-		$codePlaceholder = 'CODE_TAG[' . $this->codeTagCount . ']';
+		$codePlaceholder = 'CODE_MARKDOWN[' . $this->codeTagCount . ']';
 		$this->codeTags[$this->codeTagCount] = trim ($grp[1], PHP_EOL);
 		$this->codeTagCount++;
 
@@ -76,9 +76,9 @@ class Markdown
 
 		// Run through each paragraph replacing markdown patterns
 		for ($i = 0, $il = count ($paragraphs); $i < $il; $i++) {
-			$paragraphs[$i] = preg_replace_callback ('/`(.*?)`/', 'self::codeReplace', $paragraphs[$i]);
+			$paragraphs[$i] = preg_replace_callback ('/`([\s\S]*?)`/', 'self::codeReplace', $paragraphs[$i]);
 			$paragraphs[$i] = preg_replace($this->search, $this->replace, $paragraphs[$i]);
-			$paragraphs[$i] = preg_replace_callback ('/CODE_TAG\[([0-9]+)\]/', 'self::codeReturn', $paragraphs[$i]);
+			$paragraphs[$i] = preg_replace_callback ('/CODE_MARKDOWN\[([0-9]+)\]/', 'self::codeReturn', $paragraphs[$i]);
 		}
 
 		// Return joined paragraphs

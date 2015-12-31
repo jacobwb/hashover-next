@@ -155,8 +155,17 @@ function parse_comments (&$comment, &$rss, &$xml, &$hashover)
 		return;
 	}
 
+	// Encode HTML entities
+	$comment['body'] = htmlentities ($comment['body'], ENT_COMPAT, 'UTF-8', true);
+
+	// Decode HTML entities
+	$comment['body'] = html_entity_decode ($comment['body'], ENT_COMPAT, 'UTF-8');
+
 	// Remove [img] tags
 	$comment['body'] = preg_replace ('/\[(img|\/img)\]/i', '', $comment['body']);
+
+	// Parse comment as markdown
+	$comment['body'] = $hashover->markdown->parseMarkdown ($comment['body']);
 
 	// Get name from comment or use configured default
 	$name = !empty ($comment['name']) ? $comment['name'] : $hashover->setup->defaultName;
@@ -166,7 +175,7 @@ function parse_comments (&$comment, &$rss, &$xml, &$hashover)
 
 	// Generate comment summary item title
 	$title = $name . ' : ';
-	$single_comment = str_replace (PHP_EOL, ' ', $comment['body']);
+	$single_comment = str_replace (PHP_EOL, ' ', strip_tags ($comment['body']));
 
 	if (mb_strlen ($single_comment) > 40) {
 		$title .= substr ($single_comment, 0, 40) . '...';
@@ -194,11 +203,11 @@ function parse_comments (&$comment, &$rss, &$xml, &$hashover)
 	$comment['body'] = preg_replace ('/((ftp|http|https):\/\/[a-z0-9-@:%_\+.~#?&\/=]+) {0,}/i', '<a href="\\1" target="_blank">\\1</a>', $comment['body']);
 
 	// Replace newlines with break tags
-	$comment['body'] = str_replace (PHP_EOL, '<br>', htmlentities ($comment['body'], ENT_COMPAT, 'UTF-8', true));
+	$comment['body'] = str_replace (PHP_EOL, '<br>', $comment['body']);
 
 	// Create item description element
 	$item_description = $xml->createElement ('description');
-	$item_description_value = $xml->createTextNode (html_entity_decode ($comment['body'], ENT_COMPAT, 'UTF-8'));
+	$item_description_value = $xml->createTextNode ($comment['body']);
 	$item_description->appendChild ($item_description_value);
 
 	// Add item description element to item element

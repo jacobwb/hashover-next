@@ -348,6 +348,9 @@ class PHPMode
 				}
 			}
 
+			// Parse markdown in comment
+			$template['comment'] = $this->markdown->parseMarkdown ($template['comment']);
+
 			// Break comment into paragraphs
 			$paragraphs = explode (PHP_EOL . PHP_EOL, $template['comment']);
 			$pd_comment = '';
@@ -366,9 +369,6 @@ class PHPMode
 			if ($this->preTagCount > 0) {
 				$pd_comment = preg_replace_callback ('/PRE_TAG\[([0-9]+)\]/', 'self::preTagReturn', $pd_comment);
 			}
-
-			// Parse markdown in comment
-			$pd_comment = $this->markdown->parseMarkdown ($pd_comment);
 
 			// Add paragraph'd comment data to template
 			$template['comment'] = $pd_comment;

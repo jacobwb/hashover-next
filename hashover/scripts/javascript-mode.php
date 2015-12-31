@@ -137,6 +137,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	var codeOpenRegex	= /<code>/i;
 	var codeTagRegex	= /(<code>)([\s\S]*?)(<\/code>)/ig;
 	var codeTagMarkerRegex	= /CODE_TAG\[([0-9]+)\]/g;
+	var codeMarkdownMarker	= /CODE_MARKDOWN\[([0-9]+)\]/g;
 	var preOpenRegex	= /<pre>/i;
 	var preTagRegex		= /(<pre>)([\s\S]*?)(<\/pre>)/ig;
 	var preTagMarkerRegex	= /PRE_TAG\[([0-9]+)\]/g;
@@ -298,7 +299,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		for (var i = 0, il = paragraphs.length; i < il; i++) {
 			// Replace code tags with placeholder text
 			paragraphs[i] = paragraphs[i].replace (markdownCodeRegex, function (fullTag, code) {
-				var codePlaceholder = 'CODE_TAG[' + codeTagCount + ']';
+				var codePlaceholder = 'CODE_MARKDOWN[' + codeTagCount + ']';
 
 				codeTags[codeTagCount] = code.trim (serverEOL);
 				codeTagCount++;
@@ -313,7 +314,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 
 			// Return the original markdown code with HTML replacement
-			paragraphs[i] = paragraphs[i].replace (codeTagMarkerRegex, function (placeholder, number) {
+			paragraphs[i] = paragraphs[i].replace (codeMarkdownMarker, function (placeholder, number) {
 				return '<code class="hashover-inline">' + codeTags[number] + '</code>';
 			});
 		}
@@ -593,6 +594,9 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				}
 			}
 
+			// Parse markdown in comment
+			body = parseMarkdown (body);
+
 			// Break comment into paragraphs
 			var paragraphs = body.split (doubleEOL);
 			var pdComment = '';
@@ -616,9 +620,6 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 					return preTags[number];
 				});
 			}
-
-			// Parse markdown in comment
-			pdComment = parseMarkdown (pdComment);
 
 			// Add comment data to template
 			template.comment = pdComment;

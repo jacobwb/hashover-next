@@ -87,12 +87,12 @@ class Statistics
 		$statistics .= "\t\t" . 'System Memory Peak : ' . $this->systemMemory . ' MiB';
 		$statistics .= PHP_EOL . PHP_EOL;
 
-		// Return statistics as HTML comment in PHP mode
-		if ($this->mode === 'php') {
-			return PHP_EOL . '<!--' . $statistics . '-->';
+		// Return statistics as JavaScript comment
+		if ($this->mode === 'javascript') {
+			return PHP_EOL . '/*' . $statistics . '*/';
 		}
 
-		// Return statistics as JavaScript comment by default
-		return PHP_EOL . '/*' . $statistics . '*/';
+		// Return statistics as HTML comment by default
+		return PHP_EOL . '<!--' . $statistics . '-->';
 	}
 }

@@ -496,7 +496,7 @@ Copyright (C) 2014 Jacob Barkdull
 
 #hashover .hashover-comment .hashover-content {
 	padding: 0px 10px 0px 10px;
-	line-height: 1.4em;
+	line-height: 1.5em;
 }
 
 #hashover .hashover-comment .hashover-content p {
@@ -679,6 +679,14 @@ Copyright (C) 2014 Jacob Barkdull
 	white-space: pre;
 	padding: 5px;
 	margin: 0px;
+}
+
+#hashover code.hashover-inline {
+	display: inline;
+	padding: 1px 4px;
+	border-radius: 0px;
+	font-size: 12px;
+	line-height: 1.5em;
 }
 
 #hashover .hashover-comment blockquote,
