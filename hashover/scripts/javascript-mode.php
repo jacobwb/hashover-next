@@ -833,12 +833,6 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Handles display of various warnings when user attempts to post or login
 	function emailValidator (form, subscribe, permalink, isReply, isEdit)
 	{
-		// Return true if user was uncheck the subscribe checkbox
-		if (getElement (subscribe, true).checked === false) {
-			form.email.value = '';
-			return true;
-		}
-
 		// Whether the e-mail form is empty
 		if (form.email.value === '') {
 			// If so, warn the user that they won't receive reply notifications
@@ -854,6 +848,12 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				message = '<?php echo $hashover->locales->locale ('invalid-email', true); ?>';
 				showMessage (message, permalink, true, isReply, isEdit);
 				form.email.focus ();
+
+				// Return true if user unchecked the subscribe checkbox
+				if (getElement (subscribe, true).checked === false) {
+					form.email.value = '';
+					return true;
+				}
 
 				return false;
 			}

@@ -123,6 +123,19 @@ class WriteComments extends PostData
 		'</blockquote>'
 	);
 
+	// What to update when editing a comment
+	public $editUpdateFields = array (
+		'body',
+		'name',
+		'password',
+		'login_id',
+		'email',
+		'encryption',
+		'email_hash',
+		'notifications',
+		'website'
+	);
+
 	public function __construct (ReadComments $read_comments, Locales $locales, Cookies $cookies, Login $login, Misc $misc)
 	{
 		parent::__construct ();
@@ -567,7 +580,7 @@ class WriteComments extends PostData
 		// Check if password matches the one in the file
 		if ($passwords_match or $this->login->userIsAdmin) {
 			if ($this->login->userIsAdmin === false) {
-				foreach ($edit_comment as $key => $value) {
+				foreach ($this->editUpdateFields as $key) {
 					if (isset ($this->writeComment[$key])) {
 						$edit_comment[$key] = $this->writeComment[$key];
 					}
@@ -578,7 +591,6 @@ class WriteComments extends PostData
 
 			// Attempt to write edited comment
 			if ($this->commentData->save ($edit_comment, $this->file, true)) {
-
 				// Return the comment data on success via AJAX
 				if ($this->viaAJAX === true) {
 					return array (
