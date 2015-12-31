@@ -74,8 +74,8 @@ class CommentParser
 
 		// Format date and time
 		if ($this->setup->usesShortDates === true) {
-			$make_cmtdate = new DateTime ($comment['date']);
-			$cur_date = new DateTime (date (DATE_ISO8601));
+			$make_cmtdate = new DateTime (date ('Y-m-d', $micro_date));
+			$cur_date = new DateTime (date('Y-m-d'));
 			$interval = $make_cmtdate->diff ($cur_date);
 
 			foreach ($this->intervals as $i => $string) {
