@@ -29,8 +29,9 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class Markdown
 {
-	protected $codeTags = array ();
-	protected $codeTagCount = 0;
+	public    $codeRegex = '/`([\s\S]*?)`/';
+	protected $codePlaceholders = array ();
+	protected $codeCount = 0;
 
 	// Markdown patterns to search for
 	public $search = array (
@@ -53,30 +54,30 @@ class Markdown
 	// Replaces markdown for code with a placeholder
 	protected function codeReplace ($grp)
 	{
-		$codePlaceholder = 'CODE_MARKDOWN[' . $this->codeTagCount . ']';
-		$this->codeTags[$this->codeTagCount] = trim ($grp[1], PHP_EOL);
-		$this->codeTagCount++;
+		$codePlaceholder = 'CODE_MARKDOWN[' . $this->codeCount . ']';
+		$this->codePlaceholders[$this->codeCount] = trim ($grp[1], PHP_EOL);
+		$this->codeCount++;
 
 		return $codePlaceholder;
 	}
 
 	// Returns the original markdown code with HTML replacement
 	protected function codeReturn ($grp) {
-		return '<code class="hashover-inline">' . $this->codeTags[($grp[1])] . '</code>';
+		return '<code class="hashover-inline">' . $this->codePlaceholders[($grp[1])] . '</code>';
 	}
 
 	// Parses a string as markdown
 	public function parseMarkdown ($string)
 	{
-		$this->codeTagCount = 0;
-		$this->codeTags = array ();
+		$this->codeCount = 0;
+		$this->codePlaceholders = array ();
 
 		// Break string into paragraphs
 		$paragraphs = explode (PHP_EOL . PHP_EOL, $string);
 
 		// Run through each paragraph replacing markdown patterns
 		for ($i = 0, $il = count ($paragraphs); $i < $il; $i++) {
-			$paragraphs[$i] = preg_replace_callback ('/`([\s\S]*?)`/', 'self::codeReplace', $paragraphs[$i]);
+			$paragraphs[$i] = preg_replace_callback ($this->codeRegex, 'self::codeReplace', $paragraphs[$i]);
 			$paragraphs[$i] = preg_replace($this->search, $this->replace, $paragraphs[$i]);
 			$paragraphs[$i] = preg_replace_callback ('/CODE_MARKDOWN\[([0-9]+)\]/', 'self::codeReturn', $paragraphs[$i]);
 		}

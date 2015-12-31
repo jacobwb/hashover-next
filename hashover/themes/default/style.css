@@ -203,8 +203,6 @@ Copyright (C) 2015 Jacob Barkdull
 #hashover .hashover-reply-form,
 #hashover .hashover-reply .hashover-header,
 #hashover .hashover-reply .hashover-balloon,
-#hashover .hashover-comment pre,
-#hashover .hashover-comment code,
 #hashover #hashover-sort {
 	border: 1px solid #808080;
 }
@@ -752,22 +750,21 @@ Copyright (C) 2015 Jacob Barkdull
 
 #hashover .hashover-comment pre,
 #hashover .hashover-comment code {
-	width: 100%;
-	max-height: 200px;
 	display: inline-block;
-	overflow: auto;
-	background-color: #F5F5F5;
+	width: 100%;
+	max-height: 400px;
 	white-space: pre;
 	padding: 5px;
 	margin: 0px;
+	font-family: monospace;
+	font-size: 12px;
+	background-color: #EEEEEE;
+	overflow: auto;
 }
 
 #hashover code.hashover-inline {
 	display: inline;
 	padding: 1px 4px;
-	border-radius: 0px;
-	font-size: 12px;
-	line-height: 1.5em;
 }
 
 #hashover .hashover-comment blockquote,

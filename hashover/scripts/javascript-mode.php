@@ -72,16 +72,24 @@ function coding_standard_json ($string, $pretty_print = true, $tabs = 1)
 	return $json;
 }
 
+// Returns a regular expression in JavaScript syntax
+function js_regex ($regex, $strings)
+{
+	$regex = preg_replace ('/\\\\([0-9]+)/', '$\\1', $regex);
+
+	if ($strings !== true) {
+		$regex .= 'g';
+	}
+
+	return $regex;
+}
+
 // Returns an array of regular expressions in JavaScript syntax
 function js_regex_array ($regexes, $strings, $tabs = "\t")
 {
 	// Convert capturing groups to JavaScript syntax
 	for ($i = 0, $il = count ($regexes); $i < $il; $i++) {
-		$regexes[$i] = preg_replace ('/\\\\([0-9]+)/', '$\\1', $regexes[$i]);
-
-		if ($strings !== true) {
-			$regexes[$i] = $regexes[$i] . 'g';
-		}
+		$regexes[$i] = js_regex ($regexes[$i], $strings);
 	}
 
 	// Return array as strings in JavaScript syntax
@@ -141,7 +149,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	var preOpenRegex	= /<pre>/i;
 	var preTagRegex		= /(<pre>)([\s\S]*?)(<\/pre>)/ig;
 	var preTagMarkerRegex	= /PRE_TAG\[([0-9]+)\]/g;
-	var markdownCodeRegex	= /`(.*?)`/g;
+	var markdownCodeRegex	= <?php echo js_regex ($hashover->markdown->codeRegex, false); ?>;
 	var lineRegex		= new RegExp (serverEOL, 'g');
 	var messageCounts	= {};
 	var userIsLoggedIn	= <?php echo string_boolean ($hashover->login->userIsLoggedIn); ?>;
