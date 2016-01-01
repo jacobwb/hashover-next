@@ -306,8 +306,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		// Run through each paragraph replacing markdown patterns
 		for (var i = 0, il = paragraphs.length; i < il; i++) {
 			// Replace code tags with placeholder text
-			paragraphs[i] = paragraphs[i].replace (markdownCodeRegex, function (fullTag, code) {
-				var codePlaceholder = 'CODE_MARKDOWN[' + codeTagCount + ']';
+			paragraphs[i] = paragraphs[i].replace (markdownCodeRegex, function (fullTag, lead, code, trail) {
+				var codePlaceholder = lead + 'CODE_MARKDOWN[' + codeTagCount + ']' + trail;
 
 				codeTags[codeTagCount] = code.trim (serverEOL);
 				codeTagCount++;

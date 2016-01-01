@@ -1,7 +1,22 @@
+Changes by Jacob Barkdull 2016-01-01
+--------------------------------------------------------------------------------
+* Now only getting the current date once when parsing comments.
+* Improved Markdown, allowing the erroneous use of grave accents as apostrophes.
+* Small bug fixes.
+
+
+Changes by Jacob Barkdull 2015-12-31
+--------------------------------------------------------------------------------
+* Fixed: Posting date, status, other fields are updated when editing comments.
+* For better posting dates, time is no longer compared when parsing comments.
+* Minor improvements, CSS changes.
+
+
 Changes by Jacob Barkdull 2015-12-30
 --------------------------------------------------------------------------------
 * Fixed: Local IP address blocklist not being checked.
 * Fixed: Comment post date not taking time into account.
+* Improved Markdown, now parsing Markdown in RSS.
 * Added code comments to SpamCheck class.
 
 

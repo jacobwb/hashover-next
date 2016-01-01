@@ -29,7 +29,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class Markdown
 {
-	public    $codeRegex = '/`([\s\S]*?)`/';
+	public    $codeRegex = '/([^a-z0-9`])`([\s\S]*?)`([^a-z0-9`])/i';
 	protected $codePlaceholders = array ();
 	protected $codeCount = 0;
 
@@ -37,7 +37,7 @@ class Markdown
 	public $search = array (
 		'/__([\s\S]*?)__/',
 		'/\*\*([^ ])([\s\S]*?)([^ ])\*\*/',
-		'/\*([^ \*])([\s\S]*?)([^ \*])\*/',
+		'/\*([^ *])([\s\S]*?)([^ *])\*/',
 		'/([^a-z0-9])_([\s\S]*?)_([^a-z0-9])/i',
 		'/~~([^ ])([\s\S]*?)([^ ])~~/'
 	);
@@ -54,8 +54,8 @@ class Markdown
 	// Replaces markdown for code with a placeholder
 	protected function codeReplace ($grp)
 	{
-		$codePlaceholder = 'CODE_MARKDOWN[' . $this->codeCount . ']';
-		$this->codePlaceholders[$this->codeCount] = trim ($grp[1], PHP_EOL);
+		$codePlaceholder = $grp[1] . 'CODE_MARKDOWN[' . $this->codeCount . ']' . $grp[3];
+		$this->codePlaceholders[$this->codeCount] = trim ($grp[2], PHP_EOL);
 		$this->codeCount++;
 
 		return $codePlaceholder;
