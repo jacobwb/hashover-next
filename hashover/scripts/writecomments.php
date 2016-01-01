@@ -100,7 +100,7 @@ class WriteComments extends PostData
 		PHP_EOL,
 		PHP_EOL,
 		PHP_EOL,
-		' &nbsp;',
+		'&nbsp; ',
 		'<b>',
 		'</b>',
 		'<u>',
