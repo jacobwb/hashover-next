@@ -1,20 +1,28 @@
-Changes by Jacob Barkdull 2016-01-01
+Changes by Jacob Barkdull 2016-01-03
 --------------------------------------------------------------------------------
 * Improved Markdown
 
-	- Now allowing the erroneous use of grave accents as apostrophes.
 	- Now ignoring nested patterns, allows multi-underscore "blank space."
-
-
-* hashover/scripts/commentparser.php
-
-	- Now only getting the current date once.
+	- Now allowing an underlined word to appear on a line by itself.
 
 
 * hashover/scripts/javascript-mode.php
 
 	- Improved embedded images, now automatically closes upon error.
-	- Small bug fixes.
+	- Fixed: Thread link not displayed on some replies after sorting.
+
+
+* hashover/scripts/jsminifier.php
+
+	- Now removing entire line when removing single-line code comments.
+	- Smarter indentation and whitespace removal.
+
+
+Changes by Jacob Barkdull 2016-01-01
+--------------------------------------------------------------------------------
+* Improved Markdown, allow the erroneous use of grave accents as apostrophes.
+* Now only getting the current date once when parsing comments.
+* Small bug fixes.
 
 
 Changes by Jacob Barkdull 2015-12-31
