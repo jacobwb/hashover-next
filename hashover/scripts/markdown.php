@@ -29,25 +29,25 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class Markdown
 {
-	public    $codeRegex = '/([^a-z0-9`])`([\s\S]*?)`([^a-z0-9`])/i';
+	public    $codeRegex = '/(^|[^a-z0-9`])`([\s\S]+?)`([^a-z0-9`]|$)/i';
 	protected $codePlaceholders = array ();
 	protected $codeCount = 0;
 
 	// Markdown patterns to search for
 	public $search = array (
-		'/__([\s\S]*?)__/',
-		'/\*\*([^ ])([\s\S]*?)([^ ])\*\*/',
-		'/\*([^ *])([\s\S]*?)([^ *])\*/',
-		'/([^a-z0-9])_([\s\S]*?)_([^a-z0-9])/i',
-		'/~~([^ ])([\s\S]*?)([^ ])~~/'
+		'/\*\*([^ *])([\s\S]+?)([^ *])\*\*/',
+		'/\*([^ *])([\s\S]+?)([^ *])\*/',
+		'/(^|[^a-z0-9_])_([^_]+?)_([^a-z0-9_]|$)/i',
+		'/__([^ _])([\s\S]+?)([^ _])__/',
+		'/~~([^ ~])([\s\S]+?)([^ ~])~~/'
 	);
 
 	// HTML replacements for markdown patterns
 	public $replace = array (
-		'<u>\\1</u>',
 		'<strong>\\1\\2\\3</strong>',
 		'<em>\\1\\2\\3</em>',
 		'\\1<u>\\2</u>\\3',
+		'<u>\\1\\2\\3</u>',
 		'<s>\\1\\2\\3</s>'
 	);
 

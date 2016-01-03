@@ -351,18 +351,17 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var preTags = [];
 		var commentClass = '';
 		var replies = '';
-		var hasParent = false;
 
 		// Text for avatar image alt attribute
 		var permatext = permalink.slice (1);
 		    permatext = permatext.split ('r');
 		    permatext = permatext.pop ();
 
-		if (permalink.indexOf ('r') > -1) {
-			// Get parent comment via permalink
+		// Get parent comment via permalink
+		if (isReply === false && permalink.indexOf ('r') > -1) {
 			parentPermalink = getParentPermalink (permalink);
 			parent = findByPermalink (parentPermalink, PHPContent.comments);
-			hasParent = (parent !== null);
+			isReply = (parent !== null);
 		}
 
 		// Check if this comment is a popular comment
@@ -426,7 +425,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 
 			// Construct thread hyperlink
-			if (hasParent) {
+			if (isReply === true) {
 				var parentThread = parent.permalink;
 				var parentName = parent.name || '<?php echo $hashover->setup->defaultName; ?>';
 
@@ -552,7 +551,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 					}
 
 					var imgtag = document.createElement ('img');
-					    imgtag.className = 'hashover-imgtag';
+					    imgtag.className = 'hashover-embedded-image';
 					    imgtag.src = imagePlaceholder;
 					    imgtag.title = 'Click to view external image';
 					    imgtag.dataset.placeholder = imagePlaceholder;
@@ -1422,13 +1421,14 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				continue;
 			}
 
+			// Check if comment is a reply
+			isReply = (comments[i].permalink.indexOf ('r') > -1);
+
 			// Add comment to comments array
 			addComments (comments[i], isReply, i);
 
 			// Parse comment, convert HTML to DOM node
-			parent = getParentPermalink (comments[i].permalink, true);
-			comment = HTMLToNodeList (parseComment (comments[i], parent, true));
-			isReply = (parent !== null);
+			comment = HTMLToNodeList (parseComment (comments[i], null, true));
 
 			// Check that comment is not a reply
 			if (isReply !== true) {
@@ -1436,6 +1436,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				element = moreDiv;
 			} else {
 				// If not, append to its parent's element
+				parent = getParentPermalink (comments[i].permalink, true);
 				element = getElement (parent, true);
 			}
 
@@ -1499,23 +1500,41 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	}
 <?php } ?>
 
+	// Callback to close the embedded image
+	function closeEmbeddedImage (image) {
+		// Reset source
+		image.src = image.dataset.placeholder;
+
+		// Reset title, TODO: Use locale
+		image.title = 'Click to view external image';
+	}
+
 	// Onclick callback function for embedded images
 	function embeddedImageCallback ()
 	{
+		// If embedded image is open, close it and return false
 		if (this.src === this.dataset.url) {
-			this.src = this.dataset.placeholder;
-			this.title = 'Click to view external image';
-
+			closeEmbeddedImage (this);
 			return false;
 		}
 
-		this.src = this.dataset.url;
+		// Set title, TODO: Use locale
 		this.title = 'Loading...';
 
+		// Change title and remove load event handler once image is loaded
 		this.onload = function () {
+			// TODO: Use locale
 			this.title = 'Click to close';
 			this.onload = null;
 		};
+
+		// Close embedded image if any error occurs
+		this.onerror = function () {
+			closeEmbeddedImage (this);
+		};
+
+		// Set placeholder image to embedded source
+		this.src = this.dataset.url;
 	}
 
 	// Add various events to various elements in each comment
@@ -1529,7 +1548,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var permalink = json.permalink;
 
 		// Get embedded image elements
-		var embeddedImgs = document.getElementsByClassName ('hashover-imgtag');
+		var embeddedImgs = document.getElementsByClassName ('hashover-embedded-image');
 
 		// Set onclick functions for external images
 		for (var i = 0, il = embeddedImgs.length; i < il; i++) {

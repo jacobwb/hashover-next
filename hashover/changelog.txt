@@ -1,8 +1,20 @@
 Changes by Jacob Barkdull 2016-01-01
 --------------------------------------------------------------------------------
-* Now only getting the current date once when parsing comments.
-* Improved Markdown, allowing the erroneous use of grave accents as apostrophes.
-* Small bug fixes.
+* Improved Markdown
+
+	- Now allowing the erroneous use of grave accents as apostrophes.
+	- Now ignoring nested patterns, allows multi-underscore "blank space."
+
+
+* hashover/scripts/commentparser.php
+
+	- Now only getting the current date once.
+
+
+* hashover/scripts/javascript-mode.php
+
+	- Improved embedded images, now automatically closes upon error.
+	- Small bug fixes.
 
 
 Changes by Jacob Barkdull 2015-12-31

@@ -1424,7 +1424,7 @@ class HTMLOutput
 
 	public function asJSVar ($html, $var_name, $indent = "\t")
 	{
-		if ($this->setup->minifiesJavaScript === true) {
+		if ($this->setup->minifiesJavaScript === true and $this->setup->minifyLevel >= 3) {
 			$html = str_replace (array ("\t", PHP_EOL), array ('', ' '), $html);
 		} else {
 			$html = str_replace ("\t", '\t', $html);

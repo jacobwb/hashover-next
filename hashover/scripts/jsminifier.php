@@ -44,7 +44,7 @@ class JSMinifier
 
 		if ($level >= 1) {
 			// Remove single-line code comments
-			$js = preg_replace ('/^\s{0,}\/\/.*/m', '', $js);
+			$js = preg_replace ('/^[\t ]*?\/\/.*\s?/m', '', $js);
 
 			// Remove end-of-line code comments
 			$js = preg_replace ('/([\s;})]+)\/\/.*/m', '\\1', $js);
@@ -55,7 +55,10 @@ class JSMinifier
 
 		if ($level >= 2) {
 			// Remove whitespace
-			$js = preg_replace ('/^\s{0,} {2,}|\t+/m', '', $js);
+			$js = preg_replace ('/^\s*/m', '', $js);
+
+			// Replace multiple tabs with a single space
+			$js = preg_replace ('/\t+/m', ' ', $js);
 		}
 
 		if ($level >= 3) {
