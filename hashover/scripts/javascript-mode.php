@@ -249,10 +249,16 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		return false;
 	}
 
+	// Trims leading and trailing newlines from a string
+	function EOLTrim (string)
+	{
+		return string.replace (/^\r?\n+|\r?\n+$/g, '');
+	}
+
 	// Trims whitespace from an HTML tag's inner HTML
 	function tagTrimmer (fullTag, openTag, innerHTML, closeTag)
 	{
-		return openTag + innerHTML.trim (serverEOL) + closeTag;
+		return openTag + EOLTrim (innerHTML) + closeTag;
 	}
 
 	// Find a comment by its permalink
@@ -311,10 +317,10 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 		if (display !== 'block') {
 			codeMarker = first + markName + '[' + markCount + ']' + third;
-			codeMarkers[display].marks[markCount] = second.trim (serverEOL);
+			codeMarkers[display].marks[markCount] = EOLTrim (second);
 		} else {
 			codeMarker = markName + '[' + markCount + ']';
-			codeMarkers[display].marks[markCount] = first.trim (serverEOL);
+			codeMarkers[display].marks[markCount] = EOLTrim (first);
 		}
 
 		return codeMarker;
@@ -610,7 +616,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				body = body.replace (codeTagRegex, function (fullTag, openTag, innerHTML, closeTag) {
 					var codeMarker = openTag + 'CODE_TAG[' + codeTagCount + ']' + closeTag;
 
-					codeTags[codeTagCount] = innerHTML.trim (serverEOL);
+					codeTags[codeTagCount] = EOLTrim (innerHTML);
 					codeTagCount++;
 
 					return codeMarker;
@@ -623,7 +629,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				body = body.replace (preTagRegex, function (fullTag, openTag, innerHTML, closeTag) {
 					var preMarker = openTag + 'PRE_TAG[' + preTagCount + ']' + closeTag;
 
-					preTags[preTagCount] = innerHTML.trim (serverEOL);
+					preTags[preTagCount] = EOLTrim (innerHTML);
 					preTagCount++;
 
 					return preMarker;

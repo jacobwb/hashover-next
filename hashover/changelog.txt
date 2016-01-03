@@ -16,6 +16,7 @@ Changes by Jacob Barkdull 2016-01-03
 
 	- Improved embedded images, now automatically closes upon error.
 	- Fixed: Thread link not displayed on some replies after sorting.
+	- Fixed: Tabs and spaces being trimmed from block HTML tags.
 
 
 * hashover/scripts/jsminifier.php

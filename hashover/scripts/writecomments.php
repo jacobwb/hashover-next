@@ -123,6 +123,19 @@ class WriteComments extends PostData
 		'</blockquote>'
 	);
 
+	// HTML tags to automatically close
+	public $closeTags = array (
+		'b',
+		'i',
+		'u',
+		's',
+		'li',
+		'pre',
+		'blockquote',
+		'ul',
+		'ol'
+	);
+
 	// What to update when editing a comment
 	public $editUpdateFields = array (
 		'body',
@@ -432,6 +445,29 @@ class WriteComments extends PostData
 		return false;
 	}
 
+	protected function tagCloser ($tags, $html)
+	{
+		// Check if all allowed HTML tags have been closed, if not add them at the end
+		for ($tc = 0, $tcl = count ($tags); $tc < $tcl; $tc++) {
+			$open_tags = substr_count ($html, '<' . $tags[$tc] . '>');
+			$close_tags = substr_count ($html, '</' . $tags[$tc] . '>');
+
+			if ($open_tags !== $close_tags) {
+				while ($open_tags > $close_tags) {
+					$html .= '</' . $tags[$tc] . '>';
+					$close_tags++;
+				}
+
+				while ($close_tags > $open_tags) {
+					$html = preg_replace ('/<\/' . $tags[$tc] . '>/i', '', $html, 1);
+					$close_tags--;
+				}
+			}
+		}
+
+		return $html;
+	}
+
 	// Escapes HTML inside of <code> tags and markdown code blocks
 	protected function codeEscaper ($groups) {
 		return $groups[1] . htmlspecialchars ($groups[2], null, null, false) . $groups[3];
@@ -476,41 +512,15 @@ class WriteComments extends PostData
 		// Collapse multiple newlines to three maximum
 		$clean_code = preg_replace ('/' . PHP_EOL . '{3,}/', str_repeat (PHP_EOL, 3), $clean_code);
 
-		// HTML tags to automatically close
-		$tags = array (
-			'code',
-			'b',
-			'i',
-			'u',
-			's',
-			'li',
-			'pre',
-			'blockquote',
-			'ul',
-			'ol'
-		);
-
-		// Check if all allowed HTML tags have been closed, if not add them at the end
-		for ($tc = 0, $tcl = count ($tags); $tc < $tcl; $tc++) {
-			$open_tags = substr_count ($clean_code, '<' . $tags[$tc] . '>');
-			$close_tags = substr_count ($clean_code, '</' . $tags[$tc] . '>');
-
-			if ($open_tags !== $close_tags) {
-				while ($open_tags > $close_tags) {
-					$clean_code .= '</' . $tags[$tc] . '>';
-					$close_tags++;
-				}
-
-				while ($close_tags > $open_tags) {
-					$clean_code = preg_replace ('/<\/' . $tags[$tc] . '>/i', '', $clean_code, 1);
-					$close_tags--;
-				}
-			}
-		}
+		// Close <code> tags
+		$clean_code = $this->tagCloser (array ('code'), $clean_code);
 
 		// Escape HTML inside of <code> tags and markdown code blocks
 		$clean_code = preg_replace_callback ('/(<code>)(.*?)(<\/code>)/is', 'self::codeEscaper', $clean_code);
 		$clean_code = preg_replace_callback ('/(```)(.*?)(```)/is', 'self::codeEscaper', $clean_code);
+
+		// Close remaining tags
+		$clean_code = $this->tagCloser ($this->closeTags, $clean_code);
 
 		// Store clean code
 		$this->writeComment['body'] = $clean_code;
