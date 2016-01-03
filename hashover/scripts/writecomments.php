@@ -432,6 +432,11 @@ class WriteComments extends PostData
 		return false;
 	}
 
+	// Escapes HTML inside of <code> tags and markdown code blocks
+	protected function codeEscaper ($groups) {
+		return $groups[1] . htmlspecialchars ($groups[2], null, null, false) . $groups[3];
+	}
+
 	// Setup and test for necessary comment data
 	protected function setupCommentData ()
 	{
@@ -471,11 +476,6 @@ class WriteComments extends PostData
 		// Collapse multiple newlines to three maximum
 		$clean_code = preg_replace ('/' . PHP_EOL . '{3,}/', str_repeat (PHP_EOL, 3), $clean_code);
 
-		// Escape HTML inside of <code> tags
-		$clean_code = preg_replace_callback ('/(<code>)(.*?)(<\/code>)/is', function ($grp) use ($clean_code) {
-			return $grp[1] . htmlspecialchars ($grp[2], null, null, false) . $grp[3];
-		}, $clean_code);
-
 		// HTML tags to automatically close
 		$tags = array (
 			'code',
@@ -508,11 +508,20 @@ class WriteComments extends PostData
 			}
 		}
 
+		// Escape HTML inside of <code> tags and markdown code blocks
+		$clean_code = preg_replace_callback ('/(<code>)(.*?)(<\/code>)/is', 'self::codeEscaper', $clean_code);
+		$clean_code = preg_replace_callback ('/(```)(.*?)(```)/is', 'self::codeEscaper', $clean_code);
+
+		// Store clean code
 		$this->writeComment['body'] = $clean_code;
+
+		// Store default status and posting date
 		$this->writeComment['status'] = ($this->setup->usesModeration === true) ? 'pending' : 'approved';
 		$this->writeComment['date'] = date (DATE_ISO8601);
 
+		// Check if name is enabled and isn't empty
 		if ($this->setup->fieldOptions['name'] === true and !empty ($this->name)) {
+			// Store name
 			$this->writeComment['name'] = $this->name;
 
 			// Store password and login ID if a password is given

@@ -29,15 +29,20 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class Markdown
 {
-	public    $codeRegex = '/(^|[^a-z0-9`])`([\s\S]+?)`([^a-z0-9`]|$)/i';
-	protected $codePlaceholders = array ();
-	protected $codeCount = 0;
+	public $blockCodeRegex = '/```([\s\S]+?)```/';
+	public $inlineCodeRegex = '/(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/i';
+
+	// Array for inline code and code block markers
+	protected $codeMarkers = array (
+		'block' => array ('marks' => array (), 'count' => 0),
+		'inline' => array ('marks' => array (), 'count' => 0)
+	);
 
 	// Markdown patterns to search for
 	public $search = array (
 		'/\*\*([^ *])([\s\S]+?)([^ *])\*\*/',
 		'/\*([^ *])([\s\S]+?)([^ *])\*/',
-		'/(^|[^a-z0-9_])_([^_]+?)_([^a-z0-9_]|$)/i',
+		'/(^|\W)_([^_]+?[\s\S]+?)_(\W|$)/',
 		'/__([^ _])([\s\S]+?)([^ _])__/',
 		'/~~([^ ~])([\s\S]+?)([^ ~])~~/'
 	);
@@ -51,38 +56,78 @@ class Markdown
 		'<s>\\1\\2\\3</s>'
 	);
 
-	// Replaces markdown for code with a placeholder
-	protected function codeReplace ($grp)
+	// Replaces markdown for inline code with a marker
+	protected function codeReplace ($grp, $display)
 	{
-		$codePlaceholder = $grp[1] . 'CODE_MARKDOWN[' . $this->codeCount . ']' . $grp[3];
-		$this->codePlaceholders[$this->codeCount] = trim ($grp[2], PHP_EOL);
-		$this->codeCount++;
+		$markName = 'CODE_' . strtoupper ($display);
+		$markCount = $this->codeMarkers[$display]['count']++;
 
-		return $codePlaceholder;
+		if ($display !== 'block') {
+			$codeMarker = $grp[1] . $markName . '[' . $markCount . ']' . $grp[3];
+			$this->codeMarkers[$display]['marks'][$markCount] = trim ($grp[2], PHP_EOL);
+		} else {
+			$codeMarker = $markName . '[' . $markCount . ']';
+			$this->codeMarkers[$display]['marks'][$markCount] = trim ($grp[1], PHP_EOL);
+		}
+
+		return $codeMarker;
 	}
 
-	// Returns the original markdown code with HTML replacement
-	protected function codeReturn ($grp) {
-		return '<code class="hashover-inline">' . $this->codePlaceholders[($grp[1])] . '</code>';
+	// Replaces markdown for code block with a marker
+	protected function blockCodeReplace ($grp, $display)
+	{
+		return $this->codeReplace ($grp, 'block');
+	}
+
+	// Replaces markdown for inline code with a marker
+	protected function inlineCodeReplace ($grp)
+	{
+		return $this->codeReplace ($grp, 'inline');
+	}
+
+	// Returns the original inline markdown code with HTML replacement
+	protected function inlineCodeReturn ($grp) {
+		return '<code class="hashover-inline">' . $this->codeMarkers['inline']['marks'][($grp[1])] . '</code>';
+	}
+
+	// Returns the original markdown code block with HTML replacement
+	protected function blockCodeReturn ($grp) {
+		return '<code>' . $this->codeMarkers['block']['marks'][($grp[1])] . '</code>';
 	}
 
 	// Parses a string as markdown
 	public function parseMarkdown ($string)
 	{
-		$this->codeCount = 0;
-		$this->codePlaceholders = array ();
+		// Reset marker arrays
+		$this->codeMarkers = array (
+			'block' => array ('marks' => array (), 'count' => 0),
+			'inline' => array ('marks' => array (), 'count' => 0)
+		);
+
+		// Replace code blocks with markers
+		$string = preg_replace_callback ($this->blockCodeRegex, 'self::blockCodeReplace', $string);
 
 		// Break string into paragraphs
 		$paragraphs = explode (PHP_EOL . PHP_EOL, $string);
 
-		// Run through each paragraph replacing markdown patterns
+		// Run through each paragraph
 		for ($i = 0, $il = count ($paragraphs); $i < $il; $i++) {
-			$paragraphs[$i] = preg_replace_callback ($this->codeRegex, 'self::codeReplace', $paragraphs[$i]);
+			// Replace inline code with markers
+			$paragraphs[$i] = preg_replace_callback ($this->inlineCodeRegex, 'self::inlineCodeReplace', $paragraphs[$i]);
+
+			// Replace markdown patterns
 			$paragraphs[$i] = preg_replace($this->search, $this->replace, $paragraphs[$i]);
-			$paragraphs[$i] = preg_replace_callback ('/CODE_MARKDOWN\[([0-9]+)\]/', 'self::codeReturn', $paragraphs[$i]);
+
+			// Replace markers with original markdown code
+			$paragraphs[$i] = preg_replace_callback ('/CODE_INLINE\[([0-9]+)\]/', 'self::inlineCodeReturn', $paragraphs[$i]);
 		}
 
-		// Return joined paragraphs
-		return implode (PHP_EOL . PHP_EOL, $paragraphs);
+		// Join paragraphs
+		$string = implode (PHP_EOL . PHP_EOL, $paragraphs);
+
+		// Replace code block markers with original markdown code
+		$string = preg_replace_callback ('/CODE_BLOCK\[([0-9]+)\]/', 'self::blockCodeReturn', $string);
+
+		return $string;
 	}
 }

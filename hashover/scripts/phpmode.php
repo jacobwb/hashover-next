@@ -326,6 +326,9 @@ class PHPMode
 			// Add HTML anchor tag to URLs (hyperlinks)
 			$template['comment'] = preg_replace ($this->linkRegex, '<a href="\\1" target="_blank">\\1</a>', $template['comment']);
 
+			// Parse markdown in comment
+			$template['comment'] = $this->markdown->parseMarkdown ($template['comment']);
+
 			// Check for code tags
 			if (strpos ($template['comment'], '<code>') !== false) {
 				// Replace code tags with placeholder text
@@ -347,9 +350,6 @@ class PHPMode
 					}, $template['comment']);
 				}
 			}
-
-			// Parse markdown in comment
-			$template['comment'] = $this->markdown->parseMarkdown ($template['comment']);
 
 			// Break comment into paragraphs
 			$paragraphs = explode (PHP_EOL . PHP_EOL, $template['comment']);

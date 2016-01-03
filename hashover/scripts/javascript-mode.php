@@ -134,8 +134,10 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	var streamMode		= <?php echo string_boolean ($hashover->setup->replyMode, 'stream'); ?>;
 	var streamDepth		= <?php echo $hashover->setup->streamDepth; ?>;
 	var doubleEOL		= serverEOL + serverEOL;
-	var markdownCodeRegex	= <?php echo js_regex ($hashover->markdown->codeRegex, false); ?>;
-	var codeMarkdownMarker	= /CODE_MARKDOWN\[([0-9]+)\]/g;
+	var blockCodeRegex	= <?php echo js_regex ($hashover->markdown->blockCodeRegex, false); ?>;
+	var inlineCodeRegex	= <?php echo js_regex ($hashover->markdown->inlineCodeRegex, false); ?>;
+	var blockCodeMarker	= /CODE_BLOCK\[([0-9]+)\]/g;
+	var inlineCodeMarker	= /CODE_INLINE\[([0-9]+)\]/g;
 	var collapsedCount	= 0;
 	var collapseLimit	= <?php echo $hashover->setup->collapseLimit; ?>;
 	var allowsDislikes	= <?php echo string_true ($hashover->setup->allowsDislikes); ?>;
@@ -173,6 +175,12 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	var HashOverForm	= null;
 	var collapseComments	= <?php echo string_true ($hashover->setup->collapsesComments); ?>;
 	var URLHash		= URLParts[1] || '';
+
+	// Array for inline code and code block markers
+	var codeMarkers = {
+		'block': {'marks': [], 'count': 0},
+		'inline': {'marks': [], 'count': 0}
+	};
 
 	// Some locales, stored in JavaScript to avoid using a lot of PHP tags
 	var locale = {
@@ -294,25 +302,46 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		return null;
 	}
 
+	// Replaces markdown for inline code with a marker
+	function codeReplace (fullTag, first, second, third, display)
+	{
+		var markName = 'CODE_' + display.toUpperCase ();
+		var markCount = codeMarkers[display].count++;
+		var codeMarker;
+
+		if (display !== 'block') {
+			codeMarker = first + markName + '[' + markCount + ']' + third;
+			codeMarkers[display].marks[markCount] = second.trim (serverEOL);
+		} else {
+			codeMarker = markName + '[' + markCount + ']';
+			codeMarkers[display].marks[markCount] = first.trim (serverEOL);
+		}
+
+		return codeMarker;
+	}
+
 	// Parses a string as markdown
 	function parseMarkdown (string)
 	{
-		var codeTagCount = 0;
-		var codeTags = [];
+		// Reset marker arrays
+		codeMarkers = {
+			'block': {'marks': [], 'count': 0},
+			'inline': {'marks': [], 'count': 0}
+		};
+
+		// Replace code blocks with markers
+		string = string.replace (blockCodeRegex, function (fullTag, first, second, third) {
+			return codeReplace (fullTag, first, second, third, 'block');
+		});
 
 		// Break string into paragraphs
 		var paragraphs = string.split (doubleEOL);
 
 		// Run through each paragraph replacing markdown patterns
 		for (var i = 0, il = paragraphs.length; i < il; i++) {
-			// Replace code tags with placeholder text
-			paragraphs[i] = paragraphs[i].replace (markdownCodeRegex, function (fullTag, lead, code, trail) {
-				var codePlaceholder = lead + 'CODE_MARKDOWN[' + codeTagCount + ']' + trail;
-
-				codeTags[codeTagCount] = code.trim (serverEOL);
-				codeTagCount++;
-
-				return codePlaceholder;
+			// Replace code tags with marker text
+			paragraphs[i] = paragraphs[i].replace (inlineCodeRegex, function (fullTag, first, second, third) {
+				return codeReplace (fullTag, first, second, third, 'inline');
 			});
 
 			// Perform each markdown regular expression on the current paragraph
@@ -322,13 +351,20 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 
 			// Return the original markdown code with HTML replacement
-			paragraphs[i] = paragraphs[i].replace (codeMarkdownMarker, function (placeholder, number) {
-				return '<code class="hashover-inline">' + codeTags[number] + '</code>';
+			paragraphs[i] = paragraphs[i].replace (inlineCodeMarker, function (marker, number) {
+				return '<code class="hashover-inline">' + codeMarkers.inline.marks[number] + '</code>';
 			});
 		}
 
-		// Return joined paragraphs
-		return paragraphs.join (doubleEOL);
+		// Join paragraphs
+		string = paragraphs.join (doubleEOL);
+
+		// Replace code block markers with original markdown code
+		string = string.replace (blockCodeMarker, function (marker, number) {
+			return '<code>' + codeMarkers.block.marks[number] + '</code>';
+		});
+
+		return string;
 	}
 
 	// Add comment content to HTML template
@@ -565,29 +601,32 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				return '<a href="' + url + '" target="_blank">' + url + '</a>';
 			});
 
+			// Parse markdown in comment
+			body = parseMarkdown (body);
+
 			// Check for code tags
 			if (codeOpenRegex.test (body)) {
-				// Replace code tags with placeholder text
+				// Replace code tags with marker text
 				body = body.replace (codeTagRegex, function (fullTag, openTag, innerHTML, closeTag) {
-					var codePlaceholder = openTag + 'CODE_TAG[' + codeTagCount + ']' + closeTag;
+					var codeMarker = openTag + 'CODE_TAG[' + codeTagCount + ']' + closeTag;
 
 					codeTags[codeTagCount] = innerHTML.trim (serverEOL);
 					codeTagCount++;
 
-					return codePlaceholder;
+					return codeMarker;
 				});
 			}
 
 			// Check for pre tags
 			if (preOpenRegex.test (body)) {
-				// Replace pre tags with placeholder text
+				// Replace pre tags with marker text
 				body = body.replace (preTagRegex, function (fullTag, openTag, innerHTML, closeTag) {
-					var prePlaceholder = openTag + 'PRE_TAG[' + preTagCount + ']' + closeTag;
+					var preMarker = openTag + 'PRE_TAG[' + preTagCount + ']' + closeTag;
 
 					preTags[preTagCount] = innerHTML.trim (serverEOL);
 					preTagCount++;
 
-					return prePlaceholder;
+					return preMarker;
 				});
 			}
 
@@ -601,9 +640,6 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				}
 			}
 
-			// Parse markdown in comment
-			body = parseMarkdown (body);
-
 			// Break comment into paragraphs
 			var paragraphs = body.split (doubleEOL);
 			var pdComment = '';
@@ -614,16 +650,16 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				pdComment += '<p>' + paragraphs[i].replace (lineRegex, '<br>') + '</p>' + serverEOL;
 			}
 
-			// Replace code tag placeholders with original code tag HTML
+			// Replace code tag markers with original code tag HTML
 			if (codeTagCount > 0) {
-				pdComment = pdComment.replace (codeTagMarkerRegex, function (placeholder, number) {
+				pdComment = pdComment.replace (codeTagMarkerRegex, function (marker, number) {
 					return codeTags[number];
 				});
 			}
 
-			// Replace pre tag placeholders with original pre tag HTML
+			// Replace pre tag markers with original pre tag HTML
 			if (preTagCount > 0) {
-				pdComment = pdComment.replace (preTagMarkerRegex, function (placeholder, number) {
+				pdComment = pdComment.replace (preTagMarkerRegex, function (marker, number) {
 					return preTags[number];
 				});
 			}

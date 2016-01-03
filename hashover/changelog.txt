@@ -2,8 +2,14 @@ Changes by Jacob Barkdull 2016-01-03
 --------------------------------------------------------------------------------
 * Improved Markdown
 
+	- Added support for Github-style code blocks.
 	- Now ignoring nested patterns, allows multi-underscore "blank space."
 	- Now allowing an underlined word to appear on a line by itself.
+
+
+* hashover/scripts/writecomments.php
+
+	- Fixed: Unfinished <code> tags not being escaped.
 
 
 * hashover/scripts/javascript-mode.php
