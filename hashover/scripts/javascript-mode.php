@@ -127,52 +127,52 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 	var execStart		= Date.now ();
 	var serverEOL		= '<?php echo str_replace (array ("\r", "\n"), array ('\r', '\n'), PHP_EOL); ?>';
-	var doubleEOL		= serverEOL + serverEOL;
 	var httpRoot		= '<?php echo $hashover->setup->httpRoot; ?>';
+	var URLRegex		= '((ftp|http|https):\/\/[a-z0-9-@:%_\+.~#?&\/=]+)';
+	var URLParts		= window.location.href.split ('#');
 	var elementsById	= {};
-	var collapseComments	= <?php echo string_true ($hashover->setup->collapsesComments); ?>;
-	var collapseLimit	= <?php echo $hashover->setup->collapseLimit; ?>;
-	var collapsedCount	= 0;
 	var streamMode		= <?php echo string_boolean ($hashover->setup->replyMode, 'stream'); ?>;
 	var streamDepth		= <?php echo $hashover->setup->streamDepth; ?>;
+	var doubleEOL		= serverEOL + serverEOL;
+	var markdownCodeRegex	= <?php echo js_regex ($hashover->markdown->codeRegex, false); ?>;
+	var codeMarkdownMarker	= /CODE_MARKDOWN\[([0-9]+)\]/g;
+	var collapsedCount	= 0;
+	var collapseLimit	= <?php echo $hashover->setup->collapseLimit; ?>;
 	var allowsDislikes	= <?php echo string_true ($hashover->setup->allowsDislikes); ?>;
-	var head		= document.head || document.getElementsByTagName ('head')[0];
-	var imagePlaceholder	= '<?php echo $hashover->setup->httpImages; ?>/place-holder.<?php echo $hashover->setup->imageFormat; ?>';
-	var imageExtensions	= ['<?php echo implode ('\', \'', $hashover->setup->imageTypes); ?>'];
-	var URLRegex		= '((ftp|http|https):\/\/[a-z0-9-@:%_\+.~#?&\/=]+)';
 	var linkRegex		= new RegExp (URLRegex + '( {0,1})', 'ig');
 	var imageRegex		= new RegExp ('\\[img\\]<a.*?>' + URLRegex + '</a>\\[/img\\]', 'ig');
+	var imageExtensions	= ['<?php echo implode ('\', \'', $hashover->setup->imageTypes); ?>'];
+	var imagePlaceholder	= '<?php echo $hashover->setup->httpImages; ?>/place-holder.<?php echo $hashover->setup->imageFormat; ?>';
 	var codeOpenRegex	= /<code>/i;
 	var codeTagRegex	= /(<code>)([\s\S]*?)(<\/code>)/ig;
-	var codeTagMarkerRegex	= /CODE_TAG\[([0-9]+)\]/g;
-	var codeMarkdownMarker	= /CODE_MARKDOWN\[([0-9]+)\]/g;
 	var preOpenRegex	= /<pre>/i;
 	var preTagRegex		= /(<pre>)([\s\S]*?)(<\/pre>)/ig;
-	var preTagMarkerRegex	= /PRE_TAG\[([0-9]+)\]/g;
-	var markdownCodeRegex	= <?php echo js_regex ($hashover->markdown->codeRegex, false); ?>;
 	var lineRegex		= new RegExp (serverEOL, 'g');
+	var codeTagMarkerRegex	= /CODE_TAG\[([0-9]+)\]/g;
+	var preTagMarkerRegex	= /PRE_TAG\[([0-9]+)\]/g;
 	var messageCounts	= {};
 	var userIsLoggedIn	= <?php echo string_boolean ($hashover->login->userIsLoggedIn); ?>;
-	var themeCSS		= httpRoot + '/themes/<?php echo $hashover->setup->theme; ?>/style.css';
-	var appendCSS		= true;
-	var totalCount		= <?php echo $hashover->readComments->totalCount - 1; ?>;
 	var primaryCount	= <?php echo $hashover->readComments->primaryCount - 1; ?>;
-	var HashOverDiv		= document.getElementById ('hashover');
-	var hashoverScript	= <?php echo !empty ($_GET['hashover-script']) ? $hashover->misc->makeXSSsafe ($_GET['hashover-script']) : 'false'; ?>;
-	var deviceType		= '<?php echo $hashover->setup->isMobile === true ? 'mobile' : 'desktop'; ?>';
-	var pageURL		= '<?php echo $hashover->setup->pageURL; ?>';
-	var threadRegex		= /^(c[0-9r]+)r[0-9\-pop]+$/;
-	var sortDiv		= null;
-	var HashOverForm	= null;
+	var totalCount		= <?php echo $hashover->readComments->totalCount - 1; ?>;
 	var AJAXPost		= null;
 	var AJAXEdit		= null;
 	var httpScripts		= '<?php echo $hashover->setup->httpScripts; ?>';
-	var URLParts		= window.location.href.split ('#');
-	var URLHref		= URLParts[0];
-	var URLHash		= URLParts[1] || '';
-	var moreDiv		= null;
 	var moreLink		= null;
+	var sortDiv		= null;
+	var moreDiv		= null;
 	var showingMore		= false;
+	var pageURL		= '<?php echo $hashover->setup->pageURL; ?>';
+	var threadRegex		= /^(c[0-9r]+)r[0-9\-pop]+$/;
+	var appendCSS		= true;
+	var themeCSS		= httpRoot + '/themes/<?php echo $hashover->setup->theme; ?>/style.css';
+	var head		= document.head || document.getElementsByTagName ('head')[0];
+	var URLHref		= URLParts[0];
+	var HashOverDiv		= document.getElementById ('hashover');
+	var hashoverScript	= <?php echo !empty ($_GET['hashover-script']) ? $hashover->misc->makeXSSsafe ($_GET['hashover-script']) : 'false'; ?>;
+	var deviceType		= '<?php echo $hashover->setup->isMobile === true ? 'mobile' : 'desktop'; ?>';
+	var HashOverForm	= null;
+	var collapseComments	= <?php echo string_true ($hashover->setup->collapsesComments); ?>;
+	var URLHash		= URLParts[1] || '';
 
 	// Some locales, stored in JavaScript to avoid using a lot of PHP tags
 	var locale = {
@@ -192,6 +192,12 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		'website':		'<?php echo $hashover->locales->locale ('website', true); ?>'
 	};
 
+	// Markdown patterns to search for
+	var markdownSearch = <?php echo js_regex_array ($hashover->markdown->search, false); ?>;
+
+	// HTML replacements for markdown patterns
+	var markdownReplace = <?php echo js_regex_array ($hashover->markdown->replace, true); ?>;
+
 	// Tags that will have their innerHTML trimmed
 	var trimTagRegexes = {
 		'blockquote': {
@@ -207,12 +213,6 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			'replace': /(<ol>)([\s\S]*?)(<\/ol>)/ig
 		}
 	};
-
-	// Markdown patterns to search for
-	var markdownSearch = <?php echo js_regex_array ($hashover->markdown->search, false); ?>;
-
-	// HTML replacements for markdown patterns
-	var markdownReplace = <?php echo js_regex_array ($hashover->markdown->replace, true); ?>;
 
 	// Field options
 	var fieldOptions = <?php echo coding_standard_json ($hashover->setup->fieldOptions); ?>;
@@ -250,7 +250,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Find a comment by its permalink
 	function findByPermalink (permalink, comments)
 	{
-		// Default return value is false
+		// Default return value is null
 		var comment = null;
 
 		// Loop through all comments
@@ -261,7 +261,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 
 			// Recursively check replies when present
-			if (comments[i].replies) {
+			if (comments[i].replies !== undefined) {
 				comment = findByPermalink (permalink, comments[i].replies);
 			}
 		}
@@ -521,7 +521,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			template['reply-link'] = '<?php echo $hashover->html->replyLink ('permalink', 'replyClass', 'replyTitle'); ?>';
 
 			// Add reply count to template
-			if (comment.replies) {
+			if (comment.replies !== undefined) {
 				template['reply-count'] = comment.replies.length;
 
 				if (template['reply-count'] > 0) {
@@ -650,7 +650,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 ?>
 
 		// Recursively parse replies
-		if (comment.replies) {
+		if (comment.replies !== undefined) {
 			for (var reply = 0, total = comment.replies.length; reply < total; reply++) {
 				replies += parseComment (comment.replies[reply], comment, collapse);
 			}
@@ -1367,32 +1367,6 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 		return false;
 	}
-
-	// Run all comments in array data through parseComment function
-	function parseAll (comments, element, collapse, popular, sort, method)
-	{
-		var popular = popular || false;
-		var sort = sort || false;
-		var method = method || 'ascending';
-		var commentHTML = '';
-
-		// Parse every comment
-		for (var comment = 0, total = comments.length; comment < total; comment++) {
-			commentHTML += parseComment (comments[comment], null, collapse, sort, method, popular);
-		}
-
-		// Add comments to element's innerHTML
-		if ('insertAdjacentHTML' in element) {
-			element.insertAdjacentHTML ('beforeend', commentHTML);
-		} else {
-			element.innerHTML = commentHTML;
-		}
-
-		// Add control events
-		for (var comment = 0, total = comments.length; comment < total; comment++) {
-			addControls (comments[comment]);
-		}
-	}
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
 
 	// For showing more comments, via AJAX or removing a class
@@ -1441,7 +1415,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			// Skip existing comments
 			if (findByPermalink (comments[i].permalink, PHPContent.comments) !== null) {
 				// Check comment's replies
-				if (comments[i].replies) {
+				if (comments[i].replies !== undefined) {
 					appendComments (comments[i].replies);
 				}
 
@@ -1525,6 +1499,25 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	}
 <?php } ?>
 
+	// Onclick callback function for embedded images
+	function embeddedImageCallback ()
+	{
+		if (this.src === this.dataset.url) {
+			this.src = this.dataset.placeholder;
+			this.title = 'Click to view external image';
+
+			return false;
+		}
+
+		this.src = this.dataset.url;
+		this.title = 'Loading...';
+
+		this.onload = function () {
+			this.title = 'Click to close';
+			this.onload = null;
+		};
+	}
+
 	// Add various events to various elements in each comment
 	function addControls (json, popular)
 	{
@@ -1604,7 +1597,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		}
 
 		// Recursively execute this function on replies
-		if (json.replies) {
+		if (json.replies !== undefined) {
 			for (var reply = 0, total = json.replies.length; reply < total; reply++) {
 				addControls (json.replies[reply]);
 			}
@@ -1630,25 +1623,6 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		};
 	}
 
-	// Onclick callback function for embedded images
-	function embeddedImageCallback ()
-	{
-		if (this.src === this.dataset.url) {
-			this.src = this.dataset.placeholder;
-			this.title = 'Click to view external image';
-
-			return false;
-		}
-
-		this.src = this.dataset.url;
-		this.title = 'Loading...';
-
-		this.onload = function () {
-			this.title = 'Click to close';
-			this.onload = null;
-		};
-	}
-
 	// "Flatten" the comments object
 	function getAllComments (comments)
 	{
@@ -1659,7 +1633,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		{
 			output.push (comment);
 
-			if (comment.replies) {
+			if (comment.replies !== undefined) {
 				for (var reply = 0, total = comment.replies.length; reply < total; reply++) {
 					descend (comment.replies[reply]);
 				}
@@ -1746,6 +1720,32 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		like.open ('POST', httpScripts + '/like.php', true);
 		like.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
 		like.send (queries);
+	}
+
+	// Run all comments in array data through parseComment function
+	function parseAll (comments, element, collapse, popular, sort, method)
+	{
+		var popular = popular || false;
+		var sort = sort || false;
+		var method = method || 'ascending';
+		var commentHTML = '';
+
+		// Parse every comment
+		for (var comment = 0, total = comments.length; comment < total; comment++) {
+			commentHTML += parseComment (comments[comment], null, collapse, sort, method, popular);
+		}
+
+		// Add comments to element's innerHTML
+		if ('insertAdjacentHTML' in element) {
+			element.insertAdjacentHTML ('beforeend', commentHTML);
+		} else {
+			element.innerHTML = commentHTML;
+		}
+
+		// Add control events
+		for (var comment = 0, total = comments.length; comment < total; comment++) {
+			addControls (comments[comment]);
+		}
 	}
 
 	// Sort methods
@@ -1945,18 +1945,18 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Content passed from PHP
 	var PHPContent = HASHOVER_PHP_CONTENT;
 
+	// Get sort div element
+	sortDiv = getElement ('hashover-sort-div');
+
+	// Get primary form element
+	HashOverForm = getElement ('hashover-form');
+
 	// Display most popular comments
 	ifElement ('hashover-top-comments', function (topComments) {
 		if (PHPContent.popularComments[0] !== undefined) {
 			parseAll (PHPContent.popularComments, topComments, false, true);
 		}
 	});
-
-	// Get sort div element
-	sortDiv = getElement ('hashover-sort-div');
-
-	// Get primary form element
-	HashOverForm = getElement ('hashover-form');
 
 	// Add initial event handlers
 	parseAll (PHPContent.comments, sortDiv, collapseComments);
