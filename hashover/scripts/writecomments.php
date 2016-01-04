@@ -43,7 +43,6 @@ class WriteComments extends PostData
 	protected $kickbackURL;
 	protected $name = '';
 	protected $password = '';
-	protected $editPassword = '';
 	protected $loginHash = '';
 	protected $email = '';
 	protected $website = '';
@@ -176,28 +175,6 @@ class WriteComments extends PostData
 		// Add URL queries to kickback URL
 		if (!empty ($this->setup->URLQueries)) {
 			$this->kickbackURL .= '?' . $this->setup->URLQueries;
-		}
-
-		// Setup login information
-		if (isset ($_POST['edit'])) {
-			$this->login (false);
-		}
-
-		// Escape disallowed characters
-		$this->name = $this->encodeHTML ($this->login->name);
-		$this->password = $this->encodeHTML ($this->login->password);
-		$this->loginHash = $this->encodeHTML ($this->login->loginHash);
-		$this->email = $this->encodeHTML ($this->login->email);
-		$this->website = $this->encodeHTML ($this->login->website);
-
-		// Set mail headers to user's e-mail address
-		if (!empty ($this->email)) {
-			$this->setHeaders ($this->email, false);
-		}
-
-		// Get password from edit form via post
-		if (!empty ($this->postData['password'])) {
-			$this->editPassword = $this->encodeHTML ($this->postData['password']);
 		}
 	}
 
@@ -423,9 +400,10 @@ class WriteComments extends PostData
 			return false;
 		}
 
-		if (!empty ($this->editPassword) and !empty ($this->file)) {
+		if (!empty ($this->postData['password']) and !empty ($this->file)) {
 			$get_pass = $this->commentData->read ($this->file);
-			$passwords_match = $this->setup->encryption->verifyHash ($this->editPassword, $get_pass['password']);
+			$edit_password = $this->encodeHTML ($this->postData['password']);
+			$passwords_match = $this->setup->encryption->verifyHash ($edit_password, $get_pass['password']);
 
 			// Check if password matches the one in the file
 			if ($passwords_match === true or $this->login->userIsAdmin === true) {
@@ -445,19 +423,23 @@ class WriteComments extends PostData
 		return false;
 	}
 
+	// Closes all allowed HTML tags
 	protected function tagCloser ($tags, $html)
 	{
-		// Check if all allowed HTML tags have been closed, if not add them at the end
 		for ($tc = 0, $tcl = count ($tags); $tc < $tcl; $tc++) {
+			// Count opening and closing tags
 			$open_tags = substr_count ($html, '<' . $tags[$tc] . '>');
 			$close_tags = substr_count ($html, '</' . $tags[$tc] . '>');
 
+			// Check if opening and closing tags aren't equal
 			if ($open_tags !== $close_tags) {
+				// Add closing tags to end of comment
 				while ($open_tags > $close_tags) {
 					$html .= '</' . $tags[$tc] . '>';
 					$close_tags++;
 				}
 
+				// Remove closing tags for unopened tags
 				while ($close_tags > $open_tags) {
 					$html = preg_replace ('/<\/' . $tags[$tc] . '>/i', '', $html, 1);
 					$close_tags--;
@@ -476,6 +458,11 @@ class WriteComments extends PostData
 	// Setup and test for necessary comment data
 	protected function setupCommentData ()
 	{
+		// Setup login information
+		if ($this->login->userIsLoggedIn !== true) {
+			$this->login->setCredentials ();
+		}
+
 		// Check if required fields have values
 		$this->login->validateFields ();
 
@@ -498,6 +485,18 @@ class WriteComments extends PostData
 			throw new Exception ($this->locales->locale['comment-needed']);
 
 			return false;
+		}
+
+		// Escape disallowed characters in login information
+		$this->name = $this->encodeHTML ($this->login->name);
+		$this->password = $this->encodeHTML ($this->login->password);
+		$this->loginHash = $this->encodeHTML ($this->login->loginHash);
+		$this->email = $this->encodeHTML ($this->login->email);
+		$this->website = $this->encodeHTML ($this->login->website);
+
+		// Set mail headers to user's e-mail address
+		if (!empty ($this->email)) {
+			$this->setHeaders ($this->email, false);
 		}
 
 		// Trim leading and trailing white space
@@ -530,12 +529,12 @@ class WriteComments extends PostData
 		$this->writeComment['date'] = date (DATE_ISO8601);
 
 		// Check if name is enabled and isn't empty
-		if ($this->setup->fieldOptions['name'] === true and !empty ($this->name)) {
+		if ($this->setup->fieldOptions['name'] !== false and !empty ($this->name)) {
 			// Store name
 			$this->writeComment['name'] = $this->name;
 
 			// Store password and login ID if a password is given
-			if ($this->setup->fieldOptions['password'] === true and !empty ($this->password)) {
+			if ($this->setup->fieldOptions['password'] !== false and !empty ($this->password)) {
 				$this->writeComment['password'] = $this->password;
 
 				// Store login ID if login hash is non-empty
@@ -546,7 +545,7 @@ class WriteComments extends PostData
 		}
 
 		// Store e-mail if one is given
-		if ($this->setup->fieldOptions['email'] === true) {
+		if ($this->setup->fieldOptions['email'] !== false) {
 			if (!empty ($this->email)) {
 				$encryption_keys = $this->setup->encryption->encrypt ($this->email);
 				$this->writeComment['email'] = $encryption_keys['encrypted'];
@@ -559,7 +558,7 @@ class WriteComments extends PostData
 		}
 
 		// Store website URL if one is given
-		if ($this->setup->fieldOptions['website'] === true) {
+		if ($this->setup->fieldOptions['website'] !== false) {
 			if (!empty ($this->website)) {
 				$this->writeComment['website'] = $this->website;
 			}
@@ -578,9 +577,8 @@ class WriteComments extends PostData
 	public function editComment ()
 	{
 		try {
-			// Test for necessary comment data
+			// Verify file exists
 			$this->verifyFile ('file');
-			$this->setupCommentData ();
 
 		} catch (Exception $error) {
 			$this->kickback ($error->getMessage (), true);
@@ -592,19 +590,37 @@ class WriteComments extends PostData
 		$passwords_match = false;
 
 		// Compare passwords
-		if (!empty ($this->editPassword) and !empty ($this->file)) {
-			$passwords_match = $this->setup->encryption->verifyHash ($this->editPassword, $edit_comment['password']);
+		if (!empty ($this->postData['password']) and !empty ($this->file)) {
+			$edit_password = $this->encodeHTML ($this->postData['password']);
+			$passwords_match = $this->setup->encryption->verifyHash ($edit_password, $edit_comment['password']);
 		}
 
 		// Check if password matches the one in the file
-		if ($passwords_match or $this->login->userIsAdmin) {
+		if ($passwords_match === true or $this->login->userIsAdmin === true) {
+			// Login user with edited credentials
 			if ($this->login->userIsAdmin === false) {
+				$this->login (false);
+			}
+
+			try {
+				// Setup necessary comment data
+				$this->setupCommentData ();
+
+			} catch (Exception $error) {
+				$this->kickback ($error->getMessage (), true);
+				return false;
+			}
+
+			// Check if user is admin
+			if ($this->login->userIsAdmin === false) {
+				// If not, update login information and comment
 				foreach ($this->editUpdateFields as $key) {
 					if (isset ($this->writeComment[$key])) {
 						$edit_comment[$key] = $this->writeComment[$key];
 					}
 				}
 			} else {
+				// If so, update only the comment body
 				$edit_comment['body'] = $this->writeComment['body'];
 			}
 

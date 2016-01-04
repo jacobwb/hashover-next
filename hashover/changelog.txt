@@ -1,3 +1,11 @@
+Changes by Jacob Barkdull 2016-01-04
+--------------------------------------------------------------------------------
+* hashover/scripts/writecomments.php
+
+	- Fixed: All comments from unlogged in users posting with default name.
+	- Other small bug fixes.
+
+
 Changes by Jacob Barkdull 2016-01-03
 --------------------------------------------------------------------------------
 * Improved Markdown
