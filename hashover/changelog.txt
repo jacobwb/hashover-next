@@ -1,3 +1,9 @@
+Changes by Jacob Barkdull 2016-01-09
+--------------------------------------------------------------------------------
+* Fixed: Administrative comment deletion requiring name and password.
+* Fixed: Posting comment without a file value posts comment normally.
+
+
 Changes by Jacob Barkdull 2016-01-04
 --------------------------------------------------------------------------------
 * hashover/scripts/writecomments.php

@@ -237,10 +237,10 @@ class WriteComments extends PostData
 			if ($this->viaAJAX !== true) {
 				$this->cookies->setFailedOn ('comment', $this->replyTo, false);
 			}
-
-			// Throw exception as error message
-			throw new Exception ($this->locales->locale['comment-needed']);
 		}
+
+		// Throw exception as error message
+		throw new Exception ($this->locales->locale['comment-needed']);
 
 		return false;
 	}
@@ -392,7 +392,7 @@ class WriteComments extends PostData
 	public function deleteComment ()
 	{
 		try {
-			// Test for necessary comment data
+			// Verify file exists
 			$this->verifyFile ('file');
 
 		} catch (Exception $error) {
@@ -400,23 +400,30 @@ class WriteComments extends PostData
 			return false;
 		}
 
+		// Assume passwords don't match by default
+		$passwords_match = false;
+
+		// Check if password and file values were given
 		if (!empty ($this->postData['password']) and !empty ($this->file)) {
+			// Read original comment
 			$get_pass = $this->commentData->read ($this->file);
+
+			// Compare passwords
 			$edit_password = $this->encodeHTML ($this->postData['password']);
 			$passwords_match = $this->setup->encryption->verifyHash ($edit_password, $get_pass['password']);
+		}
 
-			// Check if password matches the one in the file
-			if ($passwords_match === true or $this->login->userIsAdmin === true) {
-				// Delete the comment file
-				if ($this->commentData->delete ($this->file, $this->setup->userDeletionsUnlink)) {
-					$this->removeFromLatest ($this->file);
-					$this->kickback ($this->locales->locale['comment-deleted']);
+		// Check if password matches the one in the file
+		if ($passwords_match === true or $this->login->userIsAdmin === true) {
+			// Delete the comment file
+			if ($this->commentData->delete ($this->file, $this->setup->userDeletionsUnlink)) {
+				$this->removeFromLatest ($this->file);
+				$this->kickback ($this->locales->locale['comment-deleted']);
 
-					return true;
-				}
-			} else {
-				sleep (5);
+				return true;
 			}
+		} else {
+			sleep (5);
 		}
 
 		$this->kickback ($this->locales->locale['post-fail'], true);
@@ -587,10 +594,13 @@ class WriteComments extends PostData
 
 		// Read original comment
 		$edit_comment = $this->commentData->read ($this->file);
+
+		// Assume passwords don't match by default
 		$passwords_match = false;
 
-		// Compare passwords
+		// Check if password and file values were given
 		if (!empty ($this->postData['password']) and !empty ($this->file)) {
+			// Compare passwords
 			$edit_password = $this->encodeHTML ($this->postData['password']);
 			$passwords_match = $this->setup->encryption->verifyHash ($edit_password, $edit_comment['password']);
 		}
@@ -683,8 +693,18 @@ class WriteComments extends PostData
 	{
 		try {
 			// Test for necessary comment data
-			$this->verifyFile ('reply-to');
 			$this->setupCommentData ();
+
+			// Set comment file name
+			if (isset ($this->replyTo)) {
+				// Verify file exists
+				$this->verifyFile ('reply-to');
+
+				// Rename file for reply
+				$comment_file = $this->replyTo . '-' . $this->readComments->threadCount[$this->replyTo];
+			} else {
+				$comment_file = $this->readComments->primaryCount;
+			}
 
 			// Check if comment is SPAM
 			$this->checkForSpam ();
@@ -695,14 +715,6 @@ class WriteComments extends PostData
 		} catch (Exception $error) {
 			$this->kickback ($error->getMessage (), true);
 			return false;
-		}
-
-		// Set comment file name
-		if (!empty ($this->replyTo)) {
-			// Rename file for reply
-			$comment_file = $this->replyTo . '-' . $this->readComments->threadCount[$this->replyTo];
-		} else {
-			$comment_file = $this->readComments->primaryCount;
 		}
 
 		// Write comment to file
