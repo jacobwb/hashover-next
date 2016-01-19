@@ -1,3 +1,7 @@
+Changes by Stéphane Mourey 2016-01-19
+--------------------------------------------------------------------------------
+* Enabling Hashover to work in the hashover-next subdirectory, not breaking change
+
 Changes by Jacob Barkdull 2016-01-09
 --------------------------------------------------------------------------------
 * Fixed: Administrative comment deletion requiring name and password.
@@ -148,7 +152,7 @@ Changes by Jacob Barkdull 2015-12-12
 * hashover/scripts/settings.php,
   hashover/scripts/hashover.php
 
-	- Logic for comment reply nesting modified to allow a configurable 
+	- Logic for comment reply nesting modified to allow a configurable
 	  number of indentation levels, after which the thread is flattened.
 
 	- Added public $usesAJAX setting.
@@ -197,7 +201,7 @@ Changes by Jacob Barkdull 2015-12-12
 * Improved error handling
 
 	- Classes now throw Exceptions, and try/catch blocks are used to display
-	  the error messages, `escapeOutput ()` has been removed and the new 
+	  the error messages, `escapeOutput ()` has been removed and the new
 	  `displayErrors ()` in the new Misc class is used as a wrapper instead.
 
 
@@ -937,7 +941,7 @@ Changes by Jacob Barkdull 2015-03-21
 	  'none' `$icon_mode` option. Wrap avatar in span tag.
 
 	- Added workaround for Chrome bug.
-	
+
 		Anchor "jump" tags aren't followed if the linked element isn't
 		on the page before the page begins loading.
 
