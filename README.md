@@ -48,6 +48,16 @@ Information and Documentation
 ---
 http://tildehash.com/?page=hashover
 
+** IMPORTANT NOTICE **
+
+This version modifies the file organisation to handle all in one subdirectory `hashover-next` of the root of the website.
+All the documentation of the previous version is still valid, but you must correct all the path when you read it, prefixing them with `/hashover-next/`.
+
+For example, to use Hashover-Next with the JavaScript method, you shoud use this code :
+
+	<script type="text/javascript" src="/hashover-next/hashover.js"></script>
+	<noscript>You must have JavaScript enabled to use the comments.</noscript>
+
 Focus of this release
 ---
 HashOver [version 1.0](https://github.com/jacobwb/hashover) consists of code written by [one person](http://tildehash.com/?page=author) over the course of five years, come March the 29th 2014. Moreover, HashOver was my first serious use of JavaScript and my first PHP project of such complexity. Those two facts should trigger obvious concerns about HashOver's performance, efficiency, and security. With that in mind, version 2.0 will be the next release, skipping 1.x releases all together, and will focus on improving nothing but the following areas.
@@ -63,7 +73,7 @@ HashOver [version 1.0](https://github.com/jacobwb/hashover) consists of code wri
 - Graphic scalability on (*x<sup>i</sup>*)HDPI displays [[#4](https://github.com/jacobwb/hashover-next/issues/4)] [[#11](https://github.com/jacobwb/hashover-next/issues/11)]
 - Code readability [[#62](https://github.com/jacobwb/hashover-next/issues/62)] [[#63](https://github.com/jacobwb/hashover-next/issues/63)]
 - Bug fixes
-		
+
 This means the possibility of new features in version 2.0 is next to null, and contributions via GitHub and/or e-mail that add new features will be rejected, at least for the time being. Improvements to existing functionality and aesthetics will be accepted. New features will be accepted and available in version 2.x releases.
 
 Contributing

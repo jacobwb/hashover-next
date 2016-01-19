@@ -18,9 +18,9 @@
 //
 // Get Complete Source Code:
 //
-// The source code for each PHP script used in HashOver is normally 
-// accessible directly from each script. You can simply visit the script 
-// file with the "source" query and the script will generate and display 
+// The source code for each PHP script used in HashOver is normally
+// accessible directly from each script. You can simply visit the script
+// file with the "source" query and the script will generate and display
 // its own source code.
 //
 // Like so:
@@ -109,9 +109,19 @@
 	}
 
 	// Append HashOver JavaScript tag to the page body
+	var fileName = "hashover.js";
+	var scriptList = document.getElementsByTagName('script');
+	for (var i = 0; i < scriptList.length; i++) {
+		var mejs = scriptList[i].src
+		console.log(mejs.substring(mejs.lastIndexOf("/") + 1));
+		if (mejs.substring(mejs.lastIndexOf("/") + 1) === fileName){
+			basePath = mejs.substring(0, mejs.lastIndexOf("/") + 1);
+		}
+	}
+
 	var script = document.createElement ('script');
 	    script.type = 'text/javascript';
-	    script.src  = '/hashover' + scriptSrc;
+	    script.src  = basePath+'hashover' + scriptSrc;
 	    script.src += '?' + scriptQueries;
 	    script.src += '&' + 'hashover-script=' + scriptNumber;
 	    script.id = 'hashover-script-' + scriptNumber;
