@@ -23,9 +23,17 @@
  *                                                                   *
 /**********************************************************************/
 
+// It is also important to choose UNIQUE values for the encryption key,
+// admin name, and admin password, as not doing so puts HashOver at
+// risk of being hijacked. Allowing someone to delete comments and/or
+// edit existing comments to post spam, impersonate you or your
+// visitors in order to push some sort of agenda/propaganda, to defame
+// you or your visitors, or to imply endorsement of some product(s),
+// service(s), and/or political ideology.
+
 // Required setup
 $config['notificationEmail'] = 'example@example.com';	// E-mail for notification of new comments
-$config['encryptionKey'] = '8CharKe';	// Unique encryption key
+$config['encryptionKey'] = '8CharKey';	// Unique encryption key
 $config['adminName'] = 'admin';	// Login name to gain admin rights (case-sensitive)
 $config['adminPassword'] = 'passw';	// Login password to gain admin rights (case-sensitive)
 

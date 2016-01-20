@@ -1,9 +1,11 @@
 <?php
 
 // Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2016 Stéphane Mourey
 // This file is part of HashOver.
 //
-// I, Jacob Barkdull, hereby release this work into the public domain.
+// We, Jacob Barkdull and Stéphane Mourey, hereby release this work into
+// the public domain.
 // This applies worldwide. If this is not legally possible, I grant any
 // entity the right to use this work for any purpose, without any
 // conditions, unless such conditions are required by law.
@@ -12,22 +14,20 @@
 //
 // IMPORTANT NOTICE:
 //
-// To retain your settings and maintain proper functionality, when
+// Previous versions of HashOver used this file to store your settings.
+// This is not anymore the case. You should not modify this file
+// yourself. This file could be update securely.
+//
+// If you migrate from one previous oldfashioned version, you can use
+// your old file at no risk. But if you update it to this one, you will
+// have to copy your old settings in a config.php, taking model on
+// config.base.php, at the top directory of this project.
+// Then to retain your settings and maintain proper functionality, when
 // downloading or otherwise upgrading to a new version of HashOver it
-// is important that you preserve this file, unless directed otherwise.
+// is important that you preserve your own config.php this file,
+// unless directed otherwise. But, as config.php is not given by
+// HashOver, there is less risk to overwritte it.
 //
-// It is also important to choose UNIQUE values for the encryption key,
-// admin name, and admin password, as not doing so puts HashOver at
-// risk of being hijacked. Allowing someone to delete comments and/or
-// edit existing comments to post spam, impersonate you or your
-// visitors in order to push some sort of agenda/propaganda, to defame
-// you or your visitors, or to imply endorsement of some product(s),
-// service(s), and/or political ideology.
-//
-//
-// NOTE FOR NOOBS:
-//
-// "true" means yes, "false" means no.
 
 
 class Settings
@@ -129,7 +129,7 @@ class Settings
 
 	public function __construct ()
 	{
-		$configFiles = array(__DIR__.'/../config.base.php',__DIR__.'/../config.php');
+		$configFiles = array(__DIR__.'/../../config.base.php',__DIR__.'/../../config.php');
 		foreach ($configFiles as $configFile) {
 			if (file_exists($configFile)) include($configFile);
 		}
