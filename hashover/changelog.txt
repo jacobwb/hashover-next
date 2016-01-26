@@ -1,4 +1,4 @@
-Changes by Jacob Barkdull 2016-01-20
+Changes by Jacob Barkdull 2016-01-25
 --------------------------------------------------------------------------------
 * `hashover.js` file moved
 
