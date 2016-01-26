@@ -135,11 +135,15 @@ class Settings
 		mb_internal_encoding ('UTF-8');
 
 		// Get parent directory
-		$dirname = dirname (__DIR__);
+		$root_directory = dirname (__DIR__);
+
+		// Get HTTP parent directory
+		$document_root = realpath ($_SERVER['DOCUMENT_ROOT']);
+		$http_directory = substr ($root_directory, strlen ($document_root));
 
 		// Technical settings
-		$this->rootDirectory	= $dirname;			// Root directory for script
-		$this->httpRoot		= '/' . basename ($dirname);	// Root directory for HTTP
+		$this->rootDirectory	= $root_directory;		// Root directory for script
+		$this->httpRoot		= $http_directory;		// Root directory for HTTP
 		$this->cookieExpiration	= time () + 60 * 60 * 24 * 30;	// Cookie expiration date
 		$this->domain		= $_SERVER['HTTP_HOST'];	// Domain name for refer checking & notifications
 
