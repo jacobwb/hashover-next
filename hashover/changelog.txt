@@ -1,3 +1,17 @@
+Changes by Jacob Barkdull 2016-01-20
+--------------------------------------------------------------------------------
+* `hashover.js` file moved
+
+	- `hashover.js` moved into `hashover/` directory, this allows you to
+	  rename the HashOver root directory without having to modify
+	  `hashover.js` as well. This also allows you to have multiple
+	  versions of HashOver running on your server without conflicts, each
+	  version simply needs its own directory.
+
+
+* Small code improvements.
+
+
 Changes by Jacob Barkdull 2016-01-09
 --------------------------------------------------------------------------------
 * Fixed: Administrative comment deletion requiring name and password.

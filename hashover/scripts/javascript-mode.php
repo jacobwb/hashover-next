@@ -228,7 +228,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Shorthand for Document.getElementById ()
 	function getElement (id, force)
 	{
-		if (force) {
+		if (force === true) {
 			return document.getElementById (id);
 		}
 
@@ -391,7 +391,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var codeTags = [];
 		var preTagCount = 0;
 		var preTags = [];
-		var commentClass = '';
+		var classes = '';
 		var replies = '';
 
 		// Text for avatar image alt attribute
@@ -407,22 +407,23 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		}
 
 		// Check if this comment is a popular comment
-		if (popular) {
+		if (popular === true) {
 			// Remove "-pop" from text for avatar
 			permatext = permatext.replace ('-pop', '');
 		} else {
 			// Check if comment is a reply
-			if (isReply) {
+			if (isReply === true) {
 				// Check that comments are being sorted
 				if (!sort || method === 'ascending') {
 					// Append class to indicate comment is a reply
-					commentClass = ' hashover-reply';
+					classes += ' hashover-reply';
 				}
 			}
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
 
+			// Append class to indicate collapsed comment
 			if (collapse === true && collapsedCount >= collapseLimit) {
-				commentClass += ' hashover-hidden';
+				classes += ' hashover-hidden';
 			} else {
 				collapsedCount++;
 			}
@@ -432,7 +433,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		// Add avatar image to template
 		template.avatar = '<?php echo $hashover->html->userAvatar ('permatext', 'permalink', 'comment.avatar'); ?>';
 
-		if (!comment.notice) {
+		if (comment.notice === undefined) {
 			var name = comment.name || '<?php echo $hashover->setup->defaultName; ?>';
 			var website = comment.website;
 			var isTwitter = false;
@@ -447,14 +448,14 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				// Check if Twitter handle is valid length
 				if (nameLength > 1 && nameLength <= 30) {
 					// Set website to Twitter profile if a specific website wasn't given
-					if (!website) {
+					if (website === undefined) {
 						website = 'http://twitter.com/' + name;
 					}
 				}
 			}
 
 			// Check whether user gave a website
-			if (website) {
+			if (website !== undefined) {
 				if (isTwitter === false) {
 					nameClass = 'hashover-name-website';
 				}
@@ -475,7 +476,10 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				template['thread-link'] = '<?php echo $hashover->html->threadLink ('permalink', 'parentThread', 'parentName'); ?>';
 			}
 
-			if (comment['user-owned']) {
+			if (comment['user-owned'] !== undefined) {
+				// Append class to indicate comment is from logged in user
+				classes += ' hashover-user-owned';
+
 				// Define "Reply" link with original poster title
 				var replyTitle = '<?php echo $hashover->locales->locale ('commenter-tip', true); ?>';
 				var replyClass = 'hashover-no-email';
@@ -495,7 +499,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				}
 
 				// Check whether this comment was liked by the visitor
-				if (comment.liked) {
+				if (comment.liked !== undefined) {
 					// If so, set various attributes to indicate comment was liked
 					var likeClass = 'hashover-liked';
 					var likeTitle = locale.likedComment;
@@ -508,7 +512,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				}
 
 				// Append class to indicate dislikes are enabled
-				if (allowsDislikes) {
+				if (allowsDislikes === true) {
 					likeClass += ' hashover-dislikes-enabled';
 				}
 
@@ -517,7 +521,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 <?php if ($hashover->setup->allowsDislikes === true) { ?>
 				// Check whether this comment was disliked by the visitor
-				if (comment.disliked) {
+				if (comment.disliked !== undefined) {
 					// If so, set various attributes to indicate comment was disliked
 					var dislikeClass = 'hashover-disliked';
 					var dislikeTitle = locale.dislikedComment;
@@ -535,7 +539,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 
 			// Get number of likes, append "Like(s)" locale
-			if (comment.likes) {
+			if (comment.likes !== undefined) {
 				var likeCount = comment.likes + ' ' + locale.like[(comment.likes === 1 ? 0 : 1)];
 			}
 
@@ -544,7 +548,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 <?php if ($hashover->setup->allowsDislikes === true) { ?>
 			// Get number of dislikes, append "Dislike(s)" locale
-			if (comment.dislikes) {
+			if (comment.dislikes !== undefined) {
 				var dislikeCount = comment.dislikes + ' ' + locale.dislike[(comment.dislikes === 1 ? 0 : 1)];
 			}
 
@@ -611,7 +615,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			body = parseMarkdown (body);
 
 			// Check for code tags
-			if (codeOpenRegex.test (body)) {
+			if (codeOpenRegex.test (body) === true) {
 				// Replace code tags with marker text
 				body = body.replace (codeTagRegex, function (fullTag, openTag, innerHTML, closeTag) {
 					var codeMarker = openTag + 'CODE_TAG[' + codeTagCount + ']' + closeTag;
@@ -624,7 +628,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 
 			// Check for pre tags
-			if (preOpenRegex.test (body)) {
+			if (preOpenRegex.test (body) === true) {
 				// Replace pre tags with marker text
 				body = body.replace (preTagRegex, function (fullTag, openTag, innerHTML, closeTag) {
 					var preMarker = openTag + 'PRE_TAG[' + preTagCount + ']' + closeTag;
@@ -638,8 +642,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 			// Check for various multi-line tags
 			for (var trimTag in trimTagRegexes) {
-				if (trimTagRegexes.hasOwnProperty (trimTag)
-				    && trimTagRegexes[trimTag]['test'].test (body))
+				if (trimTagRegexes.hasOwnProperty (trimTag) === true
+				    && trimTagRegexes[trimTag]['test'].test (body) === true)
 				{
 					// Trim whitespace
 					body = body.replace (trimTagRegexes[trimTag]['replace'], tagTrimmer);
@@ -674,7 +678,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			template.comment = pdComment;
 		} else {
 			// Append notice class
-			commentClass += ' hashover-notice ' + comment['notice-class'];
+			classes += ' hashover-notice ' + comment['notice-class'];
 
 			// Add notice to template
 			template.comment = comment.notice;
@@ -697,7 +701,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 		}
 
-		return '<?php echo $hashover->html->commentWrapper ('permalink', 'commentClass', 'html + replies'); ?>';
+		return '<?php echo $hashover->html->commentWrapper ('permalink', 'classes', 'html + replies'); ?>';
 	}
 
 	// Generate file from permalink
@@ -793,7 +797,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 
 			var regex = new RegExp ('(^|\\s)' + className + '(\\s|$)');
-			return element.className.match (regex);
+			return regex.test (element.className);
 		};
 
 		// classList.add () method
@@ -838,12 +842,12 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 		}
 
-		if (message) {
+		if (message !== undefined && message !== '') {
 			// Add message text to element
 			element.textContent = message;
 
 			// Add class to indicate message is an error if set
-			if (error) {
+			if (error === true) {
 				addClass (element, 'hashover-message-error');
 			}
 		}
@@ -877,15 +881,16 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		// Whether the e-mail form is empty
 		if (form.email.value === '') {
 			// If so, warn the user that they won't receive reply notifications
-			if (!confirm ('<?php echo $hashover->locales->locale ('no-email-warning', true); ?>')) {
+			if (confirm ('<?php echo $hashover->locales->locale ('no-email-warning', true); ?>') === false) {
 				form.email.focus ();
 				return false;
 			}
 		} else {
 			var message;
+			var emailRegex = /\S+@\S+/;
 
 			// If not, check if the e-mail is valid
-			if (!form.email.value.match (/\S+@\S+/)) {
+			if (emailRegex.test (form.email.value) === false) {
 				message = '<?php echo $hashover->locales->locale ('invalid-email', true); ?>';
 				showMessage (message, permalink, true, isReply, isEdit);
 				form.email.focus ();
@@ -1102,7 +1107,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			var scrollToElement;
 
 			// Check if JSON includes a comment
-			if (json.comment) {
+			if (json.comment !== undefined) {
 				// If so, execute callback function
 				callback (json, permalink, destination, isReply);
 
@@ -1420,7 +1425,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 		setTimeout (function () {
 			// Remove the more hyperlink from page
-			if (sortDiv.contains (moreLink)) {
+			if (sortDiv.contains (moreLink) === true) {
 				sortDiv.removeChild (moreLink);
 			}
 
@@ -1582,7 +1587,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Add various events to various elements in each comment
 	function addControls (json, popular)
 	{
-		if (json.notice) {
+		if (json.notice !== undefined) {
 			return false;
 		}
 
@@ -1641,7 +1646,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 					return false;
 				};
 
-				if (containsClass (likeLink, 'hashover-liked')) {
+				if (containsClass (likeLink, 'hashover-liked') === true) {
 					mouseOverChanger (likeLink, locale.unlike, locale.liked);
 				}
 			});
@@ -1935,7 +1940,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	}
 
 	// Create link element for comment stylesheet
-	if (appendCSS) {
+	if (appendCSS === true) {
 		var css = document.createElement ('link');
 		    css.rel = 'stylesheet';
 		    css.href = themeCSS;
@@ -1948,9 +1953,9 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 <?php } ?>
 	// Put number of comments into "hashover-comment-count" identified HTML element
 	if (totalCount !== 0) {
-		if (getElement ('hashover-comment-count')) {
-			getElement ('hashover-comment-count').textContent = totalCount;
-		}
+		ifElement ('hashover-comment-count', function (countElement) {
+			countElement.textContent = totalCount;
+		});
 <?php if ($hashover->setup->APIStatus ('rss') !== 'disabled') { ?>
 
 		// Create link element for comment RSS feed
@@ -1990,7 +1995,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	HashOverDiv.className = 'hashover-' + deviceType;
 
 	// Add class to indicate user login status
-	if (userIsLoggedIn) {
+	if (userIsLoggedIn === true) {
 		addClass (HashOverDiv, 'hashover-logged-in');
 	} else {
 		addClass (HashOverDiv, 'hashover-logged-out');
@@ -2066,7 +2071,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 <?php if ($hashover->setup->allowsLogin === true) { ?>
 	// Attach event listeners to "Login" button
-	if (!userIsLoggedIn) {
+	if (userIsLoggedIn !== true) {
 		var loginButton = getElement ('hashover-login-button');
 
 		// Onclick

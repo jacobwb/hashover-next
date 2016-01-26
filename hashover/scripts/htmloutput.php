@@ -260,14 +260,14 @@ class HTMLOutput
 	}
 
 	// Creates a wrapper element for each comment
-	public function commentWrapper ($permalink, $class = '', $innerHTML = '')
+	public function commentWrapper ($permalink, $classes = '', $innerHTML = '')
 	{
 		$comment_wrapper = new HTMLTag ('div', false, false);
 		$comment_wrapper->createAttribute ('id', $this->injectVar ($permalink));
 		$comment_wrapper->createAttribute ('class', 'hashover-comment');
 
 		if ($this->setup->mode !== 'php') {
-			$comment_wrapper->appendAttribute ('class', $this->injectVar ($class), false);
+			$comment_wrapper->appendAttribute ('class', $this->injectVar ($classes), false);
 			$comment_wrapper->innerHTML ($this->injectVar ($innerHTML));
 
 			return $comment_wrapper->asHTML ();
