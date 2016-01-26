@@ -144,7 +144,11 @@ class CommentParser
 		// Add comment to popular comments list if popular enough
 		if ($popular_listed === true) {
 			if ($popularity >= $this->setup->popularityThreshold) {
-				$this->popularList[$popularity . '.' . $key] = array ($key, $key_parts);
+				$this->popularList[] = array (
+					'popularity' => $popularity,
+					'key' => $key,
+					'parts' => $key_parts
+				);
 			}
 		}
 

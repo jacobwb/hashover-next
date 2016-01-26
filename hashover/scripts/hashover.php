@@ -258,16 +258,20 @@ class HashOver
 		}
 
 		// Sort popular comments
-		ksort ($this->commentParser->popularList);
+		usort ($this->commentParser->popularList, function ($a, $b) {
+			return ($b['popularity'] > $a['popularity']);
+		});
 
-		for ($p = 0, $pl = count ($this->commentParser->popularList); $p < $pl; $p++) {
-			if ($p > $this->setup->popularityLimit) {
-				break;
-			}
+		// Calculate how many popular comments will be shown
+		$limit = $this->setup->popularityLimit;
+		$count = min ($limit, count ($this->commentParser->popularList));
 
-			$popKey = array_shift ($this->commentParser->popularList);
-			$popComment = $this->readComments->data->read ($popKey[0]);
-			$this->comments['popularComments'][$p] = $this->commentParser->parse ($popComment, $popKey[0], $popKey[1], true);
+		// Read, parse, and add popular comments to output
+		for ($i = 0; $i < $count; $i++) {
+			$item =& $this->commentParser->popularList[$i];
+			$comment = $this->readComments->data->read ($item['key']);
+			$parsed = $this->commentParser->parse ($comment, $item['key'], $item['parts'], true);
+			$this->comments['popularComments'][$i] = $parsed;
 		}
 	}
 

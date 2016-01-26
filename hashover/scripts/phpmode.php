@@ -236,6 +236,9 @@ class PHPMode
 			}
 
 			if (isset ($comment['user-owned'])) {
+				// Append class to indicate comment is from logged in user
+				$comment_wrapper->appendAttribute ('class', 'hashover-user-owned');
+
 				// Define "Reply" link with original poster title
 				$replyTitle = $this->locales->locale ('commenter-tip');
 				$replyClass = 'hashover-no-email';

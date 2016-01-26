@@ -81,7 +81,6 @@ class Settings
 	public $displaysRSSLink		= true;				// Whether a comment RSS feed link is displayed
 
 	// Technical settings
-	public $JSONSettingsFile	= 'settings.json';		// Optional JSON settings file (overrides defaults)
 	public $loginMethod		= 'defaultLogin';		// Login method class for handling user login information
 	public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 	public $storesIPAddress		= false;			// Whether to store users' IP addresses
@@ -129,13 +128,6 @@ class Settings
 
 	public function __construct ()
 	{
-		// Setup default field options
-		foreach (array ('name', 'password', 'email', 'website') as $field) {
-			if (!isset ($this->fieldOptions[$field])) {
-				$this->fieldOptions[$field] = true;
-			}
-		}
-
 		// Set timezone
 		date_default_timezone_set ($this->timezone);
 
@@ -158,6 +150,13 @@ class Settings
 	// Synchronizes specific settings after remote changes
 	public function syncSettings ()
 	{
+		// Setup default field options
+		foreach (array ('name', 'password', 'email', 'website') as $field) {
+			if (!isset ($this->fieldOptions[$field])) {
+				$this->fieldOptions[$field] = true;
+			}
+		}
+
 		$this->httpScripts	= $this->httpRoot . '/scripts';	// Script directory for HTTP
 		$this->httpImages	= $this->httpRoot . '/images';	// Image directory for HTTP
 	}

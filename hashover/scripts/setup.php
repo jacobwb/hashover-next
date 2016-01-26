@@ -76,6 +76,14 @@ class Setup extends Settings
 		// Execute parent constructor
 		parent::__construct ();
 
+		// JSON settings file path
+		$json_settings = $this->rootDirectory . '/settings.json';
+
+		// Check for JSON settings file; parse it if it exists
+		if (file_exists ($json_settings)) {
+			$this->JSONSettings ($json_settings);
+		}
+
 		// Check if PHP version is the minimum required
 		if (version_compare (PHP_VERSION, '5.3.3') < 0) {
 			$version_parts = explode ('-', PHP_VERSION);
@@ -136,11 +144,6 @@ class Setup extends Settings
 				$this->isMobile = true;
 				$this->imageFormat = 'svg';
 			}
-		}
-
-		// Check for JSON settings file; parse it if it exists
-		if (file_exists ($this->rootDirectory . '/' . $this->JSONSettingsFile)) {
-			$this->JSONSettings ($this->rootDirectory . '/' . $this->JSONSettingsFile);
 		}
 	}
 
