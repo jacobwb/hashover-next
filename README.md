@@ -46,7 +46,25 @@ Notable Features
 
 Information and Documentation
 ---
-http://tildehash.com/?page=hashover
+Forthcoming.
+
+Important differences from version 1.0
+---
+- `hashover.php` is no longer used in JavaScript tags, instead the file `/hashover/hashover.js` is used instead.
+
+  So change:
+
+  ```html
+  <script type="text/javascript" src="/hashover.php"></script>
+  ```
+
+  To:
+
+  ```html
+  <script type="text/javascript" src="/hashover/hashover.js"></script>
+  ```
+
+- HashOver 2.0 is object oriented, many things have changed places and been renamed. For normal users, about the only thing that is important to know is that the `secrets.php` file was merged with the `settings.php` file.
 
 Focus of this release
 ---
