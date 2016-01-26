@@ -9,6 +9,7 @@ Changes by Jacob Barkdull 2016-01-25
 	  version simply needs its own directory.
 
 
+* Improved HTTP root path to allow HashOver to run from a sub-directory.
 * Comments from logged in users now have `hashover-user-owned` class.
 * Fixed: One popular comment more than configured limit being shown.
 * Fixed: `fieldOptions` setting not being synced.
