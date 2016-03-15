@@ -128,12 +128,15 @@ class Encryption
 			}
 
 			// Decrypt using retrieved key
-			$decrypted = base64_decode ($str);
-			$iv = substr ($decrypted, 0, $this->iv_size);
-			$decrypted = substr ($decrypted, $this->iv_size);
-			$decrypted = mcrypt_decrypt ($this->cipher, $key, $decrypted, $this->mcryptMode, $iv);
+			$decrypted = base64_decode ($str, true);
 
-			return rtrim ($decrypted, "\0");
+			if ($decrypted !== false and !empty ($decrypted)) {
+				$iv = substr ($decrypted, 0, $this->iv_size);
+				$decrypted = substr ($decrypted, $this->iv_size);
+				$decrypted = mcrypt_decrypt ($this->cipher, $key, $decrypted, $this->mcryptMode, $iv);
+
+				return rtrim ($decrypted, "\0");
+			}
 		}
 
 		return false;

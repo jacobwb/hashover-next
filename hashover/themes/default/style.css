@@ -130,7 +130,7 @@ Copyright (C) 2015 Jacob Barkdull
 #hashover .hashover-email-input:before,
 #hashover .hashover-website-input:before,
 #hashover .hashover-required-input:after {
-	content: "";
+	content: " ";
 	display: inline-block;
 	position: absolute;
 	top: 50%;
@@ -204,7 +204,7 @@ Copyright (C) 2015 Jacob Barkdull
 #hashover .hashover-reply .hashover-header,
 #hashover .hashover-reply .hashover-balloon,
 #hashover #hashover-sort {
-	border: 1px solid #808080;
+	border: 1px solid #AAAAAA;
 }
 
 #hashover form input,
@@ -255,8 +255,8 @@ Copyright (C) 2015 Jacob Barkdull
 
 #hashover form textarea,
 #hashover .hashover-comment > .hashover-balloon {
-	border-top: 1px solid #808080;
-	border-bottom: 1px solid #808080;
+	border-top: 1px solid #AAAAAA;
+	border-bottom: 1px solid #AAAAAA;
 }
 
 #hashover textarea:hover,
@@ -415,22 +415,26 @@ Copyright (C) 2015 Jacob Barkdull
 	padding: 0px;
 }
 
+#hashover .hashover-form-footer {
+	overflow: hidden;
+}
+
 #hashover #hashover-form > .hashover-form-footer {
 	padding: 12px;
-	overflow: hidden;
 }
 
 #hashover .hashover-comment .hashover-form-footer {
 	padding-top: 12px;
-	overflow: hidden;
 }
 
 #hashover .hashover-edit-form {
-	margin-top: 36px;
+	margin-top: 24px;
 }
 
 #hashover .hashover-edit-form .hashover-form-footer {
 	padding-bottom: 12px;
+	margin-bottom: 12px;
+	border-bottom: 1px solid #AAAAAA;
 }
 
 #hashover #hashover-count,
@@ -456,7 +460,7 @@ Copyright (C) 2015 Jacob Barkdull
 #hashover hr {
 	border: 0px;
 	height: 1px;
-	background-color: #808080;
+	background-color: #AAAAAA;
 	margin-top: 0px;
 	margin-bottom: 5px;
 }
@@ -500,19 +504,19 @@ Copyright (C) 2015 Jacob Barkdull
 #hashover #hashover-form,
 #hashover .hashover-comment,
 #hashover .hashover-reply-form {
-	background-color: #F6F6F6;
+	background-color: #F0F0F0;
 }
 
 #hashover-form .hashover-inputs,
 #hashover .hashover-comment > .hashover-header {
 	/* Light blue */
-	background-color: #F0F4FC;
+	background-color: #E5F0FF;
 
 	/* Light green */
-	/*background-color: #F0FCF4;*/
+	/*background-color: #E5FFF0;*/
 
 	/* Light red (pink-ish) */
-	/*background-color: #FCF4F0;*/
+	/*background-color: #FFE5F0;*/
 }
 
 #hashover .hashover-avatar-image *,
@@ -646,7 +650,7 @@ Copyright (C) 2015 Jacob Barkdull
 #hashover .hashover-avatar-image:before,
 #hashover .hashover-comment .hashover-avatar:before,
 #hashover .hashover-comment form .hashover-avatar-image:before {
-	border-bottom-color: #808080;
+	border-bottom-color: #AAAAAA;
 }
 
 #hashover .hashover-avatar-image:after,
@@ -662,7 +666,6 @@ Copyright (C) 2015 Jacob Barkdull
 #hashover .hashover-comment form .hashover-avatar-image:after {
 	border-style: solid solid outset;
 	border-color: transparent;
-	border-right-color: #808080;
 	margin-left: auto;
 	margin-bottom: -8px;
 	top: auto;
@@ -674,13 +677,17 @@ Copyright (C) 2015 Jacob Barkdull
 
 #hashover .hashover-reply .hashover-avatar:before,
 #hashover .hashover-comment form .hashover-avatar-image:before {
-	border-right-color: #808080;
+	border-right-color: #AAAAAA;
 }
 
 #hashover .hashover-reply .hashover-avatar:after,
 #hashover .hashover-comment form .hashover-avatar-image:after {
 	border-right-color: #FCFCFC;
 	right: -16px;
+}
+
+#hashover.hashover-logged-out .hashover-comment form .hashover-avatar-image:after {
+	border-right-color: #FCFCFC;
 }
 
 #hashover #hashover-sort-select {
@@ -795,11 +802,6 @@ Copyright (C) 2015 Jacob Barkdull
 	color: #101010;
 }
 
-#hashover .hashover-comment .hashover-footer {
-	padding-top: 12px;
-	border-top: 1px solid #808080;
-}
-
 #hashover .hashover-comment .hashover-date-permalink,
 #hashover .hashover-comment .hashover-replies,
 #hashover .hashover-comment .hashover-likes,
@@ -824,7 +826,9 @@ Copyright (C) 2015 Jacob Barkdull
 #hashover .hashover-comment .hashover-buttons a {
 	display: inline-block;
 	vertical-align: middle;
+	min-height: 16px;
 	padding-left: 30px;
+	line-height: 16px;
 	color: #111111;
 	background-image: url('../../images/inputs-and-buttons.png');
 	background-repeat: no-repeat;
@@ -934,7 +938,7 @@ Copyright (C) 2015 Jacob Barkdull
 }
 
 #hashover #hashover-end-links {
-	border-top: 1px solid #808080;
+	border-top: 1px solid #AAAAAA;
 	margin-top: -12px;
 	padding: 18px 0px 5px 0px;
 	text-align: center;

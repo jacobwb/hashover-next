@@ -490,11 +490,11 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				// Check if commenter is subscribed
 				if (comment.subscribed === true) {
 					// If so, set subscribed title
-					var replyTitle = comment.name + ' <?php echo $hashover->locales->locale ('subscribed-tip', true); ?>';
+					var replyTitle = name + ' <?php echo $hashover->locales->locale ('subscribed-tip', true); ?>';
 					var replyClass = 'hashover-has-email';
 				} else{
 					// If not, set unsubscribed title
-					var replyTitle = comment.name + ' <?php echo $hashover->locales->locale ('unsubscribed-tip', true); ?>';
+					var replyTitle = name + ' <?php echo $hashover->locales->locale ('unsubscribed-tip', true); ?>';
 					var replyClass = 'hashover-no-email';
 				}
 

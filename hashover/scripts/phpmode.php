@@ -253,11 +253,11 @@ class PHPMode
 				// Check if commenter is subscribed
 				if (isset ($comment['subscribed'])) {
 					// If so, set subscribed title
-					$replyTitle = $comment['name'] . ' ' . $this->locales->locale['subscribed-tip'];
+					$replyTitle = $name . ' ' . $this->locales->locale['subscribed-tip'];
 					$replyClass = 'hashover-has-email';
 				} else{
 					// If not, set unsubscribed title
-					$replyTitle = $comment['name'] . ' ' . $this->locales->locale['unsubscribed-tip'];
+					$replyTitle = $name . ' ' . $this->locales->locale['unsubscribed-tip'];
 					$replyClass = 'hashover-no-email';
 				}
 			}

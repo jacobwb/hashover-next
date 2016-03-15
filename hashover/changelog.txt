@@ -1,3 +1,22 @@
+Changes by Jacob Barkdull 2016-03-15
+--------------------------------------------------------------------------------
+* Small style changes for Like, Edit, and Reply hyperlinks
+
+	- Pages with small fonts no longer cause button icons to be clipped.
+	- Button hyperlink text now vertically centered.
+
+
+* Bug fix
+
+	- Showing "undefined" in JavaScript mode and nothing in PHP mode
+	  instead of configured anonymous name in Reply hyperlink tooltip for
+	  comments without a name.
+
+
+* Improved Japanese locale.
+* Minor style changes.
+
+
 Changes by Jacob Barkdull 2016-01-25
 --------------------------------------------------------------------------------
 * `hashover.js` file moved
