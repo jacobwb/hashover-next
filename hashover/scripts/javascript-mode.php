@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -105,7 +105,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 }
 
 ?>
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
