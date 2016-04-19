@@ -1528,13 +1528,20 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			// Display the comments
 			appendComments (json.comments);
 
+			// Remove loading class from element
+			removeClass (element, 'hashover-loading');
+
 			// Hide the more hyperlink and display the comments
 			hideMoreLink (finishedCallback);
 		};
 
+		// Open and send request
 		httpRequest.open ('POST', httpRoot + '/api/json.php', true);
 		httpRequest.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
 		httpRequest.send (queries.join ('&'));
+
+		// Set class to indicate loading to element
+		addClass (element, 'hashover-loading');
 <?php } else { ?>
 		// Hide the more hyperlink and display the comments
 		hideMoreLink (finishedCallback);
@@ -1607,7 +1614,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		ifElement ('hashover-thread-link-' + permalink, function (threadLink) {
 			// Add onClick event to thread hyperlink
 			threadLink.onclick = function () {
-				showMoreComments (moreLink, function () {
+				showMoreComments (threadLink, function () {
 					var parentThread = permalink.replace (threadRegex, '$1');
 					var scrollToElement = getElement (parentThread, true);
 
@@ -1689,10 +1696,16 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		};
 	}
 
+	// Returns a clone of an object
+	function cloneObject (object)
+	{
+		return JSON.parse (JSON.stringify (object));
+	}
+
 	// "Flatten" the comments object
 	function getAllComments (comments)
 	{
-		var commentsCopy = JSON.parse (JSON.stringify (comments));
+		var commentsCopy = cloneObject (comments);
 		var output = [];
 
 		function descend (comment)
@@ -1870,17 +1883,14 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		},
 
 		threadedDescending: function () {
-			var tmpSortArray = Object.keys (PHPContent.comments).map (function (key) {
-				return PHPContent.comments[key];
-			});
+			var tmpSortArray = cloneObject (PHPContent.comments);
+			    tmpSortArray = tmpSortArray.reverse ();
 
-			parseAll (tmpSortArray.reverse (), sortDiv, false, false, true, 'threadedDescending');
+			parseAll (tmpSortArray, sortDiv, false, false, true, 'threadedDescending');
 		},
 
 		threadedByName: function () {
-			var tmpSortArray = Object.keys (PHPContent.comments).map (function (key) {
-				return PHPContent.comments[key];
-			});
+			var tmpSortArray = cloneObject (PHPContent.comments);
 
 			tmpSortArray = tmpSortArray.sort (function (a, b) {
 				return (a.name > b.name);
@@ -1890,9 +1900,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		},
 
 		threadedByDate: function () {
-			var tmpSortArray = Object.keys (PHPContent.comments).map (function (key) {
-				return PHPContent.comments[key];
-			});
+			var tmpSortArray = cloneObject (PHPContent.comments);
 
 			tmpSortArray = tmpSortArray.sort (function (a, b) {
 				if (a['sort-date'] === b['sort-date']) {
@@ -1906,9 +1914,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		},
 
 		threadedByLikes: function () {
-			var tmpSortArray = Object.keys (PHPContent.comments).map (function (key) {
-				return PHPContent.comments[key];
-			});
+			var tmpSortArray = cloneObject (PHPContent.comments);
 
 			tmpSortArray = tmpSortArray.sort (function (a, b) {
 				a.likes = a.likes || 0;
@@ -2090,7 +2096,9 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	ifElement ('hashover-sort-select', function (sortSelect) {
 		sortSelect.onchange = function () {
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
-			showMoreComments (sortSelect, function () {
+			var sortSelectDiv = getElement ('hashover-sort');
+
+			showMoreComments (sortSelectDiv, function () {
 				sortDiv.textContent = '';
 				sortMethods[sortSelect.value] ();
 			});

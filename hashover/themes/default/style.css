@@ -719,6 +719,7 @@ Copyright (C) 2015 Jacob Barkdull
 	height: 100%;
 	width: 25px;
 	padding: 5px 4px;
+	margin: 0px;
 	font-size: 14px;
 	line-height: 12px;
 	text-align: center;
@@ -922,6 +923,27 @@ Copyright (C) 2015 Jacob Barkdull
 
 #hashover #hashover-more-link:hover {
 	background-color: rgba(230, 237, 250, 1.0);
+}
+
+#hashover .hashover-loading:before {
+	content: " " ! important;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+	margin-right: 10px;
+	margin-top: -8px;
+	margin-bottom: -6px;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: center center;
+	background-image: url('../../images/loading.gif');
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
+	image-rendering: -o-crisp-edges;
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
+	-ms-interpolation-mode: nearest-neighbor;
 }
 
 #hashover #hashover-more-link.hashover-hide-morelink {
