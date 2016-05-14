@@ -74,7 +74,7 @@ class Markdown
 	}
 
 	// Replaces markdown for code block with a marker
-	protected function blockCodeReplace ($grp, $display)
+	protected function blockCodeReplace ($grp)
 	{
 		return $this->codeReplace ($grp, 'block');
 	}

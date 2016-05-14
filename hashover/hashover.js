@@ -58,7 +58,7 @@
 	// Simple JavaScript port of PHP's dirname
 	function dirname (string)
 	{
-		return string.split('/').slice(0, -1).join('/');
+		return string.replace (/\/[^\/]*\/?$/, '');
 	}
 
 	// Set page URL to canonical link value if available

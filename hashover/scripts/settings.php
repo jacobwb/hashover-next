@@ -23,11 +23,6 @@
 // visitors in order to push some sort of agenda/propaganda, to defame 
 // you or your visitors, or to imply endorsement of some product(s), 
 // service(s), and/or political ideology.
-//
-//
-// NOTE FOR NOOBS:
-//
-// "true" means yes, "false" means no.
 
 
 class Settings

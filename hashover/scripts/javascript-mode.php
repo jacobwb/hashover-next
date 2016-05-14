@@ -178,26 +178,26 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 	// Array for inline code and code block markers
 	var codeMarkers = {
-		'block': {'marks': [], 'count': 0},
-		'inline': {'marks': [], 'count': 0}
+		block: { marks: [], count: 0 },
+		inline: { marks: [], count: 0 }
 	};
 
 	// Some locales, stored in JavaScript to avoid using a lot of PHP tags
 	var locale = {
-		'cancel':		'<?php echo $hashover->locales->locale['cancel']; ?>',
-		'like':			['<?php echo implode ("', '", $hashover->locales->locale ('like', true)); ?>'],
-		'liked':		'<?php echo $hashover->locales->locale ('liked', true); ?>',
-		'unlike':		'<?php echo $hashover->locales->locale ('unlike', true); ?>',
-		'likeComment':		'<?php echo $hashover->locales->locale ('like-comment', true); ?>',
-		'likedComment':		'<?php echo $hashover->locales->locale ('liked-comment', true); ?>',
-		'dislike':		['<?php echo implode ("', '", $hashover->locales->locale ('dislike', true)); ?>'],
-		'disliked':		'<?php echo $hashover->locales->locale ('disliked', true); ?>',
-		'dislikeComment':	'<?php echo $hashover->locales->locale ('dislike-comment', true); ?>',
-		'dislikedComment':	'<?php echo $hashover->locales->locale ('disliked-comment', true); ?>',
-		'name':			'<?php echo $hashover->locales->locale ('name', true); ?>',
-		'password':		'<?php echo $hashover->locales->locale ('password', true); ?>',
-		'email':		'<?php echo $hashover->locales->locale ('email', true); ?>',
-		'website':		'<?php echo $hashover->locales->locale ('website', true); ?>'
+		cancel:			'<?php echo $hashover->locales->locale['cancel']; ?>',
+		like:			['<?php echo implode ("', '", $hashover->locales->locale ('like', true)); ?>'],
+		liked:			'<?php echo $hashover->locales->locale ('liked', true); ?>',
+		unlike:			'<?php echo $hashover->locales->locale ('unlike', true); ?>',
+		likeComment:		'<?php echo $hashover->locales->locale ('like-comment', true); ?>',
+		likedComment:		'<?php echo $hashover->locales->locale ('liked-comment', true); ?>',
+		dislike:		['<?php echo implode ("', '", $hashover->locales->locale ('dislike', true)); ?>'],
+		disliked:		'<?php echo $hashover->locales->locale ('disliked', true); ?>',
+		dislikeComment:		'<?php echo $hashover->locales->locale ('dislike-comment', true); ?>',
+		dislikedComment:	'<?php echo $hashover->locales->locale ('disliked-comment', true); ?>',
+		name:			'<?php echo $hashover->locales->locale ('name', true); ?>',
+		password:		'<?php echo $hashover->locales->locale ('password', true); ?>',
+		email:			'<?php echo $hashover->locales->locale ('email', true); ?>',
+		website:		'<?php echo $hashover->locales->locale ('website', true); ?>'
 	};
 
 	// Markdown patterns to search for
@@ -208,17 +208,19 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 	// Tags that will have their innerHTML trimmed
 	var trimTagRegexes = {
-		'blockquote': {
-			'test': /<blockquote>/,
-			'replace': /(<blockquote>)([\s\S]*?)(<\/blockquote>)/ig
+		blockquote: {
+			test: /<blockquote>/,
+			replace: /(<blockquote>)([\s\S]*?)(<\/blockquote>)/ig
 		},
-		'ul': {
-			'test': /<ul>/,
-			'replace': /(<ul>)([\s\S]*?)(<\/ul>)/ig
+
+		ul: {
+			test: /<ul>/,
+			replace: /(<ul>)([\s\S]*?)(<\/ul>)/ig
 		},
-		'ol': {
-			'test': /<ol>/,
-			'replace': /(<ol>)([\s\S]*?)(<\/ol>)/ig
+
+		ol: {
+			test: /<ol>/,
+			replace: /(<ol>)([\s\S]*?)(<\/ol>)/ig
 		}
 	};
 
@@ -331,8 +333,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	{
 		// Reset marker arrays
 		codeMarkers = {
-			'block': {'marks': [], 'count': 0},
-			'inline': {'marks': [], 'count': 0}
+			block: { marks: [], count: 0 },
+			inline: { marks: [], count: 0 }
 		};
 
 		// Replace code blocks with markers
@@ -373,6 +375,40 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		return string;
 	}
 
+	// Adds properties to an element
+	function addProperties (element, properties)
+	{
+		var element = element || document.createElement ('span');
+		var properties = properties || {};
+
+		// Add each property to element
+		for (var property in properties) {
+			if (properties.hasOwnProperty (property) === false) {
+				continue;
+			}
+
+			// If the property is an object add each item to existing property
+			if (!!properties[property] && properties[property].constructor === Object) {
+				addProperties (element[property], properties[property]);
+				continue;
+			}
+
+			element[property] = properties[property];
+		}
+
+		return element;
+	}
+
+	// Create an element with attributes
+	function createElement (tagName, attributes)
+	{
+		var tagName = tagName || 'span';
+		var attributes = attributes || {};
+		var element = document.createElement (tagName);
+
+		return addProperties (element, attributes);
+	}
+
 	// Add comment content to HTML template
 	function parseComment (comment, parent, collapse, sort, method, popular)
 	{
@@ -384,7 +420,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 		var permalink = comment.permalink;
 		var nameClass = 'hashover-name-plain';
-		var template = {permalink: permalink};
+		var template = { permalink: permalink };
 		var isReply = (parent !== null);
 		var parentPermalink;
 		var codeTagCount = 0;
@@ -596,15 +632,19 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 						continue;
 					}
 
-					var imgtag = document.createElement ('img');
-					    imgtag.className = 'hashover-embedded-image';
-					    imgtag.src = imagePlaceholder;
-					    imgtag.title = 'Click to view external image';
-					    imgtag.dataset.placeholder = imagePlaceholder;
-					    imgtag.dataset.url = url;
-					    imgtag.alt = 'External Image';
+					var imgTag = createElement ('img', {
+						className: 'hashover-embedded-image',
+						src: imagePlaceholder,
+						title: 'Click to view external image',
+						alt: 'External Image',
 
-					return imgtag.outerHTML;
+						dataset: {
+							placeholder: imagePlaceholder,
+							url: url
+						}
+					});
+
+					return imgTag.outerHTML;
 				}
 
 <?php } ?>
@@ -719,9 +759,9 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	{
 		// Initial state properties of hyperlink
 		var reset = {
-			'textContent': link.textContent,
-			'title': link.title,
-			'onclick': link.onclick
+			textContent: link.textContent,
+			title: link.title,
+			onclick: link.onclick
 		};
 
 		// Change hyperlink to "Cancel" hyperlink
@@ -937,38 +977,6 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		return emailValidator (form, subscribe, permalink, isReply, isEdit);
 	}
 
-	// Simplistic JavaScript port of sprintf function in C
-	function sprintf (string, args)
-	{
-		var string = string || '';
-		var args = args || [];
-		var count = 0;
-
-		return string.replace (/%([cdfs])/g, function (match, type) {
-			if (args[count] === undefined) {
-				return match;
-			}
-
-			switch (type) {
-				case 'c': {
-					return args[count++][0];
-				}
-
-				case 'd': {
-					return parseInt (args[count++]);
-				}
-
-				case 'f': {
-					return parseFloat (args[count++]);
-				}
-
-				case 's': {
-					return args[count++];
-				}
-			}
-		});
-	}
-
 	// Validate a comment form
 	function commentValidator (form, skipComment)
 	{
@@ -990,7 +998,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 					addClass (form[field], 'hashover-emphasized-input');
 
 					// Error message to display to the user
-					fieldNeeded = sprintf (fieldNeeded, [ locale[field].toLowerCase () ]);
+					fieldNeeded = fieldNeeded.replace ('%s', locale[field].toLowerCase ());
 
 					// Focus the input
 					form[field].focus ();
@@ -1163,10 +1171,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Converts an HTML string to DOM NodeList
 	function HTMLToNodeList (html)
 	{
-		var div = document.createElement ('div');
-		    div.innerHTML = html;
-
-		return div.childNodes;
+		return createElement ('div', { innerHTML: html }).childNodes;
 	}
 
 	// Increase comment counts
@@ -1288,11 +1293,12 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var file = reversePermalink (permalink);
 
 		// Create reply form element
-		var form = document.createElement ('form');
-		    form.id = 'hashover-reply-' + permalink;
-		    form.className = 'hashover-reply-form';
-		    form.method = 'post';
-		    form.action = httpScripts + '/postcomments.php';
+		var form = createElement ('form', {
+			id: 'hashover-reply-' + permalink,
+			className: 'hashover-reply-form',
+			method: 'post',
+			action: httpScripts + '/postcomments.php'
+		});
 
 <?php
 
@@ -1360,11 +1366,12 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		    body = body.replace (linkRegex, '$1');
 
 		// Create edit form element
-		var form = document.createElement ('form');
-		    form.id = 'hashover-edit-' + permalink;
-		    form.className = 'hashover-edit-form';
-		    form.method = 'post';
-		    form.action = httpScripts + '/postcomments.php';
+		var form = createElement ('form', {
+			id: 'hashover-edit-' + permalink,
+			className: 'hashover-edit-form',
+			method: 'post',
+			action: httpScripts + '/postcomments.php'
+		});
 
 <?php
 
@@ -1947,10 +1954,11 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 	// Create link element for comment stylesheet
 	if (appendCSS === true) {
-		var css = document.createElement ('link');
-		    css.rel = 'stylesheet';
-		    css.href = themeCSS;
-		    css.type = 'text/css';
+		var css = createElement ('link', {
+			rel: 'stylesheet',
+			href: themeCSS,
+			type: 'text/css',
+		});
 
 		// Append comment stylesheet link element to page head
 		head.appendChild (css);
@@ -1965,11 +1973,12 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 <?php if ($hashover->setup->APIStatus ('rss') !== 'disabled') { ?>
 
 		// Create link element for comment RSS feed
-		var rss = document.createElement ('link');
-		    rss.rel = 'alternate';
-		    rss.href = httpRoot + '/api/rss.php?url=' + encodeURIComponent (URLHref);
-		    rss.type = 'application/rss+xml';
-		    rss.title = 'Comments';
+		var rss = createElement ('link', {
+			rel: 'alternate',
+			href: httpRoot + '/api/rss.php?url=' + encodeURIComponent (URLHref),
+			type: 'application/rss+xml',
+			title: 'Comments'
+		});
 
 		// Append comment RSS feed link element to page head
 		head.appendChild (rss);
@@ -1985,8 +1994,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 	// Create div tag for HashOver comments to appear in
 	if (HashOverDiv === null) {
-		HashOverDiv = document.createElement ('div');
-		HashOverDiv.id = 'hashover';
+		HashOverDiv = createElement ('div', { id: 'hashover' });
 
 		// Place HashOver element on page
 		if (hashoverScript !== false) {
@@ -2037,19 +2045,18 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Check whether there are more than the collapse limit
 	if (totalCount > collapseLimit) {
 		// Create element for the comments
-		moreDiv = document.createElement ('div');
-		moreDiv.id = 'hashover-more-section';
+		moreDiv = createElement ('div', { id: 'hashover-more-section' });
 
 		// If so, create "More Comments" hyperlink
-		moreLink = document.createElement ('a');
-		moreLink.href = '#';
-		moreLink.id = 'hashover-more-link';
-		moreLink.textContent = '<?php echo $collapse_link_text; ?>';
+		moreLink = createElement ('a', {
+			href: '#',
+			id: 'hashover-more-link',
+			textContent: '<?php echo $collapse_link_text; ?>',
 
-		// Add onClick event to more button
-		moreLink.onclick = function () {
-			return showMoreComments (this);
-		};
+			onclick: function () {
+				return showMoreComments (this);
+			}
+		});
 
 		// Add more button link to sort div
 		sortDiv.appendChild (moreDiv);
@@ -2117,7 +2124,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
 			// Show more comments
 			showMoreComments (moreLink, function () {
-				// When display reply form
+				// Then display reply form
 				hashoverReply (permalink);
 			});
 <?php } else { ?>
@@ -2129,9 +2136,9 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			var comments = (isPop) ? PHPContent.popularComments : PHPContent.comments;
 <?php if ($hashover->setup->collapsesComments !== false) { ?>
 
-			// Show more comment
+			// Show more comments
 			showMoreComments (moreLink, function () {
-				// When display edit form
+				// Then display edit form
 				hashoverEdit (findByPermalink (permalink, comments));
 			});
 <?php } else { ?>

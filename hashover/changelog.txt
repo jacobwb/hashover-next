@@ -1,3 +1,10 @@
+Changes by Jacob Barkdull 2016-05-14
+--------------------------------------------------------------------------------
+* Updated animated loading GIFs.
+* Added easy element creation function.
+* Removed sprintf function.
+
+
 Changes by Jacob Barkdull 2016-04-19
 --------------------------------------------------------------------------------
 * Added loading indicators to elements that trigger heavy AJAX requests.
