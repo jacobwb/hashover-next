@@ -1362,8 +1362,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var website = comment.website || '';
 
 		// Get and clean comment body
-		var body = comment.body;
-		    body = body.replace (linkRegex, '$1');
+		var body = comment.body.replace (linkRegex, '$1');
 
 		// Create edit form element
 		var form = createElement ('form', {

@@ -1,3 +1,8 @@
+Changes by Jacob Barkdull 2016-05-17
+--------------------------------------------------------------------------------
+* Fixed: Non-Gravatar default avatars using PNG image on mobile devices.
+
+
 Changes by Jacob Barkdull 2016-05-14
 --------------------------------------------------------------------------------
 * Updated animated loading GIFs.

@@ -44,14 +44,16 @@ class Avatars
 		$this->http = (!empty ($_SERVER['HTTPS']) ? 'https' : 'http') . '://';
 
 		// Get icon size from settings
-		$this->iconSize = ($setup->isMobile) ? 256 : $setup->iconSize;
+		$this->iconSize = ($setup->isMobile === true) ? 256 : $setup->iconSize;
 
 		// Default avatar
-		$this->avatar = $this->setup->httpImages . '/avatar.png';
+		$avatar = $this->setup->httpImages . '/avatar';
+		$extension = '.' . (($setup->isMobile === true) ? 'svg' : 'png');
+		$this->avatar = $avatar . $extension;
 
 		// If set to custom direct 404s to local avatar image
 		if ($this->setup->gravatarDefault === 'custom') {
-			$this->fallback = urlencode ($this->http . $this->setup->domain . $this->avatar);
+			$this->fallback = urlencode ($this->http . $this->setup->domain . $avatar . '.png');
 		} else {
 			// If not direct to a themed default
 			$this->fallback = $this->setup->gravatarDefault;

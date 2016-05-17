@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015 Jacob Barkdull
+// Copyright (C) 2015-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // I, Jacob Barkdull, hereby release this work into the public domain.
@@ -14,6 +14,7 @@
 // This applies worldwide. If this is not legally possible, I grant any
 // entity the right to use this work for any purpose, without any
 // conditions, unless such conditions are required by law.
+
 
 // Display source code
 if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
