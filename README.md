@@ -5,48 +5,34 @@ HashOver 2.0 (development)
 
 Notable Features
 ---
-<table cellpadding="2" cellspacing="2" width="100%">
-	<tbody>
-		<tr>
-			<td width="38%">
-				<ul>
-					<li>Restricted use of HTML tags</li>
-					<li>Display externally hosted images</li>
-					<li>Five comment sorting methods</li>
-					<li>Multiple languages</li>
-					<li>Spam filtering</li>
-					<li>IP address blocking</li>
-					<li>Notification emails</li>
-				</ul>
-			</td>
-			<td width="33%">
-				<ul>
-					<li>Threaded replies</li>
-					<li>Avatar icons</li>
-					<li>Comment editing &amp; deletion</li>
-					<li>Comment RSS feeds</li>
-					<li>Likes</li>
-					<li>Popular comments</li>
-					<li>Comment layout templates</li>
-				</ul>
-			</td>
-			<td valign="top" width="28%">
-				<ul>
-					<li>Administration</li>
-					<li>Automatic URL links</li>
-					<li>Customizable HTML</li>
-					<li>Customizable CSS</li>
-					<li>Referrer checking</li>
-					<li>Permalinks</li>
-				</ul>
-			</td>
-		</tr>
-	</tbody>
-</table><br>
+| General                    | Customization           | Advanced                         |
+| :------------------------- | :---------------------- | :------------------------------- |
+| Threaded replies           | Multiple themes         | Allows limited use of HTML       |
+| Comment editing & deletion | Customizable HTML       | Multiple comment sorting methods |
+| Likes & Dislikes           | Comment layout template | Spam filtering                   |
+| Popular comments section   | Customizable CSS        | Notification emails              |
+| Multiple languages         | File format plugins     | Comment RSS feeds                |
+| Automatic URL links        | Authentication plugins  | Referrer checking                |
+| Administration             |                         | Comment permalinks               |
+| Avatar icons               |                         | IP address blocking              |
+| Display remote images      |                         |                                  |
 
 Information and Documentation
 ---
 Forthcoming.
+
+Required libraries/compilation
+---
+Although most PHP installations include everything HashOver requires, depending on your setup you may need to install some libraries and/or ensure PHP was compiled with support for the following libraries.
+
+| Feature                               | Library name | Debian/Ubuntu package name |
+| :------------------------------------ | :----------- | :------------------------- |
+| XML file format support               | libxml       | php-xml                    |
+| Multi-byte character support          |              | php-mbstring               |
+| User information encryption           | libmcrypt    | php-mcrypt                 |
+|                                       |              |                            |
+| JSON file format support (optional)   |              | php-json                   |
+| SQLite file format support (optional) | libsqlite3-0 | php-sqlite3                |
 
 Important differences from version 1.0
 ---
@@ -90,6 +76,4 @@ When sending a "Pull Request", committing code, or otherwise sending, submitting
 
 If you only assign yourself as copyright holder, your contribution will be rejected.
 
-HashOver makes use of JavaScript, plain, standard, non-jQuery JavaScript. If your contribution improves or adds new functionality to the JavaScipt portions of HashOver, your contribution must also be written in plain, standard, non-jQuery JavaScript.
-
-Code contributions using or assuming the presence of jQuery, Underscore, AccDC, Ample SDK, AngularJS, CupQ, DHTMLX, Dojo, Echo3, Enyo, Ext JS, midori, MochiKit, MooTools, PhoneJS, Prototype, qooxdoo, Rialto Toolkit, Rico, script.aculo.us, Wakanda, Web Atoms JS, Webix, YUI, or any other abstraction layer, library, and/or framework will be rejected.
+HashOver makes use of JavaScript, plain, standard, non-jQuery JavaScript. If your contribution improves or adds new functionality to the JavaScipt portions of HashOver, your contribution must also be written in plain, standard, non-jQuery JavaScript. Contributions using or assuming the presence of jQuery, Underscore, AccDC, Ample SDK, AngularJS, CupQ, DHTMLX, Dojo, Echo3, Enyo, Ext JS, midori, MochiKit, MooTools, PhoneJS, Prototype, qooxdoo, Rialto Toolkit, Rico, script.aculo.us, Wakanda, Web Atoms JS, Webix, YUI, or any other abstraction layer, library, and/or framework will be rejected.
