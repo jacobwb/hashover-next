@@ -54,7 +54,7 @@ class Templater
 
 	protected function fromComment ($key)
 	{
-		if ($this->mode != 'php') {
+		if ($this->mode !== 'php') {
 			return '\' + (comment[\'' . $key . '\'] || \'\') + \'';
 		}
 
@@ -69,7 +69,7 @@ class Templater
 
 	protected function fromVariable ($key = '')
 	{
-		if ($this->mode != 'php') {
+		if ($this->mode !== 'php') {
 			return '\' + (template[\'' . $key . '\'] || \'\') + \'';
 		}
 
@@ -98,17 +98,14 @@ class Templater
 		switch ($var[1]) {
 			case 'hashover': {
 				return $this->fromVariable ($var[2]);
-				break;
 			}
 
 			case 'comment': {
 				return $this->fromComment ($var[2]);
-				break;
 			}
 
 			case 'placeholder': {
 				return $this->placeholder ($var[2]);
-				break;
 			}
 		}
 	}

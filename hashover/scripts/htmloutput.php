@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015 Jacob Barkdull
+// Copyright (C) 2015-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -294,6 +294,8 @@ class HTMLOutput
 			case 'a': {
 				$name_link = new HTMLTag ('a', false, false);
 				$name_link->createAttribute ('href', $this->injectVar ($href));
+				$name_link->createAttribute ('target', '_blank');
+				$name_link->createAttribute ('rel', 'noopener noreferrer');
 				break;
 			}
 
@@ -303,7 +305,6 @@ class HTMLOutput
 			}
 		}
 
-		$name_link->createAttribute ('target', '_blank');
 		$name_link->createAttribute ('class', 'hashover-name-' . $this->injectVar ($permalink));
 		$name_link->innerHTML ($this->injectVar ($name));
 
@@ -440,7 +441,7 @@ class HTMLOutput
 			$cancel_link->appendAttribute ('href', '?' . $this->setup->URLQueries, false);
 		}
 
-		// Continue with other attibutes
+		// Continue with other attributes
 		$cancel_link->createAttribute ('class', 'hashover-comment-' . $for);
 		$cancel_link->appendAttribute ('class', $class);
 		$cancel_link->createAttribute ('title', $this->locales->locale ('cancel', $this->addcslashes));
@@ -661,6 +662,7 @@ class HTMLOutput
 				$main_form_hyperlink = new HTMLTag ('a', false, false);
 				$main_form_hyperlink->createAttribute ('href', $user_website);
 				$main_form_hyperlink->createAttribute ('target', '_blank');
+				$main_form_hyperlink->createAttribute ('rel', 'noopener noreferrer');
 				$main_form_hyperlink->innerHTML ($user_name);
 
 				// Add username hyperlink to main form column spanner
@@ -704,7 +706,7 @@ class HTMLOutput
 			$fake_input->createAttribute ('value');
 
 			// Add fake summary input element to fake required fields
-			$required_fields->appendInnerHTML ($fake_input->asHTML (), false);
+			$required_fields->appendInnerHTML ($fake_input->asHTML ());
 		}
 
 		// Add fake input elements to form element
@@ -930,8 +932,9 @@ class HTMLOutput
 				array ('value' => 'ascending', 'innerHTML' => $this->locales->locale ('sort-ascending', $this->addcslashes)),
 				array ('value' => 'descending', 'innerHTML' => $this->locales->locale ('sort-descending', $this->addcslashes)),
 				array ('value' => 'by-date', 'innerHTML' => $this->locales->locale ('sort-by-date', $this->addcslashes)),
-				array ('value' => 'by-name', 'innerHTML' => $this->locales->locale ('sort-by-name', $this->addcslashes)),
-				array ('value' => 'by-likes', 'innerHTML' => $this->locales->locale ('sort-by-likes', $this->addcslashes))
+				array ('value' => 'by-likes', 'innerHTML' => $this->locales->locale ('sort-by-likes', $this->addcslashes)),
+				array ('value' => 'by-replies', 'innerHTML' => $this->locales->locale ('sort-by-replies', $this->addcslashes)),
+				array ('value' => 'by-name', 'innerHTML' => $this->locales->locale ('sort-by-name', $this->addcslashes))
 			);
 
 			// Create sort options for sort dropdown menu element
@@ -953,14 +956,16 @@ class HTMLOutput
 
 			// Create option group for threaded sort options
 			$threaded_optgroup = new HTMLTag ('optgroup');
-			$threaded_optgroup->createAttribute ('label', $this->locales->locale ('threaded', $this->addcslashes));
+			$threaded_optgroup->createAttribute ('label', $this->locales->locale ('sort-threads', $this->addcslashes));
 
 			// Array of select tag threaded sort options
 			$threaded_sort_options = array (
 				array ('value' => 'threaded-descending', 'innerHTML' => $this->locales->locale ('sort-descending', $this->addcslashes)),
 				array ('value' => 'threaded-by-date', 'innerHTML' => $this->locales->locale ('sort-by-date', $this->addcslashes)),
-				array ('value' => 'threaded-by-name', 'innerHTML' => $this->locales->locale ('sort-by-name', $this->addcslashes)),
-				array ('value' => 'threaded-by-likes', 'innerHTML' => $this->locales->locale ('sort-by-likes', $this->addcslashes))
+				array ('value' => 'threaded-by-likes', 'innerHTML' => $this->locales->locale ('sort-by-likes', $this->addcslashes)),
+				array ('value' => 'by-popularity', 'innerHTML' => $this->locales->locale ('sort-by-popularity', $this->addcslashes)),
+				array ('value' => 'by-discussion', 'innerHTML' => $this->locales->locale ('sort-by-discussion', $this->addcslashes)),
+				array ('value' => 'threaded-by-name', 'innerHTML' => $this->locales->locale ('sort-by-name', $this->addcslashes))
 			);
 
 			// Create sort options for sort dropdown menu element
@@ -1012,68 +1017,63 @@ class HTMLOutput
 		$end_links_wrapper->createAttribute ('id', 'hashover-end-links');
 
 		// Create link back to HashOver homepage (fixme! get a real page!)
-		$hashover_home_link = new HTMLTag ('a', false, false);
-		$hashover_home_link->createAttribute ('href', 'http://tildehash.com/?page=hashover');
-		$hashover_home_link->createAttribute ('id', 'hashover-home-link');
-		$hashover_home_link->createAttribute ('target', '_blank');
-		$hashover_home_link->innerHTML ('HashOver Comments');
+		$homepage_link = new HTMLTag ('a', false, false);
+		$homepage_link->createAttribute ('href', 'http://tildehash.com/?page=hashover');
+		$homepage_link->createAttribute ('id', 'hashover-home-link');
+		$homepage_link->createAttribute ('target', '_blank');
+		$homepage_link->innerHTML ($this->locales->locale ('hashover-comments', $this->addcslashes));
 
 		// Add link back to HashOver homepage to end links wrapper element
-		$end_links_wrapper->appendChild ($hashover_home_link);
-		$end_links_wrapper->appendInnerHTML (' &#8210;', false);
+		$end_links_wrapper->innerHTML ($homepage_link->asHTML () . ' &#8210;');
+
+		// End links array
+		$end_links = array ();
 
 		if ($this->readComments->totalCount > 1) {
 			if ($this->setup->displaysRSSLink === true
 			    and $this->setup->APIStatus ('rss') !== 'disabled')
 			{
 				// Create RSS feed link
-				$hashover_rss_link = new HTMLTag ('a', false, false);
-				$hashover_rss_link->createAttribute ('href', $this->setup->httpRoot . '/api/rss.php');
-				$hashover_rss_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
-				$hashover_rss_link->createAttribute ('id', 'hashover-rss-link');
-				$hashover_rss_link->createAttribute ('target', '_blank');
-				$hashover_rss_link->innerHTML ('RSS Feed');
-
-				// Add RSS feed link to end links wrapper element
-				$end_links_wrapper->appendChild ($hashover_rss_link);
-				$end_links_wrapper->appendInnerHTML (' &middot;', false);
+				$rss_link = new HTMLTag ('a', false, false);
+				$rss_link->createAttribute ('href', $this->setup->httpRoot . '/api/rss.php');
+				$rss_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
+				$rss_link->createAttribute ('id', 'hashover-rss-link');
+				$rss_link->createAttribute ('target', '_blank');
+				$rss_link->innerHTML ($this->locales->locale ('rss-feed', $this->addcslashes));
+				$end_links[] = $rss_link->asHTML ();
 			}
 		}
 
 		// Create link to HashOver source code (fixme! can be done better)
-		$hashover_source_link = new HTMLTag ('a', false, false);
-		$hashover_source_link->createAttribute ('href', $this->setup->httpScripts . '/hashover.php?source');
-		$hashover_source_link->createAttribute ('id', 'hashover-source-link');
-		$hashover_source_link->createAttribute ('rel', 'hashover-source');
-		$hashover_source_link->createAttribute ('target', '_blank');
-		$hashover_source_link->innerHTML ('Source Code');
+		$source_link = new HTMLTag ('a', false, false);
+		$source_link->createAttribute ('href', $this->setup->httpScripts . '/hashover.php?source');
+		$source_link->createAttribute ('id', 'hashover-source-link');
+		$source_link->createAttribute ('rel', 'hashover-source');
+		$source_link->createAttribute ('target', '_blank');
+		$source_link->innerHTML ($this->locales->locale ('source-code', $this->addcslashes));
+		$end_links[] = $source_link->asHTML ();
 
-		// Add link to HashOver source code to end links wrapper element
-		$end_links_wrapper->appendChild ($hashover_source_link);
-
-		// Create link to HashOver JavaScript source code
 		if ($this->setup->mode === 'javascript') {
-			// First add a middot character
-			$end_links_wrapper->appendInnerHTML (' &middot;', false);
-
-			$hashover_javascript_link = new HTMLTag ('a', false, false);
-			$hashover_javascript_link->createAttribute ('href', $this->setup->httpScripts . '/hashover-javascript.php');
-			$hashover_javascript_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
-			$hashover_javascript_link->appendAttribute ('href', '&title=' . $this->safeURLEncode ($this->setup->pageTitle), false);
+			// Create link to HashOver JavaScript source code
+			$javascript_link = new HTMLTag ('a', false, false);
+			$javascript_link->createAttribute ('href', $this->setup->httpScripts . '/hashover-javascript.php');
+			$javascript_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
+			$javascript_link->appendAttribute ('href', '&title=' . $this->safeURLEncode ($this->setup->pageTitle), false);
 
 			if (!empty ($_GET['hashover-script'])) {
 				$hashover_script = $this->misc->makeXSSsafe ($this->safeURLEncode ($_GET['hashover-script']));
-				$hashover_javascript_link->appendAttribute ('href', '&hashover-script=' . $hashover_script, false);
+				$javascript_link->appendAttribute ('href', '&hashover-script=' . $hashover_script, false);
 			}
 
-			$hashover_javascript_link->createAttribute ('id', 'hashover-javascript-link');
-			$hashover_javascript_link->createAttribute ('rel', 'hashover-javascript');
-			$hashover_javascript_link->createAttribute ('target', '_blank');
-			$hashover_javascript_link->innerHTML ('JavaScript');
-
-			// Add link to HashOver JavaScript source code to end links wrapper element
-			$end_links_wrapper->appendChild ($hashover_javascript_link);
+			$javascript_link->createAttribute ('id', 'hashover-javascript-link');
+			$javascript_link->createAttribute ('rel', 'hashover-javascript');
+			$javascript_link->createAttribute ('target', '_blank');
+			$javascript_link->innerHTML ('JavaScript');
+			$end_links[] = $javascript_link->asHTML ();
 		}
+
+		// Add end links to end links wrapper element
+		$end_links_wrapper->appendInnerHTML (implode (' &middot;' . PHP_EOL, $end_links));
 
 		// Add end links wrapper element to HashOver element
 		$hashover_element->appendChild ($end_links_wrapper);
@@ -1208,7 +1208,7 @@ class HTMLOutput
 				$reply_cancel_button->createAttribute ('id', 'hashover-reply-cancel-' . $this->injectVar ($permalink));
 			}
 
-			// Continue with other attibutes
+			// Continue with other attributes
 			$reply_cancel_button->appendAttribute ('href', '#' . $this->injectVar ($permalink), false);
 			$reply_cancel_button->createAttribute ('class', 'hashover-submit');
 			$reply_cancel_button->appendAttribute ('class', 'hashover-reply-cancel');
@@ -1227,7 +1227,7 @@ class HTMLOutput
 			$reply_post_button->createAttribute ('id', 'hashover-reply-post-' . $this->injectVar ($permalink));
 		}
 
-		// Continue with other attibutes
+		// Continue with other attributes
 		$reply_post_button->createAttribute ('class', 'hashover-submit');
 		$reply_post_button->appendAttribute ('class', 'hashover-reply-post');
 		$reply_post_button->createAttribute ('type', 'submit');
@@ -1364,7 +1364,7 @@ class HTMLOutput
 				$edit_cancel_button->createAttribute ('id', 'hashover-edit-cancel-' . $this->injectVar ($permalink));
 			}
 
-			// Continue with other attibutes
+			// Continue with other attributes
 			$edit_cancel_button->appendAttribute ('href', '#' . $this->injectVar ($permalink), false);
 			$edit_cancel_button->createAttribute ('class', 'hashover-submit');
 			$edit_cancel_button->appendAttribute ('class', 'hashover-edit-cancel');
@@ -1383,7 +1383,7 @@ class HTMLOutput
 			$save_edit_button->createAttribute ('id', 'hashover-edit-post-' . $this->injectVar ($permalink));
 		}
 
-		// Continue with other attibutes
+		// Continue with other attributes
 		$save_edit_button->createAttribute ('class', 'hashover-submit');
 		$save_edit_button->appendAttribute ('class', 'hashover-edit-post');
 		$save_edit_button->createAttribute ('type', 'submit');
@@ -1402,7 +1402,7 @@ class HTMLOutput
 			$delete_button->createAttribute ('id', 'hashover-edit-delete-' . $this->injectVar ($permalink));
 		}
 
-		// Continue with other attibutes
+		// Continue with other attributes
 		$delete_button->createAttribute ('class', 'hashover-submit');
 		$delete_button->appendAttribute ('class', 'hashover-edit-delete');
 		$delete_button->createAttribute ('type', 'submit');

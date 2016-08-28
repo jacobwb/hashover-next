@@ -131,6 +131,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	var URLRegex		= '((http|https|ftp):\/\/[a-z0-9-@:%_\+.~#?&\/=]+)';
 	var URLParts		= window.location.href.split ('#');
 	var elementsById	= {};
+	var trimRegex		= /^[\r\n]+|[\r\n]+$/g;
 	var streamMode		= <?php echo string_boolean ($hashover->setup->replyMode, 'stream'); ?>;
 	var streamDepth		= <?php echo $hashover->setup->streamDepth; ?>;
 	var doubleEOL		= serverEOL + serverEOL;
@@ -186,6 +187,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Some locales, stored in JavaScript to avoid using a lot of PHP tags
 	var locale = {
 		cancel:			'<?php echo $hashover->locales->locale['cancel']; ?>',
+		externalImageTip:	'<?php echo $hashover->locales->locale ('external-image-tip', true); ?>',
 		like:			['<?php echo implode ("', '", $hashover->locales->locale ('like', true)); ?>'],
 		liked:			'<?php echo $hashover->locales->locale ('liked', true); ?>',
 		unlike:			'<?php echo $hashover->locales->locale ('unlike', true); ?>',
@@ -255,7 +257,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Trims leading and trailing newlines from a string
 	function EOLTrim (string)
 	{
-		return string.replace (/^\r?\n+|\r?\n+$/g, '');
+		return string.replace (trimRegex, '');
 	}
 
 	// Trims whitespace from an HTML tag's inner HTML
@@ -616,7 +618,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 
 			// Add HTML anchor tag to URLs
-			var body = comment.body.replace (linkRegex, '<a href="$1" target="_blank">$1</a>');
+			var body = comment.body.replace (linkRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
 
 			// Replace [img] tags with external image placeholder if enabled
 			body = body.replace (imageRegex, function (fullURL, url) {
@@ -636,7 +638,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 					var imgTag = createElement ('img', {
 						className: 'hashover-embedded-image',
 						src: imagePlaceholder,
-						title: 'Click to view external image',
+						title: locale.externalImageTip,
 						alt: 'External Image',
 
 						dataset: {
@@ -649,7 +651,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				}
 
 <?php } ?>
-				return '<a href="' + url + '" target="_blank">' + url + '</a>';
+				return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a>';
 			});
 
 			// Parse markdown in comment
@@ -1566,8 +1568,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		// Reset source
 		image.src = image.dataset.placeholder;
 
-		// Reset title, TODO: Use locale
-		image.title = 'Click to view external image';
+		// Reset title
+		image.title = locale.externalImageTip;
 	}
 
 	// Onclick callback function for embedded images
@@ -1579,13 +1581,12 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			return false;
 		}
 
-		// Set title, TODO: Use locale
-		this.title = 'Loading...';
+		// Set title
+		this.title = '<?php echo $hashover->locales->locale ('loading', true); ?>';
 
 		// Change title and remove load event handler once image is loaded
 		this.onload = function () {
-			// TODO: Use locale
-			this.title = 'Click to close';
+			this.title = '<?php echo $hashover->locales->locale ('click-to-close', true); ?>';
 			this.onload = null;
 		};
 
@@ -1840,6 +1841,21 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var tmpArray;
 		var sortArray;
 
+		function replyPropertySum (comment, callback)
+		{
+			var sum = 0;
+
+			if (comment.replies !== undefined) {
+				for (var i = 0, il = comment.replies.length; i < il; i++) {
+					sum += replyPropertySum (comment.replies[i], callback);
+				}
+			}
+
+			sum += callback (comment);
+
+			return sum;
+		}
+
 		// Sort methods
 		switch (method) {
 			case 'descending': {
@@ -1873,11 +1889,77 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				break;
 			}
 
+			case 'by-replies': {
+				tmpArray = cloneObject (PHPContent.comments);
+
+				sortArray = tmpArray.sort (function (a, b) {
+					var ac = (!!a.replies) ? a.replies.length : 0;
+					var bc = (!!b.replies) ? b.replies.length : 0;
+
+					return bc - ac;
+				});
+
+				break;
+			}
+
+			case 'by-discussion': {
+				tmpArray = cloneObject (PHPContent.comments);
+
+				function replyCounter (comment)
+				{
+					return (comment.replies) ? comment.replies.length : 0;
+				}
+
+				sortArray = tmpArray.sort (function (a, b) {
+					var replyCountA = replyPropertySum (a, replyCounter);
+					var replyCountB = replyPropertySum (b, replyCounter);
+
+					return replyCountB - replyCountA;
+				});
+
+				break;
+			}
+
+			case 'by-popularity': {
+				tmpArray = cloneObject (PHPContent.comments);
+
+				function netLikes (comment)
+				{
+					var likes = comment.likes || 0;
+					var dislikes = comment.dislikes || 0;
+
+					return likes - dislikes;
+				}
+
+				sortArray = tmpArray.sort (function (a, b) {
+					var likeCountA = replyPropertySum (a, netLikes);
+					var likeCountB = replyPropertySum (b, netLikes);
+
+					return likeCountB - likeCountA;
+				});
+
+				break;
+			}
+
 			case 'by-name': {
 				tmpArray = getAllComments (PHPContent.comments);
 
 				sortArray = tmpArray.sort (function (a, b) {
-					return (a.name > b.name);
+					var nameA = (a.name || defaultName).toLowerCase ();
+					var nameB = (b.name || defaultName).toLowerCase ();
+
+					nameA = (nameA.charAt (0) === '@') ? nameA.slice (1) : nameA;
+					nameB = (nameB.charAt (0) === '@') ? nameB.slice (1) : nameB;
+
+					if (nameA > nameB) {
+						return 1;
+					}
+
+					if (nameA < nameB) {
+						return -1;
+					}
+
+					return 0;
 				});
 
 				break;
@@ -1922,7 +2004,21 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				tmpArray = cloneObject (PHPContent.comments);
 
 				sortArray = tmpArray.sort (function (a, b) {
-					return (a.name > b.name);
+					var nameA = (a.name || defaultName).toLowerCase ();
+					var nameB = (b.name || defaultName).toLowerCase ();
+
+					nameA = (nameA.charAt (0) === '@') ? nameA.slice (1) : nameA;
+					nameB = (nameB.charAt (0) === '@') ? nameB.slice (1) : nameB;
+
+					if (nameA > nameB) {
+						return 1;
+					}
+
+					if (nameA < nameB) {
+						return -1;
+					}
+
+					return 0;
 				});
 
 				break;

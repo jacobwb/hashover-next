@@ -1,3 +1,49 @@
+Changes by Jacob Barkdull 2016-08-28
+--------------------------------------------------------------------------------
+* Added 3 new comment sorting methods.
+
+	- "By replies" sorts comments by the number of replies each comment has,
+	  in ascending order. Meaning the more replies a comment has, the more
+	  towards the top the comment appears.
+
+	- "By discussion" sorts comments by the total number of replies they
+	  have including replies to replies. Meaning the more discussion has
+	  happened, the more towards the top the comment appears.
+
+	- "By popularity" sorts threads by the sum of likes minus the sum of
+	  dislikes for each comment in the thread. Meaning the more likes a
+	  comment has, and the more likes its replies have, the more towards
+	  the top the entire comment thread appears.
+
+
+* Added protection against `target="_blank"` vulnerability
+
+	- Hyperlinks that open in a new tab/window, especially those linking to
+	  external websites, now use a `rel="noopener noreferrer"` attribute to
+	  help prevent potential phishing attacks.
+
+
+* hashover/scripts/htmltag.php
+
+	- HTMLTag children are now stored as object references instead of as
+	  strings, this allows tag attributes and inner HTML to be set and/or
+	  changed after the children have been appended to their parent tags.
+
+
+* hashover/scripts/javascript-mode.php
+
+	- Fixed: `EOLTrim ()` function only trimming a single carriage return
+	  from beginning and ending of strings.
+
+
+* Added: Dutch locale.
+* Fixed: External image tooltips weren't localized.
+* Fixed: The HashOver homepage, RSS, and source code links weren't localized.
+* Fixed: Comments with Twitter @handle names sorted higher than normal names.
+* Fixed: Anonymous comments sorted by name were incorrectly ordered.
+* Minor code improvements.
+
+
 Changes by Jacob Barkdull 2016-05-17
 --------------------------------------------------------------------------------
 * Fixed: Non-Gravatar default avatars using PNG image on mobile devices.

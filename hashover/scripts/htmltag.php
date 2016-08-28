@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015 Jacob Barkdull
+// Copyright (C) 2015-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -33,30 +33,74 @@ class HTMLTag
 	protected $isSingleton;
 	protected $usesPrettyPrint;
 	protected $attributes = array ();
-
-	public $innerHTML = '';
-	public $errors = array ();
+	protected $children = array ();
 
 	public function __construct ($tag = '', $singleton = false, $pretty = true)
 	{
 		if (!is_string ($tag) or !$this->isWord ($tag)) {
 			$this->throwError ('Tag must have a single word String value.');
-			return false;
+			return;
 		}
 
 		if (!is_bool ($singleton)) {
 			$this->throwError ('Singleton must be of type Boolean.');
-			return false;
+			return;
 		}
 
 		if (!is_bool ($pretty)) {
 			$this->throwError ('Pretty Print must be of type Boolean.');
-			return false;
+			return;
 		}
 
 		$this->tag = $tag;
 		$this->isSingleton = $singleton;
 		$this->usesPrettyPrint = $pretty;
+	}
+
+	public function __get ($name)
+	{
+		switch ($name) {
+			case 'innerHTML': {
+				return $this->getInnerHTML ();
+			}
+		}
+	}
+
+	protected function isWord ($string)
+	{
+		if (empty ($string)) {
+			return false;
+		}
+
+		if (!ctype_alnum ($string)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	protected function throwError ($error)
+	{
+		$backtrace = debug_backtrace ();
+		$line = $backtrace[1]['line'];
+
+		throw new Exception ('Error on line ' . $line . ': ' . $error);
+	}
+
+	protected function getInnerHTML ()
+	{
+		$inner_html = array ();
+
+		foreach ($this->children as $child) {
+			if (is_object ($child)) {
+				$inner_html[] = $child->asHTML ();
+				continue;
+			}
+
+			$inner_html[] = $child;
+		}
+
+		return implode (PHP_EOL, $inner_html);
 	}
 
 	public function createAttribute ($name = '', $value = '')
@@ -102,13 +146,13 @@ class HTMLTag
 		}
 
 		if (!empty ($html)) {
-			$this->innerHTML = $html;
+			$this->children = array ($html);
 		}
 
 		return true;
 	}
 
-	public function appendInnerHTML ($html = '', $eol = true)
+	public function appendInnerHTML ($html = '')
 	{
 		if ($this->isSingleton === true) {
 			$this->throwError ('Singleton tags do not have innerHTML.');
@@ -116,11 +160,7 @@ class HTMLTag
 		}
 
 		if (!empty ($html)) {
-			if ($eol === true) {
-				$this->innerHTML .= PHP_EOL;
-			}
-
-			$this->innerHTML .= $html;
+			$this->children[] = $html;
 		}
 
 		return true;
@@ -129,7 +169,7 @@ class HTMLTag
 	public function appendChild (HTMLTag $object)
 	{
 		if ($this->isSingleton === true) {
-			$this->throwError ('Singleton tags do not have innerHTML.');
+			$this->throwError ('Singleton tags do not have children.');
 			return false;
 		}
 
@@ -139,12 +179,7 @@ class HTMLTag
 			return false;
 		}
 
-		if (!empty ($this->innerHTML)) {
-			$this->innerHTML .= PHP_EOL;
-		}
-
-		$this->innerHTML .= $object->asHTML ();
-
+		$this->children[] = $object;
 		return true;
 	}
 
@@ -163,43 +198,22 @@ class HTMLTag
 
 		$tag .= '>';
 
-		if ($this->isSingleton === true) {
-			return $tag;
-		}
+		if ($this->isSingleton === false) {
+			if (!empty ($this->children)) {
+				$inner_html = $this->getInnerHTML ();
 
-		if (!empty ($this->innerHTML)) {
-			if ($this->usesPrettyPrint === true) {
-				$tag .= PHP_EOL . "\t";
-				$tag .= str_replace (PHP_EOL, PHP_EOL . "\t", $this->innerHTML);
-				$tag .= PHP_EOL;
-			} else {
-				$tag .= $this->innerHTML;
+				if ($this->usesPrettyPrint === true) {
+					$tag .= PHP_EOL . "\t";
+					$tag .= str_replace (PHP_EOL, PHP_EOL . "\t", $inner_html);
+					$tag .= PHP_EOL;
+				} else {
+					$tag .= $inner_html;
+				}
 			}
-		}
 
-		$tag .= '</' . $this->tag . '>';
+			$tag .= '</' . $this->tag . '>';
+		}
 
 		return $tag;
-	}
-
-	protected function isWord ($string)
-	{
-		if (empty ($string)) {
-			return false;
-		}
-
-		if (!ctype_alnum ($string)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	protected function throwError ($error)
-	{
-		$backtrace = debug_backtrace ();
-		$line = $backtrace[1]['line'];
-
-		throw new Exception ('Error on line ' . $line . ': ' . $error);
 	}
 }

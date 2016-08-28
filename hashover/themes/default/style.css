@@ -197,7 +197,7 @@ Copyright (C) 2016 Jacob Barkdull
 #hashover .hashover-avatar *,
 #hashover .hashover-inputs input,
 #hashover .hashover-comment form .hashover-balloon,
-#hashover .hashover-comment form textarea,
+#hashover .hashover-comment textarea,
 #hashover #hashover-form,
 #hashover .hashover-comment,
 #hashover .hashover-reply-form,
@@ -263,12 +263,8 @@ Copyright (C) 2016 Jacob Barkdull
 #hashover input:hover,
 #hashover .hashover-submit:hover {
 	background-color: #FCFCFC;
-	border-color: #222222;
+	border-color: #606060;
 	text-decoration: none;
-}
-
-#hashover textarea:hover {
-	border-color: #909090;
 }
 
 #hashover textarea:focus,
