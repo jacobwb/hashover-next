@@ -128,7 +128,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	var execStart		= Date.now ();
 	var serverEOL		= '<?php echo str_replace (array ("\r", "\n"), array ('\r', '\n'), PHP_EOL); ?>';
 	var httpRoot		= '<?php echo $hashover->setup->httpRoot; ?>';
-	var URLRegex		= '((ftp|http|https):\/\/[a-z0-9-@:%_\+.~#?&\/=]+)';
+	var URLRegex		= '((http|https|ftp):\/\/[a-z0-9-@:%_\+.~#?&\/=]+)';
 	var URLParts		= window.location.href.split ('#');
 	var elementsById	= {};
 	var streamMode		= <?php echo string_boolean ($hashover->setup->replyMode, 'stream'); ?>;
@@ -140,6 +140,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	var inlineCodeMarker	= /CODE_INLINE\[([0-9]+)\]/g;
 	var collapsedCount	= 0;
 	var collapseLimit	= <?php echo $hashover->setup->collapseLimit; ?>;
+	var defaultName		= '<?php echo $hashover->setup->defaultName; ?>';
 	var allowsDislikes	= <?php echo string_true ($hashover->setup->allowsDislikes); ?>;
 	var linkRegex		= new RegExp (URLRegex + '( {0,1})', 'ig');
 	var imageRegex		= new RegExp ('\\[img\\]<a.*?>' + URLRegex + '</a>\\[/img\\]', 'ig');
@@ -470,7 +471,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		template.avatar = '<?php echo $hashover->html->userAvatar ('permatext', 'permalink', 'comment.avatar'); ?>';
 
 		if (comment.notice === undefined) {
-			var name = comment.name || '<?php echo $hashover->setup->defaultName; ?>';
+			var name = comment.name || defaultName;
 			var website = comment.website;
 			var isTwitter = false;
 
@@ -506,7 +507,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			// Construct thread hyperlink
 			if (isReply === true) {
 				var parentThread = parent.permalink;
-				var parentName = parent.name || '<?php echo $hashover->setup->defaultName; ?>';
+				var parentName = parent.name || defaultName;
 
 				// Add thread parent hyperlink to template
 				template['thread-link'] = '<?php echo $hashover->html->threadLink ('permalink', 'parentThread', 'parentName'); ?>';
@@ -1833,107 +1834,108 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		}
 	}
 
-	// Sort methods
-	var sortMethods = {
-		ascending: function () {
-			parseAll (PHPContent.comments, sortDiv, false, false, true, 'ascending');
-		},
+	// Comment sorting
+	function sortComments (method)
+	{
+		var tmpArray;
+		var sortArray;
 
-		descending: function () {
-			var tmpArray = getAllComments (PHPContent.comments);
+		// Sort methods
+		switch (method) {
+			case 'descending': {
+				tmpArray = getAllComments (PHPContent.comments);
+				sortArray = tmpArray.reverse ();
+				break;
+			}
 
-			var tmpSortArray = Object.keys (tmpArray).map (function (key) {
-				return tmpArray[key];
-			});
+			case 'by-date': {
+				sortArray = getAllComments (PHPContent.comments).sort (function (a, b) {
+					if (a['sort-date'] === b['sort-date']) {
+						return 1;
+					}
 
-			parseAll (tmpSortArray.reverse (), sortDiv, false, false, true, 'descending');
-		},
+					return b['sort-date'] - a['sort-date'];
+				});
 
-		byName: function () {
-			var tmpArray = getAllComments (PHPContent.comments);
+				break;
+			}
 
-			var tmpSortArray = Object.keys (tmpArray).map (function (key) {
-				return tmpArray[key];
-			});
+			case 'by-likes': {
+				sortArray = getAllComments (PHPContent.comments).sort (function (a, b) {
+					a.likes = a.likes || 0;
+					b.likes = b.likes || 0;
+					a.dislikes = a.dislikes || 0;
+					b.dislikes = b.dislikes || 0;
 
-			tmpSortArray = tmpSortArray.sort (function (a, b) {
-				return (a.name > b.name);
-			});
+					return (b.likes - b.dislikes) - (a.likes - a.dislikes);
+				});
 
-			parseAll (tmpSortArray, sortDiv, false, false, true, 'byName');
-		},
+				break;
+			}
 
-		byDate: function () {
-			var tmpSortArray = getAllComments (PHPContent.comments).sort (function (a, b) {
-				if (a['sort-date'] === b['sort-date']) {
-					return 1;
-				}
+			case 'by-name': {
+				tmpArray = getAllComments (PHPContent.comments);
 
-				return b['sort-date'] - a['sort-date'];
-			});
+				sortArray = tmpArray.sort (function (a, b) {
+					return (a.name > b.name);
+				});
 
-			parseAll (tmpSortArray, sortDiv, false, false, true, 'byDate');
-		},
+				break;
+			}
 
-		byLikes: function () {
-			var tmpSortArray = getAllComments (PHPContent.comments).sort (function (a, b) {
-				a.likes = a.likes || 0;
-				b.likes = b.likes || 0;
-				a.dislikes = a.dislikes || 0;
-				b.dislikes = b.dislikes || 0;
+			case 'threaded-descending': {
+				tmpArray = cloneObject (PHPContent.comments);
+				sortArray = tmpArray.reverse ();
+				break;
+			}
 
-				return (b.likes - b.dislikes) - (a.likes - a.dislikes);
-			});
+			case 'threaded-by-date': {
+				tmpArray = cloneObject (PHPContent.comments);
 
-			parseAll (tmpSortArray, sortDiv, false, false, true, 'byLikes');
-		},
+				sortArray = tmpArray.sort (function (a, b) {
+					if (a['sort-date'] === b['sort-date']) {
+						return 1;
+					}
 
-		threadedDescending: function () {
-			var tmpSortArray = cloneObject (PHPContent.comments);
-			    tmpSortArray = tmpSortArray.reverse ();
+					return b['sort-date'] - a['sort-date'];
+				});
 
-			parseAll (tmpSortArray, sortDiv, false, false, true, 'threadedDescending');
-		},
+				break;
+			}
 
-		threadedByName: function () {
-			var tmpSortArray = cloneObject (PHPContent.comments);
+			case 'threaded-by-likes': {
+				tmpArray = cloneObject (PHPContent.comments);
 
-			tmpSortArray = tmpSortArray.sort (function (a, b) {
-				return (a.name > b.name);
-			});
+				sortArray = tmpArray.sort (function (a, b) {
+					a.likes = a.likes || 0;
+					b.likes = b.likes || 0;
+					a.dislikes = a.dislikes || 0;
+					b.dislikes = b.dislikes || 0;
 
-			parseAll (tmpSortArray, sortDiv, false, false, true, 'threadedByName');
-		},
+					return (b.likes - b.dislikes) - (a.likes - a.dislikes);
+				});
 
-		threadedByDate: function () {
-			var tmpSortArray = cloneObject (PHPContent.comments);
+				break;
+			}
 
-			tmpSortArray = tmpSortArray.sort (function (a, b) {
-				if (a['sort-date'] === b['sort-date']) {
-					return 1;
-				}
+			case 'threaded-by-name': {
+				tmpArray = cloneObject (PHPContent.comments);
 
-				return b['sort-date'] - a['sort-date'];
-			});
+				sortArray = tmpArray.sort (function (a, b) {
+					return (a.name > b.name);
+				});
 
-			parseAll (tmpSortArray, sortDiv, false, false, true, 'threadedByDate');
-		},
+				break;
+			}
 
-		threadedByLikes: function () {
-			var tmpSortArray = cloneObject (PHPContent.comments);
-
-			tmpSortArray = tmpSortArray.sort (function (a, b) {
-				a.likes = a.likes || 0;
-				b.likes = b.likes || 0;
-				a.dislikes = a.dislikes || 0;
-				b.dislikes = b.dislikes || 0;
-
-				return (b.likes - b.dislikes) - (a.likes - a.dislikes);
-			});
-
-			parseAll (tmpSortArray, sortDiv, false, false, true, 'threadedByLikes');
+			default: {
+				sortArray = PHPContent.comments;
+				break;
+			}
 		}
-	};
+
+		parseAll (sortArray, sortDiv, false, false, true, method);
+	}
 
 <?php if ($hashover->setup->appendsCSS === true) { ?>
 	// Check if comment theme stylesheet is already in page head
@@ -2106,11 +2108,11 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 			showMoreComments (sortSelectDiv, function () {
 				sortDiv.textContent = '';
-				sortMethods[sortSelect.value] ();
+				sortComments (sortSelect.value);
 			});
 <?php } else { ?>
 			sortDiv.textContent = '';
-			sortMethods[sortSelect.value] ();
+			sortComments (sortSelect.value);
 <?php } ?>
 		};
 	});

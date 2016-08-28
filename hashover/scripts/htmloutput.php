@@ -927,11 +927,11 @@ class HTMLOutput
 
 			// Array of select tag sort options
 			$sort_options = array (
-				array ('value' => 'ascending', 'innerHTML' => $this->locales->locale ('sort-ascend', $this->addcslashes)),
-				array ('value' => 'descending', 'innerHTML' => $this->locales->locale ('sort-descend', $this->addcslashes)),
-				array ('value' => 'byDate', 'innerHTML' => $this->locales->locale ('sort-bydate', $this->addcslashes)),
-				array ('value' => 'byName', 'innerHTML' => $this->locales->locale ('sort-byname', $this->addcslashes)),
-				array ('value' => 'byLikes', 'innerHTML' => $this->locales->locale ('sort-bylikes', $this->addcslashes))
+				array ('value' => 'ascending', 'innerHTML' => $this->locales->locale ('sort-ascending', $this->addcslashes)),
+				array ('value' => 'descending', 'innerHTML' => $this->locales->locale ('sort-descending', $this->addcslashes)),
+				array ('value' => 'by-date', 'innerHTML' => $this->locales->locale ('sort-by-date', $this->addcslashes)),
+				array ('value' => 'by-name', 'innerHTML' => $this->locales->locale ('sort-by-name', $this->addcslashes)),
+				array ('value' => 'by-likes', 'innerHTML' => $this->locales->locale ('sort-by-likes', $this->addcslashes))
 			);
 
 			// Create sort options for sort dropdown menu element
@@ -957,10 +957,10 @@ class HTMLOutput
 
 			// Array of select tag threaded sort options
 			$threaded_sort_options = array (
-				array ('value' => 'threadedDescending', 'innerHTML' => $this->locales->locale ('sort-descend', $this->addcslashes)),
-				array ('value' => 'threadedByDate', 'innerHTML' => $this->locales->locale ('sort-bydate', $this->addcslashes)),
-				array ('value' => 'threadedByName', 'innerHTML' => $this->locales->locale ('sort-byname', $this->addcslashes)),
-				array ('value' => 'threadedByLikes', 'innerHTML' => $this->locales->locale ('sort-bylikes', $this->addcslashes))
+				array ('value' => 'threaded-descending', 'innerHTML' => $this->locales->locale ('sort-descending', $this->addcslashes)),
+				array ('value' => 'threaded-by-date', 'innerHTML' => $this->locales->locale ('sort-by-date', $this->addcslashes)),
+				array ('value' => 'threaded-by-name', 'innerHTML' => $this->locales->locale ('sort-by-name', $this->addcslashes)),
+				array ('value' => 'threaded-by-likes', 'innerHTML' => $this->locales->locale ('sort-by-likes', $this->addcslashes))
 			);
 
 			// Create sort options for sort dropdown menu element
