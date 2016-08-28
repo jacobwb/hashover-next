@@ -618,7 +618,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 
 			// Add HTML anchor tag to URLs
-			var body = comment.body.replace (linkRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+			var body = comment.body.replace (linkRegex, '<a href="$1" rel="noopener noreferrer" target="_blank">$1</a>');
 
 			// Replace [img] tags with external image placeholder if enabled
 			body = body.replace (imageRegex, function (fullURL, url) {
@@ -651,7 +651,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				}
 
 <?php } ?>
-				return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a>';
+				return '<a href="' + url + '" rel="noopener noreferrer" target="_blank">' + url + '</a>';
 			});
 
 			// Parse markdown in comment

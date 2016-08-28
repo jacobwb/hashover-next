@@ -294,8 +294,8 @@ class HTMLOutput
 			case 'a': {
 				$name_link = new HTMLTag ('a', false, false);
 				$name_link->createAttribute ('href', $this->injectVar ($href));
-				$name_link->createAttribute ('target', '_blank');
 				$name_link->createAttribute ('rel', 'noopener noreferrer');
+				$name_link->createAttribute ('target', '_blank');
 				break;
 			}
 
@@ -661,8 +661,8 @@ class HTMLOutput
 				// Create link to user's website
 				$main_form_hyperlink = new HTMLTag ('a', false, false);
 				$main_form_hyperlink->createAttribute ('href', $user_website);
-				$main_form_hyperlink->createAttribute ('target', '_blank');
 				$main_form_hyperlink->createAttribute ('rel', 'noopener noreferrer');
+				$main_form_hyperlink->createAttribute ('target', '_blank');
 				$main_form_hyperlink->innerHTML ($user_name);
 
 				// Add username hyperlink to main form column spanner
