@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015 Jacob Barkdull
+// Copyright (C) 2015-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
