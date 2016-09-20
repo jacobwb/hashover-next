@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015 Jacob Barkdull
+// Copyright (C) 2015-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -208,13 +208,7 @@ class HashOver
 			}
 
 			switch ($status) {
-				// Parse as deletion note
-				case 'deleted': {
-					$level = $this->commentParser->notice ('deleted', $key, $last_date);
-					break;
-				}
-
-				// Parse as pending note
+				// Parse as pending notice, viewable and editable by owner and admin
 				case 'pending': {
 					$parsed = $this->commentParser->parse ($comment, $key, $key_parts, false, false);
 
@@ -223,15 +217,39 @@ class HashOver
 						break;
 					}
 
-					$parsed['date'] .= ' (' . strtolower ($this->locales->locale['comment-pending']) . ')';
+					$last_date = $parsed['sort-date'];
 					$level = $parsed;
-					$last_date = $level['sort-date'];
 
 					break;
 				}
 
-				// Parse comment normally
+				// Parse as deletion notice, viewable and editable by admin
+				case 'deleted': {
+					if ($this->login->userIsAdmin === true) {
+						$level = $this->commentParser->parse ($comment, $key, $key_parts, false, false);
+						$last_date = $level['sort-date'];
+					} else {
+						$level = $this->commentParser->notice ('deleted', $key, $last_date);
+					}
+
+					break;
+				}
+
+				// Parse as deletion notice, non-existent comment
+				case 'missing': {
+					$level = $this->commentParser->notice ('deleted', $key, $last_date);
+					break;
+				}
+
+				// Parse as an unknown/error notice
+				case 'read-error': {
+					$level = $this->commentParser->notice ('error', $key, $last_date);
+					break;
+				}
+
+				// Otherwise parse comment normally
 				default: {
+					$comment['status'] = 'approved';
 					$level = $this->commentParser->parse ($comment, $key, $key_parts);
 					$last_date = $level['sort-date'];
 

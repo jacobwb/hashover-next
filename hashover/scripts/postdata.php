@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015 Jacob Barkdull
+// Copyright (C) 2015-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -29,13 +29,26 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class PostData
 {
-	public $postData = array ();
+	public $postData = array (
+		'status' => '',
+		'name' => '',
+		'password' => '',
+		'email' => '',
+		'website' => '',
+		'comment' => ''
+	);
+
 	public $file;
 	public $replyTo;
 	public $viaAJAX = false;
 
 	public function __construct ()
 	{
+		// Set status
+		if (isset ($_POST['status'])) {
+			$this->postData['status'] = $this->ForceUTF8 ($_POST['status']);
+		}
+
 		// Set name
 		if (isset ($_POST['name'])) {
 			$this->postData['name'] = $this->ForceUTF8 ($_POST['name']);

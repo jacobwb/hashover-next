@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -95,7 +95,7 @@ class CommentParser
 			$comment_date = date ('m/d/Y \a\t ' . $this->ampm, $micro_date);
 		}
 
-		// Add name to comment data
+		// Add name to output
 		if (!empty ($comment['name'])) {
 			$output['name'] = $comment['name'];
 		}
@@ -111,7 +111,7 @@ class CommentParser
 			}
 		}
 
-		// Add website URL to comment data
+		// Add website URL to output
 		if (!empty ($comment['website'])) {
 			$output['website'] = $comment['website'];
 		}
@@ -123,7 +123,7 @@ class CommentParser
 			}
 		}
 
-		// Add number of likes to comment data
+		// Add number of likes to output
 		if (!empty ($comment['likes'])) {
 			$output['likes'] =(int) $comment['likes'];
 
@@ -131,7 +131,7 @@ class CommentParser
 			$popularity += $output['likes'];
 		}
 
-		// If enabled, add number of dislikes to comment data
+		// If enabled, add number of dislikes to output
 		if ($this->setup->allowsDislikes === true) {
 			if (!empty ($comment['dislikes'])) {
 				$output['dislikes'] =(int) $comment['dislikes'];
@@ -186,8 +186,27 @@ class CommentParser
 			}
 		}
 
+		// Add comment date to output
 		$output['date'] =(string) $comment_date;
+
+		if (!empty ($comment['status'])) {
+			$status = $comment['status'];
+
+			// Check if comment has a status other than approved
+			if ($status !== 'approved') {
+				// If so, add comment status to output
+				$output['status'] =(string) $status;
+
+				// And append status to date
+				$status_locale = mb_strtolower ($this->locales->locale[$status . '-name']);
+				$output['date'] .= ' (' . $status_locale . ')';
+			}
+		}
+
+		// Add comment date as Unix timestamp to output
 		$output['sort-date'] =(int) $micro_date;
+
+		// Add comment body to output
 		$output['body'] =(string) $comment['body'];
 
 		return $output;
@@ -197,11 +216,11 @@ class CommentParser
 	public function notice ($type, $key, &$last_date)
 	{
 		$output = array ();
-		$output['title'] = $this->locales->locale['comment-' . $type];
+		$output['title'] = $this->locales->locale[$type . '-name'];
 		$last_date++;
 
 		if ($this->setup->iconMode !== 'none') {
-			$output['avatar']  = $this->setup->httpImages . '/' . $type . '-icon.' . $this->setup->imageFormat;
+			$output['avatar'] = $this->setup->httpImages . '/' . $type . '-icon.' . $this->setup->imageFormat;
 		}
 
 		$output['permalink'] = 'c' . str_replace ('-', 'r', $key);

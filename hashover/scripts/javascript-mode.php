@@ -161,6 +161,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	var AJAXPost		= null;
 	var AJAXEdit		= null;
 	var httpScripts		= '<?php echo $hashover->setup->httpScripts; ?>';
+	var commentStatuses	= ['approved', 'pending', 'deleted'];
 	var moreLink		= null;
 	var sortDiv		= null;
 	var moreDiv		= null;
@@ -921,8 +922,17 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Handles display of various warnings when user attempts to post or login
 	function emailValidator (form, subscribe, permalink, isReply, isEdit)
 	{
+		if (form.email === undefined) {
+			return true;
+		}
+
 		// Whether the e-mail form is empty
 		if (form.email.value === '') {
+			// Return true if user unchecked the subscribe checkbox
+			if (getElement (subscribe, true).checked === false) {
+				return true;
+			}
+
 			// If so, warn the user that they won't receive reply notifications
 			if (confirm ('<?php echo $hashover->locales->locale ('no-email-warning', true); ?>') === false) {
 				form.email.focus ();
@@ -934,15 +944,15 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 			// If not, check if the e-mail is valid
 			if (emailRegex.test (form.email.value) === false) {
-				message = '<?php echo $hashover->locales->locale ('invalid-email', true); ?>';
-				showMessage (message, permalink, true, isReply, isEdit);
-				form.email.focus ();
-
 				// Return true if user unchecked the subscribe checkbox
 				if (getElement (subscribe, true).checked === false) {
 					form.email.value = '';
 					return true;
 				}
+
+				message = '<?php echo $hashover->locales->locale ('invalid-email', true); ?>';
+				showMessage (message, permalink, true, isReply, isEdit);
+				form.email.focus ();
 
 				return false;
 			}
@@ -1000,14 +1010,11 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 					// If not, add a class indicating a failed post
 					addClass (form[field], 'hashover-emphasized-input');
 
-					// Error message to display to the user
-					fieldNeeded = fieldNeeded.replace ('%s', locale[field].toLowerCase ());
-
 					// Focus the input
 					form[field].focus ();
 
-					// Return message in proper case
-					return fieldNeeded[0].toUpperCase () + fieldNeeded.slice (1);
+					// Return error message to display to the user
+					return fieldNeeded.replace ('%s', locale[field]);
 				}
 
 				// Remove class indicating a failed post
@@ -1107,7 +1114,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		queries.push ('ajax=yes');
 
 		// Handle AJAX request return data
-		httpRequest.onload = function () {
+		httpRequest.onreadystatechange = function () {
 			// Do nothing if request wasn't successful in a meaningful way
 			if (this.readyState !== 4 || this.status !== 200) {
 				return;
@@ -1391,6 +1398,20 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var editForm = getElement ('hashover-placeholder-edit-form-' + permalink, true);
 		    editForm.appendChild (form);
 
+		// Set status dropdown menu option to comment status
+		ifElement ('hashover-edit-status-' + permalink, function (status) {
+			if (comment.status !== undefined) {
+				status.selectedIndex = commentStatuses.indexOf (comment.status);
+			}
+		});
+
+		// Blank out password field
+		setTimeout (function () {
+			if (form.password !== undefined) {
+				form.password.value = '';
+			}
+		}, 100);
+
 		// Uncheck subscribe checkbox if user isn't subscribed
 		if (comment.subscribed !== true) {
 			getElement ('hashover-subscribe-' + permalink, true).checked = null;
@@ -1525,7 +1546,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var queries = ['url=' + encodeURIComponent (pageURL), 'start=' + collapseLimit, 'ajax=yes'];
 
 		// Handle AJAX request return data
-		httpRequest.onload = function () {
+		httpRequest.onreadystatechange = function () {
 			// Do nothing if request wasn't successful in a meaningful way
 			if (this.readyState !== 4 || this.status !== 200) {
 				return;
@@ -1751,7 +1772,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var queries;
 
 		// When loaded update like count
-		like.onload = function () {
+		like.onreadystatechange = function () {
 			var likes = 0;
 
 			// Get number of likes

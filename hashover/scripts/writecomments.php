@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -123,7 +123,7 @@ class WriteComments extends PostData
 	);
 
 	// HTML tags to automatically close
-	public $closeTags = array (
+	protected $closeTags = array (
 		'b',
 		'i',
 		'u',
@@ -135,17 +135,28 @@ class WriteComments extends PostData
 		'ol'
 	);
 
-	// What to update when editing a comment
-	public $editUpdateFields = array (
+	// Unprotected fields to update when editing a comment
+	protected $editableFields = array (
 		'body',
 		'name',
+		'notifications',
+		'website'
+	);
+
+	// Password protected fields
+	protected $protectedFields = array (
 		'password',
 		'login_id',
 		'email',
 		'encryption',
-		'email_hash',
-		'notifications',
-		'website'
+		'email_hash'
+	);
+
+	// Possible comment status options
+	protected $statusOptions = array (
+		'approved',
+		'pending',
+		'deleted'
 	);
 
 	public function __construct (ReadComments $read_comments, Locales $locales, Cookies $cookies, Login $login, Misc $misc)
@@ -463,11 +474,18 @@ class WriteComments extends PostData
 	}
 
 	// Setup and test for necessary comment data
-	protected function setupCommentData ()
+	protected function setupCommentData ($editing = false)
 	{
-		// Setup login information
-		if ($this->login->userIsLoggedIn !== true) {
-			$this->login->setCredentials ();
+		// Check if setup is for a comment edit
+		if ($editing === true) {
+			// If so, mimic normal user login
+			$this->login->prepareCredentials ();
+			$this->login->updateCredentials ();
+		} else {
+			// If not, setup initial login information
+			if ($this->login->userIsLoggedIn !== true) {
+				$this->login->setCredentials ();
+			}
 		}
 
 		// Check if required fields have values
@@ -531,8 +549,18 @@ class WriteComments extends PostData
 		// Store clean code
 		$this->writeComment['body'] = $clean_code;
 
-		// Store default status and posting date
-		$this->writeComment['status'] = ($this->setup->usesModeration === true) ? 'pending' : 'approved';
+		// Check if user is admin
+		if ($this->login->userIsAdmin === true) {
+			// If so, check if status is allowed
+			if (in_array ($this->postData['status'], $this->statusOptions, true)) {
+				$this->writeComment['status'] = $this->postData['status'];
+			}
+		} else {
+			// If not, store default status
+			$this->writeComment['status'] = ($this->setup->usesModeration === true) ? 'pending' : 'approved';
+		}
+
+		// Store posting date
 		$this->writeComment['date'] = date (DATE_ISO8601);
 
 		// Check if name is enabled and isn't empty
@@ -557,7 +585,7 @@ class WriteComments extends PostData
 				$encryption_keys = $this->setup->encryption->encrypt ($this->email);
 				$this->writeComment['email'] = $encryption_keys['encrypted'];
 				$this->writeComment['encryption'] = $encryption_keys['keys'];
-				$this->writeComment['email_hash'] = md5 (strtolower ($this->email));
+				$this->writeComment['email_hash'] = md5 (mb_strtolower ($this->email));
 
 				// Set e-mail subscription if one is given
 				$this->writeComment['notifications'] = !empty ($_POST['subscribe']) ? 'yes' : 'no';
@@ -592,46 +620,55 @@ class WriteComments extends PostData
 			return false;
 		}
 
-		// Read original comment
-		$edit_comment = $this->commentData->read ($this->file);
-
 		// Assume passwords don't match by default
 		$passwords_match = false;
 
-		// Check if password and file values were given
-		if (!empty ($this->postData['password']) and !empty ($this->file)) {
-			// Compare passwords
-			$edit_password = $this->encodeHTML ($this->postData['password']);
-			$passwords_match = $this->setup->encryption->verifyHash ($edit_password, $edit_comment['password']);
+		if (!empty ($this->file)) {
+			// Read original comment
+			$edit_comment = $this->commentData->read ($this->file);
+
+			// Check if password and file values were given
+			if (!empty ($this->postData['password']) and !empty ($edit_comment['password'])) {
+				// Compare passwords
+				$edit_password = $this->encodeHTML ($this->postData['password']);
+				$passwords_match = $this->setup->encryption->verifyHash ($edit_password, $edit_comment['password']);
+			}
 		}
 
 		// Check if password matches the one in the file
 		if ($passwords_match === true or $this->login->userIsAdmin === true) {
-			// Login user with edited credentials
+			// Login normal user with edited credentials
 			if ($this->login->userIsAdmin === false) {
 				$this->login (false);
 			}
 
 			try {
 				// Setup necessary comment data
-				$this->setupCommentData ();
+				$this->setupCommentData (true);
 
 			} catch (Exception $error) {
 				$this->kickback ($error->getMessage (), true);
 				return false;
 			}
 
-			// Check if user is admin
-			if ($this->login->userIsAdmin === false) {
-				// If not, update login information and comment
-				foreach ($this->editUpdateFields as $key) {
-					if (isset ($this->writeComment[$key])) {
-						$edit_comment[$key] = $this->writeComment[$key];
-					}
+			// Set initial fields for update
+			$update_fields = $this->editableFields;
+
+			// Only set status for update if user is admin
+			if ($this->login->userIsAdmin === true) {
+				$update_fields[] = 'status';
+			}
+
+			// Only set protected fields for update if passwords match
+			if ($passwords_match === true) {
+				$update_fields = array_merge ($update_fields, $this->protectedFields);
+			}
+
+			// Update login information and comment
+			foreach ($update_fields as $key) {
+				if (isset ($this->writeComment[$key])) {
+					$edit_comment[$key] = $this->writeComment[$key];
 				}
-			} else {
-				// If so, update only the comment body
-				$edit_comment['body'] = $this->writeComment['body'];
 			}
 
 			// Attempt to write edited comment

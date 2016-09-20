@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -74,8 +74,8 @@ class ReadComments
 
 				// Check for the comment in the list
 				if (!isset ($this->commentList[$current])) {
-					// If it doesn't exist, mark comment as deleted
-					$this->commentList[$current] = 'deleted';
+					// If it doesn't exist, mark comment as missing
+					$this->commentList[$current] = 'missing';
 
 					// Count the missing comment
 					$this->countComments ($current);
@@ -126,8 +126,8 @@ class ReadComments
 			}
 
 			// Skip deleted comments
-			if ($comment === 'deleted') {
-				$comments[$key]['status'] = 'deleted';
+			if ($comment === 'missing') {
+				$comments[$key]['status'] = 'missing';
 				continue;
 			}
 
@@ -139,8 +139,8 @@ class ReadComments
 				// If so, add the comment to output
 				$comments[$key] = $read_comment;
 			} else {
-				// If not, consider it deleted
-				$comments[$key]['status'] = 'deleted';
+				// If not, set comment status as a read error
+				$comments[$key]['status'] = 'read-error';
 				continue;
 			}
 

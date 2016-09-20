@@ -93,6 +93,7 @@ class PHPMode
 
 			$body = $comment['body'];
 			$body = preg_replace ($this->linkRegex, '\\1', $body);
+			$status = !empty ($comment['status']) ? $comment['status'] : 'approved';
 			$name = !empty ($comment['name']) ? $comment['name'] : '';
 			$website = !empty ($comment['website']) ? $comment['website'] : '';
 
@@ -101,7 +102,7 @@ class PHPMode
 			$form->createAttribute ('class', 'hashover-edit-form');
 			$form->createAttribute ('method', 'post');
 			$form->createAttribute ('action', $this->setup->httpScripts . '/postcomments.php');
-			$form->innerHTML ($this->html->editForm ($permalink, $file, $name, $website, $body, $subscribed));
+			$form->innerHTML ($this->html->editForm ($permalink, $file, $name, $website, $body, $status, $subscribed));
 
 			return $form->asHTML ();
 		}

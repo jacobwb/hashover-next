@@ -103,11 +103,11 @@ class HTMLOutput
 
 		return sprintf (
 			$this->locales->locale ($field . '-tip', $this->addcslashes),
-			strtolower ($this->locales->locale ($optionality, $this->addcslashes))
+			mb_strtolower ($this->locales->locale ($optionality, $this->addcslashes))
 		);
 	}
 
-	// Creates a inputs elements for user login information
+	// Creates input elements for user login information
 	protected function loginInputs ($editForm = false, $name = '', $website = '')
 	{
 		// Login input attribute information
@@ -122,6 +122,7 @@ class HTMLOutput
 				'input-title' => $this->optionality ('name'),
 				'input-value' => $this->misc->makeXSSsafe ($this->login->name)
 			),
+
 			'password' => array (
 				'wrapper-class' => 'hashover-password-input',
 				'label-class' => 'hashover-password-label',
@@ -132,6 +133,7 @@ class HTMLOutput
 				'input-title' => $this->optionality ('password'),
 				'input-value' => ''
 			),
+
 			'email' => array (
 				'wrapper-class' => 'hashover-email-input',
 				'label-class' => 'hashover-email-label',
@@ -142,6 +144,7 @@ class HTMLOutput
 				'input-title' => $this->optionality ('email'),
 				'input-value' => $this->misc->makeXSSsafe ($this->login->email)
 			),
+
 			'website' => array (
 				'wrapper-class' => 'hashover-website-input',
 				'label-class' => 'hashover-website-label',
@@ -157,9 +160,9 @@ class HTMLOutput
 		// Change input values to specified values
 		if ($editForm === true) {
 			$login_input_attributes['name']['input-value'] = $this->injectVar ($name);
-			$login_input_attributes['website']['input-value'] = $this->injectVar ($website);
 			$login_input_attributes['password']['placeholder'] = $this->locales->locale ('confirm-password', $this->addcslashes);
 			$login_input_attributes['password']['input-title'] = $this->locales->locale ('confirm-password', $this->addcslashes);
+			$login_input_attributes['website']['input-value'] = $this->injectVar ($website);
 		}
 
 		// Create wrapper element for styling login inputs
@@ -232,7 +235,7 @@ class HTMLOutput
 			// Logged in
 			if ($this->login->userIsLoggedIn === true) {
 				// Image source is avatar image
-				$hash = !empty ($this->login->email) ? md5 (strtolower (trim ($this->login->email))) : '';
+				$hash = !empty ($this->login->email) ? md5 (mb_strtolower (trim ($this->login->email))) : '';
 				$avatar_src = $this->avatars->getGravatar ($hash);
 			} else {
 				// Logged out
@@ -915,6 +918,7 @@ class HTMLOutput
 			// Create wrapper element for sort dropdown menu
 			$sort_wrapper = new HTMLTag ('span');
 			$sort_wrapper->createAttribute ('id', 'hashover-sort');
+			$sort_wrapper->createAttribute ('class', 'hashover-select-wrapper');
 
 			// Hide comment count if collapse limit is set at zero
 			if ($this->setup->collapseLimit <= 0) {
@@ -1247,7 +1251,7 @@ class HTMLOutput
 		return $reply_form->asHTML ();
 	}
 
-	public function editForm ($permalink, $file, $name = '', $website = '', $body, $subscribed = true)
+	public function editForm ($permalink, $file, $name = '', $website = '', $body, $status = '', $subscribed = true)
 	{
 		// "Edit Comment" locale string
 		$edit_comment = $this->locales->locale ('edit-comment', $this->addcslashes);
@@ -1269,6 +1273,54 @@ class HTMLOutput
 		$edit_form_title->createAttribute ('class', 'hashover-title');
 		$edit_form_title->appendAttribute ('class', 'hashover-dashed-title');
 		$edit_form_title->innerHTML ($edit_comment);
+
+		if ($this->login->userIsAdmin === true) {
+			// Create status dropdown wrapper element
+			$edit_status_wrapper = new HTMLTag ('span', false, false);
+			$edit_status_wrapper->createAttribute ('class', 'hashover-edit-status');
+			$edit_status_wrapper->innerHTML ('Status');
+
+			// Create select wrapper element
+			$edit_status_select_wrapper = new HTMLTag ('span', false, false);
+			$edit_status_select_wrapper->createAttribute ('class', 'hashover-select-wrapper');
+
+			// Status dropdown menu options
+			$status_options = array (
+				'approved' => $this->locales->locale ('status-approved', $this->addcslashes),
+				'pending' => $this->locales->locale ('status-pending', $this->addcslashes),
+				'deleted' => $this->locales->locale ('status-deleted', $this->addcslashes)
+			);
+
+			// Create status dropdown menu element
+			$edit_status_dropdown = new HTMLTag ('select');
+			$edit_status_dropdown->createAttribute ('id', 'hashover-edit-status-' . $this->injectVar ($permalink));
+			$edit_status_dropdown->createAttribute ('name', 'status');
+			$edit_status_dropdown->createAttribute ('size', '1');
+
+			foreach ($status_options as $value => $inner_html) {
+				// Create status dropdown menu option element
+				$edit_status_option = new HTMLTag ('option');
+				$edit_status_option->createAttribute ('value', $value);
+				$edit_status_option->innerHTML ($inner_html);
+
+				// Set option as selected if it matches the comment status given
+				if ($value === $status) {
+					$edit_status_option->createAttribute ('selected', 'true');
+				}
+
+				// Add option element to status dropdown menu
+				$edit_status_dropdown->appendChild ($edit_status_option);
+			}
+
+			// Add status dropdown menu to select wrapper element
+			$edit_status_select_wrapper->appendChild ($edit_status_dropdown);
+
+			// Add select wrapper to status dropdown wrapper element
+			$edit_status_wrapper->appendChild ($edit_status_select_wrapper);
+
+			// Add status dropdown wrapper to edit form title element
+			$edit_form_title->appendChild ($edit_status_wrapper);
+		}
 
 		// Append edit form title to edit form wrapper
 		$edit_form->appendChild ($edit_form_title);

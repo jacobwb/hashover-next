@@ -1,3 +1,14 @@
+Changes by Jacob Barkdull 2016-09-20
+--------------------------------------------------------------------------------
+* Allow admin to change comment moderation status when editing comments.
+* Allow admin to view and edit comments marked as deleted.
+* Allow admin to edit all applicable comment information, not just the body.
+* Differentiate between deleted, marked deleted, and unreadable comments.
+* Small improvements to support for multibyte locale strings.
+* Minor locale changes.
+* Minor bug fixes.
+
+
 Changes by Jacob Barkdull 2016-08-28
 --------------------------------------------------------------------------------
 * Added 3 new comment sorting methods.

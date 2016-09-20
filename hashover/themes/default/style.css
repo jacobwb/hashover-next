@@ -203,7 +203,7 @@ Copyright (C) 2016 Jacob Barkdull
 #hashover .hashover-reply-form,
 #hashover .hashover-reply .hashover-header,
 #hashover .hashover-reply .hashover-balloon,
-#hashover #hashover-sort {
+#hashover .hashover-select-wrapper {
 	border: 1px solid #AAAAAA;
 }
 
@@ -234,7 +234,7 @@ Copyright (C) 2016 Jacob Barkdull
 #hashover .hashover-comment label,
 #hashover .hashover-message,
 #hashover #hashover-more-link,
-#hashover #hashover-sort:before {
+#hashover .hashover-select-wrapper:before {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -433,16 +433,17 @@ Copyright (C) 2016 Jacob Barkdull
 	border-bottom: 1px solid #AAAAAA;
 }
 
+#hashover .hashover-edit-form .hashover-title {
+	margin-top: 3px;
+}
+
 #hashover #hashover-count,
 #hashover .hashover-comment form .hashover-title {
 	float: left;
 }
 
-#hashover #hashover-sort {
-	margin-top: -2px;
-}
-
 #hashover #hashover-sort,
+#hashover .hashover-edit-status,
 #hashover .hashover-comment .hashover-footer .hashover-buttons,
 #hashover .hashover-form-buttons,
 #hashover .hashover-thread-link {
@@ -686,27 +687,26 @@ Copyright (C) 2016 Jacob Barkdull
 	border-right-color: #FCFCFC;
 }
 
-#hashover #hashover-sort-select {
+#hashover .hashover-select-wrapper select {
 	border: none;
 	background-color: #F5F8FC;
-	padding: 0px 2px;
+	padding: 0px 12px 0px 2px;
 	cursor: pointer;
 }
 
-#hashover #hashover-sort {
+#hashover .hashover-select-wrapper {
+	display: inline-block;
 	position: relative;
 	overflow: hidden;
-	margin-top: -4px;
+	margin-top: -3px;
+	vertical-align: middle;
 	cursor: pointer;
-}
-
-#hashover #hashover-sort {
 	-moz-border-radius: 4px 4px 4px 4px;
 	-webkit-border-radius: 4px 4px 4px 4px;
 	border-radius: 4px 4px 4px 4px;
 }
 
-#hashover #hashover-sort:before {
+#hashover .hashover-select-wrapper:before {
 	content: "\25BC";
 	position: absolute;
 	right: 0px;
@@ -723,8 +723,8 @@ Copyright (C) 2016 Jacob Barkdull
 	background-color: #F5F8FC;
 }
 
-#hashover #hashover-sort:hover #hashover-sort-select,
-#hashover #hashover-sort:hover:before {
+#hashover .hashover-select-wrapper:hover select,
+#hashover .hashover-select-wrapper:hover:before {
 	background-color: #FCFCFC;
 }
 
@@ -924,12 +924,7 @@ Copyright (C) 2016 Jacob Barkdull
 #hashover .hashover-loading:before {
 	content: " " ! important;
 	display: inline-block;
-	width: 16px;
-	height: 16px;
 	vertical-align: middle;
-	margin-right: 10px;
-	margin-top: -8px;
-	margin-bottom: -6px;
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	background-position: center center;

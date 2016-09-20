@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015 Jacob Barkdull
+// Copyright (C) 2015-2016 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -72,21 +72,21 @@ class Login extends PostData
 
 		// Validate e-mail address
 		if (!empty ($this->email)) {
-			if (!filter_var ($this->loginMethod->email, FILTER_VALIDATE_EMAIL)) {
+			if (!filter_var ($this->email, FILTER_VALIDATE_EMAIL)) {
 				$this->email = '';
 			}
 		}
 
 		// Prepend "http://" to website URL if missing
 		if (!empty ($this->website)) {
-			if (!preg_match ('/htt(p|ps):\/\//i', $this->loginMethod->website)) {
+			if (!preg_match ('/htt(p|ps):\/\//i', $this->website)) {
 				$this->website = 'http://' . $this->website;
 			}
 		}
 	}
 
-	// Set login credentials
-	public function setCredentials ()
+	// Prepares login credentials
+	public function prepareCredentials ()
 	{
 		// Set name
 		if (isset ($this->postData['name'])) {
@@ -112,6 +112,13 @@ class Login extends PostData
 		if (isset ($this->postData['website'])) {
 			$this->loginMethod->website = $this->postData['website'];
 		}
+	}
+
+	// Set login credentials
+	public function setCredentials ()
+	{
+		// Prepare login credentials
+		$this->prepareCredentials ();
 
 		// Set login method credentials
 		$this->loginMethod->setCredentials ();
@@ -138,9 +145,9 @@ class Login extends PostData
 					$this->cookies->setFailedOn ($field, $this->replyTo, false);
 				}
 
-				throw new Exception (ucfirst (sprintf (
-					$this->fieldNeeded, strtolower ($this->locales->locale ($field))
-				)));
+				throw new Exception (sprintf (
+					$this->fieldNeeded, $this->locales->locale ($field)
+				));
 
 				return false;
 			}
