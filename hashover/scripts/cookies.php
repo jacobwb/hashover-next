@@ -40,8 +40,8 @@ class Cookies
 		$this->expire = $expire;
 
 		// Remove port from domain
-		if (strpos ($this->domain, ':') !== false) {
-			$this->domain = substr ($this->domain, 0, strrpos ($this->domain, ':'));
+		if (mb_strpos ($this->domain, ':') !== false) {
+			$this->domain = mb_substr ($this->domain, 0, strrpos ($this->domain, ':'));
 		}
 
 		// Transmit cookies over HTTPS if set so in Settings

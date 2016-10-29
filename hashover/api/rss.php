@@ -178,7 +178,7 @@ function parse_comments (&$comment, &$rss, &$xml, &$hashover)
 	$single_comment = str_replace (PHP_EOL, ' ', strip_tags ($comment['body']));
 
 	if (mb_strlen ($single_comment) > 40) {
-		$title .= substr ($single_comment, 0, 40) . '...';
+		$title .= mb_substr ($single_comment, 0, 40) . '...';
 	} else {
 		$title .= $single_comment;
 	}

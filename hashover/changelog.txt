@@ -1,3 +1,13 @@
+Changes by Jacob Barkdull 2016-10-28
+--------------------------------------------------------------------------------
+* Added loading indicator to embedded images.
+* Fixed: Loading indicator not showing on "Show X Other Comments" link.
+* Fixed: User being logged in as Anonymous when posting a comment.
+* Fixed: Use Japanese ellipsis.
+* Small improvements to multibyte support.
+* Other small changes.
+
+
 Changes by Jacob Barkdull 2016-09-20
 --------------------------------------------------------------------------------
 * Allow admin to change comment moderation status when editing comments.

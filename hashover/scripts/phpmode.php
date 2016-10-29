@@ -58,6 +58,15 @@ class PHPMode
 		$this->comments = $comments;
 	}
 
+	protected function fileFromPermalink ($permalink)
+	{
+		$file = substr ($permalink, 1);
+		$file = str_replace ('r', '-', $file);
+		$file = str_replace ('-pop', '', $file);
+
+		return $file;
+	}
+
 	protected function replyCheck ($permalink)
 	{
 		if (empty ($_GET['hashover-reply'])) {
@@ -65,9 +74,7 @@ class PHPMode
 		}
 
 		if ($_GET['hashover-reply'] === $permalink) {
-			$file = substr ($permalink, 1);
-			$file = str_replace ('r', '-', $file);
-			$file = str_replace ('-pop', '', $file);
+			$file = $this->fileFromPermalink ($permalink);
 
 			$form = new HTMLTag ('form');
 			$form->createAttribute ('id', 'hashover-reply-' . $permalink);
@@ -87,9 +94,7 @@ class PHPMode
 		}
 
 		if ($_GET['hashover-edit'] === $permalink) {
-			$file = substr ($permalink, 1);
-			$file = str_replace ('r', '-', $file);
-			$file = str_replace ('-pop', '', $file);
+			$file = $this->fileFromPermalink ($permalink);
 
 			$body = $comment['body'];
 			$body = preg_replace ($this->linkRegex, '\\1', $body);
@@ -203,7 +208,7 @@ class PHPMode
 
 			// Check if user's name is a Twitter handle
 			if ($name[0] === '@') {
-				$name = substr ($name, 1);
+				$name = mb_substr ($name, 1);
 				$nameClass = 'hashover-name-twitter';
 				$is_twitter = true;
 				$nameLength = mb_strlen ($name);
@@ -334,20 +339,20 @@ class PHPMode
 			$template['comment'] = $this->markdown->parseMarkdown ($template['comment']);
 
 			// Check for code tags
-			if (strpos ($template['comment'], '<code>') !== false) {
+			if (mb_strpos ($template['comment'], '<code>') !== false) {
 				// Replace code tags with placeholder text
 				$template['comment'] = preg_replace_callback ('/(<code>)([\s\S]*?)(<\/code>)/i', 'self::codeTagReplace', $template['comment']);
 			}
 
 			// Check for pre tags
-			if (strpos ($template['comment'], '<pre>') !== false) {
+			if (mb_strpos ($template['comment'], '<pre>') !== false) {
 				// Replace pre tags with placeholder text
 				$template['comment'] = preg_replace_callback ('/(<pre>)([\s\S]*?)(<\/pre>)/i', 'self::preTagReplace', $template['comment']);
 			}
 
 			// Check for various multi-line tags
 			foreach ($this->trimTagRegexes as $tag => $trimTagRegex) {
-				if (strpos ($template['comment'], '<' . $tag . '>') !== false) {
+				if (mb_strpos ($template['comment'], '<' . $tag . '>') !== false) {
 					// Trim leading and trailing whitespace
 					$template['comment'] = preg_replace_callback ($trimTagRegex, function ($grp) {
 						return $grp[1] . trim ($grp[2], PHP_EOL) . $grp[3];

@@ -446,8 +446,8 @@ class WriteComments extends PostData
 	{
 		for ($tc = 0, $tcl = count ($tags); $tc < $tcl; $tc++) {
 			// Count opening and closing tags
-			$open_tags = substr_count ($html, '<' . $tags[$tc] . '>');
-			$close_tags = substr_count ($html, '</' . $tags[$tc] . '>');
+			$open_tags = mb_substr_count ($html, '<' . $tags[$tc] . '>');
+			$close_tags = mb_substr_count ($html, '</' . $tags[$tc] . '>');
 
 			// Check if opening and closing tags aren't equal
 			if ($open_tags !== $close_tags) {

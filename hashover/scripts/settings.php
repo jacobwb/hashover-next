@@ -134,7 +134,7 @@ class Settings
 
 		// Get HTTP parent directory
 		$document_root = realpath ($_SERVER['DOCUMENT_ROOT']);
-		$http_directory = substr ($root_directory, strlen ($document_root));
+		$http_directory = mb_substr ($root_directory, mb_strlen ($document_root));
 
 		// Technical settings
 		$this->rootDirectory	= $root_directory;		// Root directory for script

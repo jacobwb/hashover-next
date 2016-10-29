@@ -29,15 +29,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class PostData
 {
-	public $postData = array (
-		'status' => '',
-		'name' => '',
-		'password' => '',
-		'email' => '',
-		'website' => '',
-		'comment' => ''
-	);
-
+	public $postData = array ();
 	public $file;
 	public $replyTo;
 	public $viaAJAX = false;

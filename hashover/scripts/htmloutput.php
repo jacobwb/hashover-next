@@ -638,7 +638,7 @@ class HTMLOutput
 
 			// Check if user's name is a Twitter handle
 			if ($user_name[0] === '@') {
-				$user_name = substr ($user_name, 1);
+				$user_name = mb_substr ($user_name, 1);
 				$name_class = 'hashover-name-twitter';
 				$is_twitter = true;
 				$name_length = mb_strlen ($user_name);

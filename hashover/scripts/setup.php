@@ -246,7 +246,7 @@ class Setup extends Settings
 		$directory_name = str_replace ($this->reservedCharacters, '-', $directory_name);
 
 		// Remove multiple dashes
-		if (strpos ($directory_name, '--') !== false) {
+		if (mb_strpos ($directory_name, '--') !== false) {
 			$directory_name = preg_replace ('/-{2,}/', '-', $directory_name);
 		}
 
@@ -285,7 +285,7 @@ class Setup extends Settings
 			$this->filePath = '/';
 		} else {
 			// Remove starting slash
-			$this->threadDirectory = substr ($url_parts['path'], 1);
+			$this->threadDirectory = mb_substr ($url_parts['path'], 1);
 
 			// Set file path
 			$this->filePath = $url_parts['path'];

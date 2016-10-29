@@ -630,13 +630,15 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				    urlExtension = urlExtension.split ('.');
 				    urlExtension = urlExtension.pop ();
 
-				// Check if the image URL is of an allowed type
-				for (var ext = 0, length = imageExtensions.length; ext < length; ext++) {
-					if (imageExtensions[ext] !== urlExtension) {
-						continue;
-					}
+				// Check if the image extension is an allowed type
+				if (imageExtensions.indexOf (urlExtension) > -1) {
+					// If so, create a wrapper element for the embedded image
+					var embeddedImage = createElement ('span', {
+						className: 'hashover-embedded-image-wrapper'
+					});
 
-					var imgTag = createElement ('img', {
+					// Append an image tag to the embedded image wrapper
+					embeddedImage.appendChild (createElement ('img', {
 						className: 'hashover-embedded-image',
 						src: imagePlaceholder,
 						title: locale.externalImageTip,
@@ -646,12 +648,14 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 							placeholder: imagePlaceholder,
 							url: url
 						}
-					});
+					}));
 
-					return imgTag.outerHTML;
+					// And return the embedded image HTML
+					return embeddedImage.outerHTML;
 				}
 
 <?php } ?>
+				// Convert image URL into an anchor tag
 				return '<a href="' + url + '" rel="noopener noreferrer" target="_blank">' + url + '</a>';
 			});
 
@@ -749,7 +753,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	}
 
 	// Generate file from permalink
-	function reversePermalink (permalink)
+	function fileFromPermalink (permalink)
 	{
 		var file = permalink.slice (1);
 		    file = file.replace (/r/g, '-');
@@ -1300,7 +1304,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var link = getElement ('hashover-reply-link-' + permalink, true);
 
 		// Get file
-		var file = reversePermalink (permalink);
+		var file = fileFromPermalink (permalink);
 
 		// Create reply form element
 		var form = createElement ('form', {
@@ -1365,7 +1369,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var link = getElement ('hashover-edit-link-' + permalink, true);
 
 		// Get file
-		var file = reversePermalink (permalink);
+		var file = fileFromPermalink (permalink);
 
 		// Get name and website
 		var name = comment.name || '';
@@ -1591,6 +1595,9 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 		// Reset title
 		image.title = locale.externalImageTip;
+
+		// Remove loading class from wrapper
+		removeClass (this.parentNode, 'hashover-loading');
 	}
 
 	// Onclick callback function for embedded images
@@ -1605,10 +1612,16 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		// Set title
 		this.title = '<?php echo $hashover->locales->locale ('loading', true); ?>';
 
+		// Add loading class to wrapper
+		addClass (this.parentNode, 'hashover-loading');
+
 		// Change title and remove load event handler once image is loaded
 		this.onload = function () {
 			this.title = '<?php echo $hashover->locales->locale ('click-to-close', true); ?>';
 			this.onload = null;
+
+			// Remove loading class from wrapper
+			removeClass (this.parentNode, 'hashover-loading');
 		};
 
 		// Close embedded image if any error occurs
@@ -1761,7 +1774,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	function likeComment (action, permalink)
 	{
 		// Get file
-		var file = reversePermalink (permalink);
+		var file = fileFromPermalink (permalink);
 
 		var actionLink = getElement ('hashover-' + action + '-' + permalink, true);
 		var likesElement = getElement ('hashover-' + action + 's-' + permalink, true);
