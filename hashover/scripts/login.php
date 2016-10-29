@@ -61,30 +61,6 @@ class Login extends PostData
 		$this->getLogin ();
 	}
 
-	// Update login credentials
-	public function updateCredentials ()
-	{
-		$this->name = $this->loginMethod->name;
-		$this->password = $this->loginMethod->password;
-		$this->loginHash = $this->loginMethod->loginHash;
-		$this->email = $this->loginMethod->email;
-		$this->website = $this->loginMethod->website;
-
-		// Validate e-mail address
-		if (!empty ($this->email)) {
-			if (!filter_var ($this->email, FILTER_VALIDATE_EMAIL)) {
-				$this->email = '';
-			}
-		}
-
-		// Prepend "http://" to website URL if missing
-		if (!empty ($this->website)) {
-			if (!preg_match ('/htt(p|ps):\/\//i', $this->website)) {
-				$this->website = 'http://' . $this->website;
-			}
-		}
-	}
-
 	// Prepares login credentials
 	public function prepareCredentials ()
 	{
@@ -111,6 +87,30 @@ class Login extends PostData
 		// Set website URL
 		if (isset ($this->postData['website'])) {
 			$this->loginMethod->website = $this->postData['website'];
+		}
+	}
+
+	// Update login credentials
+	public function updateCredentials ()
+	{
+		$this->name = $this->loginMethod->name;
+		$this->password = $this->loginMethod->password;
+		$this->loginHash = $this->loginMethod->loginHash;
+		$this->email = $this->loginMethod->email;
+		$this->website = $this->loginMethod->website;
+
+		// Validate e-mail address
+		if (!empty ($this->email)) {
+			if (!filter_var ($this->email, FILTER_VALIDATE_EMAIL)) {
+				$this->email = '';
+			}
+		}
+
+		// Prepend "http://" to website URL if missing
+		if (!empty ($this->website)) {
+			if (!preg_match ('/htt(p|ps):\/\//i', $this->website)) {
+				$this->website = 'http://' . $this->website;
+			}
 		}
 	}
 
