@@ -35,7 +35,7 @@ Although most PHP installations include everything HashOver requires, depending 
 
 Important differences from version 1.0
 ---
-- `hashover.php` is no longer used in JavaScript tags, instead the file `/hashover/hashover.js` is used instead.
+- `hashover.php` is no longer used in JavaScript tags, the file `/hashover/hashover.js` is used instead.
 
   So change:
 
