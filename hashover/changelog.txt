@@ -1,3 +1,9 @@
+Changes by Jacob Barkdull 2016-12-03
+--------------------------------------------------------------------------------
+* Now using MCRYPT_DEV_URANDOM instead of MCRYPT_RAND.
+* Small CSS changes.
+
+
 Changes by Jacob Barkdull 2016-10-28
 --------------------------------------------------------------------------------
 * Added loading indicator to embedded images.

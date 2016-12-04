@@ -97,7 +97,7 @@ class Encryption
 		$key = $this->createMcryptKey ($this->encryptionHash);
 
 		// Encrypt using random encryption key
-		$iv = mcrypt_create_iv ($this->iv_size, MCRYPT_RAND);
+		$iv = mcrypt_create_iv ($this->iv_size, MCRYPT_DEV_URANDOM);
 		$encrypted = mcrypt_encrypt ($this->cipher, $key['key'], $str, $this->mcryptMode, $iv);
 		$encrypted = $iv . $encrypted;
 

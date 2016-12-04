@@ -10,6 +10,10 @@ Copyright (C) 2014 Jacob Barkdull
 -----------------------------------------------------------------------------*/
 
 
+#hashover {
+	text-indent: initial;
+}
+
 #hashover #hashover-requiredFields,
 #hashover .hashover-hidden {
 	display: none ! important;
