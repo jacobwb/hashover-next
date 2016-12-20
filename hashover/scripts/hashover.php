@@ -114,7 +114,8 @@ class HashOver
 		$this->cookies = new Cookies (
 			$this->setup->domain,
 			$this->setup->cookieExpiration,
-			$this->setup->secureCookies
+			$this->setup->secureCookies,
+			$this->setup->setCookies
 		);
 
 		// Instantiate login class
