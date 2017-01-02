@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -56,8 +56,8 @@ class Cookies
 	public function set ($name, $value = '', $date = '')
 	{
 		$date = !empty ($date) ? $date : $this->expire;
-		if($this->setCookies)
-		{
+
+		if ($this->setCookies !== false) {
 			setcookie ($name, $value, $date, '/', $this->domain, $this->secure, true);
 		}
 	}
