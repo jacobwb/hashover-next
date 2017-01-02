@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -32,12 +32,14 @@ class Cookies
 	public $domain;
 	public $expire;
 	public $secure = false;
+	public $setCookies = true;
 
-	public function __construct ($domain, $expire, $secure = false)
+	public function __construct ($domain, $expire, $secure = false, $setCookies = true)
 	{
 		// Set domain and default expiration date from parameters
 		$this->domain = $domain;
 		$this->expire = $expire;
+		$this->setCookies = $setCookies;
 
 		// Remove port from domain
 		if (mb_strpos ($this->domain, ':') !== false) {
@@ -54,7 +56,10 @@ class Cookies
 	public function set ($name, $value = '', $date = '')
 	{
 		$date = !empty ($date) ? $date : $this->expire;
-		setcookie ($name, $value, $date, '/', $this->domain, $this->secure, true);
+
+		if ($this->setCookies !== false) {
+			setcookie ($name, $value, $date, '/', $this->domain, $this->secure, true);
+		}
 	}
 
 	// Set cookies for remembering state login actions
