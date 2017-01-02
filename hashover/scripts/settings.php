@@ -77,8 +77,8 @@ class Settings
 
 	// Technical settings
 	public $loginMethod		= 'defaultLogin';		// Login method class for handling user login information
-	public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 	public $setCookies		= true;				// Whether cookies are set at all
+	public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 	public $storesIPAddress		= false;			// Whether to store users' IP addresses
 	public $allowsUserReplies	= false;			// Whether given e-mails are sent as reply-to address to users
 	public $noreplyEmail		= 'noreply@example.com';	// E-mail used when no e-mail is given
