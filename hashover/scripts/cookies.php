@@ -52,11 +52,13 @@ class Cookies
 		}
 	}
 
-	// Set a cookie, with either a specific expiration date or the one in Settings
+	// Set a cookie with expiration date
 	public function set ($name, $value = '', $date = '')
 	{
+		// Use specific expiration date or the one in Settings
 		$date = !empty ($date) ? $date : $this->expire;
 
+		// Set the cookie if cookies are enabled
 		if ($this->setCookies !== false) {
 			setcookie ($name, $value, $date, '/', $this->domain, $this->secure, true);
 		}
@@ -74,9 +76,10 @@ class Cookies
 		}
 	}
 
-	// Expire a cookie by setting its expiration date to 1
+	// Expire a cookie
 	public function expireCookie ($cookie)
 	{
+		// Set its expiration date to 1 if it exists
 		if (isset ($_COOKIE[$cookie])) {
 			$this->set ($cookie, '', 1);
 		}
