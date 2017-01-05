@@ -1,3 +1,21 @@
+Changes by Jacob Barkdull 2016-01-05
+--------------------------------------------------------------------------------
+* hashover/scripts/javascript-mode.php
+
+	- Updated Copyright year.
+	- Small code changes.
+
+
+* Added: Danish translation by Jacob Moen.
+* Merged: Further improvements to German locale.
+
+
+Changes by Jacob Barkdull 2016-01-02
+--------------------------------------------------------------------------------
+* Merged: New public `$setCookies` setting for enabling and disabling cookies.
+* Merged: Improvements to German locale.
+
+
 Changes by Jacob Barkdull 2016-12-03
 --------------------------------------------------------------------------------
 * Now using MCRYPT_DEV_URANDOM instead of MCRYPT_RAND.

@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2016 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -293,7 +293,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Returns the permalink of a comment's parent
 	function getParentPermalink (permalink, flatten)
 	{
-		var flatten = flatten || false;
+		flatten = flatten || false;
+
 		var parent = permalink.split ('r');
 		var length = parent.length - 1;
 
@@ -382,8 +383,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Adds properties to an element
 	function addProperties (element, properties)
 	{
-		var element = element || document.createElement ('span');
-		var properties = properties || {};
+		element = element || document.createElement ('span');
+		properties = properties || {};
 
 		// Add each property to element
 		for (var property in properties) {
@@ -406,21 +407,26 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Create an element with attributes
 	function createElement (tagName, attributes)
 	{
-		var tagName = tagName || 'span';
-		var attributes = attributes || {};
+		tagName = tagName || 'span';
+		attributes = attributes || {};
+
+		// Create element
 		var element = document.createElement (tagName);
 
-		return addProperties (element, attributes);
+		// Add properties to element
+		element = addProperties (element, attributes);
+
+		return element;
 	}
 
 	// Add comment content to HTML template
 	function parseComment (comment, parent, collapse, sort, method, popular)
 	{
-		var parent = parent || null;
-		var collapse = collapse || false;
-		var sort = sort || false;
-		var method = method || 'ascending';
-		var popular = popular || false;
+		parent = parent || null;
+		collapse = collapse || false;
+		sort = sort || false;
+		method = method || 'ascending';
+		popular = popular || false;
 
 		var permalink = comment.permalink;
 		var nameClass = 'hashover-name-plain';
@@ -873,10 +879,11 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Handle message element(s)
 	function showMessage (message, permalink, error, isReply, isEdit)
 	{
-		var permalink = permalink || '';
-		var error = error || true;
-		var isReply = isReply || false;
-		var isEdit = isEdit || false;
+		permalink = permalink || '';
+		error = error || true;
+		isReply = isReply || false;
+		isEdit = isEdit || false;
+
 		var element;
 
 		// Decide which message element to use
@@ -968,11 +975,10 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Validate a comment form e-mail field
 	function validateEmail (permalink, form, isReply, isEdit)
 	{
-		var permalink = permalink || null;
-		var isReply = isReply || false;
-		var isEdit = isEdit || false;
+		permalink = permalink || null;
+		isReply = isReply || false;
+		isEdit = isEdit || false;
 
-		var form;
 		var subscribe;
 
 		// Check whether comment is an edit
@@ -997,7 +1003,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Validate a comment form
 	function commentValidator (form, skipComment)
 	{
-		var skipComment = skipComment || false;
+		skipComment = skipComment || false;
+
 		var fieldNeeded = '<?php echo $hashover->locales->locale ('field-needed', true); ?>';
 
 		// Check each input field for if they are required
@@ -1044,10 +1051,10 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Validate required comment credentials
 	function validateComment (skipComment, form, permalink, isReply, isEdit)
 	{
-		var skipComment = skipComment || false;
-		var permalink = permalink || null;
-		var isReply = isReply || false;
-		var isEdit = isEdit || false;
+		skipComment = skipComment || false;
+		permalink = permalink || null;
+		isReply = isReply || false;
+		isEdit = isEdit || false;
 
 		// Validate comment form
 		var message = commentValidator (form, skipComment);
@@ -1072,10 +1079,10 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// For posting comments, both traditionally and via AJAX
 	function postComment (destination, form, button, callback, permalink, close, isReply, isEdit)
 	{
-		var permalink = permalink || '';
-		var close = close || null;
-		var isReply = isReply || false;
-		var isEdit = isEdit || false;
+		permalink = permalink || '';
+		close = close || null;
+		isReply = isReply || false;
+		isEdit = isEdit || false;
 
 		// Return false if comment is invalid
 		if (validateComment (false, form, permalink, isReply, isEdit) === false) {
@@ -1203,8 +1210,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// For adding new comments to comments array
 	function addComments (comment, isReply, index)
 	{
-		var isReply = isReply || false;
-		var index = index || null;
+		isReply = isReply || false;
+		index = index || null;
 
 		// Check that comment is not a reply
 		if (isReply !== true) {
@@ -1452,7 +1459,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// For showing more comments, via AJAX or removing a class
 	function hideMoreLink (finishedCallback)
 	{
-		var finishedCallback = finishedCallback || null;
+		finishedCallback = finishedCallback || null;
 
 		// Add class to hide the more hyperlink
 		moreLink.className = 'hashover-hide-morelink';
@@ -1533,7 +1540,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// onClick event for more button
 	function showMoreComments (element, finishedCallback)
 	{
-		var finishedCallback = finishedCallback || null;
+		finishedCallback = finishedCallback || null;
 
 		// Do nothing if already showing all comments
 		if (showingMore === true) {
@@ -1846,9 +1853,10 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Run all comments in array data through parseComment function
 	function parseAll (comments, element, collapse, popular, sort, method)
 	{
-		var popular = popular || false;
-		var sort = sort || false;
-		var method = method || 'ascending';
+		popular = popular || false;
+		sort = sort || false;
+		method = method || 'ascending';
+
 		var commentHTML = '';
 
 		// Parse every comment
