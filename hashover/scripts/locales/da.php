@@ -17,7 +17,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	}
 }
 
-// English text for forms, buttons, links, and tooltips
+// Danish text for forms, buttons, links, and tooltips
 $locale = array (
 	'comment-form'		=> 'Skriv kommentar her...',
 	'reply-form'		=> 'Skriv svar her...',
