@@ -15,7 +15,11 @@ Copyright (C) 2016 Jacob Barkdull
 }
 
 #hashover #hashover-requiredFields,
-#hashover .hashover-hidden {
+#hashover .hashover-hidden,
+#hashover .hashover-notice > .hashover-balloon > .hashover-footer,
+#hashover .hashover-first .hashover-balloon,
+#hashover .hashover-first .hashover-avatar:before,
+#hashover .hashover-first .hashover-avatar:after {
 	display: none ! important;
 }
 
@@ -907,10 +911,6 @@ Copyright (C) 2016 Jacob Barkdull
 
 #hashover .hashover-notice > .hashover-balloon > .hashover-content {
 	margin: 0px;
-}
-
-#hashover .hashover-notice > .hashover-balloon > .hashover-footer {
-	display: none;
 }
 
 #hashover #hashover-more-link {

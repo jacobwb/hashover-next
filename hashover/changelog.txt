@@ -8,6 +8,8 @@ Changes by Jacob Barkdull 2016-01-05
 
 * Added: Danish translation by Jacob Moen.
 * Merged: Further improvements to German locale.
+* Changed "Be the first to comment!" to "No comments yet." in all locales.
+* Now hiding unused comment text of "No comments yet." notice.
 
 
 Changes by Jacob Barkdull 2016-01-02
