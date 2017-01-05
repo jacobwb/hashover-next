@@ -159,10 +159,10 @@ class HashOver
 		// If no comments were found, setup a default message comment
 		if ($this->readComments->totalCount <= 1) {
 			$this->comments['comments'][] = array (
-				'title' => $this->locales->locale['first-comment'],
+				'title' => $this->locales->locale['be-first-name'],
 				'avatar' => $this->setup->httpImages . '/first-comment.' . $this->setup->imageFormat,
 				'permalink' => 'c1',
-				'notice' => $this->locales->locale['first-comment'],
+				'notice' => $this->locales->locale['be-first-note'],
 				'notice-class' => 'hashover-first'
 			);
 
