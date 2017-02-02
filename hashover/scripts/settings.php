@@ -137,8 +137,8 @@ class Settings
 		$document_root = realpath ($_SERVER['DOCUMENT_ROOT']);
 		$http_directory = mb_substr ($root_directory, mb_strlen ($document_root));
 		
-		//Replace backslashes with forwardslashes
-		$http_directory = str_replace('\\', '/', $http_directory);
+		// Replace backslashes with forwardslashes
+		$http_directory = str_replace ('\\', '/', $http_directory);
 		
 		// Technical settings
 		$this->rootDirectory	= $root_directory;		// Root directory for script
