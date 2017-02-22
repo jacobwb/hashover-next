@@ -67,7 +67,7 @@ HashOver [version 1.0](https://github.com/jacobwb/hashover) consists of code wri
 - Graphic scalability on (*x<sup>i</sup>*)HDPI displays [[#4](https://github.com/jacobwb/hashover-next/issues/4)] [[#11](https://github.com/jacobwb/hashover-next/issues/11)]
 - Code readability [[#62](https://github.com/jacobwb/hashover-next/issues/62)] [[#63](https://github.com/jacobwb/hashover-next/issues/63)]
 - Bug fixes
-		
+
 This means the possibility of new features in version 2.0 is next to null, and contributions via GitHub and/or e-mail that add new features will be rejected, at least for the time being. Improvements to existing functionality and aesthetics will be accepted. New features will be accepted and available in version 2.x releases.
 
 Information and Documentation

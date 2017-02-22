@@ -2,9 +2,9 @@
 
 Copyright (C) 2014-2017 Jacob Barkdull
 
-	I, Jacob Barkdull, hereby release this work into the public domain. 
-	This applies worldwide. If this is not legally possible, I grant any 
-	entity the right to use this work for any purpose, without any 
+	I, Jacob Barkdull, hereby release this work into the public domain.
+	This applies worldwide. If this is not legally possible, I grant any
+	entity the right to use this work for any purpose, without any
 	conditions, unless such conditions are required by law.
 
 -----------------------------------------------------------------------------*/
@@ -235,7 +235,7 @@ Copyright (C) 2014-2017 Jacob Barkdull
 	background-color: #E8E8E8 ! important;
 }
 
-#hashover textarea:hover, 
+#hashover textarea:hover,
 #hashover input:hover,
 #hashover .hashover-submit:hover {
 	background-color: #FCFCFC;

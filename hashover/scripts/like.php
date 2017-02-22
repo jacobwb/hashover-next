@@ -20,9 +20,9 @@
 //
 // Script Description:
 //
-//	This script reads a given comment file, retrieves the like count, 
-//	increases the count by one, then writes the file. Assuming the 
-//	visitor hasn't already liked the given comment before and the 
+//	This script reads a given comment file, retrieves the like count,
+//	increases the count by one, then writes the file. Assuming the
+//	visitor hasn't already liked the given comment before and the
 //	visitor isn't the comment's original poster.
 
 
