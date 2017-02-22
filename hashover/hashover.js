@@ -18,9 +18,9 @@
 //
 // Get Complete Source Code:
 //
-// The source code for each PHP script used in HashOver is normally 
-// accessible directly from each script. You can simply visit the script 
-// file with the "source" query and the script will generate and display 
+// The source code for each PHP script used in HashOver is normally
+// accessible directly from each script. You can simply visit the script
+// file with the "source" query and the script will generate and display
 // its own source code.
 //
 // Like so:

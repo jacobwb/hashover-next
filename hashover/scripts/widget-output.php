@@ -109,7 +109,7 @@ function parseTemplate (object, count, sort, method) {
 		// Remove repetitive and trailing HTML <br> tags
 		clean_code = clean_code.replace (/(<br>){2,}/ig, '<br><br>').replace (/(<br><br>)$/g, '').replace (/^(<br><br>)/g, '');
 
-		var 
+		var
 			name = object['name'].replace (/^@(.*?)$/, '$1'),
 			thread = '<a href="' + object['thread-url'] + '#' + permalink + '" title="Permalink">' + object['thread-title'] + '</a>',
 			date = object['date'],
