@@ -65,14 +65,18 @@ Changes by Jacob Barkdull 2017-02-25
 	- Code tags are now converted to pre tags to ensure proper whitespace.
 
 
-* Added "Status" locale string to all locales.
+* Added: <big>, <em>, <small>, <strong>, <sub> and <sup> as allowed HTML tags.
 * Added code to check for PHP extensions HashOver depends on.
 * Added error messages for missing PHP extensions.
 * Added language specific reusable code for generating error messages.
+* Added "Status" locale string to all locales.
+
 * Removed CSS class `hashover-edit` in favor of `hashover-comment-edit`.
 * Renamed CSS class `hashover-count-sort` to `hashover-sort-count`.
+
 * Improved support for multiple line ending styles in comment files.
 * Improved JSON data format support.
+
 * Minor locale improvements.
 * Small code improvements.
 

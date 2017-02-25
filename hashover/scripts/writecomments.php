@@ -68,30 +68,10 @@ class WriteComments extends PostData
 		"\r\n",
 		"\r",
 		"\n",
-		'  ',
-		'&lt;b&gt;',
-		'&lt;/b&gt;',
-		'&lt;u&gt;',
-		'&lt;/u&gt;',
-		'&lt;i&gt;',
-		'&lt;/i&gt;',
-		'&lt;s&gt;',
-		'&lt;/s&gt;',
-		'&lt;pre&gt;',
-		'&lt;/pre&gt;',
-		'&lt;code&gt;',
-		'&lt;/code&gt;',
-		'&lt;ul&gt;',
-		'&lt;/ul&gt;',
-		'&lt;ol&gt;',
-		'&lt;/ol&gt;',
-		'&lt;li&gt;',
-		'&lt;/li&gt;',
-		'&lt;blockquote&gt;',
-		'&lt;/blockquote&gt;'
+		'  '
 	);
 
-	// Replacements
+	// Character replacements
 	protected $dataReplace = array (
 		'&#92;',
 		'&quot;',
@@ -100,27 +80,27 @@ class WriteComments extends PostData
 		PHP_EOL,
 		PHP_EOL,
 		PHP_EOL,
-		'&nbsp; ',
-		'<b>',
-		'</b>',
-		'<u>',
-		'</u>',
-		'<i>',
-		'</i>',
-		'<s>',
-		'</s>',
-		'<pre>',
-		'</pre>',
-		'<code>',
-		'</code>',
-		'<ul>',
-		'</ul>',
-		'<ol>',
-		'</ol>',
-		'<li>',
-		'</li>',
-		'<blockquote>',
-		'</blockquote>'
+		'&nbsp; '
+	);
+
+	// HTML tags to allow in comments
+	protected $htmlTagSearch = array (
+		'b',
+		'big',
+		'blockquote',
+		'code',
+		'em',
+		'i',
+		'li',
+		'ol',
+		'pre',
+		's',
+		'small',
+		'strong',
+		'sub',
+		'sup',
+		'u',
+		'ul'
 	);
 
 	// HTML tags to automatically close
@@ -544,6 +524,13 @@ class WriteComments extends PostData
 
 		// Escape HTML tags
 		$clean_code = str_ireplace ($this->dataSearch, $this->dataReplace, $clean_code);
+
+		// Unescape allowed HTML tags
+		foreach ($this->htmlTagSearch as $tag) {
+			$escaped_tags = array ('&lt;' . $tag . '&gt;', '&lt;/' . $tag . '&gt;');
+			$text_tags = array ('<' . $tag . '>', '</' . $tag . '>');
+			$clean_code = str_ireplace ($escaped_tags, $text_tags, $clean_code);
+		}
 
 		// Collapse multiple newlines to three maximum
 		$clean_code = preg_replace ('/' . PHP_EOL . '{3,}/', str_repeat (PHP_EOL, 3), $clean_code);
