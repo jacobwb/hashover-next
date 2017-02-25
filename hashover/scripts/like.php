@@ -42,12 +42,12 @@ ini_set ('display_errors', true);
 error_reporting (E_ALL);
 
 // Exit if nothing is to be done
-if (!empty ($_POST['url'])
-    and !empty ($_POST['thread'])
-    and !empty ($_POST['like'])
-    and !empty ($_POST['action']))
+if (empty ($_POST['url'])
+    or empty ($_POST['thread'])
+    or empty ($_POST['like'])
+    or empty ($_POST['action']))
 {
-	echo 'No action.'
+	echo 'No action.';
 	exit;
 }
 
