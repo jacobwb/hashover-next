@@ -1640,6 +1640,98 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		this.src = this.dataset.url;
 	}
 
+	// Changes Element.textContent onmouseover and reverts onmouseout
+	function mouseOverChanger (element, over, out)
+	{
+		if (over === null || out === null) {
+			element.onmouseover = null;
+			element.onmouseout = null;
+
+			return false;
+		}
+
+		element.onmouseover = function () {
+			this.textContent = over;
+		};
+
+		element.onmouseout = function () {
+			this.textContent = out;
+		};
+	}
+
+	// For liking comments
+	function likeComment (action, permalink)
+	{
+		// Get file
+		var file = fileFromPermalink (permalink);
+
+		var actionLink = getElement ('hashover-' + action + '-' + permalink, true);
+		var likesElement = getElement ('hashover-' + action + 's-' + permalink, true);
+		var dislikesClass = (action === 'like') ? '<?php if ($hashover->setup->allowsDislikes === true) echo ' hashover-dislikes-enabled'; ?>' : '';
+
+		// Load "like.php"
+		var like = new XMLHttpRequest ();
+		var queries;
+
+		// When loaded update like count
+		like.onreadystatechange = function () {
+			var likes = 0;
+
+			// Get number of likes
+			if (likesElement.textContent !== '') {
+				var likes = parseInt (likesElement.textContent.split (' ')[0]);
+			}
+
+			// Change "Like" button title and class
+			if (actionLink.className === 'hashover-' + action + dislikesClass) {
+				// Change class to indicate the comment has been liked/disliked
+				actionLink.className = 'hashover-' + action + 'd' + dislikesClass;
+				actionLink.title = (action === 'like') ? locale.likedComment : locale.dislikedComment;
+				actionLink.textContent = (action === 'like') ? locale.liked : locale.disliked;
+
+				if (action === 'like') {
+					mouseOverChanger (actionLink, locale.unlike, locale.liked);
+				}
+
+				// Increase likes
+				likes++;
+			} else {
+				// Change class to indicate the comment is unliked
+				actionLink.className = 'hashover-' + action + dislikesClass;
+				actionLink.title = (action === 'like') ? locale.likeComment : locale.dislikeComment;
+				actionLink.textContent = (action === 'like') ? locale.like[0] : locale.dislike[0];
+
+				if (action === 'like') {
+					mouseOverChanger (actionLink, null, null);
+				}
+
+				// Decrease likes
+				likes--;
+			}
+
+			if (action === 'like') {
+				var likeCount = likes + ' ' + locale.like[(likes !== 1 ? 1 : 0)];
+			} else {
+				var likeCount = likes + ' ' + locale.dislike[(likes !== 1 ? 1 : 0)];
+			}
+
+			// Change number of likes
+			likesElement.style.fontWeight = 'bold';
+			likesElement.textContent = (likes > 0) ? likeCount : '';
+		};
+
+		// Set request queries
+		queries  = 'url=' + encodeURIComponent (pageURL);
+		queries += '&thread=<?php echo $hashover->setup->threadDirectory; ?>';
+		queries += '&like=' + file;
+		queries += '&action=' + action;
+
+		// Send request
+		like.open ('POST', httpScripts + '/like.php', true);
+		like.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
+		like.send (queries);
+	}
+
 	// Add various events to various elements in each comment
 	function addControls (json, popular)
 	{
@@ -1726,25 +1818,6 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		}
 	}
 
-	// Changes Element.textContent onmouseover and reverts onmouseout
-	function mouseOverChanger (element, over, out)
-	{
-		if (over === null || out === null) {
-			element.onmouseover = null;
-			element.onmouseout = null;
-
-			return false;
-		}
-
-		element.onmouseover = function () {
-			this.textContent = over;
-		};
-
-		element.onmouseout = function () {
-			this.textContent = out;
-		};
-	}
-
 	// Returns a clone of an object
 	function cloneObject (object)
 	{
@@ -1775,79 +1848,6 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		}
 
 		return output;
-	}
-
-	// For liking comments
-	function likeComment (action, permalink)
-	{
-		// Get file
-		var file = fileFromPermalink (permalink);
-
-		var actionLink = getElement ('hashover-' + action + '-' + permalink, true);
-		var likesElement = getElement ('hashover-' + action + 's-' + permalink, true);
-		var dislikesClass = (action === 'like') ? '<?php if ($hashover->setup->allowsDislikes === true) echo ' hashover-dislikes-enabled'; ?>' : '';
-
-		// Load "like.php"
-		var like = new XMLHttpRequest ();
-		var queries;
-
-		// When loaded update like count
-		like.onreadystatechange = function () {
-			var likes = 0;
-
-			// Get number of likes
-			if (likesElement.textContent !== '') {
-				var likes = parseInt (likesElement.textContent.split (' ')[0]);
-			}
-
-			// Change "Like" button title and class
-			if (actionLink.className === 'hashover-' + action + dislikesClass) {
-				// Change class to indicate the comment has been liked/disliked
-				actionLink.className = 'hashover-' + action + 'd' + dislikesClass;
-				actionLink.title = (action === 'like') ? locale.likedComment : locale.dislikedComment;
-				actionLink.textContent = (action === 'like') ? locale.liked : locale.disliked;
-
-				if (action === 'like') {
-					mouseOverChanger (actionLink, locale.unlike, locale.liked);
-				}
-
-				// Increase likes
-				likes++;
-			} else {
-				// Change class to indicate the comment is unliked
-				actionLink.className = 'hashover-' + action + dislikesClass;
-				actionLink.title = (action === 'like') ? locale.likeComment : locale.dislikeComment;
-				actionLink.textContent = (action === 'like') ? locale.like[0] : locale.dislike[0];
-
-				if (action === 'like') {
-					mouseOverChanger (actionLink, null, null);
-				}
-
-				// Decrease likes
-				likes--;
-			}
-
-			if (action === 'like') {
-				var likeCount = likes + ' ' + locale.like[(likes !== 1 ? 1 : 0)];
-			} else {
-				var likeCount = likes + ' ' + locale.dislike[(likes !== 1 ? 1 : 0)];
-			}
-
-			// Change number of likes
-			likesElement.style.fontWeight = 'bold';
-			likesElement.textContent = (likes > 0) ? likeCount : '';
-		};
-
-		// Set request queries
-		queries  = 'url=' + encodeURIComponent (pageURL);
-		queries += '&thread=<?php echo $hashover->setup->threadDirectory; ?>';
-		queries += '&like=' + file;
-		queries += '&action=' + action;
-
-		// Send request
-		like.open ('POST', httpScripts + '/like.php', true);
-		like.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
-		like.send (queries);
 	}
 
 	// Run all comments in array data through parseComment function
