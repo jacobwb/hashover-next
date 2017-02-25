@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2016 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -330,22 +330,39 @@ class WriteComments extends PostData
 				$metadata['status'] = 'open';
 			}
 
-			if (file_exists ($metafile) and is_writable ($metafile)) {
-				$data = json_decode (file_get_contents ($metafile), true);
+			if (!file_exists ($metafile) or !is_writable ($metafile)) {
+				continue;
+			}
 
-				if ($level === 0) {
-					$metadata['status'] = $data['status'];
-					array_unshift ($data['latest'], (string) $file);
-				} else {
-					$comment_directory = basename ($this->metalevels[0]);
-					array_unshift ($data['latest'], $comment_directory . '/' . $file);
-				}
+			$contents = @file_get_contents ($metafile);
+			$data = @json_decode ($contents, true);
 
-				if (count ($data['latest']) >= 10) {
-					if (count ($data['latest']) >= $this->setup->latestMax) {
-						$max = max (10, $this->setup->latestMax);
-						$data['latest'] = array_slice ($data['latest'], 0, $max);
-					}
+			if ($contents === false or $data === null) {
+				continue;
+			}
+
+			if (!isset ($data['status']) or !is_string ($data['status'])) {
+				$data['status'] = 'open';
+			}
+
+			if (!isset ($data['latest']) or !is_array ($data['latest'])) {
+				$data['latest'] = array ();
+			}
+
+			if ($level === 0) {
+				$metadata['status'] = $data['status'];
+				array_unshift ($data['latest'], (string) $file);
+			} else {
+				$comment_directory = basename ($this->metalevels[0]);
+				array_unshift ($data['latest'], $comment_directory . '/' . $file);
+			}
+
+			$latest_count = count ($data['latest']);
+
+			if ($latest_count >= 10) {
+				if ($latest_count >= $this->setup->latestMax) {
+					$max = max (10, $this->setup->latestMax);
+					$data['latest'] = array_slice ($data['latest'], 0, $max);
 				}
 			}
 
@@ -369,7 +386,13 @@ class WriteComments extends PostData
 				continue;
 			}
 
-			$metadata = json_decode (file_get_contents ($metafile), true);
+			$contents = @file_get_contents ($metafile);
+			$metadata = @json_decode ($contents, true);
+
+			if ($contents === false or $metadata === null) {
+				continue;
+			}
+
 			$file = basename ($file);
 			$latest = array ();
 
