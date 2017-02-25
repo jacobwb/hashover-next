@@ -48,7 +48,7 @@ class ReadFiles
 		}
 
 		// Check if comment thread directory exists
-		if ($setup->mode !== 'api') {
+		if ($setup->usage['context'] !== 'api') {
 			if (file_exists (dirname ($metadata_file)) and is_writable (dirname ($metadata_file))) {
 				// Check whether the page and metadata URLs differ
 				if ($this->setup->metadata['title'] !== $setup->pageTitle) {

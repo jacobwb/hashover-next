@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // Generates a comment count hyperlink pointing to a specific page.
 // This file is part of HashOver.
 //
@@ -26,45 +26,29 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	}
 }
 
-// Use UTF-8 character set
-ini_set ('default_charset', 'UTF-8');
+// Change to the scripts directory
+chdir ('../scripts/');
 
-// Enable display of PHP errors
-ini_set ('display_errors', true);
-error_reporting (E_ALL);
+// Do some standard HashOver setup work
+include ('standard-setup.php');
+include ('javascript-setup.php');
+include ('oop-setup.php');
 
-// Tell browser this is JavaScript
-header ('Content-Type: application/javascript');
+try {
+	// Instantiate HashOver class
+	$hashover = new HashOver ('javascript', 'api');
+	$hashover->setup->setPageURL ('request');
+	$hashover->initiate ();
 
-// Disable browser cache
-header ('Expires: Wed, 08 May 1991 12:00:00 GMT');
-header ('Last-Modified: ' . gmdate ('D, d M Y H:i:s') . ' GMT');
-header ('Cache-Control: no-store, no-cache, must-revalidate');
-header ('Cache-Control: post-check=0, pre-check=0', false);
-header ('Pragma: no-cache');
-
-// Autoload class files
-spl_autoload_register (function ($classname) {
-	$classname = strtolower ($classname);
-	$error = '"' . $classname . '.php" file could not be included!';
-
-	if (!@include ('../scripts/' . $classname . '.php')) {
-		echo '(document.getElementById (\'hashover\') || document.body).innerHTML += \'' . $error . '\';';
-		exit;
+	// If there are more than one comment set a comment count link
+	if ($hashover->readComments->totalCount > 1) {
+		$link_text = $hashover->commentCount;
+	} else {
+		// If not set a "Post Comment" link in configured language
+		$link_text = $hashover->locales->locale['post-button'];
 	}
-});
-
-// Instantiate HashOver class
-$hashover = new HashOver ('api');
-$hashover->setup->setPageURL ('request');
-$hashover->initiate ();
-
-// If there are more than one comment set a comment count link
-if ($hashover->readComments->totalCount > 1) {
-	$link_text = $hashover->commentCount;
-} else {
-	// If not set a "Post Comment" link in configured language
-	$link_text = $hashover->locales->locale['post-button'];
+} catch (Exception $error) {
+	$link_text = 'Error!';
 }
 
 ?>
@@ -82,7 +66,7 @@ var countLink = document.createElement ('a');
     countLink.href = '<?php echo $_GET['url']; ?>#comments';
     countLink.textContent = '<?php echo $link_text; ?>';
 
-<?php if (!empty ($_GET['hashover-script'])) { ?>
+<?php if (!empty ($_GET['hashover-script'])): ?>
 // Get count link element
 var hashoverScript = 'hashover-script-<?php echo $_GET['hashover-script']; ?>';
 var thisScript = document.getElementById (hashoverScript);
@@ -91,7 +75,7 @@ var thisScript = document.getElementById (hashoverScript);
 if (thisScript !== null) {
 	thisScript.parentNode.insertBefore (countLink, thisScript);
 }
-<?php } else { ?>
+<?php else: ?>
 // Display count link
 document.write (countLink.outerHTML);
-<?php } ?>
+<?php endif; ?>

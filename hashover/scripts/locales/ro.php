@@ -61,6 +61,7 @@ $locale = array(
 	'subscribe'		=> 'Notifica-ma de raspunsuri',
 	'subscribe-tip'		=> 'Subscribe la notificari pe mail',
 	'edit-comment'		=> 'Editare comentariu',
+	'status'		=> 'Stare',
 	'status-approved'	=> 'Aprobat',
 	'status-pending'	=> 'În așteptarea aprobării',
 	'status-deleted'	=> 'Marcate șters',

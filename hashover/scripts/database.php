@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -32,13 +32,11 @@ class Database
 {
 	public $database;
 	public $setup;
-	public $misc;
 	public $storageMode;
 
-	public function __construct (Setup $setup, Misc $misc)
+	public function __construct (Setup $setup)
 	{
 		$this->setup = $setup;
-		$this->misc = $misc;
 		$this->storageMode = $setup->databaseType;
 
 		try {
@@ -56,7 +54,7 @@ class Database
 				);
 			}
 		} catch (PDOException $error) {
-			$this->misc->displayError ($error->getMessage ());
+			throw new Exception ($error->getMessage ());
 		}
 	}
 
@@ -133,7 +131,8 @@ class Database
 			}
 
 		} catch (PDOException $error) {
-			$this->misc->displayError ($error->getMessage ());
+			throw new Exception ($error->getMessage ());
+			return false;
 		}
 
 		return true;
@@ -176,7 +175,8 @@ class Database
 			}
 
 		} catch (PDOException $error) {
-			$this->misc->displayError ($error->getMessage ());
+			throw new Exception ($error->getMessage ());
+			return false;
 		}
 
 		return true;

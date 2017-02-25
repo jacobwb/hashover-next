@@ -1,3 +1,82 @@
+Changes by Jacob Barkdull 2017-02-25
+--------------------------------------------------------------------------------
+* hashover/scripts/setup.php
+
+	- Added type checking to JSON settings loading process.
+	- Added allowed domain name check in referer checking.
+	- Now assuming false in referer check.
+
+
+* hashover/scripts/hashover.php
+
+	- public function `getCommentCount` now returns a string value instead
+	  of setting the value of the public `$commentCount` property.
+
+
+* hashover/scripts/javascript-mode.php
+
+	- When comments are collapsed the more link now uses the comment count.
+
+	- Now using the alternative syntax for control structures in PHP code
+	  nested within the JavaScript code. This is easier to read, however,
+	  all nested PHP code in the JavaScript will be removed eventually.
+
+
+* hashover/scripts/settings.php
+
+	- Added new public boolean `$collapsesUI` setting.
+
+	  Previously named `$initialHide`, this sets whether the entire comment
+	  form, thread, and end links are collapsed. The standard link used to
+	  display the collapsed comments will be displayed, clicking the link
+	  will load all of the comments. In the future, this behavior may
+	  change to display the collapsed comments instead of loading them all
+	  or -- once pagination is implemented -- to display the first page.
+
+	- Added new public array `$allowedDomains` setting.
+
+	  This setting allows you list what domains are allowed to remotely
+	  load the HashOver script files. This is useful for loading HashOver
+	  files located on a web host with PHP from another host without PHP,
+	  or loading HashOver files located on a subdomain from the top level
+	  of a website. Please use this format '*.example.com'.
+
+	- public `$setCookies` setting renamed to `$setsCookies`.
+
+
+* hashover/scripts/htmltag.php
+
+	- Switched singleton and pretty print parameter order.
+	- Allow more characters in tag and attribute names.
+	- Added new method for creating attributes from a given array.
+	- Added new method for appending text to attributes from a given array.
+	- Allow creating attributes when object is instantiated.
+	- Small performance improvements.
+
+
+* hashover/scripts/htmloutput.php
+
+	- Reduced code base size by ~12.1%
+	- Small performance improvements.
+
+
+* hashover/api/rss.php
+
+	- Code tags are now converted to pre tags to ensure proper whitespace.
+
+
+* Added "Status" locale string to all locales.
+* Added code to check for PHP extensions HashOver depends on.
+* Added error messages for missing PHP extensions.
+* Added language specific reusable code for generating error messages.
+* Removed CSS class `hashover-edit` in favor of `hashover-comment-edit`.
+* Renamed CSS class `hashover-count-sort` to `hashover-sort-count`.
+* Improved support for multiple line ending styles in comment files.
+* Improved JSON data format support.
+* Minor locale improvements.
+* Small code improvements.
+
+
 Changes by Jacob Barkdull 2016-01-05
 --------------------------------------------------------------------------------
 * hashover/scripts/javascript-mode.php

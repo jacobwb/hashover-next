@@ -29,17 +29,24 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 // Text for "Show X Other Comment(s)" link
 if ($hashover->setup->collapsesComments !== false) {
+	// Check if at least 1 comment is to be shown
 	if ($hashover->setup->collapseLimit >= 1) {
+		// If so, use the "Show X Other Comments" locale
 		$other_comment_count = ($hashover->readComments->totalCount - 1) - $hashover->setup->collapseLimit;
-		$collapse_link_plural = ($other_comment_count !== 1) ? 1 : 0;
-		$collapse_link_text = $hashover->locales->locale['show-other-comments'][$collapse_link_plural];
-		$collapse_link_text = sprintf ($collapse_link_text, $other_comment_count);
+		$more_link_plural = ($other_comment_count !== 1) ? 1 : 0;
+		$more_link_locale = 'show-other-comments';
+		$more_link_text = $hashover->locales->locale[$more_link_locale][$more_link_plural];
+		$more_link_text = sprintf ($more_link_text, $other_comment_count);
 	} else {
-		$collapse_link_plural = ($hashover->readComments->totalCount !== 1) ? 1 : 0;
-		$collapse_link_text = $hashover->locales->locale['show-number-comments'][$collapse_link_plural];
-		$collapse_link_text = sprintf ($collapse_link_text, $hashover->readComments->totalCount - 1);
+		// If not, show count according to `$showsReplyCount` setting
+		$more_link_text = $hashover->getCommentCount ('show-number-comments');
 	}
 }
+
+// Some short variables (FIXME: this is cosmetic)
+$allowsLikes = !!$hashover->setup->allowsLikes;
+$allowsDislikes = !!$hashover->setup->allowsDislikes;
+$likesOrDislikes = ($allowsLikes or $allowsDislikes);
 
 // Return a boolean as a string
 function string_boolean ($boolean, $value = true)
@@ -105,7 +112,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 }
 
 ?>
-// Copyright (C) 2010-2016 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -122,11 +129,15 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(function () {
+// Initial HashOver object
+var HashOver = {};
+
+// FIXME: This will be split into multiple functions in separate files
+HashOver.init = function ()
+{
 	"use strict";
 
 	var execStart		= Date.now ();
-	var serverEOL		= '<?php echo str_replace (array ("\r", "\n"), array ('\r', '\n'), PHP_EOL); ?>';
 	var httpRoot		= '<?php echo $hashover->setup->httpRoot; ?>';
 	var URLRegex		= '((http|https|ftp):\/\/[a-z0-9-@:%_\+.~#?&\/=]+)';
 	var URLParts		= window.location.href.split ('#');
@@ -134,7 +145,6 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	var trimRegex		= /^[\r\n]+|[\r\n]+$/g;
 	var streamMode		= <?php echo string_boolean ($hashover->setup->replyMode, 'stream'); ?>;
 	var streamDepth		= <?php echo $hashover->setup->streamDepth; ?>;
-	var doubleEOL		= serverEOL + serverEOL;
 	var blockCodeRegex	= <?php echo js_regex ($hashover->markdown->blockCodeRegex, false); ?>;
 	var inlineCodeRegex	= <?php echo js_regex ($hashover->markdown->inlineCodeRegex, false); ?>;
 	var blockCodeMarker	= /CODE_BLOCK\[([0-9]+)\]/g;
@@ -142,7 +152,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	var collapsedCount	= 0;
 	var collapseLimit	= <?php echo $hashover->setup->collapseLimit; ?>;
 	var defaultName		= '<?php echo $hashover->setup->defaultName; ?>';
-	var allowsDislikes	= <?php echo string_true ($hashover->setup->allowsDislikes); ?>;
+	var allowsDislikes	= <?php echo string_true ($allowsDislikes); ?>;
+	var allowsLikes		= <?php echo string_true ($allowsLikes); ?>;
 	var linkRegex		= new RegExp (URLRegex + '( {0,1})', 'ig');
 	var imageRegex		= new RegExp ('\\[img\\]<a.*?>' + URLRegex + '</a>\\[/img\\]', 'ig');
 	var imageExtensions	= ['<?php echo implode ('\', \'', $hashover->setup->imageTypes); ?>'];
@@ -151,7 +162,10 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	var codeTagRegex	= /(<code>)([\s\S]*?)(<\/code>)/ig;
 	var preOpenRegex	= /<pre>/i;
 	var preTagRegex		= /(<pre>)([\s\S]*?)(<\/pre>)/ig;
-	var lineRegex		= new RegExp (serverEOL, 'g');
+	var lineRegex		= /(?:\r\n|\r|\n)/g;
+	var paragraphRegex	= /(?:\r\n|\r|\n){2}/g;
+	var serverEOL		= '<?php echo str_replace (array ("\r", "\n"), array ('\r', '\n'), PHP_EOL); ?>';
+	var doubleEOL		= serverEOL + serverEOL;
 	var codeTagMarkerRegex	= /CODE_TAG\[([0-9]+)\]/g;
 	var preTagMarkerRegex	= /PRE_TAG\[([0-9]+)\]/g;
 	var messageCounts	= {};
@@ -270,8 +284,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Find a comment by its permalink
 	function findByPermalink (permalink, comments)
 	{
-		// Default return value is null
-		var comment = null;
+		var comment;
 
 		// Loop through all comments
 		for (var i = 0, il = comments.length; i < il; i++) {
@@ -283,11 +296,15 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			// Recursively check replies when present
 			if (comments[i].replies !== undefined) {
 				comment = findByPermalink (permalink, comments[i].replies);
+
+				if (comment !== null) {
+					return comment;
+				}
 			}
 		}
 
-		// Return comment or false
-		return comment;
+		// Otherwise return null
+		return null;
 	}
 
 	// Returns the permalink of a comment's parent
@@ -348,7 +365,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		});
 
 		// Break string into paragraphs
-		var paragraphs = string.split (doubleEOL);
+		var paragraphs = string.split (paragraphRegex);
 
 		// Run through each paragraph replacing markdown patterns
 		for (var i = 0, il = paragraphs.length; i < il; i++) {
@@ -465,7 +482,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 					classes += ' hashover-reply';
 				}
 			}
-<?php if ($hashover->setup->collapsesComments !== false) { ?>
+<?php if ($hashover->setup->collapsesComments !== false): ?>
 
 			// Append class to indicate collapsed comment
 			if (collapse === true && collapsedCount >= collapseLimit) {
@@ -473,7 +490,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			} else {
 				collapsedCount++;
 			}
-<?php } ?>
+<?php endif; ?>
 		}
 
 		// Add avatar image to template
@@ -530,8 +547,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				var replyTitle = '<?php echo $hashover->locales->locale ('commenter-tip', true); ?>';
 				var replyClass = 'hashover-no-email';
 
-				// Add "Reply" hyperlink to template
-				template['edit-link'] = '<?php echo $hashover->html->editLink ('permalink'); ?>';
+				// Add "Edit" hyperlink to template
+				template['edit-link'] = '<?php echo $hashover->html->formLink ('edit', 'permalink'); ?>';
 			} else {
 				// Check if commenter is subscribed
 				if (comment.subscribed === true) {
@@ -543,6 +560,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 					var replyTitle = name + ' <?php echo $hashover->locales->locale ('unsubscribed-tip', true); ?>';
 					var replyClass = 'hashover-no-email';
 				}
+<?php if ($allowsLikes === true): ?>
 
 				// Check whether this comment was liked by the visitor
 				if (comment.liked !== undefined) {
@@ -563,9 +581,10 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				}
 
 				// Add like link to HTML template
-				template['like-link'] = '<?php echo $hashover->html->likeLink ('permalink', 'likeClass', 'likeTitle', 'likeText'); ?>';
+				template['like-link'] = '<?php echo $hashover->html->likeLink ('like', 'permalink', 'likeClass', 'likeTitle', 'likeText'); ?>';
+<?php endif; ?>
+<?php if ($allowsDislikes === true): ?>
 
-<?php if ($hashover->setup->allowsDislikes === true) { ?>
 				// Check whether this comment was disliked by the visitor
 				if (comment.disliked !== undefined) {
 					// If so, set various attributes to indicate comment was disliked
@@ -579,29 +598,36 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 					var dislikeText = locale.dislike[0];
 				}
 
+				// Append class to indicate likes are enabled
+				if (allowsLikes === true) {
+					dislikeClass += ' hashover-likes-enabled';
+				}
+
 				// Add dislike link to HTML template
-				template['dislike-link'] = '<?php echo $hashover->html->dislikeLink ('permalink', 'dislikeClass', 'dislikeTitle', 'dislikeText'); ?>';
-<?php } ?>
+				template['dislike-link'] = '<?php echo $hashover->html->likeLink ('dislike', 'permalink', 'dislikeClass', 'dislikeTitle', 'dislikeText'); ?>';
+<?php endif; ?>
 			}
 
+<?php if ($allowsLikes === true): ?>
 			// Get number of likes, append "Like(s)" locale
 			if (comment.likes !== undefined) {
 				var likeCount = comment.likes + ' ' + locale.like[(comment.likes === 1 ? 0 : 1)];
 			}
 
 			// Add like count to HTML template
-			template['like-count'] = '<?php echo $hashover->html->likeCount ('permalink', '(likeCount || \'\')'); ?>';
+			template['like-count'] = '<?php echo $hashover->html->likeCount ('likes', 'permalink', '(likeCount || \'\')'); ?>';
 
-<?php if ($hashover->setup->allowsDislikes === true) { ?>
+<?php endif; ?>
+<?php if ($allowsDislikes === true): ?>
 			// Get number of dislikes, append "Dislike(s)" locale
 			if (comment.dislikes !== undefined) {
 				var dislikeCount = comment.dislikes + ' ' + locale.dislike[(comment.dislikes === 1 ? 0 : 1)];
 			}
 
 			// Add dislike count to HTML template
-			template['dislike-count'] = '<?php echo $hashover->html->dislikeCount ('permalink', '(dislikeCount || \'\')'); ?>';
+			template['dislike-count'] = '<?php echo $hashover->html->likeCount ('dislikes', 'permalink', '(dislikeCount || \'\')'); ?>';
 
-<?php } ?>
+<?php endif; ?>
 			// Add name HTML to template
 			template.name = '<?php echo $hashover->html->nameWrapper ('nameLink', 'nameClass'); ?>';
 
@@ -609,7 +635,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			template.date = '<?php echo $hashover->html->dateLink ('permalink', 'comment.date'); ?>';
 
 			// Add "Reply" hyperlink to template
-			template['reply-link'] = '<?php echo $hashover->html->replyLink ('permalink', 'replyClass', 'replyTitle'); ?>';
+			template['reply-link'] = '<?php echo $hashover->html->formLink ('reply', 'permalink', 'replyClass', 'replyTitle'); ?>';
 
 			// Add reply count to template
 			if (comment.replies !== undefined) {
@@ -629,7 +655,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 			// Replace [img] tags with external image placeholder if enabled
 			body = body.replace (imageRegex, function (fullURL, url) {
-<?php if ($hashover->setup->allowsImages === true) { ?>
+<?php if ($hashover->setup->allowsImages === true): ?>
 				// Get image extension from URL
 				var urlExtension = url.split ('#')[0];
 				    urlExtension = urlExtension.split ('?')[0];
@@ -660,7 +686,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 					return embeddedImage.outerHTML;
 				}
 
-<?php } ?>
+<?php endif; ?>
 				// Convert image URL into an anchor tag
 				return '<a href="' + url + '" rel="noopener noreferrer" target="_blank">' + url + '</a>';
 			});
@@ -705,7 +731,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 
 			// Break comment into paragraphs
-			var paragraphs = body.split (doubleEOL);
+			var paragraphs = body.split (paragraphRegex);
 			var pdComment = '';
 
 			// Wrap comment in paragraph tag
@@ -783,7 +809,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		link.title = locale.cancel;
 
 		// This resets the "Cancel" hyperlink to initial state onClick
-		link.onclick = function () {
+		link.onclick = function ()
+		{
 			// Remove fields from form wrapper
 			wrapper.textContent = '';
 
@@ -794,17 +821,18 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 			return false;
 		};
-<?php if ($hashover->setup->usesCancelButtons === true) { ?>
+<?php if ($hashover->setup->usesCancelButtons === true): ?>
 
 		// Attach event listeners to "Cancel" button
-		getElement ('hashover-' + form + '-cancel-' + permalink, true).onclick = function () {
+		getElement ('hashover-' + form + '-cancel-' + permalink, true).onclick = function ()
+		{
 			// Remove fields from form wrapper
 			wrapper.textContent = '';
 			link.onclick ();
 
 			return false;
 		};
-<?php } ?>
+<?php endif; ?>
 	}
 
 	// Returns false if key event is the enter key
@@ -829,23 +857,27 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	if (document.documentElement.classList) {
 		// If so, wrap relevant functions
 		// classList.contains () method
-		var containsClass = function (element, className) {
+		var containsClass = function (element, className)
+		{
 			return element.classList.contains (className);
 		};
 
 		// classList.add () method
-		var addClass = function (element, className) {
+		var addClass = function (element, className)
+		{
 			element.classList.add (className);
 		};
 
 		// classList.remove () method
-		var removeClass = function (element, className) {
+		var removeClass = function (element, className)
+		{
 			element.classList.remove (className);
 		};
 	} else {
 		// If not, define fallback functions
 		// classList.contains () method
-		var containsClass = function (element, className) {
+		var containsClass = function (element, className)
+		{
 			if (!element || !element.className) {
 				return false;
 			}
@@ -855,7 +887,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		};
 
 		// classList.add () method
-		var addClass = function (element, className) {
+		var addClass = function (element, className)
+		{
 			if (!element) {
 				return false;
 			}
@@ -866,7 +899,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		};
 
 		// classList.remove () method
-		var removeClass = function (element, className) {
+		var removeClass = function (element, className)
+		{
 			if (!element || !element.className) {
 				return false;
 			}
@@ -1094,7 +1128,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			button.disabled = true;
 		}, 500);
 
-<?php if ($hashover->setup->usesAJAX !== false) { ?>
+<?php if ($hashover->setup->usesAJAX !== false): ?>
 		var httpRequest = new XMLHttpRequest ();
 		var formElements = form.elements;
 		var elementsLength = formElements.length;
@@ -1125,7 +1159,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		queries.push ('ajax=yes');
 
 		// Handle AJAX request return data
-		httpRequest.onreadystatechange = function () {
+		httpRequest.onreadystatechange = function ()
+		{
 			// Do nothing if request wasn't successful in a meaningful way
 			if (this.readyState !== 4 || this.status !== 200) {
 				return;
@@ -1178,17 +1213,17 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		}, 20000);
 
 		return false;
-<?php } else { ?>
+<?php else: ?>
 		// Re-enable button after 20 seconds
 		setTimeout (function () {
 			button.disabled = false;
 		}, 20000);
 
 		return true;
-<?php } ?>
+<?php endif; ?>
 	}
 
-<?php if ($hashover->setup->usesAJAX !== false) { ?>
+<?php if ($hashover->setup->usesAJAX !== false): ?>
 	// Converts an HTML string to DOM NodeList
 	function HTMLToNodeList (html)
 	{
@@ -1246,7 +1281,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	}
 
 	// For posting comments
-	AJAXPost = function (json, permalink, destination, isReply) {
+	AJAXPost = function (json, permalink, destination, isReply)
+	{
 		// If there aren't any comments, replace first comment message
 		if (totalCount === 0) {
 			PHPContent.comments[0] = json.comment;
@@ -1275,7 +1311,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	};
 
 	// For editing comments
-	AJAXEdit = function (json, permalink, destination, isReply) {
+	AJAXEdit = function (json, permalink, destination, isReply)
+	{
 		// Get old comment element nodes
 		var comment = getElement (permalink, true);
 		var oldNodes = comment.childNodes;
@@ -1303,7 +1340,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		}
 	};
 
-<?php } ?>
+<?php endif; ?>
 	// Displays reply form
 	function hashoverReply (permalink)
 	{
@@ -1347,12 +1384,14 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var destination = getElement (permalink, true);
 
 		// Onclick
-		postReply.onclick = function () {
+		postReply.onclick = function ()
+		{
 			return postComment (destination, form, this, AJAXPost, permalink, link.onclick, true, false);
 		};
 
 		// Onsubmit
-		postReply.onsubmit = function () {
+		postReply.onsubmit = function ()
+		{
 			return postComment (destination, form, this, AJAXPost, permalink, link.onclick, true, false);
 		};
 
@@ -1429,7 +1468,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		}
 
 		// Displays onClick confirmation dialog for comment deletion
-		getElement ('hashover-edit-delete-' + permalink, true).onclick = function () {
+		getElement ('hashover-edit-delete-' + permalink, true).onclick = function ()
+		{
 			return confirm ('<?php echo $hashover->locales->locale ('delete-comment', true); ?>');
 		};
 
@@ -1443,18 +1483,20 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var destination = getElement (permalink, true);
 
 		// Onclick
-		saveEdit.onclick = function () {
+		saveEdit.onclick = function ()
+		{
 			return postComment (destination, form, this, AJAXEdit, permalink, link.onclick, false, true);
 		};
 
 		// Onsubmit
-		saveEdit.onsubmit = function () {
+		saveEdit.onsubmit = function ()
+		{
 			return postComment (destination, form, this, AJAXEdit, permalink, link.onclick, false, true);
 		};
 
 		return false;
 	}
-<?php if ($hashover->setup->collapsesComments !== false) { ?>
+<?php if ($hashover->setup->collapsesComments !== false): ?>
 
 	// For showing more comments, via AJAX or removing a class
 	function hideMoreLink (finishedCallback)
@@ -1470,9 +1512,12 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 				sortDiv.removeChild (moreLink);
 			}
 
-			// Show comment count and sort options
-			getElement ('hashover-sort').style.display = '';
+			// Show hidden form elements
+			getElement ('hashover-form-section').style.display = '';
+			getElement ('hashover-count-wrapper').style.display = '';
 			getElement ('hashover-count').style.display = '';
+			getElement ('hashover-sort').style.display = '';
+			getElement ('hashover-end-links').style.display = '';
 
 			// Get each hidden comment element
 			var collapsed = sortDiv.getElementsByClassName ('hashover-hidden');
@@ -1488,7 +1533,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			}
 		}, 350);
 	}
-<?php if ($hashover->setup->usesAJAX !== false) { ?>
+<?php if ($hashover->setup->usesAJAX !== false): ?>
 
 	// For appending new comments to the thread on page
 	function appendComments (comments)
@@ -1535,7 +1580,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			addControls (comments[i]);
 		}
 	}
-<?php } ?>
+<?php endif; ?>
 
 	// onClick event for more button
 	function showMoreComments (element, finishedCallback)
@@ -1552,12 +1597,13 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			return false;
 		}
 
-<?php if ($hashover->setup->usesAJAX !== false) { ?>
+<?php if ($hashover->setup->usesAJAX !== false): ?>
 		var httpRequest = new XMLHttpRequest ();
 		var queries = ['url=' + encodeURIComponent (pageURL), 'start=' + collapseLimit, 'ajax=yes'];
 
 		// Handle AJAX request return data
-		httpRequest.onreadystatechange = function () {
+		httpRequest.onreadystatechange = function ()
+		{
 			// Do nothing if request wasn't successful in a meaningful way
 			if (this.readyState !== 4 || this.status !== 200) {
 				return;
@@ -1583,17 +1629,17 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 		// Set class to indicate loading to element
 		addClass (element, 'hashover-loading');
-<?php } else { ?>
+<?php else: ?>
 		// Hide the more hyperlink and display the comments
 		hideMoreLink (finishedCallback);
-<?php } ?>
+<?php endif; ?>
 
 		// Set all comments as shown
 		showingMore = true;
 
 		return false;
 	}
-<?php } ?>
+<?php endif; ?>
 
 	// Callback to close the embedded image
 	function closeEmbeddedImage (image) {
@@ -1623,7 +1669,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		addClass (this.parentNode, 'hashover-loading');
 
 		// Change title and remove load event handler once image is loaded
-		this.onload = function () {
+		this.onload = function ()
+		{
 			this.title = '<?php echo $hashover->locales->locale ('click-to-close', true); ?>';
 			this.onload = null;
 
@@ -1632,7 +1679,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		};
 
 		// Close embedded image if any error occurs
-		this.onerror = function () {
+		this.onerror = function ()
+		{
 			closeEmbeddedImage (this);
 		};
 
@@ -1650,14 +1698,17 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			return false;
 		}
 
-		element.onmouseover = function () {
+		element.onmouseover = function ()
+		{
 			this.textContent = over;
 		};
 
-		element.onmouseout = function () {
+		element.onmouseout = function ()
+		{
 			this.textContent = out;
 		};
 	}
+<?php if ($likesOrDislikes === true): ?>
 
 	// For liking comments
 	function likeComment (action, permalink)
@@ -1667,15 +1718,21 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 		var actionLink = getElement ('hashover-' + action + '-' + permalink, true);
 		var likesElement = getElement ('hashover-' + action + 's-' + permalink, true);
-		var dislikesClass = (action === 'like') ? '<?php if ($hashover->setup->allowsDislikes === true) echo ' hashover-dislikes-enabled'; ?>' : '';
+		var dislikesClass = (action === 'like') ? '<?php if ($allowsDislikes === true) echo ' hashover-dislikes-enabled'; ?>' : '';
 
 		// Load "like.php"
 		var like = new XMLHttpRequest ();
 		var queries;
 
 		// When loaded update like count
-		like.onreadystatechange = function () {
+		like.onreadystatechange = function ()
+		{
 			var likes = 0;
+
+			// Do nothing if request wasn't successful in a meaningful way
+			if (this.readyState !== 4 || this.status !== 200) {
+				return;
+			}
 
 			// Get number of likes
 			if (likesElement.textContent !== '') {
@@ -1731,11 +1788,22 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		like.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
 		like.send (queries);
 	}
+<?php endif; ?>
 
 	// Add various events to various elements in each comment
 	function addControls (json, popular)
 	{
+		function stepIntoReplies ()
+		{
+			if (json.replies !== undefined) {
+				for (var reply = 0, total = json.replies.length; reply < total; reply++) {
+					addControls (json.replies[reply]);
+				}
+			}
+		}
+
 		if (json.notice !== undefined) {
+			stepIntoReplies ();
 			return false;
 		}
 
@@ -1750,11 +1818,12 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			embeddedImgs[i].onclick = embeddedImageCallback;
 		}
 
-<?php if ($hashover->setup->collapsesComments !== false) { ?>
+<?php if ($hashover->setup->collapsesComments !== false): ?>
 		// Get thread link of comment
 		ifElement ('hashover-thread-link-' + permalink, function (threadLink) {
 			// Add onClick event to thread hyperlink
-			threadLink.onclick = function () {
+			threadLink.onclick = function ()
+			{
 				showMoreComments (threadLink, function () {
 					var parentThread = permalink.replace (threadRegex, '$1');
 					var scrollToElement = getElement (parentThread, true);
@@ -1767,11 +1836,12 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 			};
 		});
 
-<?php } ?>
+<?php endif; ?>
 		// Get reply link of comment
 		ifElement ('hashover-reply-link-' + permalink, function (replyLink) {
 			// Add onClick event to "Reply" hyperlink
-			replyLink.onclick = function () {
+			replyLink.onclick = function ()
+			{
 				hashoverReply (permalink);
 				return false;
 			};
@@ -1781,15 +1851,19 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		if (json['user-owned'] === true) {
 			ifElement ('hashover-edit-link-' + permalink, function (editLink) {
 				// Add onClick event to "Edit" hyperlinks
-				editLink.onclick = function () {
+				editLink.onclick = function ()
+				{
 					hashoverEdit (json);
 					return false;
 				};
 			});
+<?php if ($likesOrDislikes): ?>
 		} else {
+<?php if ($allowsLikes === true): ?>
 			ifElement ('hashover-like-' + permalink, function (likeLink) {
 				// Add onClick event to "Like" hyperlinks
-				likeLink.onclick = function () {
+				likeLink.onclick = function ()
+				{
 					likeComment ('like', permalink);
 					return false;
 				};
@@ -1798,24 +1872,23 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 					mouseOverChanger (likeLink, locale.unlike, locale.liked);
 				}
 			});
-<?php if ($hashover->setup->allowsDislikes === true) { ?>
+<?php endif; ?>
+<?php if ($allowsDislikes === true): ?>
 
 			ifElement ('hashover-dislike-' + permalink, function (dislikeLink) {
 				// Add onClick event to "Dislike" hyperlinks
-				dislikeLink.onclick = function () {
+				dislikeLink.onclick = function ()
+				{
 					likeComment ('dislike', permalink);
 					return false;
 				};
 			});
-<?php } ?>
+<?php endif; ?>
+<?php endif; ?>
 		}
 
 		// Recursively execute this function on replies
-		if (json.replies !== undefined) {
-			for (var reply = 0, total = json.replies.length; reply < total; reply++) {
-				addControls (json.replies[reply]);
-			}
-		}
+		stepIntoReplies ();
 	}
 
 	// Returns a clone of an object
@@ -2075,7 +2148,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		parseAll (sortArray, sortDiv, false, false, true, method);
 	}
 
-<?php if ($hashover->setup->appendsCSS === true) { ?>
+<?php if ($hashover->setup->appendsCSS === true): ?>
 	// Check if comment theme stylesheet is already in page head
 	if (typeof (document.querySelector) === 'function') {
 		appendCSS = !document.querySelector ('link[href="' + themeCSS + '"]');
@@ -2103,13 +2176,13 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		head.appendChild (css);
 	}
 
-<?php } ?>
+<?php endif; ?>
 	// Put number of comments into "hashover-comment-count" identified HTML element
 	if (totalCount !== 0) {
 		ifElement ('hashover-comment-count', function (countElement) {
 			countElement.textContent = totalCount;
 		});
-<?php if ($hashover->setup->APIStatus ('rss') !== 'disabled') { ?>
+<?php if ($hashover->setup->APIStatus ('rss') !== 'disabled'): ?>
 
 		// Create link element for comment RSS feed
 		var rss = createElement ('link', {
@@ -2121,13 +2194,14 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 		// Append comment RSS feed link element to page head
 		head.appendChild (rss);
-<?php } ?>
+<?php endif; ?>
 	}
 
 	// Initial HTML
 <?php
 
-	echo $hashover->html->asJSVar ($hashover->html->initialHTML (false), 'initialHTML');
+	$initialHTML = $hashover->html->initialHTML ($hashover->commentParser->popularList, false);
+	echo $hashover->html->asJSVar ($initialHTML, 'initialHTML');
 
 ?>
 
@@ -2180,7 +2254,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	// Add initial event handlers
 	parseAll (PHPContent.comments, sortDiv, collapseComments);
 
-<?php if ($hashover->setup->collapsesComments !== false) { ?>
+<?php if ($hashover->setup->collapsesComments !== false): ?>
 	// Check whether there are more than the collapse limit
 	if (totalCount > collapseLimit) {
 		// Create element for the comments
@@ -2190,7 +2264,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		moreLink = createElement ('a', {
 			href: '#',
 			id: 'hashover-more-link',
-			textContent: '<?php echo $collapse_link_text; ?>',
+			textContent: '<?php echo $more_link_text; ?>',
 
 			onclick: function () {
 				return showMoreComments (this);
@@ -2207,51 +2281,56 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		showingMore = true;
 	}
 
-<?php } ?>
+<?php endif; ?>
 	// Attach event listeners to "Post Comment" button
 	var postButton = getElement ('hashover-post-button');
 
 	// Onclick
-	postButton.onclick = function () {
+	postButton.onclick = function ()
+	{
 		return postComment (sortDiv, HashOverForm, postButton, AJAXPost);
 	};
 
 	// Onsubmit
-	postButton.onsubmit = function () {
+	postButton.onsubmit = function ()
+	{
 		return postComment (sortDiv, HashOverForm, postButton, AJAXPost);
 	};
 
-<?php if ($hashover->setup->allowsLogin === true) { ?>
+<?php if ($hashover->setup->allowsLogin === true): ?>
 	// Attach event listeners to "Login" button
 	if (userIsLoggedIn !== true) {
 		var loginButton = getElement ('hashover-login-button');
 
 		// Onclick
-		loginButton.onclick = function () {
+		loginButton.onclick = function ()
+		{
 			return validateComment (true, HashOverForm);
 		};
 
 		// Onsubmit
-		loginButton.onsubmit = function () {
+		loginButton.onsubmit = function ()
+		{
 			return validateComment (true, HashOverForm);
 		};
 	}
 
-<?php } ?>
+<?php endif; ?>
 	// Five method sort
 	ifElement ('hashover-sort-select', function (sortSelect) {
-		sortSelect.onchange = function () {
-<?php if ($hashover->setup->collapsesComments !== false) { ?>
+		sortSelect.onchange = function ()
+		{
+<?php if ($hashover->setup->collapsesComments !== false): ?>
 			var sortSelectDiv = getElement ('hashover-sort');
 
 			showMoreComments (sortSelectDiv, function () {
 				sortDiv.textContent = '';
 				sortComments (sortSelect.value);
 			});
-<?php } else { ?>
+<?php else: ?>
 			sortDiv.textContent = '';
 			sortComments (sortSelect.value);
-<?php } ?>
+<?php endif; ?>
 		};
 	});
 
@@ -2260,30 +2339,30 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 		var permalink = URLHref.replace (/.*?hashover-(edit|reply)=(c[0-9r\-pop]+).*?/, '$2');
 
 		if (!URLHref.match ('hashover-edit=')) {
-<?php if ($hashover->setup->collapsesComments !== false) { ?>
+<?php if ($hashover->setup->collapsesComments !== false): ?>
 			// Show more comments
 			showMoreComments (moreLink, function () {
 				// Then display reply form
 				hashoverReply (permalink);
 			});
-<?php } else { ?>
+<?php else: ?>
 			// Display reply form
 			hashoverReply (permalink);
-<?php } ?>
+<?php endif; ?>
 		} else {
 			var isPop = permalink.match ('-pop');
 			var comments = (isPop) ? PHPContent.popularComments : PHPContent.comments;
-<?php if ($hashover->setup->collapsesComments !== false) { ?>
+<?php if ($hashover->setup->collapsesComments !== false): ?>
 
 			// Show more comments
 			showMoreComments (moreLink, function () {
 				// Then display edit form
 				hashoverEdit (findByPermalink (permalink, comments));
 			});
-<?php } else { ?>
+<?php else: ?>
 			// Display edit form
 			hashoverEdit (findByPermalink (permalink, comments));
-<?php } ?>
+<?php endif; ?>
 		}
 	}
 
@@ -2293,7 +2372,8 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	}
 
 	// Callback for scrolling a comment into view on page load
-	var scroller = function () {
+	var scroller = function ()
+	{
 		setTimeout (function () {
 			// Workaround for stupid Chrome bug
 			if (URLHash.match (/comments|hashover/)) {
@@ -2304,7 +2384,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 			// Jump to linked comment
 			if (URLHash.match (/c[0-9]+r*/)) {
-<?php if ($hashover->setup->collapsesComments !== false) { ?>
+<?php if ($hashover->setup->collapsesComments !== false): ?>
 				var existingComment = getElement (URLHash);
 
 				// Check if comment exists on the page and is visable
@@ -2321,11 +2401,11 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 						});
 					});
 				}
-<?php } else { ?>
+<?php else: ?>
 				ifElement (URLHash, function (comment) {
 					comment.scrollIntoView ({'behavior': 'smooth'});
 				});
-<?php } ?>
+<?php endif; ?>
 			}
 		}, 500);
 	};
@@ -2343,4 +2423,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 	if (getElement ('hashover-message').textContent !== '') {
 		showMessage ();
 	}
-}) ();
+};
+
+// Initiate HashOver
+HashOver.init ();

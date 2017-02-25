@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2016 Jacob Barkdull
+// Copyright (C) 2015-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ class Templater
 	protected $newline_search = array ("\r\n", "\r", "\n");
 	protected $newline_replace = array ("\n", "\n", PHP_EOL);
 
-	public function __construct ($mode = 'javascript', Setup $setup)
+	public function __construct ($mode = 'php', Setup $setup)
 	{
 		$this->mode = $mode;
 		$this->setup = $setup;
@@ -58,10 +58,8 @@ class Templater
 			return '\' + (comment[\'' . $key . '\'] || \'\') + \'';
 		}
 
-		if (!empty ($key)) {
-			if (!empty ($this->comment[$key])) {
-				return $this->comment[$key];
-			}
+		if (!empty ($this->comment[$key])) {
+			return $this->comment[$key];
 		}
 
 		return '';
@@ -78,9 +76,12 @@ class Templater
 
 	protected function placeholder ($id)
 	{
-		$placeholder = new HTMLTag ('span', false, false);
-		$placeholder->createAttribute ('id', 'hashover-placeholder-' . $id);
-		$placeholder->appendAttribute ('id', '-' . $this->fromVariable ('permalink'), false);
+		$span_id  = 'hashover-placeholder-' . $id;
+		$span_id .= '-' . $this->fromVariable ('permalink');
+
+		$placeholder = new HTMLTag ('span', array (
+			'id' => $span_id
+		), false);
 
 		if (!empty ($this->comment[$id])) {
 			$placeholder->innerHTML ($this->comment[$id]);
@@ -91,7 +92,7 @@ class Templater
 
 	protected function mainCallback ($var)
 	{
-		if (empty ($var[1])) {
+		if (empty ($var[1]) or empty ($var[2])) {
 			return '';
 		}
 

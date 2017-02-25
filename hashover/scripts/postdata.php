@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2016 Jacob Barkdull
+// Copyright (C) 2015-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 class PostData
 {
 	public $postData = array ();
+	public $remoteAccess = false;
 	public $file;
 	public $replyTo;
 	public $viaAJAX = false;
@@ -64,6 +65,11 @@ class PostData
 		// Set comment
 		if (isset ($_POST['comment'])) {
 			$this->postData['comment'] = $this->ForceUTF8 ($_POST['comment']);
+		}
+
+		// Set indicator of remote access
+		if (isset ($_POST['remote-access'])) {
+			$this->remoteAccess = true;
 		}
 
 		// Get comment file

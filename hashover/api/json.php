@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2016 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -25,58 +25,47 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	}
 }
 
-// Use UTF-8 character set
-ini_set ('default_charset', 'UTF-8');
+// Change to the scripts directory
+chdir ('../scripts/');
 
-// Enable display of PHP errors
-ini_set ('display_errors', true);
-error_reporting (E_ALL);
+// Do some standard HashOver setup work
+include ('standard-setup.php');
+include ('javascript-setup.php');
+include ('oop-setup.php');
 
-// Tell browser this is JavaScript
-header ('Content-Type: application/javascript');
+try {
+	// Instantiate HashOver class
+	$hashover = new HashOver ('json', 'api');
 
-// Disable browser cache
-header ('Expires: Wed, 08 May 1991 12:00:00 GMT');
-header ('Last-Modified: ' . gmdate ('D, d M Y H:i:s') . ' GMT');
-header ('Cache-Control: no-store, no-cache, must-revalidate');
-header ('Cache-Control: post-check=0, pre-check=0', false);
-header ('Pragma: no-cache');
-
-// Autoload class files
-spl_autoload_register (function ($classname) {
-	$classname = strtolower ($classname);
-	$error = '"' . $classname . '.php" file could not be included!';
-
-	if (!@include ('../scripts/' . $classname . '.php')) {
-		echo '(document.getElementById (\'hashover\') || document.body).innerHTML += \'' . $error . '\';';
-		exit;
+	// Display error if the API is disabled
+	if (empty ($_POST['ajax']) and $hashover->setup->APIStatus ('json') === 'disabled') {
+		throw new Exception ('<b>HashOver</b>: This API is not enabled.');
 	}
-});
 
-// Instantiate HashOver class
-$hashover = new HashOver ('api');
+	// Configure HashOver and load comments
+	$hashover->setup->setPageURL ('request');
+	$hashover->initiate ();
 
-// Display error if the API is disabled
-if (!isset ($_POST['ajax']) and $hashover->setup->APIStatus ('json') === 'disabled') {
-	exit (json_encode (array ('error' => '<b>HashOver</b>: This API is not enabled.')));
-}
+	// Setup where to start reading comments
+	$start = !empty ($_POST['start']) ? $_POST['start'] : 0;
 
-// Configure HashOver and load comments
-$hashover->setup->setPageURL ('request');
-$hashover->initiate ();
+	// Check for comments
+	if ($hashover->readComments->totalCount > 1) {
+		// Parse primary comments
+		// TODO: Use starting point
+		$hashover->parsePrimary (false, 0);
 
-// Setup where to start reading comments
-$start = !empty ($_POST['start']) ? $_POST['start'] : 0;
+		// Display as JSON data
+		$data = $hashover->comments;
+	} else {
+		// Return no comments message
+		$data = array ('No comments.');
+	}
 
-// Check for comments
-if ($hashover->readComments->totalCount > 1) {
-	// Parse primary comments
-	// TODO: Use starting point
-	$hashover->parsePrimary (false, 0);
+	// Return JSON data
+	echo json_encode ($data);
 
-	// Display as JSON data
-	echo json_encode ($hashover->comments);
-} else {
-	// Return no comments message
-	echo json_encode (array ('No comments.'));
+} catch (Exception $error) {
+	$misc = new Misc ('json');
+	$misc->displayError ($error->getMessage ());
 }

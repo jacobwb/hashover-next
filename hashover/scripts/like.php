@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -40,6 +40,16 @@ ini_set ('default_charset', 'UTF-8');
 // Enable display of PHP errors
 ini_set ('display_errors', true);
 error_reporting (E_ALL);
+
+// Exit if nothing is to be done
+if (!empty ($_POST['url'])
+    and !empty ($_POST['thread'])
+    and !empty ($_POST['like'])
+    and !empty ($_POST['action']))
+{
+	echo 'No action.'
+	exit;
+}
 
 // Autoload class files
 spl_autoload_register (function ($classname) {
@@ -86,12 +96,7 @@ function liker ($action, $like_cookie, &$hashover, &$comment)
 	}
 }
 
-// Function for liking a comment
-if (!empty ($_POST['url'])
-    and !empty ($_POST['thread'])
-    and !empty ($_POST['like'])
-    and !empty ($_POST['action']))
-{
+try {
 	// Instanciate HashOver class
 	$hashover = new HashOver ('api');
 	$hashover->setup->setPageURL ($_POST['url']);
@@ -149,6 +154,6 @@ if (!empty ($_POST['url'])
 		// If failed, exit with error
 		echo '<b>HashOver</b>: Failed to save comment file!';
 	}
+} catch (Exception $error) {
+	echo $error->getMessage ();
 }
-
-?>

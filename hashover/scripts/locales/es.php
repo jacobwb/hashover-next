@@ -61,6 +61,7 @@ $locale = array (
 	'subscribe'		=> 'Notificarme si hay respuestas',
 	'subscribe-tip'		=> 'Suscribirse a notificaciones por correo electrónico',
 	'edit-comment'		=> 'Editar Comentario',
+	'status'		=> 'Estado',
 	'status-approved'	=> 'Aprobado',
 	'status-pending'	=> 'Aprobación pendiente',
 	'status-deleted'	=> 'Marcado eliminado',

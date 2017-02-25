@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015 Jacob Barkdull
+// Copyright (C) 2015-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -29,8 +29,9 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class Markdown
 {
-	public $blockCodeRegex = '/```([\s\S]+?)```/';
-	public $inlineCodeRegex = '/(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/i';
+	public    $blockCodeRegex = '/```([\s\S]+?)```/';
+	protected $paragraphRegex = '/(?:\r\n|\r|\n){2}/';
+	public    $inlineCodeRegex = '/(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/i';
 
 	// Array for inline code and code block markers
 	protected $codeMarkers = array (
@@ -64,10 +65,10 @@ class Markdown
 
 		if ($display !== 'block') {
 			$codeMarker = $grp[1] . $markName . '[' . $markCount . ']' . $grp[3];
-			$this->codeMarkers[$display]['marks'][$markCount] = trim ($grp[2], PHP_EOL);
+			$this->codeMarkers[$display]['marks'][$markCount] = trim ($grp[2], "\r\n");
 		} else {
 			$codeMarker = $markName . '[' . $markCount . ']';
-			$this->codeMarkers[$display]['marks'][$markCount] = trim ($grp[1], PHP_EOL);
+			$this->codeMarkers[$display]['marks'][$markCount] = trim ($grp[1], "\r\n");
 		}
 
 		return $codeMarker;
@@ -108,7 +109,7 @@ class Markdown
 		$string = preg_replace_callback ($this->blockCodeRegex, 'self::blockCodeReplace', $string);
 
 		// Break string into paragraphs
-		$paragraphs = explode (PHP_EOL . PHP_EOL, $string);
+		$paragraphs = preg_split ($this->paragraphRegex, $string);
 
 		// Run through each paragraph
 		for ($i = 0, $il = count ($paragraphs); $i < $il; $i++) {

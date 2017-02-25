@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2016 Jacob Barkdull
+// Copyright (C) 2015-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -29,13 +29,12 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class HashOver
 {
-	public $mode;
+	public $usage = array ();
 	public $statistics;
 	public $misc;
 	public $setup;
 	public $readComments;
 	public $locales;
-	public $avatars;
 	public $commentParser;
 	public $markdown;
 	public $cookies;
@@ -44,39 +43,36 @@ class HashOver
 	public $html;
 	public $templater;
 
-	public function __construct ($mode = 'php')
+	public function __construct ($mode = 'php', $context = 'normal')
 	{
-		$this->mode = $mode;
+		// Store usage context information
+		$this->usage['mode'] = $mode;
+		$this->usage['context'] = $context;
 
 		// Instantiate and start statistics
 		$this->statistics = new Statistics ($mode);
 		$this->statistics->executionStart ();
 
+		// Instantiate general setup class
+		$this->setup = new Setup ($this->usage);
+
 		// Instantiate class of miscellaneous functions
 		$this->misc = new Misc ($mode);
-
-		try {
-			// Instantiate general setup class
-			$this->setup = new Setup ($mode, $this->misc);
-
-		} catch (Exception $error) {
-			$this->misc->displayError ($error->getMessage ());
-		}
 	}
 
-	public function getCommentCount ()
+	public function getCommentCount ($locale_key = 'showing-comments')
 	{
 		// Decide if comment count is pluralized
 		$prime_plural = ($this->readComments->primaryCount !== 2) ? 1 : 0;
 
 		// Format comment count; Exclude "Showing" in API usages
-		$locale_key = ($this->mode === 'api') ? 'count-link' : 'showing-comments';
+		$locale_key = ($this->usage['context'] === 'api') ? 'count-link' : $locale_key;
 		$showing_comments = $this->locales->locale[$locale_key][$prime_plural];
 
 		// Whether to show reply count separately
 		if ($this->setup->showsReplyCount === true) {
 			// If so, inject top level comment count into count locale string
-			$this->commentCount = sprintf ($showing_comments, $this->readComments->primaryCount - 1);
+			$comment_count = sprintf ($showing_comments, $this->readComments->primaryCount - 1);
 
 			// Check if there are any replies
 			if ($this->readComments->totalCount !== $this->readComments->primaryCount) {
@@ -84,53 +80,38 @@ class HashOver
 				$reply_locale = $this->locales->locale['count-replies'][$reply_plural];
 				$reply_count = sprintf ($reply_locale, $this->readComments->totalCount - 1);
 
-				// Append reply count
-				$this->commentCount .= ' (' . $reply_count . ')';
+				// If so, append reply count
+				$comment_count .= ' (' . $reply_count . ')';
 			}
-		} else {
-			// If not, inject total comment count into count locale string
-			$this->commentCount = sprintf ($showing_comments, $this->readComments->totalCount - 1);
+
+			// And return count with separate reply count
+			return $comment_count;
 		}
+
+		// Otherwise inject total comment count into count locale string
+		return sprintf ($showing_comments, $this->readComments->totalCount - 1);
 	}
 
 	// Begin initialization work
 	public function initiate ()
 	{
-		try {
-			// Instantiate class for reading comments
-			$this->readComments = new ReadComments ($this->setup, $this->misc);
+		// Instantiate class for reading comments
+		$this->readComments = new ReadComments ($this->setup);
 
-			// Instantiate locales class
-			$this->locales = new Locales ($this->setup->language);
-
-		} catch (Exception $error) {
-			$this->misc->displayError ($error->getMessage ());
-		}
-
-		// Instantiate avatars class
-		$this->avatars = new Avatars ($this->setup);
+		// Instantiate locales class
+		$this->locales = new Locales ($this->setup->language);
 
 		// Instantiate cookies class
-		$this->cookies = new Cookies (
-			$this->setup->domain,
-			$this->setup->cookieExpiration,
-			$this->setup->secureCookies,
-			$this->setup->setCookies
-		);
+		$this->cookies = new Cookies ($this->setup);
 
 		// Instantiate login class
-		$this->login = new Login ($this->setup, $this->cookies, $this->locales);
+		$this->login = new Login ($this->setup);
 
 		// Instantiate comment parser class
-		$this->commentParser = new CommentParser (
-			$this->setup,
-			$this->login,
-			$this->locales,
-			$this->avatars
-		);
+		$this->commentParser = new CommentParser ($this->setup);
 
 		// Generate comment count
-		$this->getCommentCount ();
+		$this->commentCount = $this->getCommentCount ();
 
 		// Instantiate markdown class
 		$this->markdown = new Markdown ();
@@ -300,20 +281,22 @@ class HashOver
 		// Expire various temporary cookies
 		$this->cookies->clear ();
 
+		// Various comment count numbers
+		$commentCounts = array (
+			'show-count' => $this->commentCount,
+			'primary' => $this->readComments->primaryCount,
+			'total' => $this->readComments->totalCount,
+		);
+
 		// Instantiate HTML output class
 		$this->html = new HTMLOutput (
-			$this->readComments,
-			$this->login,
-			$this->locales,
-			$this->avatars,
-			$this->misc,
-			$this->commentCount,
-			$this->commentParser->popularList
+			$this->setup,
+			$commentCounts
 		);
 
 		// Instantiate comment theme templater class
 		$this->templater = new Templater (
-			$this->mode,
+			$this->usage['mode'],
 			$this->setup
 		);
 	}
@@ -325,9 +308,6 @@ class HashOver
 		$phpmode = new PHPMode (
 			$this->setup,
 			$this->html,
-			$this->locales,
-			$this->templater,
-			$this->markdown,
 			$this->comments
 		);
 
@@ -346,7 +326,7 @@ class HashOver
 		}
 
 		// Start HTML output with initial HTML
-		$html  = $this->html->initialHTML ();
+		$html  = $this->html->initialHTML ($this->commentParser->popularList);
 
 		// End statistics and add them as code comment
 		$html .= $this->statistics->executionEnd ();

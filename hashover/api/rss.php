@@ -16,7 +16,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 // Display source code
 if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	if (isset ($_GET['source'])) {
@@ -25,23 +24,23 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	}
 }
 
-// Use UTF-8 character set
-ini_set ('default_charset', 'UTF-8');
-
-// Enable display of PHP errors
-ini_set ('display_errors', true);
-error_reporting (E_ALL);
-
 // Tell browser this is XML/RSS
 header ('Content-Type: application/xml; charset=utf-8');
+
+// Change to the scripts directory
+chdir ('../scripts/');
+
+// Do some standard HashOver setup work
+include ('standard-setup.php');
 
 // Autoload class files
 spl_autoload_register (function ($classname) {
 	$classname = strtolower ($classname);
 	$error = '"' . $classname . '.php" file could not be included!';
 
-	if (!@include ('../scripts/' . $classname . '.php')) {
-		echo '(document.getElementById (\'hashover\') || document.body).innerHTML += \'' . $error . '\';';
+	if (!@include ('./' . $classname . '.php')) {
+		echo '<?xml version="1.0" encoding="UTF-8"?>', PHP_EOL;
+		echo '<error>', $error, '</error>';
 		exit;
 	}
 });
@@ -162,6 +161,9 @@ function create_rss (&$hashover)
 
 		// Parse comment as markdown
 		$comment['body'] = $hashover->markdown->parseMarkdown ($comment['body']);
+
+		// Convert <code> tags to <pre> tags
+		$comment['body'] = preg_replace ('/(<|<\/)code>/i', '\\1pre>', $comment['body']);
 
 		// Get name from comment or use configured default
 		$name = !empty ($comment['name']) ? $comment['name'] : $hashover->setup->defaultName;
@@ -295,11 +297,17 @@ function create_rss (&$hashover)
 	echo $hashover->statistics->executionEnd ();
 }
 
-// Instantiate HashOver class
-$hashover = new HashOver ('api');
-$hashover->setup->setPageURL ('request');
-$hashover->initiate ();
-$hashover->parsePrimary ();
+try {
+	// Instantiate HashOver class
+	$hashover = new HashOver ('rss', 'api');
+	$hashover->setup->setPageURL ('request');
+	$hashover->initiate ();
+	$hashover->parsePrimary ();
 
-// Create RSS feed
-create_rss ($hashover);
+	// Create RSS feed
+	create_rss ($hashover);
+
+} catch (Exception $error) {
+	$misc = new Misc ('rss');
+	$misc->displayError ($error->getMessage ());
+}

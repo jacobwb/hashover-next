@@ -61,6 +61,7 @@ $locale = array (
 	'subscribe'		=> 'Herinner mij wanneer een antwoorden wordt geplaatst',
 	'subscribe-tip'		=> 'Meld aan voor herinneringen',
 	'edit-comment'		=> 'Bewerk reactie',
+	'status'		=> 'Status',
 	'status-approved'	=> 'Goedgekeurd',
 	'status-pending'	=> 'In afwachting van goedkeuring',
 	'status-deleted'	=> 'Gemarkeerd verwijderd',

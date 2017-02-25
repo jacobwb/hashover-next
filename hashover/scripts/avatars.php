@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015 Jacob Barkdull
+// Copyright (C) 2015-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 class Avatars
 {
 	public $setup;
+	public $isHTTPS = false;
 	public $http;
 	public $subdomain;
 	public $iconSize;
@@ -39,28 +40,29 @@ class Avatars
 	public function __construct (Setup $setup)
 	{
 		$this->setup = $setup;
-
-		// Use HTTPS if this file is requested with HTTPS
-		$this->http = (!empty ($_SERVER['HTTPS']) ? 'https' : 'http') . '://';
+		$this->isHTTPS = $setup->isHTTPS ();
 
 		// Get icon size from settings
 		$this->iconSize = ($setup->isMobile === true) ? 256 : $setup->iconSize;
 
 		// Default avatar
-		$avatar = $this->setup->httpImages . '/avatar';
+		$avatar = $setup->httpImages . '/avatar';
 		$extension = '.' . (($setup->isMobile === true) ? 'svg' : 'png');
 		$this->avatar = $avatar . $extension;
 
 		// If set to custom direct 404s to local avatar image
-		if ($this->setup->gravatarDefault === 'custom') {
-			$this->fallback = urlencode ($this->http . $this->setup->domain . $avatar . '.png');
+		if ($setup->gravatarDefault === 'custom') {
+			$this->fallback = urlencode ($setup->absolutePath . $avatar . '.png');
 		} else {
 			// If not direct to a themed default
-			$this->fallback = $this->setup->gravatarDefault;
+			$this->fallback = $setup->gravatarDefault;
 		}
 
+		// Use HTTPS if this file is requested with HTTPS
+		$this->http = ($this->isHTTPS ? 'https' : 'http') . '://';
+		$this->subdomain = $this->isHTTPS ? 'secure' : 'www';
+
 		// Gravatar URL
-		$this->subdomain = !empty ($_SERVER['HTTPS']) ? 'secure' : 'www';
 		$this->gravatar = $this->http . $this->subdomain . '.gravatar.com/avatar/';
 	}
 

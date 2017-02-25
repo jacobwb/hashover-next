@@ -61,6 +61,7 @@ $locale = array (
 	'subscribe'		=> 'Påmind mig om svar',
 	'subscribe-tip'		=> 'Tilmeld email varsling',
 	'edit-comment'		=> 'Rediger kommentar',
+	'status'		=> 'Status',
 	'status-approved'	=> 'Godkendt',
 	'status-pending'	=> 'Afventer godkendelse',
 	'status-deleted'	=> 'Markerede slettet',

@@ -42,17 +42,17 @@ class Login extends PostData
 	public $userIsLoggedIn = false;
 	public $userIsAdmin = false;
 
-	public function __construct (Setup $setup, Cookies $cookies, Locales $locales)
+	public function __construct (Setup $setup)
 	{
 		parent::__construct ();
 
 		$this->setup = $setup;
-		$this->cookies = $cookies;
-		$this->locales = $locales;
+		$this->cookies = new Cookies ($setup);
+		$this->locales = new Locales ($setup->language);
 
 		// Instantiate login method class
 		$login_class = $this->setup->loginMethod;
-		$this->loginMethod = new $login_class ($setup, $cookies, $locales);
+		$this->loginMethod = new $login_class ($setup, $this->cookies, $this->locales);
 
 		// Error message to display to the user
 		$this->fieldNeeded = $this->locales->locale ('field-needed');

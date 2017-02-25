@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -30,10 +30,15 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 // Functions for reading and writing XML files
 class ParseXML extends ReadFiles
 {
-	public function __construct ($setup)
+	public function __construct (Setup $setup)
 	{
 		parent::__construct ($setup);
+
+		// Enable XML user error handling
 		libxml_use_internal_errors (true);
+
+		// Throw exception if the XML extension isn't loaded
+		$setup->extensionsLoaded (array ('xml', 'libxml'));
 	}
 
 	public function query (array $files = array (), $auto = true)
@@ -48,15 +53,21 @@ class ParseXML extends ReadFiles
 			$file = $this->setup->dir . '/' . $file . '.xml';
 		}
 
-		// Read and parse comment XML file
-		$xml = @simplexml_load_string (file_get_contents ($file), 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOCDATA);
+		// Read XML comment file
+		$data = @file_get_contents ($file);
 
-		// Check for XML parse error
-		if ($xml !== false) {
-			// Remove first two levels of indentation from comment
-			$xml->body = preg_replace ('/^\t{0,2}/m', '', trim ($xml->body, "\r\n\t"));
+		// Check for file read error
+		if ($data !== false) {
+			// Parse XML comment file
+			$xml = @simplexml_load_string ($data, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOCDATA);
 
-			return (array) $xml;
+			// Check for XML parse error
+			if ($xml !== false) {
+				// Remove first two levels of indentation from comment
+				$xml->body = preg_replace ('/^\t{0,2}/m', '', trim ($xml->body, "\r\n\t"));
+
+				return (array) $xml;
+			}
 		}
 
 		return false;

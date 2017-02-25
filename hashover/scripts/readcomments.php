@@ -36,14 +36,21 @@ class ReadComments
 	public $totalCount = 1;
 	public $primaryCount = 1;
 
-	public function __construct (Setup $setup, Misc $misc)
+	public function __construct (Setup $setup)
 	{
 		$this->setup = $setup;
 
 		// Instantiate necessary class data format class
 		$data_class = 'Parse' . strtoupper ($setup->dataFormat);
-		$this->data = new $data_class ($setup, $misc);
+		$this->data = new $data_class ($setup);
 
+		// Query a list of comments
+		$this->queryComments ();
+	}
+
+	// Queries a list of comments
+	public function queryComments ()
+	{
 		// Query a list of comments
 		$this->commentList = $this->data->query ();
 
@@ -51,6 +58,35 @@ class ReadComments
 		if ($this->commentList !== false) {
 			$this->organizeComments ();
 		}
+	}
+
+	// Count the comments
+	public function countComment ($comment)
+	{
+		// Count replies
+		if (strpos ($comment, '-') !== false) {
+			$file_parts = explode ('-', $comment);
+			$thread = basename ($comment, '-' . end ($file_parts));
+
+			if (isset ($this->threadCount[$thread])) {
+				$this->threadCount[$thread]++;
+			} else {
+				$this->threadCount[$thread] = 1;
+			}
+		} else {
+			// Count top level comments
+			$this->primaryCount++;
+		}
+
+		// Count replies
+		if (isset ($this->threadCount[$comment])) {
+			$this->threadCount[$comment]++;
+		} else {
+			$this->threadCount[$comment] = 1;
+		}
+
+		// Count all comments
+		$this->totalCount++;
 	}
 
 	// Check for missing comments
@@ -78,7 +114,7 @@ class ReadComments
 					$this->commentList[$current] = 'missing';
 
 					// Count the missing comment
-					$this->countComments ($current);
+					$this->countComment ($current);
 				}
 			}
 
@@ -99,7 +135,7 @@ class ReadComments
 			$this->findMissingComments (explode ('-', $key));
 
 			// Count comment
-			$this->countComments ($key);
+			$this->countComment ($key);
 		}
 
 		// Sort comments by their keys alphabetically in ascending order
@@ -148,34 +184,5 @@ class ReadComments
 		}
 
 		return $comments;
-	}
-
-	// Count the comments
-	public function countComments ($comment)
-	{
-		// Count replies
-		if (strpos ($comment, '-') !== false) {
-			$file_parts = explode ('-', $comment);
-			$thread = basename ($comment, '-' . end ($file_parts));
-
-			if (isset ($this->threadCount[$thread])) {
-				$this->threadCount[$thread]++;
-			} else {
-				$this->threadCount[$thread] = 1;
-			}
-		} else {
-			// Count top level comments
-			$this->primaryCount++;
-		}
-
-		// Count replies
-		if (isset ($this->threadCount[$comment])) {
-			$this->threadCount[$comment]++;
-		} else {
-			$this->threadCount[$comment] = 1;
-		}
-
-		// Count all comments
-		$this->totalCount++;
 	}
 }

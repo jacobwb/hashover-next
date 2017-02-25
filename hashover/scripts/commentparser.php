@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2016 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -44,12 +44,12 @@ class CommentParser
 		'd' => 'date-days'
 	);
 
-	public function __construct (Setup $setup, Login $login, Locales $locales, Avatars $avatars)
+	public function __construct (Setup $setup)
 	{
 		$this->setup = $setup;
-		$this->login = $login;
-		$this->locales = $locales;
-		$this->avatars = $avatars;
+		$this->login = new Login ($setup);
+		$this->locales = new Locales ($setup->language);
+		$this->avatars = new Avatars ($setup);
 		$this->ampm = ($setup->uses12HourTime === false) ? 'H:i' : 'g:ia';
 		$this->current_datetime = new DateTime (date('Y-m-d'));
 	}

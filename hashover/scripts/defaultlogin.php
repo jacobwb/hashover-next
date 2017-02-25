@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015 Jacob Barkdull
+// Copyright (C) 2015-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -43,6 +43,12 @@ class DefaultLogin
 		$this->setup = $setup;
 		$this->cookies = $cookies;
 		$this->locales = $locales;
+
+		// Disable login is cookies are disabled
+		if ($setup->setsCookies === false) {
+			$setup->allowsLogin = false;
+			$setup->syncSettings ();
+		}
 	}
 
 	// Set login credentials

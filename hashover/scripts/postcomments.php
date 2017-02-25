@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2016 Jacob Barkdull
+// Copyright (C) 2015-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -25,115 +25,91 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	}
 }
 
-// Use UTF-8 character set
-ini_set ('default_charset', 'UTF-8');
+// Do some standard HashOver setup work
+include ('standard-setup.php');
+include ('javascript-setup.php');
+include ('oop-setup.php');
 
-// Enable display of PHP errors
-ini_set ('display_errors', true);
-error_reporting (E_ALL);
+try {
+	// Mode is based on whether request is AJAX
+	$mode = isset ($_POST['ajax']) ? 'javascript' : 'php';
+	$data = null;
 
-// Tell browser output is JavaScript
-header ('Content-Type: application/javascript');
+	// Instantiate HashOver class
+	$hashover = new HashOver ($mode);
+	$hashover->setup->setPageURL ('request');
+	$hashover->setup->setPageTitle ('request');
+	$hashover->initiate ();
+	$hashover->finalize ();
 
-// Disable browser cache
-header ('Expires: Wed, 08 May 1991 12:00:00 GMT');
-header ('Last-Modified: ' . gmdate ('D, d M Y H:i:s') . ' GMT');
-header ('Cache-Control: no-store, no-cache, must-revalidate');
-header ('Cache-Control: post-check=0, pre-check=0', false);
-header ('Pragma: no-cache');
+	// Instantiate class for writing and editing comments
+	$write_comments = new WriteComments (
+		$hashover->setup,
+		$hashover->readComments
+	);
 
-// Autoload class files
-spl_autoload_register (function ($classname) {
-	$classname = strtolower ($classname);
-	$error = '"' . $classname . '.php" file could not be included!';
+	// Various POST data actions
+	$post_actions = array (
+		'login',
+		'logout',
+		'post',
+		'edit',
+		'delete'
+	);
 
-	if (!@include ('./' . $classname . '.php')) {
-		echo '(document.getElementById (\'hashover\') || document.body).innerHTML += \'' . $error . '\';';
-		exit;
-	}
-});
+	// Execute an action (write/edit/login/etc)
+	foreach ($post_actions as $action) {
+		if (empty ($_POST[$action])) {
+			continue;
+		}
 
-// Mode is based on whether request is AJAX
-$mode = isset ($_POST['ajax']) ? 'javascript' : 'php';
-$data = null;
+		switch ($action) {
+			case 'login': {
+				if ($hashover->setup->allowsLogin !== true) {
+					$write_comments->postComment ();
+					break;
+				}
 
-// Instantiate HashOver class
-$hashover = new HashOver ($mode);
-$hashover->setup->setPageURL ('request');
-$hashover->setup->setPageTitle ('request');
-$hashover->initiate ();
-$hashover->finalize ();
-
-// Instantiate class for writing and editing comments
-$write_comments = new WriteComments (
-	$hashover->readComments,
-	$hashover->locales,
-	$hashover->cookies,
-	$hashover->login,
-	$hashover->misc
-);
-
-// Various POST data actions
-$post_actions = array (
-	'login',
-	'logout',
-	'post',
-	'edit',
-	'delete'
-);
-
-// Execute an action (write/edit/login/etc)
-foreach ($post_actions as $action) {
-	if (empty ($_POST[$action])) {
-		continue;
-	}
-
-	switch ($action) {
-		case 'login': {
-			if ($hashover->setup->allowsLogin !== true) {
-				$write_comments->postComment ();
+				$write_comments->login ();
 				break;
 			}
 
-			$write_comments->login ();
-			break;
+			case 'logout': {
+				$write_comments->logout ();
+				break;
+			}
+
+			case 'post': {
+				$data = $write_comments->postComment ();
+				break;
+			}
+
+			case 'edit': {
+				$data = $write_comments->editComment ();
+				break;
+			}
+
+			case 'delete': {
+				$write_comments->deleteComment ();
+				break;
+			}
 		}
 
-		case 'logout': {
-			$write_comments->logout ();
-			break;
-		}
-
-		case 'post': {
-			$data = $write_comments->postComment ();
-			break;
-		}
-
-		case 'edit': {
-			$data = $write_comments->editComment ();
-			break;
-		}
-
-		case 'delete': {
-			$write_comments->deleteComment ();
-			break;
-		}
+		break;
 	}
 
-	break;
-}
+	// Returns comment being saved as JSON
+	if (isset ($_POST['ajax']) and is_array ($data)) {
+		// Slit file into parts
+		$key_parts = explode ('-', $data['file']);
 
-// Returns comment being saved as JSON
-if (isset ($_POST['ajax']) and is_array ($data)) {
-	// Slit file into parts
-	$key_parts = explode ('-', $data['file']);
-
-	// Update comment count
-	$hashover->getCommentCount ();
-
-	// Echo JSON array
-	echo json_encode (array (
-		'comment' => $hashover->commentParser->parse ($data['comment'], $data['file'], $key_parts),
-		'count' => $hashover->commentCount
-	));
+		// Echo JSON array
+		echo json_encode (array (
+			'comment' => $hashover->commentParser->parse ($data['comment'], $data['file'], $key_parts),
+			'count' => $hashover->getCommentCount ()
+		));
+	}
+} catch (Exception $error) {
+	$misc = new Misc (isset ($_POST['ajax']) ? 'json' : 'php');
+	$misc->displayError ($error->getMessage ());
 }

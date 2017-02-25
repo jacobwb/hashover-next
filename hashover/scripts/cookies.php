@@ -29,17 +29,13 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class Cookies
 {
-	public $domain;
-	public $expire;
+	public $setup;
 	public $secure = false;
-	public $setCookies = true;
 
-	public function __construct ($domain, $expire, $secure = false, $setCookies = true)
+	public function __construct (Setup $setup)
 	{
-		// Set domain and default expiration date from parameters
-		$this->domain = $domain;
-		$this->expire = $expire;
-		$this->setCookies = $setCookies;
+		$this->setup = $setup;
+		$this->domain = $setup->domain;
 
 		// Remove port from domain
 		if (mb_strpos ($this->domain, ':') !== false) {
@@ -47,7 +43,7 @@ class Cookies
 		}
 
 		// Transmit cookies over HTTPS if set so in Settings
-		if ($secure === true) {
+		if ($setup->secureCookies === true) {
 			$this->secure = !empty ($_SERVER['HTTPS']) ? true : false;
 		}
 	}
@@ -56,10 +52,10 @@ class Cookies
 	public function set ($name, $value = '', $date = '')
 	{
 		// Use specific expiration date or the one in Settings
-		$date = !empty ($date) ? $date : $this->expire;
+		$date = !empty ($date) ? $date : $this->setup->cookieExpiration;
 
 		// Set the cookie if cookies are enabled
-		if ($this->setCookies !== false) {
+		if ($this->setup->setsCookies !== false) {
 			setcookie ($name, $value, $date, '/', $this->domain, $this->secure, true);
 		}
 	}

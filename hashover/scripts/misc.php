@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -38,7 +38,8 @@ class Misc
 		'>',
 		'"',
 		"'",
-		'/'
+		'/',
+		'\\'
 	);
 
 	// XSS-safe replacement character entities
@@ -48,7 +49,8 @@ class Misc
 		'&gt;',
 		'&quot;',
 		'&#x27;',
-		'&#x2F;'
+		'&#x2F;',
+		'&#92;'
 	);
 
 	public function __construct ($mode)
@@ -64,24 +66,46 @@ class Misc
 	}
 
 	// Returns error in HTML paragraph
-	public function displayError ($error)
+	public function displayError ($error = 'Something went wrong!')
 	{
-		if (empty ($error)) {
-			return;
+		$xss_safe = $this->makeXSSsafe ($error);
+		$data = array ();
+
+		switch ($this->mode) {
+			// Minimal JavaScript to display error message on page
+			case 'javascript': {
+				$data[] = 'var hashover = document.getElementById (\'hashover\') || document.body;';
+				$data[] = 'var error = \'<p><b>HashOver</b>: ' . $xss_safe . '</p>\';' . PHP_EOL;
+				$data[] = 'hashover.innerHTML += error;';
+
+				break;
+			}
+
+			// RSS XML to indicate error
+			case 'rss': {
+				$data[] = '<?xml version="1.0" encoding="UTF-8"?>';
+				$data[] = '<error>HashOver: ' . $xss_safe . '</error>';
+
+				break;
+			}
+
+			// JSON to indicate error
+			case 'json': {
+				$data[] = json_encode (array (
+					'message' => $error,
+					'type' => 'error'
+				));
+
+				break;
+			}
+
+			// Default just return the error message
+			default: {
+				$data[] = 'HashOver: ' . $error;
+				break;
+			}
 		}
 
-		// Wrap error in paragraph tag
-		$html = '<p>' . $error . '</p>';
-
-		// Return the paragraph tag alone in PHP mode
-		if ($this->mode === 'php') {
-			return $html;
-		}
-
-		// Element to add error message to
-		$element = '(document.getElementById (\'hashover\') || document.body)';
-
-		// Return JavaScript to display error message
-		exit ($element . '.innerHTML += \'' . addcslashes ($html, "'") . '\';');
+		echo implode (PHP_EOL, $data);
 	}
 }

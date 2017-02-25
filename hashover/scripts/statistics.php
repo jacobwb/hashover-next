@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ class Statistics
 	public $scriptMemory;
 	public $systemMemory;
 
-	public function __construct ($mode = 'javascript')
+	public function __construct ($mode = 'php')
 	{
 		$this->mode = $mode;
 	}

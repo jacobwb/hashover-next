@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -47,6 +47,24 @@ class ParseSQL extends Database
 		'likes' => null,
 		'dislikes' => null
 	);
+
+	public function __construct (Setup $setup)
+	{
+		parent::__construct ($setup);
+
+		// Throw exception if the SQL extension isn't loaded
+		switch ($setup->databaseType) {
+			case 'sqlite': {
+				$setup->extensionsLoaded (array ('pdo_sqlite', 'sqlite3'));
+				break;
+			}
+
+			case 'mysql': {
+				$setup->extensionsLoaded (array ('pdo_mysql'));
+				break;
+			}
+		}
+	}
 
 	public function query (array $files = array (), $auto = true)
 	{

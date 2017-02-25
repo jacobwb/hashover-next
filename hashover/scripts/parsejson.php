@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -30,8 +30,17 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 // Functions for reading and writing JSON files
 class ParseJSON extends ReadFiles
 {
+	public function __construct (Setup $setup)
+	{
+		parent::__construct ($setup);
+
+		// Throw exception if the JSON extension isn't loaded
+		$setup->extensionsLoaded (array ('json'));
+	}
+
 	public function query (array $files = array (), $auto = true)
 	{
+		// Return array of files
 		return $this->loadFiles ('json', $files, $auto);
 	}
 
@@ -41,7 +50,21 @@ class ParseJSON extends ReadFiles
 			$file = $this->setup->dir . '/' . $file . '.json';
 		}
 
-		return @json_decode (file_get_contents ($file), true);
+		// Read JSON comment file
+		$data = @file_get_contents ($file);
+
+		// Check for file read error
+		if ($data !== false) {
+			// Parse JSON comment file
+			$json = @json_decode ($data, true);
+
+			// Check for JSON parse error
+			if ($json !== null) {
+				return $json;
+			}
+		}
+
+		return false;
 	}
 
 	public function save (array $contents, $file, $editing = false, $fullpath = false)
@@ -50,17 +73,24 @@ class ParseJSON extends ReadFiles
 			$file = $this->setup->dir . '/' . $file . '.json';
 		}
 
-		if (!file_exists ($file) or $editing === true) {
-			if (defined ('JSON_PRETTY_PRINT')) {
-				$json = str_replace ('    ', "\t", json_encode ((array) $contents, JSON_PRETTY_PRINT));
-			} else {
-				$json = json_encode ((array) $contents);
-			}
+		// Return false on attempts to override an existing file
+		if (file_exists ($file) and $editing === false) {
+			return false;
+		}
 
-			if (file_put_contents ($file, $json)) {
-				chmod ($file, 0600);
-				return true;
-			}
+		// Encode comment contents to JSON
+		$json = json_encode ((array) $contents);
+
+		// Check if we have pretty print support
+		if (defined ('JSON_PRETTY_PRINT')) {
+			// If so, convert spaces indentation to tabs
+			$json = str_replace ('    ', "\t", $json, JSON_PRETTY_PRINT));
+		}
+
+		// Save the JSON data to the comment file
+		if (file_put_contents ($file, $json)) {
+			chmod ($file, 0600);
+			return true;
 		}
 
 		return false;
@@ -68,15 +98,20 @@ class ParseJSON extends ReadFiles
 
 	public function delete ($file, $hardUnlink = false)
 	{
+		// Actually delete the comment file
 		if ($hardUnlink === true) {
 			return unlink ($this->setup->dir . '/' . $file . '.json');
 		}
 
+		// Read comment file
 		$json = $this->read ($file);
 
+		// Check for JSON parse error
 		if ($json !== false) {
+			// Change status to deleted
 			$json['status'] = 'deleted';
 
+			// Attempt to save file
 			if ($this->save ($json, $file, true)) {
 				return true;
 			}

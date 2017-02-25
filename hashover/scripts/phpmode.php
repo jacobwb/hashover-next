@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2016 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -47,14 +47,16 @@ class PHPMode
 	protected $codeTags = array ();
 	protected $preTagCount = 0;
 	protected $preTags = array ();
+	protected $paragraphRegex = '/(?:\r\n|\r|\n){2}/';
+	protected $lineRegex = '/(?:\r\n|\r|\n)/';
 
-	public function __construct (Setup $setup, HTMLOutput $html, Locales $locales, Templater $templater, Markdown $markdown, array $comments)
+	public function __construct (Setup $setup, HTMLOutput $html, array $comments)
 	{
 		$this->setup = $setup;
 		$this->html = $html;
-		$this->locales = $locales;
-		$this->templater = $templater;
-		$this->markdown = $markdown;
+		$this->locales = new Locales ($setup->language);
+		$this->templater = new Templater ($setup->usage['mode'], $setup);
+		$this->markdown = new Markdown ();
 		$this->comments = $comments;
 	}
 
@@ -76,11 +78,13 @@ class PHPMode
 		if ($_GET['hashover-reply'] === $permalink) {
 			$file = $this->fileFromPermalink ($permalink);
 
-			$form = new HTMLTag ('form');
-			$form->createAttribute ('id', 'hashover-reply-' . $permalink);
-			$form->createAttribute ('class', 'hashover-reply-form');
-			$form->createAttribute ('method', 'post');
-			$form->createAttribute ('action', $this->setup->httpScripts . '/postcomments.php');
+			$form = new HTMLTag ('form', array (
+				'id' => 'hashover-reply-' . $permalink,
+				'class' => 'hashover-reply-form',
+				'method' => 'post',
+				'action' => $this->setup->httpScripts . '/postcomments.php'
+			));
+
 			$form->innerHTML ($this->html->replyForm ($permalink, $file));
 
 			return $form->asHTML ();
@@ -102,11 +106,13 @@ class PHPMode
 			$name = !empty ($comment['name']) ? $comment['name'] : '';
 			$website = !empty ($comment['website']) ? $comment['website'] : '';
 
-			$form = new HTMLTag ('form', false, false);
-			$form->createAttribute ('id', 'hashover-edit-' . $permalink);
-			$form->createAttribute ('class', 'hashover-edit-form');
-			$form->createAttribute ('method', 'post');
-			$form->createAttribute ('action', $this->setup->httpScripts . '/postcomments.php');
+			$form = new HTMLTag ('form', array (
+				'id' => 'hashover-edit-' . $permalink,
+				'class' => 'hashover-edit-form',
+				'method' => 'post',
+				'action' => $this->setup->httpScripts . '/postcomments.php'
+			), false);
+
 			$form->innerHTML ($this->html->editForm ($permalink, $file, $name, $website, $body, $status, $subscribed));
 
 			return $form->asHTML ();
@@ -116,7 +122,7 @@ class PHPMode
 	protected function codeTagReplace ($grp)
 	{
 		$codePlaceholder = $grp[1] . 'CODE_TAG[' . $this->codeTagCount . ']' . $grp[3];
-		$this->codeTags[$this->codeTagCount] = trim ($grp[2], PHP_EOL);
+		$this->codeTags[$this->codeTagCount] = trim ($grp[2], "\r\n");
 		$this->codeTagCount++;
 
 		return $codePlaceholder;
@@ -129,7 +135,7 @@ class PHPMode
 	protected function preTagReplace ($grp)
 	{
 		$prePlaceholder = $grp[1] . 'PRE_TAG[' . $this->preTagCount . ']' . $grp[3];
-		$this->preTags[$this->preTagCount] = trim ($grp[2], PHP_EOL);
+		$this->preTags[$this->preTagCount] = trim ($grp[2], "\r\n");
 		$this->preTagCount++;
 
 		return $prePlaceholder;
@@ -251,9 +257,9 @@ class PHPMode
 
 				// Add "Reply" hyperlink to template
 				if (!empty ($_GET['hashover-edit']) and $_GET['hashover-edit'] === $comment['permalink']) {
-					$template['edit-link'] = $this->html->cancelLink ($comment['permalink'], 'edit', 'hashover-edit');
+					$template['edit-link'] = $this->html->cancelLink ($comment['permalink'], 'edit');
 				} else {
-					$template['edit-link'] = $this->html->editLink ($comment['permalink']);
+					$template['edit-link'] = $this->html->formLink ('edit', $comment['permalink']);
 				}
 			} else {
 				// Check if commenter is subscribed
@@ -277,7 +283,7 @@ class PHPMode
 			}
 
 			// Add like count to HTML template
-			$template['like-count'] = $this->html->likeCount ($comment['permalink'], $likeCount);
+			$template['like-count'] = $this->html->likeCount ('likes', $comment['permalink'], $likeCount);
 
 			// Get number of dislikes, append "Dislike(s)" locale
 			if ($this->setup->allowsDislikes === true) {
@@ -289,7 +295,7 @@ class PHPMode
 				}
 
 				// Add dislike count to HTML template
-				$template['dislike-count'] = $this->html->dislikeCount ($comment['permalink'], $dislikeCount);
+				$template['dislike-count'] = $this->html->likeCount ('dislikes', $comment['permalink'], $dislikeCount);
 			}
 
 			// Add name HTML to template
@@ -302,7 +308,7 @@ class PHPMode
 			if (!empty ($_GET['hashover-reply']) and $_GET['hashover-reply'] === $comment['permalink']) {
 				$template['reply-link'] = $this->html->cancelLink ($comment['permalink'], 'reply', $replyClass);
 			} else {
-				$template['reply-link'] = $this->html->replyLink ($comment['permalink'], $replyClass, $replyTitle);
+				$template['reply-link'] = $this->html->formLink ('reply', $comment['permalink'], $replyClass, $replyTitle);
 			}
 
 			// Add edit form HTML to template
@@ -355,18 +361,18 @@ class PHPMode
 				if (mb_strpos ($template['comment'], '<' . $tag . '>') !== false) {
 					// Trim leading and trailing whitespace
 					$template['comment'] = preg_replace_callback ($trimTagRegex, function ($grp) {
-						return $grp[1] . trim ($grp[2], PHP_EOL) . $grp[3];
+						return $grp[1] . trim ($grp[2], "\r\n") . $grp[3];
 					}, $template['comment']);
 				}
 			}
 
 			// Break comment into paragraphs
-			$paragraphs = explode (PHP_EOL . PHP_EOL, $template['comment']);
+			$paragraphs = preg_split ($this->paragraphRegex, $template['comment']);
 			$pd_comment = '';
 
 			for ($i = 0, $il = count ($paragraphs); $i < $il; $i++) {
 				// Wrap comment in paragraph tag, replace single line breaks with break tags
-				$pd_comment .= '<p>' . str_replace (PHP_EOL, '<br>', $paragraphs[$i]) . '</p>' . PHP_EOL;
+				$pd_comment .= '<p>' . preg_replace ($this->lineRegex, '<br>', $paragraphs[$i]) . '</p>' . PHP_EOL;
 			}
 
 			// Replace code tag placeholders with original code tag HTML

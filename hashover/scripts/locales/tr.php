@@ -61,6 +61,7 @@ $locale = array (
 	'subscribe'		=> 'Cevaplardan beni haberdar edin',
 	'subscribe-tip'		=> 'E-posta uyarılarına kayıt ol',
 	'edit-comment'		=> 'Yorumu değiştir',
+	'status'		=> 'Durum',
 	'status-approved'	=> 'Onaylı',
 	'status-pending'	=> 'Onay bekleyen',
 	'status-deleted'	=> 'İşaretli silindi',

@@ -42,8 +42,10 @@ class Settings
 	public $defaultName		= 'Anonymous';			// Default name to use when one isn't given
 	public $allowsImages		= true;				// Whether external image URLs wrapped in [img] tags are embedded
 	public $allowsLogin		= true;				// Whether users can login and logout (when false form cookies are still set)
-	public $allowsDislikes		= false;			// Whether a "Dislike" link is display; allowing Reddit-style voting
+	public $allowsLikes		= true;				// Whether a "Like" link is displayed
+	public $allowsDislikes		= false;			// Whether a "Dislike" link is displayed; allowing Reddit-style voting
 	public $usesAJAX		= true;				// Whether AJAX is used for posting, editing, and loading comments
+	public $collapsesUI		= false;			// Whether the comment form, thread, and end links are all initially hidden
 	public $collapsesComments	= true;				// Whether to hide comments and display a link to show them
 	public $collapseLimit		= 3;				// Number of comments that aren't hidden
 	public $replyMode		= 'thread';			// Whether to display replies as a 'thread' or as a 'stream'
@@ -77,7 +79,7 @@ class Settings
 
 	// Technical settings
 	public $loginMethod		= 'defaultLogin';		// Login method class for handling user login information
-	public $setCookies		= true;				// Whether cookies are set at all
+	public $setsCookies		= true;				// Whether cookies are enabled
 	public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 	public $storesIPAddress		= false;			// Whether to store users' IP addresses
 	public $allowsUserReplies	= false;			// Whether given e-mails are sent as reply-to address to users
@@ -93,12 +95,18 @@ class Settings
 	public $latestTrimWidth		= 100;				// Number of characters to trim latest comments to, 0 for no trim
 	public $userDeletionsUnlink	= false;			// Whether user deleted files are actually unlinked from the filesystem
 
-	// Allowed image types when embedded images are allowed
+	// Types of images allowed to be embedded in comments
 	public $imageTypes = array (
 		'jpeg',
 		'jpg',
 		'png',
 		'gif'
+	);
+
+	// External domains allowed to remotely load HashOver scripts
+	public $allowedDomains = array (
+		'127.0.0.1:8000'
+		// '*.example.com'
 	);
 
 	// General database options
@@ -136,28 +144,77 @@ class Settings
 		// Get HTTP parent directory
 		$document_root = realpath ($_SERVER['DOCUMENT_ROOT']);
 		$http_directory = mb_substr ($root_directory, mb_strlen ($document_root));
-		
-		// Replace backslashes with forwardslashes
-		$http_directory = str_replace ('\\', '/', $http_directory);
-		
+
+		// Replace backslashes with forwardslashes on Windows
+		if (DIRECTORY_SEPARATOR === '\\') {
+			$http_directory = str_replace ('\\', '/', $http_directory);
+		}
+
+		// Determine HTTP or HTTPS
+		$protocol = ($this->isHTTPS () ? 'https' : 'http') . '://';
+
 		// Technical settings
 		$this->rootDirectory	= $root_directory;		// Root directory for script
 		$this->httpRoot		= $http_directory;		// Root directory for HTTP
 		$this->cookieExpiration	= time () + 60 * 60 * 24 * 30;	// Cookie expiration date
 		$this->domain		= $_SERVER['HTTP_HOST'];	// Domain name for refer checking & notifications
+		$this->absolutePath	= $protocol . $this->domain;	// Absolute path or remote access
 
 		// Synchronize settings
 		$this->syncSettings ();
 	}
 
+	function isHTTPS ()
+	{
+		// The connection is HTTPS if server says so
+		if (!empty ($_SERVER['HTTPS']) and $_SERVER['HTTPS'] !== 'off') {
+			return true;
+		}
+
+		// Assume the connection is HTTPS on standard SSL port
+		if ($_SERVER['SERVER_PORT'] == 443) {
+			return true;
+		}
+
+		return false;
+	}
+
 	// Synchronizes specific settings after remote changes
 	public function syncSettings ()
 	{
+		// Collapse entire thread if comment form is to be collapsed
+		if ($this->collapsesUI === true) {
+			$this->collapseLimit = 0;
+		}
+
+		// Disable likes and dislikes if cookies are disabled
+		if ($this->setsCookies === false) {
+			$this->allowsLikes = false;
+			$this->allowsDislikes = false;
+		}
+
 		// Setup default field options
 		foreach (array ('name', 'password', 'email', 'website') as $field) {
 			if (!isset ($this->fieldOptions[$field])) {
 				$this->fieldOptions[$field] = true;
 			}
+		}
+
+		// Disable password if name is disabled
+		if ($this->fieldOptions['name'] === false) {
+			$this->fieldOptions['password'] = false;
+		}
+
+		// Disable login if name or password is disabled
+		if ($this->fieldOptions['name'] === false
+		    or $this->fieldOptions['password'] === false)
+		{
+			$this->allowsLogin = false;
+		}
+
+		// Disable autologin if login is disabled
+		if ($this->allowsLogin === false) {
+			$this->usesAutoLogin = false;
 		}
 
 		$this->httpScripts	= $this->httpRoot . '/scripts';	// Script directory for HTTP

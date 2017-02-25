@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -29,16 +29,16 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class Setup extends Settings
 {
-	public $mode = 'php';
-	public $misc;
+	public $usage;
 	public $encryption;
+	public $remoteAccess = false;
 	public $pageURL;
 	public $pageTitle;
-	public $parsedURL;
 	public $filePath;
 	public $threadDirectory;
-	public $URLQueries;
 	public $dir;
+	public $URLQueryList = array ();
+	public $URLQueries;
 
 	// Default metadata
 	public $metadata = array (
@@ -68,21 +68,22 @@ class Setup extends Settings
 		' '
 	);
 
-	public function __construct ($mode = 'php', Misc $misc)
+	public $extensions = array (
+		'date',
+		'dom',
+		'mbstring',
+		'mcrypt',
+		'pcre',
+		'PDO',
+		'SimpleXML'
+	);
+
+	public function __construct (array $usage)
 	{
-		$this->mode = $mode;
-		$this->misc = $misc;
+		$this->usage = $usage;
 
 		// Execute parent constructor
 		parent::__construct ();
-
-		// JSON settings file path
-		$json_settings = $this->rootDirectory . '/settings.json';
-
-		// Check for JSON settings file; parse it if it exists
-		if (file_exists ($json_settings)) {
-			$this->JSONSettings ($json_settings);
-		}
 
 		// Check if PHP version is the minimum required
 		if (version_compare (PHP_VERSION, '5.3.3') < 0) {
@@ -92,50 +93,44 @@ class Setup extends Settings
 			throw new Exception ('PHP ' . $version . ' is too old. Must be at least version 5.3.3.');
 		}
 
-		// Check for Blowfish hashing support
+		// Check for required extensions
+		$this->extensionsLoaded ($this->extensions);
+
+		// JSON settings file path
+		$json_settings = $this->rootDirectory . '/settings.json';
+
+		// Check for JSON settings file; parse it if it exists
+		if (file_exists ($json_settings)) {
+			$this->JSONSettings ($json_settings);
+		}
+
+		// Throw exception if for Blowfish hashing support isn't detected
 		if ((defined ('CRYPT_BLOWFISH') and CRYPT_BLOWFISH) === false) {
 			throw new Exception ('Failed to find CRYPT_BLOWFISH. Blowfish hashing support is required.');
 		}
 
-		// Exit if notification email is set to the default
+		// Throw exception if notification email is set to the default
 		if ($this->notificationEmail === 'example@example.com') {
 			throw new Exception ('You must use a UNIQUE notification e-mail in ' . __FILE__);
 		}
 
-		// Exit if encryption key is set to the default
+		// Throw exception if encryption key is set to the default
 		if ($this->encryptionKey === '8CharKey') {
 			throw new Exception ('You must use a UNIQUE encryption key in ' . __FILE__);
 		}
 
-		// Exit if administrative password is set to the default
+		// Throw exception if administrative password is set to the default
 		if ($this->adminPassword === 'password') {
 			throw new Exception ('You must use a UNIQUE admin password in ' . __FILE__);
 		}
 
-		// Error if the script wasn't requested by this server
-		if ($this->mode === 'javascript' and $this->refererCheck () === false) {
+		// Throw exception if the script wasn't requested by this server
+		if ($this->usage['mode'] === 'javascript' and $this->refererCheck () === false) {
 			throw new Exception ('External use not allowed.');
 		}
 
 		// Instantiate encryption class
 		$this->encryption = new Encryption ($this->encryptionKey);
-
-		// Disable password if name is disabled
-		if ($this->fieldOptions['name'] === false) {
-			$this->fieldOptions['password'] = false;
-		}
-
-		// Disable login if name or password is disabled
-		if ($this->fieldOptions['name'] === false
-		    or $this->fieldOptions['password'] === false)
-		{
-			$this->allowsLogin = false;
-		}
-
-		// Disable autologin if login is disabled
-		if ($this->allowsLogin === false) {
-			$this->usesAutoLogin = false;
-		}
 
 		// Check if visitor is on mobile device
 		if (!empty ($_SERVER['HTTP_USER_AGENT'])) {
@@ -143,6 +138,16 @@ class Setup extends Settings
 				// Adjust settings to accommodate
 				$this->isMobile = true;
 				$this->imageFormat = 'svg';
+			}
+		}
+	}
+
+	public function extensionsLoaded (array $extensions)
+	{
+		// Throw exceptions if an extension isn't loaded
+		foreach ($extensions as $extension) {
+			if (extension_loaded ($extension) === false) {
+				throw new Exception ('Failed to detect required extension: ' . $extension . '.');
 			}
 		}
 	}
@@ -163,14 +168,37 @@ class Setup extends Settings
 			$title_case_key = ucwords (str_replace ('-', ' ', strtolower ($key)));
 			$setting = lcfirst (str_replace (' ', '', $title_case_key));
 
-			// Override default setting if the property exists
+			// Check if the JSON setting property exists in the defaults
 			if (property_exists ($this, $setting)) {
-				$this->{$setting} = $value;
+				// Check if the JSON value is the same type as the default
+				if (gettype ($value) === gettype ($this->{$setting})) {
+					// Override default setting
+					$this->{$setting} = $value;
+				}
 			}
 		}
 
 		// Synchronize settings
 		$this->syncSettings ();
+	}
+
+	protected function getDomainWithPort ($url = '')
+	{
+		// Parse URL
+		$url = parse_url ($url);
+
+		if ($url === false or empty ($url['host'])) {
+			throw new Exception ('Failed to obtain domain name.');
+			return false;
+		}
+
+		// If URL has a port, return domain with port
+		if (!empty ($url['port'])) {
+			return $url['host'] . ':' . $url['port'];
+		}
+
+		// Otherwise return domain without port
+		return $url['host'];
 	}
 
 	protected function refererCheck ()
@@ -180,21 +208,35 @@ class Setup extends Settings
 			return false;
 		}
 
-		// Get HTTP referer
-		$referer = parse_url ($_SERVER['HTTP_REFERER']);
-		$referer_host = $referer['host'];
+		// Get HTTP referer domain with port
+		$domain = $this->getDomainWithPort ($_SERVER['HTTP_REFERER']);
 
-		// Add referer port to referer host
-		if (!empty ($referer['port'])) {
-			$referer_host .= ':' . $referer['port'];
+		// Check if the script was requested by this server
+		if ($domain === $this->domain) {
+			return true;
 		}
 
-		// The script wasn't requested by this server
-		if ($referer_host !== $this->domain) {
-			return false;
+		// Check if the script was requested from an allowed domain
+		foreach ($this->allowedDomains as $allowed_domain) {
+			$sub_regex = '/^' . preg_quote ('\*\.') . '/';
+			$safe_domain = preg_quote ($allowed_domain);
+			$domain_regex = preg_replace ($sub_regex, '(?:.*?\.)*', $safe_domain);
+			$domain_regex = '/^' . $domain_regex . '$/i';
+
+			if (preg_match ($domain_regex, $domain)) {
+				// Setup remote access
+				$this->remoteAccess = true;
+				$this->httpRoot = $this->absolutePath . $this->httpRoot;
+				$this->allowsLikes = false;
+				$this->allowsDislikes = false;
+				$this->usesAJAX = false;
+				$this->syncSettings ();
+
+				return true;
+			}
 		}
 
-		return true;
+		return false;
 	}
 
 	protected function getRequest ($key)
@@ -263,88 +305,88 @@ class Setup extends Settings
 		// Set page URL
 		$this->pageURL = $url;
 
-		// Request page URL by default
-		if (empty ($url) or $url === 'request') {
-			try {
+		try {
+			// Request page URL by default
+			if (empty ($url) or $url === 'request') {
 				$this->pageURL = $this->getPageURL ();
-
-			} catch (Exception $error) {
-				$this->misc->displayError ($error->getMessage ());
-			}
-		}
-
-		// Strip HTML tags from page URL
-		$this->pageURL = strip_tags (html_entity_decode ($this->pageURL, false, 'UTF-8'));
-
-		// Turn page URL into array
-		$url_parts = parse_url ($this->pageURL);
-
-		// Set initial path
-		if (empty ($url_parts['path']) or $url_parts['path'] === '/') {
-			$this->threadDirectory = 'index';
-			$this->filePath = '/';
-		} else {
-			// Remove starting slash
-			$this->threadDirectory = mb_substr ($url_parts['path'], 1);
-
-			// Set file path
-			$this->filePath = $url_parts['path'];
-		}
-
-		if (!empty ($url_parts['query'])) {
-			$queries = array ();
-			$url_parts['query'] = explode ('&', $url_parts['query']);
-			$ignore_queries = array ('hashover-reply', 'hashover-edit');
-			$ignore_queries_file = $this->rootDirectory . '/ignore-queries.txt';
-
-			// Remove unwanted URL queries
-			if (file_exists ($ignore_queries_file)) {
-				$ignore_queries_file = explode (PHP_EOL, file_get_contents ($ignore_queries_file));
-				$ignore_queries = array_merge ($ignore_queries_file, $ignore_queries);
 			}
 
-			for ($q = 0, $ql = count ($url_parts['query']); $q < $ql; $q++) {
-				if (!in_array ($url_parts['query'][$q], $ignore_queries, true)) {
-					$equals = explode ('=', $url_parts['query'][$q]);
+			// Strip HTML tags from page URL
+			$this->pageURL = strip_tags (html_entity_decode ($this->pageURL, false, 'UTF-8'));
 
-					if (!in_array ($equals[0], $ignore_queries, true)) {
-						$queries[] = $url_parts['query'][$q];
+			// Turn page URL into array
+			$url_parts = parse_url ($this->pageURL);
+
+			// Set initial path
+			if (empty ($url_parts['path']) or $url_parts['path'] === '/') {
+				$this->threadDirectory = 'index';
+				$this->filePath = '/';
+			} else {
+				// Remove starting slash
+				$this->threadDirectory = mb_substr ($url_parts['path'], 1);
+
+				// Set file path
+				$this->filePath = $url_parts['path'];
+			}
+
+			if (!empty ($url_parts['query'])) {
+				$url_parts['query'] = explode ('&', $url_parts['query']);
+				$ignore_queries = array ('hashover-reply', 'hashover-edit');
+				$ignore_queries_file = $this->rootDirectory . '/ignore-queries.txt';
+
+				// Remove unwanted URL queries
+				if (file_exists ($ignore_queries_file)) {
+					$ignore_queries_file = explode (PHP_EOL, file_get_contents ($ignore_queries_file));
+					$ignore_queries = array_merge ($ignore_queries_file, $ignore_queries);
+				}
+
+				for ($q = 0, $ql = count ($url_parts['query']); $q < $ql; $q++) {
+					if (!in_array ($url_parts['query'][$q], $ignore_queries, true)) {
+						$equals = explode ('=', $url_parts['query'][$q]);
+
+						if (!in_array ($equals[0], $ignore_queries, true)) {
+							$this->URLQueryList[] = $url_parts['query'][$q];
+						}
 					}
 				}
+
+				$this->URLQueries = implode ('&', $this->URLQueryList);
+				$this->threadDirectory .= '-' . $this->URLQueries;
+			} else {
+				$url_parts['query'] = array ();
 			}
 
-			$this->URLQueries = implode ('&', $queries);
-			$this->threadDirectory .= '-' . $this->URLQueries;
-		} else {
-			$url_parts['query'] = array ();
+			// Encode HTML characters in page URL
+			$this->pageURL = htmlspecialchars ($this->pageURL, false, 'UTF-8', false);
+
+			// Final URL
+			if (!empty ($url_parts['scheme']) and !empty ($url_parts['host'])) {
+				$this->pageURL  = $url_parts['scheme'] . '://';
+				$this->pageURL .= $url_parts['host'];
+			} else {
+				throw new Exception ('URL needs a hostname and scheme.');
+				return;
+			}
+
+			// Add optional port to URL
+			if (!empty ($url_parts['port'])) {
+				$this->pageURL .= ':' . $url_parts['port'];
+			}
+
+			// Add file path
+			$this->pageURL .= $this->filePath;
+
+			// Add option queries
+			if (!empty ($this->URLQueries)) {
+				$this->pageURL .= '?' . $this->URLQueries;
+			}
+
+			// Set thread directory name to page URL
+			$this->setThreadDirectory ($this->threadDirectory);
+
+		} catch (Exception $error) {
+			throw new Exception ($error->getMessage ());
 		}
-
-		// Encode HTML characters in page URL
-		$this->pageURL = htmlspecialchars ($this->pageURL, false, 'UTF-8', false);
-
-		// Final URL
-		if (!empty ($url_parts['scheme']) and !empty ($url_parts['host'])) {
-			$this->pageURL  = $url_parts['scheme'] . '://';
-			$this->pageURL .= $url_parts['host'];
-		} else {
-			$this->misc->displayError ('URL needs a hostname and scheme.');
-		}
-
-		// Add optional port to URL
-		if (!empty ($url_parts['port'])) {
-			$this->pageURL .= ':' . $url_parts['port'];
-		}
-
-		// Add file path
-		$this->pageURL .= $this->filePath;
-
-		// Add option queries
-		if (!empty ($this->URLQueries)) {
-			$this->pageURL .= '?' . $this->URLQueries;
-		}
-
-		// Set thread directory name to page URL
-		$this->setThreadDirectory ($this->threadDirectory);
 	}
 
 	protected function getPageTitle ()

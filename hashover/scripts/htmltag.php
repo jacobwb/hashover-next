@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2016 Jacob Barkdull
+// Copyright (C) 2015-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -30,12 +30,12 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 class HTMLTag
 {
 	protected $tag;
+	protected $usesPrettyPrint = true;
 	protected $isSingleton;
-	protected $usesPrettyPrint;
 	protected $attributes = array ();
 	protected $children = array ();
 
-	public function __construct ($tag = '', $singleton = false, $pretty = true)
+	public function __construct ($tag = '', array $attributes = array (), $pretty = true, $singleton = false)
 	{
 		if (!is_string ($tag) or !$this->isWord ($tag)) {
 			$this->throwError ('Tag must have a single word String value.');
@@ -43,18 +43,19 @@ class HTMLTag
 		}
 
 		if (!is_bool ($singleton)) {
-			$this->throwError ('Singleton must be of type Boolean.');
+			$this->throwError ('Singleton parameter must have a Boolean value.');
 			return;
 		}
 
 		if (!is_bool ($pretty)) {
-			$this->throwError ('Pretty Print must be of type Boolean.');
+			$this->throwError ('Pretty Print parameter must have a Boolean value.');
 			return;
 		}
 
-		$this->tag = $tag;
-		$this->isSingleton = $singleton;
+		$this->tag = !empty ($tag) ? $tag : 'span';
+		$this->createAttributes ($attributes);
 		$this->usesPrettyPrint = $pretty;
+		$this->isSingleton = $singleton;
 	}
 
 	public function __get ($name)
@@ -72,7 +73,7 @@ class HTMLTag
 			return false;
 		}
 
-		if (!ctype_alnum ($string)) {
+		if (!preg_match ('/[a-z0-9:-_.]+/i', $string)) {
 			return false;
 		}
 
@@ -110,13 +111,20 @@ class HTMLTag
 			return false;
 		}
 
-		if (empty ($this->tag)) {
-			$this->throwError ('No tag to add attribute to.');
-			return false;
-		}
-
 		$this->attributes[$name] = $value;
 		return true;
+	}
+
+	public function createAttributes (array $attributes)
+	{
+		if (!is_array ($attributes)) {
+			$this->throwError ('Attributes parameter must have an Array value.');
+			return;
+		}
+
+		foreach ($attributes as $key => $value) {
+			$this->createAttribute ($key, $value);
+		}
 	}
 
 	public function appendAttribute ($name = '', $value = '', $spaced = true)
@@ -136,6 +144,18 @@ class HTMLTag
 
 		$this->attributes[$name] .= $value;
 		return true;
+	}
+
+	public function appendAttributes (array $attributes, $spaced = true)
+	{
+		if (!is_array ($attributes)) {
+			$this->throwError ('Attributes parameter must have an Array value.');
+			return;
+		}
+
+		foreach ($attributes as $key => $value) {
+			$this->appendAttribute ($key, $value, $spaced);
+		}
 	}
 
 	public function innerHTML ($html = '')
@@ -185,18 +205,13 @@ class HTMLTag
 
 	public function asHTML ()
 	{
-		if (empty ($this->tag)) {
-			$this->throwError ('You have not added any HTML tags.');
-			return false;
-		}
-
-		$tag = '<' . $this->tag;
+		$attributes = '';
 
 		foreach ($this->attributes as $attribute => $value) {
-			$tag .= ' ' . $attribute . '="' . $value . '"';
+			$attributes .= ' ' . $attribute . '="' . $value . '"';
 		}
 
-		$tag .= '>';
+		$tag = '<' . $this->tag . $attributes . '>';
 
 		if ($this->isSingleton === false) {
 			if (!empty ($this->children)) {

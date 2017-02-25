@@ -61,6 +61,7 @@ $locale = array (
 	'subscribe'		=> '返信をお知らせ',
 	'subscribe-tip'		=> 'コメントへの返信をメールでお知らせ',
 	'edit-comment'		=> 'コメントを編集する',
+	'status'		=> 'ステータス',
 	'status-approved'	=> '承認',
 	'status-pending'	=> '承認待ち',
 	'status-deleted'	=> 'マーク削除',
