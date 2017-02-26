@@ -78,13 +78,16 @@ class ParseJSON extends ReadFiles
 			return false;
 		}
 
-		// Encode comment contents to JSON
-		$json = json_encode ((array) $contents);
-
 		// Check if we have pretty print support
 		if (defined ('JSON_PRETTY_PRINT')) {
-			// If so, convert spaces indentation to tabs
-			$json = str_replace ('    ', "\t", $json, JSON_PRETTY_PRINT));
+			// If so, encode comment to JSON with pretty print
+			$json = json_encode ($contents, JSON_PRETTY_PRINT);
+
+			// And convert spaces indentation to tabs
+			$json = str_replace ('    ', "\t", $json);
+		} else {
+			// If not, encode comment to JSON normally
+			$json = json_encode ($contents);
 		}
 
 		// Save the JSON data to the comment file
