@@ -21,7 +21,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 $locale = array(
 	'comment-form'		=> 'Scrie comentariu aici...',
 	'reply-form'		=> 'Scrie reply aici...',
-	'form-tip'		=> 'Caractere HTML acceptate: &lt;b&gt;, &lt;u&gt;, &lt;i&gt;, &lt;s&gt;, &lt;pre&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;blockquote&gt;, &lt;code&gt; escapes HTML, URL automat devin link si [img]URL[/img] se deschid in alt tab.',
+	'form-tip'		=> 'Caractere HTML acceptate: &lt;b&gt;, &lt;u&gt;, &lt;i&gt;, &lt;s&gt;, &lt;big&gt;, &lt;em&gt;, &lt;small&gt;, &lt;strong&gt;, &lt;sub&gt;, &lt;sup&gt;, &lt;pre&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;blockquote&gt;, &lt;code&gt; escapes HTML, URL automat devin link si [img]URL[/img] se deschid in alt tab.',
 	'post-button'		=> 'Post Comment',
 	'login'			=> 'Conectează-te',
 	'login-tip'		=> 'Conectează-te (optionale)',
