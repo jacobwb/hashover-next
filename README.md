@@ -6,31 +6,57 @@ HashOver 2.0 (development)
 
 Notable Features
 ---
-| General                    | Customization           | Advanced                         |
-| :------------------------- | :---------------------- | :------------------------------- |
-| Threaded replies           | Multiple themes         | Allows limited use of HTML       |
-| Comment editing & deletion | Customizable HTML       | Multiple comment sorting methods |
-| Likes & Dislikes           | Comment layout template | Spam filtering                   |
-| Popular comments section   | Customizable CSS        | Notification emails              |
-| Multiple languages         | File format plugins     | Comment RSS feeds                |
-| Automatic URL links        | Authentication plugins  | Referrer checking                |
-| Administration             |                         | Comment permalinks               |
-| Avatar icons               |                         | IP address blocking              |
-| Display remote images      |                         |                                  |
+General                          | Customization           | Advanced                         
+-------------------------------- | ----------------------- | -------------------------------- 
+Threaded replies                 | Multiple themes         | Allows limited use of HTML
+Comment editing & deletion       | Customizable HTML       | Multiple comment sorting methods
+Likes & Dislikes                 | Comment layout template | Spam filtering
+Popular comments section         | Customizable CSS        | Notification emails
+Multiple languages               | File format plugins     | Comment RSS feeds
+Automatic URL links              | Authentication plugins  | Referrer checking
+Administration                   |                         | Comment permalinks
+Avatar icons                     |                         | IP address blocking
+Display remote images            |                         |
 
 
-Required libraries/compilation
+Required modules/compilation
 ---
-Although most PHP installations include everything HashOver requires, depending on your setup you may need to install some libraries and/or ensure PHP was compiled with support for the following libraries.
+Although most PHP installations include everything HashOver requires by default, depending on your setup you may need to install some modules/extensions and/or ensure PHP was compiled with support for the following modules.
 
-| Feature                               | Library name | Debian/Ubuntu package name |
-| :------------------------------------ | :----------- | :------------------------- |
-| XML file format support               | libxml       | php-xml                    |
-| Multi-byte character support          |              | php-mbstring               |
-| User information encryption           | libmcrypt    | php-mcrypt                 |
-|                                       |              |                            |
-| JSON file format support (optional)   |              | php-json                   |
-| SQLite file format support (optional) | libsqlite3-0 | php-sqlite3                |
+Feature                          | Module name(s)          | Debian/Ubuntu package name(s)
+-------------------------------- | ----------------------- | -----------------------------
+Date and Time                    | date                    | *part of PHP core*
+Document Object Model            | dom                     | *part of PHP core*
+Regular Expressions              | pcre                    | *part of PHP core*
+XML data storage format support  | xml, libxml, SimpleXML  | php-xml
+Multi-byte character support     | mbstring                | php-mbstring
+User information encryption      | mcrypt                  | php-mcrypt
+
+**The following modules are optional**
+
+Feature                          | Module name(s)          | Debian/Ubuntu package name(s)
+-------------------------------- | ----------------------- | -----------------------------
+JSON data storage format support | json                    | php-json
+PHP Data Objects                 | PDO                     | php-sqlite3, php-mysql
+SQLite file format support       | pdo_sqlite, sqlite3     | php-sqlite3
+
+
+Checking for required modules
+---
+On UNIX (GNU, BSD, etc) you may list which modules you have installed with this command...
+```
+php -m
+```
+
+
+HashOver on Windows
+---
+Windows will be officially supported by HashOver 2.0, there should not be any major issues with using HashOver on Windows. However, HashOver is primarily developed on and for UNIX operating systems, which are the primary operating systems used by the majority of web servers. If you have any issues with HashOver on Windows, please report them.
+
+On Windows the command to list installed modules is...
+```
+php.exe -m
+```
 
 
 Important differences from version 1.0
@@ -76,6 +102,6 @@ Forthcoming.
 
 Contributing
 ---
-When sending a "Pull Request", committing code, or otherwise sending, submitting, or transmitting code in any other way, please place a GNU Affero General Public License notice or any compatible license notice at the top of the code (if one isn't already present) and assign your contribution's copyright to yourself and "Jacob Barkdull". This gives me the necessary rights to distribute your contribution in HashOver under the GNU Affero General Public License. If you only assign yourself as copyright holder, your contribution will be rejected.
+When sending a "Pull Request", committing code, or otherwise sending, submitting, or transmitting code in any other way, please place a [GNU Affero General Public License](http://www.gnu.org/licenses/agpl.html) notice or any compatible license notice at the top of the code (if one isn't already present) and assign your contribution's copyright to yourself or "Jacob Barkdull". This gives me the necessary rights to distribute your contribution in HashOver under the GNU Affero General Public License.
 
 HashOver is partially written in JavaScript, plain, standard, non-jQuery JavaScript. If your contribution improves or adds new functionality to the JavaScipt portions of HashOver, your contribution must also be written in plain, standard, non-jQuery JavaScript. Contributions using or assuming the presence of jQuery, Underscore, AngularJS, Prototype, React, Node.js, or any other abstraction layer, library, and/or framework will be rejected.
