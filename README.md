@@ -46,7 +46,7 @@ Important differences from version 1.0
   To:
 
   ```html
-  <script type="text/javascript" src="/hashover/hashover.js"></script>
+  <script src="/hashover/hashover.js"></script>
   ```
 
 - HashOver 2.0 is object oriented, many things have changed places and been renamed. For normal users, about the only thing that is important to know is that the `secrets.php` file was merged with the `settings.php` file.
