@@ -96,64 +96,69 @@ function liker ($action, $like_cookie, &$hashover, &$comment)
 	}
 }
 
-try {
-	// Instanciate HashOver class
-	$hashover = new HashOver ('api');
-	$hashover->setup->setPageURL ($_POST['url']);
-	$hashover->initiate ();
+function main ()
+{
+	try {
+		// Instanciate HashOver class
+		$hashover = new HashOver ('api');
+		$hashover->setup->setPageURL ($_POST['url']);
+		$hashover->initiate ();
 
-	$storageMode =& $hashover->readComments->data->storageMode;
-	$file = str_replace ('../', '', $_POST['like']);
+		$storageMode =& $hashover->readComments->data->storageMode;
+		$file = str_replace ('../', '', $_POST['like']);
 
-	// Exit with error is file doesn't exist
-	if ($storageMode === 'flat-file') {
-		$file = $_POST['thread'] . '/' . $file;
-		$file = '../pages/' . $file . '.' . $hashover->setup->dataFormat;
+		// Exit with error is file doesn't exist
+		if ($storageMode === 'flat-file') {
+			$file = $_POST['thread'] . '/' . $file;
+			$file = '../pages/' . $file . '.' . $hashover->setup->dataFormat;
 
-		if (!file_exists ($file)) {
-			exit ('<b>HashOver</b>: File: "' . $file . '" non-existent!');
-		}
-	}
-
-	// Read comment
-	$comment = $hashover->readComments->data->read ($file, true);
-
-	// Exit with error if failed to read comment
-	if ($comment === false) {
-		exit ('<b>HashOver</b>: Failed to read file: "' . $file . '"');
-	}
-
-	// Check if liker isn't poster via login ID comparision
-	if ($hashover->login->userIsLoggedIn and !empty ($comment['login_id'])) {
-		if ($_COOKIE['hashover-login'] === $comment['login_id']) {
-			// Exit with error if liker posted the comment
-			exit ('<b>HashOver</b>: Practice altruism!');
-		}
-	}
-
-	// Name of the cookie used to indicate liked comments
-	$like_cookie = md5 ($hashover->setup->domain . $_POST['thread'] . '/' . $_POST['like']);
-
-	// Action: like or dislike
-	$action = $_POST['action'] !== 'dislike' ? 'like' : 'dislike';
-
-	// Like or dislike the comment
-	liker ($action, $like_cookie, $hashover, $comment);
-
-	// Attempt to save file with updated like count
-	if ($hashover->readComments->data->save ($comment, $file, true, true)) {
-		// If successful, display number of likes and dislikes
-		if (!empty ($comment['likes'])) {
-			echo $comment['likes'], ' likes.', PHP_EOL;
+			if (!file_exists ($file)) {
+				exit ('<b>HashOver</b>: File: "' . $file . '" non-existent!');
+			}
 		}
 
-		if (!empty ($comment['dislikes'])) {
-			echo $comment['dislikes'], ' dislikes.';
+		// Read comment
+		$comment = $hashover->readComments->data->read ($file, true);
+
+		// Exit with error if failed to read comment
+		if ($comment === false) {
+			exit ('<b>HashOver</b>: Failed to read file: "' . $file . '"');
 		}
-	} else {
-		// If failed, exit with error
-		echo '<b>HashOver</b>: Failed to save comment file!';
+
+		// Check if liker isn't poster via login ID comparision
+		if ($hashover->login->userIsLoggedIn and !empty ($comment['login_id'])) {
+			if ($_COOKIE['hashover-login'] === $comment['login_id']) {
+				// Exit with error if liker posted the comment
+				exit ('<b>HashOver</b>: Practice altruism!');
+			}
+		}
+
+		// Name of the cookie used to indicate liked comments
+		$like_cookie = md5 ($hashover->setup->domain . $_POST['thread'] . '/' . $_POST['like']);
+
+		// Action: like or dislike
+		$action = $_POST['action'] !== 'dislike' ? 'like' : 'dislike';
+
+		// Like or dislike the comment
+		liker ($action, $like_cookie, $hashover, $comment);
+
+		// Attempt to save file with updated like count
+		if ($hashover->readComments->data->save ($comment, $file, true, true)) {
+			// If successful, display number of likes and dislikes
+			if (!empty ($comment['likes'])) {
+				echo $comment['likes'], ' likes.', PHP_EOL;
+			}
+
+			if (!empty ($comment['dislikes'])) {
+				echo $comment['dislikes'], ' dislikes.';
+			}
+		} else {
+			// If failed, exit with error
+			echo '<b>HashOver</b>: Failed to save comment file!';
+		}
+	} catch (Exception $error) {
+		echo $error->getMessage ();
 	}
-} catch (Exception $error) {
-	echo $error->getMessage ();
 }
+
+main ();
