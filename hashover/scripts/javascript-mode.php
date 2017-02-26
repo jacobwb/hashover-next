@@ -61,10 +61,10 @@ function string_true ($boolean)
 }
 
 // Encodes JSON, returns output that conforms to coding standard
-function coding_standard_json ($string, $pretty_print = true, $tabs = 1)
+function js_json ($string, $pretty_print = true, $tabs = 1)
 {
-	$search = array ('\\', "'", '"', '    ', PHP_EOL);
-	$replace = array ('', "\'", "'", "\t", PHP_EOL . str_repeat ("\t", $tabs));
+	$search = array ('\\', "'", '"', "','", '    ', PHP_EOL);
+	$replace = array ('', "\'", "'", "', '", "\t", PHP_EOL . str_repeat ("\t", $tabs));
 
 	// Encode string as JSON with pretty where possible
 	if ($pretty_print !== false and defined ('JSON_PRETTY_PRINT')) {
@@ -101,7 +101,7 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 
 	// Return array as strings in JavaScript syntax
 	if ($strings === true) {
-		return coding_standard_json ($regexes);
+		return js_json ($regexes);
 	}
 
 	// Join array items as regular expressions
@@ -156,7 +156,7 @@ HashOver.init = function ()
 	var allowsLikes		= <?php echo string_true ($allowsLikes); ?>;
 	var linkRegex		= new RegExp (URLRegex + '( {0,1})', 'ig');
 	var imageRegex		= new RegExp ('\\[img\\]<a.*?>' + URLRegex + '</a>\\[/img\\]', 'ig');
-	var imageExtensions	= ['<?php echo implode ('\', \'', $hashover->setup->imageTypes); ?>'];
+	var imageExtensions	= <?php echo js_json ($hashover->setup->imageTypes, false, 0); ?>;
 	var imagePlaceholder	= '<?php echo $hashover->setup->httpImages; ?>/place-holder.<?php echo $hashover->setup->imageFormat; ?>';
 	var codeOpenRegex	= /<code>/i;
 	var codeTagRegex	= /(<code>)([\s\S]*?)(<\/code>)/ig;
@@ -203,12 +203,12 @@ HashOver.init = function ()
 	var locale = {
 		cancel:			'<?php echo $hashover->locales->locale['cancel']; ?>',
 		externalImageTip:	'<?php echo $hashover->locales->locale ('external-image-tip', true); ?>',
-		like:			['<?php echo implode ("', '", $hashover->locales->locale ('like', true)); ?>'],
+		like:			<?php echo js_json ($hashover->locales->locale ('like', true), false); ?>,
 		liked:			'<?php echo $hashover->locales->locale ('liked', true); ?>',
 		unlike:			'<?php echo $hashover->locales->locale ('unlike', true); ?>',
 		likeComment:		'<?php echo $hashover->locales->locale ('like-comment', true); ?>',
 		likedComment:		'<?php echo $hashover->locales->locale ('liked-comment', true); ?>',
-		dislike:		['<?php echo implode ("', '", $hashover->locales->locale ('dislike', true)); ?>'],
+		dislike:		<?php echo js_json ($hashover->locales->locale ('dislike', true), false); ?>,
 		disliked:		'<?php echo $hashover->locales->locale ('disliked', true); ?>',
 		dislikeComment:		'<?php echo $hashover->locales->locale ('dislike-comment', true); ?>',
 		dislikedComment:	'<?php echo $hashover->locales->locale ('disliked-comment', true); ?>',
@@ -243,7 +243,7 @@ HashOver.init = function ()
 	};
 
 	// Field options
-	var fieldOptions = <?php echo coding_standard_json ($hashover->setup->fieldOptions); ?>;
+	var fieldOptions = <?php echo js_json ($hashover->setup->fieldOptions); ?>;
 
 	// Shorthand for Document.getElementById ()
 	function getElement (id, force)
@@ -1727,17 +1727,32 @@ HashOver.init = function ()
 		// When loaded update like count
 		like.onreadystatechange = function ()
 		{
-			var likes = 0;
+			var likeResponse;
+			var likesKey, likes = 0;
 
 			// Do nothing if request wasn't successful in a meaningful way
 			if (this.readyState !== 4 || this.status !== 200) {
 				return;
 			}
 
-			// Get number of likes
-			if (likesElement.textContent !== '') {
-				var likes = parseInt (likesElement.textContent.split (' ')[0]);
+			// Get JSON response
+			likeResponse = JSON.parse (this.responseText);
+
+			// If a message is returned display it to the user
+			if (likeResponse.message !== undefined) {
+				alert (likeResponse.message);
+				return;
 			}
+
+			// If an error is returned display a stand error to the user
+			if (likeResponse.error !== undefined) {
+				alert ('Error! Something went wrong!');
+				return;
+			}
+
+			// Get number of likes
+			likesKey = (action !== 'dislikes') ? 'likes' : 'dislikes';
+			likes = likeResponse[likesKey] || 0;
 
 			// Change "Like" button title and class
 			if (actionLink.className === 'hashover-' + action + dislikesClass) {
@@ -1746,41 +1761,46 @@ HashOver.init = function ()
 				actionLink.title = (action === 'like') ? locale.likedComment : locale.dislikedComment;
 				actionLink.textContent = (action === 'like') ? locale.liked : locale.disliked;
 
+				// Add listener to change link text to "Unlike" on mouse over
 				if (action === 'like') {
 					mouseOverChanger (actionLink, locale.unlike, locale.liked);
 				}
-
-				// Increase likes
-				likes++;
 			} else {
 				// Change class to indicate the comment is unliked
 				actionLink.className = 'hashover-' + action + dislikesClass;
 				actionLink.title = (action === 'like') ? locale.likeComment : locale.dislikeComment;
 				actionLink.textContent = (action === 'like') ? locale.like[0] : locale.dislike[0];
 
+				// Add listener to change link text to "Unlike" on mouse over
 				if (action === 'like') {
 					mouseOverChanger (actionLink, null, null);
 				}
-
-				// Decrease likes
-				likes--;
 			}
 
-			if (action === 'like') {
-				var likeCount = likes + ' ' + locale.like[(likes !== 1 ? 1 : 0)];
+			if (likes > 0) {
+				// Locale plural key
+				var plural = (likes !== 1) ? 1 : 0;
+
+				if (action === 'like') {
+					var likeCount = likes + ' ' + locale.like[plural];
+				} else {
+					var likeCount = likes + ' ' + locale.dislike[plural];
+				}
+
+				// Change number of likes; set font weight bold
+				likesElement.textContent = likeCount;
+				likesElement.style.fontWeight = 'bold';
 			} else {
-				var likeCount = likes + ' ' + locale.dislike[(likes !== 1 ? 1 : 0)];
+				// Remove like count; set font weight normal
+				likesElement.textContent = '';
+				likesElement.style.fontWeight = '';
 			}
-
-			// Change number of likes
-			likesElement.style.fontWeight = 'bold';
-			likesElement.textContent = (likes > 0) ? likeCount : '';
 		};
 
 		// Set request queries
 		queries  = 'url=' + encodeURIComponent (pageURL);
 		queries += '&thread=<?php echo $hashover->setup->threadDirectory; ?>';
-		queries += '&like=' + file;
+		queries += '&comment=' + file;
 		queries += '&action=' + action;
 
 		// Send request

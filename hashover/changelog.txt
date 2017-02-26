@@ -21,6 +21,12 @@ Changes by Jacob Barkdull 2017-02-25
 	  nested within the JavaScript code. This is easier to read, however,
 	  all nested PHP code in the JavaScript will be removed eventually.
 
+	- Now using the like/dislike count returned by the `like.php` AJAX
+	  request, removing the need for the JavaScript code to handle
+	  increasing and decreasing the like/dislike count, and allowing the
+	  code to know if the request executed successfully. Additionally, an
+	  error message is now displayed to the user under rare circumstances.
+
 
 * hashover/scripts/settings.php
 
@@ -63,6 +69,16 @@ Changes by Jacob Barkdull 2017-02-25
 * hashover/api/rss.php
 
 	- Code tags are now converted to pre tags to ensure proper whitespace.
+
+
+* hashover/scripts/like.php
+
+	- This file now returns JSON data containing a like and/or dislike
+	  count or an error message under rare circumstances.
+
+	- Main code moved into a function.
+	- Removed most instances of `exit`.
+	- Added code comments
 
 
 * Added: <big>, <em>, <small>, <strong>, <sub> and <sup> as allowed HTML tags.
