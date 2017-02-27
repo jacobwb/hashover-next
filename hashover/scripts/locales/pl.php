@@ -21,7 +21,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 $locale = array (
 	'comment-form'		=> 'Napisz komentarz...',
 	'reply-form'		=> 'Napisz odpowiedź...',
-	'form-tip'		=> 'Akceptowany HTML: &lt;b&gt;, &lt;u&gt;, &lt;i&gt;, &lt;s&gt;, &lt;pre&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;blockquote&gt;, &lt;code&gt; escapes HTML, URLe automatycznie zamieniają się w linki, a [img]URL tutaj[/img] wyświetli zewnętrzny obrazek.',
+	'form-tip'		=> 'Akceptowany HTML: &lt;b&gt;, &lt;u&gt;, &lt;i&gt;, &lt;s&gt;, &lt;big&gt;, &lt;em&gt;, &lt;small&gt;, &lt;strong&gt;, &lt;sub&gt;, &lt;sup&gt;, &lt;pre&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;blockquote&gt;, &lt;code&gt; escapes HTML, URLe automatycznie zamieniają się w linki, a [img]URL tutaj[/img] wyświetli zewnętrzny obrazek.',
 	'post-button'		=> 'Wyślij komentarz',
 	'login'			=> 'Zaloguj Się',
 	'login-tip'		=> 'Zaloguj Się (opcjonalne)',
