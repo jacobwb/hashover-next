@@ -139,7 +139,7 @@ HashOver.init = function ()
 
 	var execStart		= Date.now ();
 	var httpRoot		= '<?php echo $hashover->setup->httpRoot; ?>';
-	var URLRegex		= '((http|https|ftp):\/\/[a-z0-9-@:%_\+.~#?&\/=]+)';
+	var URLRegex		= '((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+)';
 	var URLParts		= window.location.href.split ('#');
 	var elementsById	= {};
 	var trimRegex		= /^[\r\n]+|[\r\n]+$/g;
@@ -156,7 +156,7 @@ HashOver.init = function ()
 	var allowsLikes		= <?php echo string_true ($allowsLikes); ?>;
 	var linkRegex		= new RegExp (URLRegex + '( {0,1})', 'ig');
 	var imageRegex		= new RegExp ('\\[img\\]<a.*?>' + URLRegex + '</a>\\[/img\\]', 'ig');
-	var imageExtensions	= <?php echo js_json ($hashover->setup->imageTypes, false, 0); ?>;
+	var imageExtensions	= <?php echo js_json ($hashover->setup->imageTypes, false); ?>;
 	var imagePlaceholder	= '<?php echo $hashover->setup->httpImages; ?>/place-holder.<?php echo $hashover->setup->imageFormat; ?>';
 	var codeOpenRegex	= /<code>/i;
 	var codeTagRegex	= /(<code>)([\s\S]*?)(<\/code>)/ig;
@@ -187,7 +187,7 @@ HashOver.init = function ()
 	var head		= document.head || document.getElementsByTagName ('head')[0];
 	var URLHref		= URLParts[0];
 	var HashOverDiv		= document.getElementById ('hashover');
-	var hashoverScript	= <?php echo !empty ($_GET['hashover-script']) ? $hashover->misc->makeXSSsafe ($_GET['hashover-script']) : 'false'; ?>;
+	var hashoverScript	= <?php echo js_json ($hashover->setup->executingScript, false); ?>;
 	var deviceType		= '<?php echo $hashover->setup->isMobile === true ? 'mobile' : 'desktop'; ?>';
 	var HashOverForm	= null;
 	var collapseComments	= <?php echo string_true ($hashover->setup->collapsesComments); ?>;

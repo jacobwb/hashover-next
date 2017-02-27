@@ -22,6 +22,8 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	if (isset ($_GET['source'])) {
 		header ('Content-type: text/plain; charset=UTF-8');
 		exit (file_get_contents (basename (__FILE__)));
+	} else {
+		exit ('<b>HashOver</b>: This isn\'t a standalone file.');
 	}
 }
 
@@ -171,8 +173,8 @@ if (hashoverWidget == null) {
 	hashoverWidget = document.createElement ('div');
 	hashoverWidget.id = 'hashover-widget';
 
-<?php if (!empty ($_GET['hashover-script'])): ?>
-	var hashoverScript = 'hashover-script-<?php echo $_GET['hashover-script']; ?>';
+<?php if ($hashover->setup->executingScript !== false): ?>
+	var hashoverScript = 'hashover-script-<?php echo $hashover->setup->executingScript; ?>';
 	var thisScript = document.getElementById (hashoverScript);
 
 	thisScript.parentNode.insertBefore (hashoverWidget, thisScript);

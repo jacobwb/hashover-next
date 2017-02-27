@@ -87,12 +87,14 @@ class Markdown
 	}
 
 	// Returns the original inline markdown code with HTML replacement
-	protected function inlineCodeReturn ($grp) {
+	protected function inlineCodeReturn ($grp)
+	{
 		return '<code class="hashover-inline">' . $this->codeMarkers['inline']['marks'][($grp[1])] . '</code>';
 	}
 
 	// Returns the original markdown code block with HTML replacement
-	protected function blockCodeReturn ($grp) {
+	protected function blockCodeReturn ($grp)
+	{
 		return '<code>' . $this->codeMarkers['block']['marks'][($grp[1])] . '</code>';
 	}
 
@@ -117,7 +119,7 @@ class Markdown
 			$paragraphs[$i] = preg_replace_callback ($this->inlineCodeRegex, 'self::inlineCodeReplace', $paragraphs[$i]);
 
 			// Replace markdown patterns
-			$paragraphs[$i] = preg_replace($this->search, $this->replace, $paragraphs[$i]);
+			$paragraphs[$i] = preg_replace ($this->search, $this->replace, $paragraphs[$i]);
 
 			// Replace markers with original markdown code
 			$paragraphs[$i] = preg_replace_callback ('/CODE_INLINE\[([0-9]+)\]/', 'self::inlineCodeReturn', $paragraphs[$i]);

@@ -42,7 +42,7 @@ class PHPMode
 		'ol' => '/(<ol>)([\s\S]*?)(<\/ol>)/i'
 	);
 
-	protected $linkRegex = '/((ftp|http|https):\/\/[a-z0-9-@:%_\+.~#?&\/=]+) {0,}/i';
+	protected $linkRegex = '/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+) {0,1}/i';
 	protected $codeTagCount = 0;
 	protected $codeTags = array ();
 	protected $preTagCount = 0;

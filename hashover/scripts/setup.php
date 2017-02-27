@@ -39,6 +39,7 @@ class Setup extends Settings
 	public $dir;
 	public $URLQueryList = array ();
 	public $URLQueries;
+	public $executingScript = false;
 
 	// Default metadata
 	public $metadata = array (
@@ -81,6 +82,7 @@ class Setup extends Settings
 	public function __construct (array $usage)
 	{
 		$this->usage = $usage;
+		$this->misc = new Misc ($usage['mode']);
 
 		// Execute parent constructor
 		parent::__construct ();
@@ -127,6 +129,21 @@ class Setup extends Settings
 		// Throw exception if the script wasn't requested by this server
 		if ($this->usage['mode'] === 'javascript' and $this->refererCheck () === false) {
 			throw new Exception ('External use not allowed.');
+		}
+
+		// Check if we are placing HashOver at a specific script's position
+		if (!empty ($_GET['hashover-script'])) {
+			// If so, make the script query XSS safe
+			$hashover_script = $this->misc->makeXSSsafe ($_GET['hashover-script']);
+
+			// Check if the script query contains a numeric value
+			if (is_numeric ($hashover_script)) {
+				// If so, set it as the executing script
+				$this->executingScript = (int)($hashover_script);
+			} else {
+				// If not, throw an exception
+				throw new Exception ('Script query must have a numeric value.');
+			}
 		}
 
 		// Instantiate encryption class

@@ -6,8 +6,8 @@ HashOver 2.0 (development)
 
 Notable Features
 ---
-General                          | Customization           | Advanced                         
--------------------------------- | ----------------------- | -------------------------------- 
+General                          | Customization           | Advanced
+-------------------------------- | ----------------------- | --------------------------------
 Threaded replies                 | Multiple themes         | Allows limited use of HTML
 Comment editing & deletion       | Customizable HTML       | Multiple comment sorting methods
 Likes & Dislikes                 | Comment layout template | Spam filtering

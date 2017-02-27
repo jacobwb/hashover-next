@@ -48,7 +48,7 @@ class WriteComments extends PostData
 	protected $email = '';
 	protected $website = '';
 	protected $commentData = array ();
-	protected $ajax = false;
+	protected $urls = array ();
 
 	// Fake inputs used as spam trap fields
 	protected $trapFields = array (
@@ -483,8 +483,18 @@ class WriteComments extends PostData
 		return $html;
 	}
 
+	// Extract URLs for later injection
+	protected function urlExtractor ($groups)
+	{
+		$link_number = count ($this->urls);
+		$this->urls[] = $groups[1];
+
+		return 'URL[' . $link_number . ']';
+	}
+
 	// Escapes HTML inside of <code> tags and markdown code blocks
-	protected function codeEscaper ($groups) {
+	protected function codeEscaper ($groups)
+	{
 		return $groups[1] . htmlspecialchars ($groups[2], null, null, false) . $groups[3];
 	}
 
@@ -542,8 +552,8 @@ class WriteComments extends PostData
 		// Trim leading and trailing white space
 		$clean_code = $this->postData['comment'];
 
-		// Add space to end of URLs to separate '&' characters from escaped HTML tags
-		$clean_code = preg_replace ('/(((ftp|http|https){1}:\/\/)[a-z0-9-@:%_\+.~#?&\/=]+)/i', '\\1 ', $clean_code);
+		// Extract URLs from comment
+		$clean_code = preg_replace_callback ('/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+)/i', 'self::urlExtractor', $clean_code);
 
 		// Escape HTML tags
 		$clean_code = str_ireplace ($this->dataSearch, $this->dataReplace, $clean_code);
@@ -567,6 +577,14 @@ class WriteComments extends PostData
 
 		// Close remaining tags
 		$clean_code = $this->tagCloser ($this->closeTags, $clean_code);
+
+		// Inject original URLs back into comment
+		$clean_code = preg_replace_callback ('/URL\[([0-9]+)\]/', function ($groups) {
+			$url_key = $groups[1];
+			$url = $this->urls[$url_key];
+
+			return $url . ' ';
+		}, $clean_code);
 
 		// Store clean code
 		$this->commentData['body'] = $clean_code;
