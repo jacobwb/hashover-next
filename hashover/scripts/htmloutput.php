@@ -137,7 +137,7 @@ class HTMLOutput extends Locales
 				'label-class' => 'hashover-email-label',
 				'placeholder' => $this->locale ('email', $this->addcslashes),
 				'input-id' => 'hashover-main-email',
-				'input-type' => 'text',
+				'input-type' => 'email',
 				'input-name' => 'email',
 				'input-title' => $this->optionality ('email'),
 				'input-value' => $this->misc->makeXSSsafe ($this->login->email)
@@ -148,7 +148,7 @@ class HTMLOutput extends Locales
 				'label-class' => 'hashover-website-label',
 				'placeholder' => $this->locale ('website', $this->addcslashes),
 				'input-id' => 'hashover-main-website',
-				'input-type' => 'text',
+				'input-type' => 'url',
 				'input-name' => 'website',
 				'input-title' => $this->optionality ('website'),
 				'input-value' => $this->misc->makeXSSsafe ($this->login->website)
