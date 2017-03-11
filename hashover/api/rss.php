@@ -31,7 +31,7 @@ header ('Content-Type: application/xml; charset=utf-8');
 chdir ('../scripts/');
 
 // Do some standard HashOver setup work
-include ('standard-setup.php');
+require ('standard-setup.php');
 
 // Autoload class files
 spl_autoload_register (function ($classname) {

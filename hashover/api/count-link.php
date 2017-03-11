@@ -30,9 +30,9 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 chdir ('../scripts/');
 
 // Do some standard HashOver setup work
-include ('standard-setup.php');
-include ('javascript-setup.php');
-include ('oop-setup.php');
+require ('standard-setup.php');
+require ('javascript-setup.php');
+require ('oop-setup.php');
 
 try {
 	// Instantiate HashOver class

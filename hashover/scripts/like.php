@@ -35,7 +35,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 }
 
 // Do some standard HashOver setup work
-include ('standard-setup.php');
+require ('standard-setup.php');
 
 // Autoload class files
 spl_autoload_register (function ($classname) {
