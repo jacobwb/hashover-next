@@ -115,6 +115,34 @@ class HTMLTag
 		return true;
 	}
 
+	public function innerHTML ($html = '')
+	{
+		if ($this->isSingleton === true) {
+			$this->throwError ('Singleton tags do not have innerHTML.');
+			return false;
+		}
+
+		if (!empty ($html)) {
+			$this->children = array ($html);
+		}
+
+		return true;
+	}
+
+	public function appendInnerHTML ($html = '')
+	{
+		if ($this->isSingleton === true) {
+			$this->throwError ('Singleton tags do not have innerHTML.');
+			return false;
+		}
+
+		if (!empty ($html)) {
+			$this->children[] = $html;
+		}
+
+		return true;
+	}
+
 	public function createAttributes (array $attributes)
 	{
 		if (!is_array ($attributes)) {
@@ -156,34 +184,6 @@ class HTMLTag
 		foreach ($attributes as $key => $value) {
 			$this->appendAttribute ($key, $value, $spaced);
 		}
-	}
-
-	public function innerHTML ($html = '')
-	{
-		if ($this->isSingleton === true) {
-			$this->throwError ('Singleton tags do not have innerHTML.');
-			return false;
-		}
-
-		if (!empty ($html)) {
-			$this->children = array ($html);
-		}
-
-		return true;
-	}
-
-	public function appendInnerHTML ($html = '')
-	{
-		if ($this->isSingleton === true) {
-			$this->throwError ('Singleton tags do not have innerHTML.');
-			return false;
-		}
-
-		if (!empty ($html)) {
-			$this->children[] = $html;
-		}
-
-		return true;
 	}
 
 	public function appendChild (HTMLTag $object)
