@@ -202,20 +202,20 @@ HashOver.init = function ()
 	// Some locales, stored in JavaScript to avoid using a lot of PHP tags
 	var locale = {
 		cancel:			'<?php echo $hashover->locales->locale['cancel']; ?>',
-		externalImageTip:	'<?php echo $hashover->locales->locale ('external-image-tip', true); ?>',
-		like:			<?php echo js_json ($hashover->locales->locale ('like', true), false); ?>,
-		liked:			'<?php echo $hashover->locales->locale ('liked', true); ?>',
-		unlike:			'<?php echo $hashover->locales->locale ('unlike', true); ?>',
-		likeComment:		'<?php echo $hashover->locales->locale ('like-comment', true); ?>',
-		likedComment:		'<?php echo $hashover->locales->locale ('liked-comment', true); ?>',
-		dislike:		<?php echo js_json ($hashover->locales->locale ('dislike', true), false); ?>,
-		disliked:		'<?php echo $hashover->locales->locale ('disliked', true); ?>',
-		dislikeComment:		'<?php echo $hashover->locales->locale ('dislike-comment', true); ?>',
-		dislikedComment:	'<?php echo $hashover->locales->locale ('disliked-comment', true); ?>',
-		name:			'<?php echo $hashover->locales->locale ('name', true); ?>',
-		password:		'<?php echo $hashover->locales->locale ('password', true); ?>',
-		email:			'<?php echo $hashover->locales->locale ('email', true); ?>',
-		website:		'<?php echo $hashover->locales->locale ('website', true); ?>'
+		externalImageTip:	'<?php echo $hashover->locales->locale ('external-image-tip'); ?>',
+		like:			<?php echo js_json ($hashover->locales->locale ('like'), false); ?>,
+		liked:			'<?php echo $hashover->locales->locale ('liked'); ?>',
+		unlike:			'<?php echo $hashover->locales->locale ('unlike'); ?>',
+		likeComment:		'<?php echo $hashover->locales->locale ('like-comment'); ?>',
+		likedComment:		'<?php echo $hashover->locales->locale ('liked-comment'); ?>',
+		dislike:		<?php echo js_json ($hashover->locales->locale ('dislike'), false); ?>,
+		disliked:		'<?php echo $hashover->locales->locale ('disliked'); ?>',
+		dislikeComment:		'<?php echo $hashover->locales->locale ('dislike-comment'); ?>',
+		dislikedComment:	'<?php echo $hashover->locales->locale ('disliked-comment'); ?>',
+		name:			'<?php echo $hashover->locales->locale ('name'); ?>',
+		password:		'<?php echo $hashover->locales->locale ('password'); ?>',
+		email:			'<?php echo $hashover->locales->locale ('email'); ?>',
+		website:		'<?php echo $hashover->locales->locale ('website'); ?>'
 	};
 
 	// Markdown patterns to search for
@@ -544,7 +544,7 @@ HashOver.init = function ()
 				classes += ' hashover-user-owned';
 
 				// Define "Reply" link with original poster title
-				var replyTitle = '<?php echo $hashover->locales->locale ('commenter-tip', true); ?>';
+				var replyTitle = '<?php echo $hashover->locales->locale ('commenter-tip'); ?>';
 				var replyClass = 'hashover-no-email';
 
 				// Add "Edit" hyperlink to template
@@ -553,11 +553,11 @@ HashOver.init = function ()
 				// Check if commenter is subscribed
 				if (comment.subscribed === true) {
 					// If so, set subscribed title
-					var replyTitle = name + ' <?php echo $hashover->locales->locale ('subscribed-tip', true); ?>';
+					var replyTitle = name + ' <?php echo $hashover->locales->locale ('subscribed-tip'); ?>';
 					var replyClass = 'hashover-has-email';
 				} else{
 					// If not, set unsubscribed title
-					var replyTitle = name + ' <?php echo $hashover->locales->locale ('unsubscribed-tip', true); ?>';
+					var replyTitle = name + ' <?php echo $hashover->locales->locale ('unsubscribed-tip'); ?>';
 					var replyClass = 'hashover-no-email';
 				}
 <?php if ($allowsLikes === true): ?>
@@ -643,9 +643,9 @@ HashOver.init = function ()
 
 				if (template['reply-count'] > 0) {
 					if (template['reply-count'] !== 1) {
-						template['reply-count'] += ' <?php echo $hashover->locales->locale ('replies', true); ?>';
+						template['reply-count'] += ' <?php echo $hashover->locales->locale ('replies'); ?>';
 					} else {
-						template['reply-count'] += ' <?php echo $hashover->locales->locale ('reply', true); ?>';
+						template['reply-count'] += ' <?php echo $hashover->locales->locale ('reply'); ?>';
 					}
 				}
 			}
@@ -979,7 +979,7 @@ HashOver.init = function ()
 			}
 
 			// If so, warn the user that they won't receive reply notifications
-			if (confirm ('<?php echo $hashover->locales->locale ('no-email-warning', true); ?>') === false) {
+			if (confirm ('<?php echo $hashover->locales->locale ('no-email-warning'); ?>') === false) {
 				form.email.focus ();
 				return false;
 			}
@@ -995,7 +995,7 @@ HashOver.init = function ()
 					return true;
 				}
 
-				message = '<?php echo $hashover->locales->locale ('invalid-email', true); ?>';
+				message = '<?php echo $hashover->locales->locale ('invalid-email'); ?>';
 				showMessage (message, permalink, true, isReply, isEdit);
 				form.email.focus ();
 
@@ -1039,7 +1039,7 @@ HashOver.init = function ()
 	{
 		skipComment = skipComment || false;
 
-		var fieldNeeded = '<?php echo $hashover->locales->locale ('field-needed', true); ?>';
+		var fieldNeeded = '<?php echo $hashover->locales->locale ('field-needed'); ?>';
 
 		// Check each input field for if they are required
 		for (var field in fieldOptions) {
@@ -1076,7 +1076,7 @@ HashOver.init = function ()
 			form.comment.focus ();
 
 			// Return a error message to display to the user
-			return '<?php echo $hashover->locales->locale ('comment-needed', true); ?>';
+			return '<?php echo $hashover->locales->locale ('comment-needed'); ?>';
 		}
 
 		return true;
@@ -1470,7 +1470,7 @@ HashOver.init = function ()
 		// Displays onClick confirmation dialog for comment deletion
 		getElement ('hashover-edit-delete-' + permalink, true).onclick = function ()
 		{
-			return confirm ('<?php echo $hashover->locales->locale ('delete-comment', true); ?>');
+			return confirm ('<?php echo $hashover->locales->locale ('delete-comment'); ?>');
 		};
 
 		// Change "Edit" link to "Cancel" link
@@ -1663,7 +1663,7 @@ HashOver.init = function ()
 		}
 
 		// Set title
-		this.title = '<?php echo $hashover->locales->locale ('loading', true); ?>';
+		this.title = '<?php echo $hashover->locales->locale ('loading'); ?>';
 
 		// Add loading class to wrapper
 		addClass (this.parentNode, 'hashover-loading');
@@ -1671,7 +1671,7 @@ HashOver.init = function ()
 		// Change title and remove load event handler once image is loaded
 		this.onload = function ()
 		{
-			this.title = '<?php echo $hashover->locales->locale ('click-to-close', true); ?>';
+			this.title = '<?php echo $hashover->locales->locale ('click-to-close'); ?>';
 			this.onload = null;
 
 			// Remove loading class from wrapper

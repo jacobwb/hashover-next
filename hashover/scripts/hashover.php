@@ -99,7 +99,10 @@ class HashOver
 		$this->readComments = new ReadComments ($this->setup);
 
 		// Instantiate locales class
-		$this->locales = new Locales ($this->setup->language);
+		$this->locales = new Locales (
+			$this->setup->language,
+			$this->usage['mode']
+		);
 
 		// Instantiate cookies class
 		$this->cookies = new Cookies ($this->setup);

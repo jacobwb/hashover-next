@@ -29,10 +29,13 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class Locales
 {
+	public $mode;
 	public $locale;
 
-	public function __construct ($language)
+	public function __construct ($language, $mode)
 	{
+		$this->mode = $mode;
+
 		// Path to PHP locale file
 		$locale_file_path = __DIR__ . '/locales/' . strtolower ($language) . '.php';
 
@@ -50,22 +53,27 @@ class Locales
 	}
 
 	// Return a locale string, optionally add C-style escaping
-	public function locale ($name, $addcslashes = false, $charlist = "'")
+	public function locale ($name, $add_slashes = true, $charlist = "'")
 	{
-		if ($addcslashes === false) {
+		// Don't escape given string in PHP mode if told not to
+		if ($this->mode === 'php' or $add_slashes === false) {
 			return $this->locale[$name];
 		}
 
+		// Check if locale is an array
 		if (is_array ($this->locale[$name])) {
 			$escaped_array = array ();
 
+			// If so, escape each item in the array
 			foreach ($this->locale[$name] as $key => $value) {
 				$escaped_array[$key] = addcslashes ($value, $charlist);
 			}
 
+			// And return the new array
 			return $escaped_array;
 		}
 
+		// Otherwise escape the single string
 		return addcslashes ($this->locale[$name], $charlist);
 	}
 }
