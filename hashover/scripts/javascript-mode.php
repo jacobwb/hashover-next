@@ -34,8 +34,8 @@ if ($hashover->setup->collapsesComments !== false) {
 		// If so, use the "Show X Other Comments" locale
 		$other_comment_count = ($hashover->readComments->totalCount - 1) - $hashover->setup->collapseLimit;
 		$more_link_plural = ($other_comment_count !== 1) ? 1 : 0;
-		$more_link_locale = 'show-other-comments';
-		$more_link_text = $hashover->locales->locale[$more_link_locale][$more_link_plural];
+		$more_link_locale = $hashover->locales->locale ('show-other-comments');
+		$more_link_text = $more_link_locale[$more_link_plural];
 		$more_link_text = sprintf ($more_link_text, $other_comment_count);
 	} else {
 		// If not, show count according to `$showsReplyCount` setting
@@ -201,14 +201,14 @@ HashOver.init = function ()
 
 	// Some locales, stored in JavaScript to avoid using a lot of PHP tags
 	var locale = {
-		cancel:			'<?php echo $hashover->locales->locale['cancel']; ?>',
+		cancel:			'<?php echo $hashover->locales->locale ('cancel'); ?>',
 		externalImageTip:	'<?php echo $hashover->locales->locale ('external-image-tip'); ?>',
-		like:			<?php echo js_json ($hashover->locales->locale ('like'), false); ?>,
+		like:			<?php echo js_json ($hashover->locales->locale ('like', false), false); ?>,
 		liked:			'<?php echo $hashover->locales->locale ('liked'); ?>',
 		unlike:			'<?php echo $hashover->locales->locale ('unlike'); ?>',
 		likeComment:		'<?php echo $hashover->locales->locale ('like-comment'); ?>',
 		likedComment:		'<?php echo $hashover->locales->locale ('liked-comment'); ?>',
-		dislike:		<?php echo js_json ($hashover->locales->locale ('dislike'), false); ?>,
+		dislike:		<?php echo js_json ($hashover->locales->locale ('dislike', false), false); ?>,
 		disliked:		'<?php echo $hashover->locales->locale ('disliked'); ?>',
 		dislikeComment:		'<?php echo $hashover->locales->locale ('dislike-comment'); ?>',
 		dislikedComment:	'<?php echo $hashover->locales->locale ('disliked-comment'); ?>',
@@ -560,7 +560,7 @@ HashOver.init = function ()
 					var replyTitle = name + ' <?php echo $hashover->locales->locale ('unsubscribed-tip'); ?>';
 					var replyClass = 'hashover-no-email';
 				}
-<?php if ($allowsLikes === true): ?>
+<?php if ($allowsLikes !== false): ?>
 
 				// Check whether this comment was liked by the visitor
 				if (comment.liked !== undefined) {
@@ -608,7 +608,7 @@ HashOver.init = function ()
 <?php endif; ?>
 			}
 
-<?php if ($allowsLikes === true): ?>
+<?php if ($allowsLikes !== false): ?>
 			// Get number of likes, append "Like(s)" locale
 			if (comment.likes !== undefined) {
 				var likeCount = comment.likes + ' ' + locale.like[(comment.likes === 1 ? 0 : 1)];
@@ -655,7 +655,7 @@ HashOver.init = function ()
 
 			// Replace [img] tags with external image placeholder if enabled
 			body = body.replace (imageRegex, function (fullURL, url) {
-<?php if ($hashover->setup->allowsImages === true): ?>
+<?php if ($hashover->setup->allowsImages !== false): ?>
 				// Get image extension from URL
 				var urlExtension = url.split ('#')[0];
 				    urlExtension = urlExtension.split ('?')[0];
@@ -821,7 +821,7 @@ HashOver.init = function ()
 
 			return false;
 		};
-<?php if ($hashover->setup->usesCancelButtons === true): ?>
+<?php if ($hashover->setup->usesCancelButtons !== false): ?>
 
 		// Attach event listeners to "Cancel" button
 		getElement ('hashover-' + form + '-cancel-' + permalink, true).onclick = function ()
@@ -1182,7 +1182,7 @@ HashOver.init = function ()
 
 				// Scroll comment into view
 				scrollToElement = getElement (json.comment.permalink, true);
-				scrollToElement.scrollIntoView ({'behavior': 'smooth'});
+				scrollToElement.scrollIntoView ({ behavior: 'smooth' });
 
 				// Clear form
 				form.comment.value = '';
@@ -1650,7 +1650,7 @@ HashOver.init = function ()
 		image.title = locale.externalImageTip;
 
 		// Remove loading class from wrapper
-		removeClass (this.parentNode, 'hashover-loading');
+		removeClass (image.parentNode, 'hashover-loading');
 	}
 
 	// Onclick callback function for embedded images
@@ -1708,7 +1708,7 @@ HashOver.init = function ()
 			this.textContent = out;
 		};
 	}
-<?php if ($likesOrDislikes === true): ?>
+<?php if ($likesOrDislikes !== false): ?>
 
 	// For liking comments
 	function likeComment (action, permalink)
@@ -1849,7 +1849,7 @@ HashOver.init = function ()
 					var scrollToElement = getElement (parentThread, true);
 
 					// Scroll to the comment
-					scrollToElement.scrollIntoView ({'behavior': 'smooth'});
+					scrollToElement.scrollIntoView ({ behavior: 'smooth' });
 				});
 
 				return false;
@@ -1879,7 +1879,7 @@ HashOver.init = function ()
 			});
 <?php if ($likesOrDislikes): ?>
 		} else {
-<?php if ($allowsLikes === true): ?>
+<?php if ($allowsLikes !== false): ?>
 			ifElement ('hashover-like-' + permalink, function (likeLink) {
 				// Add onClick event to "Like" hyperlinks
 				likeLink.onclick = function ()
@@ -1991,6 +1991,19 @@ HashOver.init = function ()
 			return sum;
 		}
 
+		function replyCounter (comment)
+		{
+			return (comment.replies) ? comment.replies.length : 0;
+		}
+
+		function netLikes (comment)
+		{
+			var likes = comment.likes || 0;
+			var dislikes = comment.dislikes || 0;
+
+			return likes - dislikes;
+		}
+
 		// Sort methods
 		switch (method) {
 			case 'descending': {
@@ -2040,11 +2053,6 @@ HashOver.init = function ()
 			case 'by-discussion': {
 				tmpArray = cloneObject (PHPContent.comments);
 
-				function replyCounter (comment)
-				{
-					return (comment.replies) ? comment.replies.length : 0;
-				}
-
 				sortArray = tmpArray.sort (function (a, b) {
 					var replyCountA = replyPropertySum (a, replyCounter);
 					var replyCountB = replyPropertySum (b, replyCounter);
@@ -2057,14 +2065,6 @@ HashOver.init = function ()
 
 			case 'by-popularity': {
 				tmpArray = cloneObject (PHPContent.comments);
-
-				function netLikes (comment)
-				{
-					var likes = comment.likes || 0;
-					var dislikes = comment.dislikes || 0;
-
-					return likes - dislikes;
-				}
 
 				sortArray = tmpArray.sort (function (a, b) {
 					var likeCountA = replyPropertySum (a, netLikes);
@@ -2168,7 +2168,7 @@ HashOver.init = function ()
 		parseAll (sortArray, sortDiv, false, false, true, method);
 	}
 
-<?php if ($hashover->setup->appendsCSS === true): ?>
+<?php if ($hashover->setup->appendsCSS !== false): ?>
 	// Check if comment theme stylesheet is already in page head
 	if (typeof (document.querySelector) === 'function') {
 		appendCSS = !document.querySelector ('link[href="' + themeCSS + '"]');
@@ -2317,7 +2317,7 @@ HashOver.init = function ()
 		return postComment (sortDiv, HashOverForm, postButton, AJAXPost);
 	};
 
-<?php if ($hashover->setup->allowsLogin === true): ?>
+<?php if ($hashover->setup->allowsLogin !== false): ?>
 	// Attach event listeners to "Login" button
 	if (userIsLoggedIn !== true) {
 		var loginButton = getElement ('hashover-login-button');
@@ -2398,7 +2398,7 @@ HashOver.init = function ()
 			// Workaround for stupid Chrome bug
 			if (URLHash.match (/comments|hashover/)) {
 				ifElement (URLHash, function (comments) {
-					comments.scrollIntoView ({'behavior': 'smooth'});
+					comments.scrollIntoView ({ behavior: 'smooth' });
 				});
 			}
 
@@ -2412,18 +2412,18 @@ HashOver.init = function ()
 				    && containsClass (existingComment, 'hashover-hidden') === false)
 				{
 					// If so, scroll the comment into view
-					existingComment.scrollIntoView ({'behavior': 'smooth'});
+					existingComment.scrollIntoView ({ behavior: 'smooth' });
 				} else {
 					// If not, show more comments
 					showMoreComments (moreLink, function () {
 						ifElement (URLHash, function (comment) {
-							comment.scrollIntoView ({'behavior': 'smooth'});
+							comment.scrollIntoView ({ behavior: 'smooth' });
 						});
 					});
 				}
 <?php else: ?>
 				ifElement (URLHash, function (comment) {
-					comment.scrollIntoView ({'behavior': 'smooth'});
+					comment.scrollIntoView ({ behavior: 'smooth' });
 				});
 <?php endif; ?>
 			}
