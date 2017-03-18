@@ -38,7 +38,7 @@ class DefaultLogin
 	public $email;
 	public $website;
 
-	public function __construct (Setup $setup, Cookies $cookies, Locales $locale)
+	public function __construct (Setup $setup, Cookies $cookies, Locale $locale)
 	{
 		$this->setup = $setup;
 		$this->cookies = $cookies;
