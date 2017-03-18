@@ -31,18 +31,18 @@ class DefaultLogin
 {
 	public $setup;
 	public $cookies;
-	public $locales;
+	public $locale;
 	public $name;
 	public $password;
 	public $loginHash;
 	public $email;
 	public $website;
 
-	public function __construct (Setup $setup, Cookies $cookies, Locales $locales)
+	public function __construct (Setup $setup, Cookies $cookies, Locales $locale)
 	{
 		$this->setup = $setup;
 		$this->cookies = $cookies;
-		$this->locales = $locales;
+		$this->locale = $locale;
 
 		// Disable login is cookies are disabled
 		if ($setup->setsCookies === false) {

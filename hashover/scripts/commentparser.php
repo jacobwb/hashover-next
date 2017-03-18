@@ -32,7 +32,7 @@ class CommentParser
 {
 	public $setup;
 	public $login;
-	public $locales;
+	public $locale;
 	public $avatars;
 	public $popularList = array ();
 
@@ -48,7 +48,7 @@ class CommentParser
 	{
 		$this->setup = $setup;
 		$this->login = new Login ($setup);
-		$this->locales = new Locales ($setup->language);
+		$this->locale = new Locale ($setup->language);
 		$this->avatars = new Avatars ($setup);
 		$this->ampm = ($setup->uses12HourTime === false) ? 'H:i' : 'g:ia';
 		$this->current_datetime = new DateTime (date('Y-m-d'));
@@ -80,7 +80,7 @@ class CommentParser
 
 			foreach ($this->intervals as $i => $string) {
 				if ($interval->$i > 0) {
-					$date_locale = $this->locales->locale[$string][($interval->$i !== 1)];
+					$date_locale = $this->locale->text[$string][($interval->$i !== 1)];
 					$comment_date = sprintf ($date_locale, $interval->$i);
 
 					break;
@@ -89,7 +89,7 @@ class CommentParser
 
 			if (empty ($comment_date)) {
 				$get_time = date ($this->ampm, $micro_date);
-				$comment_date = sprintf ($this->locales->locale['date-today'], $get_time);
+				$comment_date = sprintf ($this->locale->text['date-today'], $get_time);
 			}
 		} else {
 			$comment_date = date ('m/d/Y \a\t ' . $this->ampm, $micro_date);
@@ -198,7 +198,7 @@ class CommentParser
 				$output['status'] =(string) $status;
 
 				// And append status to date
-				$status_locale = mb_strtolower ($this->locales->locale[$status . '-name']);
+				$status_locale = mb_strtolower ($this->locale->text[$status . '-name']);
 				$output['date'] .= ' (' . $status_locale . ')';
 			}
 		}
@@ -216,7 +216,7 @@ class CommentParser
 	public function notice ($type, $key, &$last_date)
 	{
 		$output = array ();
-		$output['title'] = $this->locales->locale[$type . '-name'];
+		$output['title'] = $this->locale->text[$type . '-name'];
 		$last_date++;
 
 		if ($this->setup->iconMode !== 'none') {
@@ -224,7 +224,7 @@ class CommentParser
 		}
 
 		$output['permalink'] = 'c' . str_replace ('-', 'r', $key);
-		$output['notice'] = $this->locales->locale[$type . '-note'];
+		$output['notice'] = $this->locale->text[$type . '-note'];
 		$output['notice-class'] = 'hashover-' . $type;
 		$output['sort-date'] =(int) $last_date;
 

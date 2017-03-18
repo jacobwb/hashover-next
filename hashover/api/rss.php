@@ -85,7 +85,7 @@ function create_rss (&$hashover)
 	if (!empty ($hashover->setup->metadata['title'])) {
 		$title_metadata = $hashover->setup->metadata['title'];
 	} else {
-		$title_metadata = $hashover->locales->locale['untitled'];
+		$title_metadata = $hashover->locale->text['untitled'];
 	}
 
 	// Create channel title element
@@ -107,7 +107,7 @@ function create_rss (&$hashover)
 	// Create channel description element
 	$description = $xml->createElement ('description');
 	$count_plural = ($hashover->readComments->totalCount !== 1);
-	$showing_comments_locale = $hashover->locales->locale['showing-comments'][$count_plural];
+	$showing_comments_locale = $hashover->locale->text['showing-comments'][$count_plural];
 	$count_locale = sprintf ($showing_comments_locale, $hashover->readComments->totalCount - 1);
 	$description_value = $xml->createTextNode ($count_locale);
 	$description->appendChild ($description_value);

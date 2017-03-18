@@ -50,7 +50,7 @@ class HTMLOutput
 
 		$this->setup = $setup;
 		$this->mode = $setup->usage['mode'];
-		$this->locales = new Locales ($setup->language, $setup->usage['mode']);
+		$this->locale = new Locale ($setup->language, $setup->usage['mode']);
 		$this->login = new Login ($setup);
 		$this->avatars = new Avatars ($setup);
 		$this->misc = new Misc ($this->mode);
@@ -100,8 +100,8 @@ class HTMLOutput
 		}
 
 		return sprintf (
-			$this->locales->locale ($field . '-tip'),
-			mb_strtolower ($this->locales->locale ($optionality))
+			$this->locale->get ($field . '-tip'),
+			mb_strtolower ($this->locale->get ($optionality))
 		);
 	}
 
@@ -113,7 +113,7 @@ class HTMLOutput
 			'name' => array (
 				'wrapper-class' => 'hashover-name-input',
 				'label-class' => 'hashover-name-label',
-				'placeholder' => $this->locales->locale ('name'),
+				'placeholder' => $this->locale->get ('name'),
 				'input-id' => 'hashover-main-name',
 				'input-type' => 'text',
 				'input-name' => 'name',
@@ -124,7 +124,7 @@ class HTMLOutput
 			'password' => array (
 				'wrapper-class' => 'hashover-password-input',
 				'label-class' => 'hashover-password-label',
-				'placeholder' => $this->locales->locale ('password'),
+				'placeholder' => $this->locale->get ('password'),
 				'input-id' => 'hashover-main-password',
 				'input-type' => 'password',
 				'input-name' => 'password',
@@ -135,7 +135,7 @@ class HTMLOutput
 			'email' => array (
 				'wrapper-class' => 'hashover-email-input',
 				'label-class' => 'hashover-email-label',
-				'placeholder' => $this->locales->locale ('email'),
+				'placeholder' => $this->locale->get ('email'),
 				'input-id' => 'hashover-main-email',
 				'input-type' => 'email',
 				'input-name' => 'email',
@@ -146,7 +146,7 @@ class HTMLOutput
 			'website' => array (
 				'wrapper-class' => 'hashover-website-input',
 				'label-class' => 'hashover-website-label',
-				'placeholder' => $this->locales->locale ('website'),
+				'placeholder' => $this->locale->get ('website'),
 				'input-id' => 'hashover-main-website',
 				'input-type' => 'url',
 				'input-name' => 'website',
@@ -158,8 +158,8 @@ class HTMLOutput
 		// Change input values to specified values
 		if ($editForm === true) {
 			$login_input_attributes['name']['input-value'] = $this->injectVar ($name);
-			$login_input_attributes['password']['placeholder'] = $this->locales->locale ('confirm-password');
-			$login_input_attributes['password']['input-title'] = $this->locales->locale ('confirm-password');
+			$login_input_attributes['password']['placeholder'] = $this->locale->get ('confirm-password');
+			$login_input_attributes['password']['input-title'] = $this->locale->get ('confirm-password');
 			$login_input_attributes['website']['input-value'] = $this->injectVar ($website);
 		}
 
@@ -329,10 +329,10 @@ class HTMLOutput
 			'href' => '#' . $this->injectVar ($parent),
 			'id' => 'hashover-thread-link-' . $this->injectVar ($permalink),
 			'class' => 'hashover-thread-link',
-			'title' => $this->locales->locale ('thread-tip')
+			'title' => $this->locale->get ('thread-tip')
 		), false);
 
-		$thread_locale = $this->locales->locale ('thread');
+		$thread_locale = $this->locale->get ('thread');
 		$inner_html = sprintf ($thread_locale, $this->injectVar ($name));
 		$thread_link->innerHTML ($inner_html);
 
@@ -412,7 +412,7 @@ class HTMLOutput
 		$link->createAttributes (array (
 			'id' => $form. '-link-' . $permalink,
 			'class' => 'hashover-comment-' . $type,
-			'title' => $this->locales->locale ($title_locale)
+			'title' => $this->locale->get ($title_locale)
 		));
 
 		// Append href attribute
@@ -427,7 +427,7 @@ class HTMLOutput
 		}
 
 		// Add link text
-		$link->innerHTML ($this->locales->locale ($type));
+		$link->innerHTML ($this->locale->get ($type));
 
 		return $link->asHTML ();
 	}
@@ -436,7 +436,7 @@ class HTMLOutput
 	public function cancelLink ($permalink, $for, $class)
 	{
 		$cancel_link = $this->queryLink ($this->setup->filePath);
-		$cancel_locale = $this->locales->locale ('cancel');
+		$cancel_locale = $this->locale->get ('cancel');
 
 		// Create more attributes
 		$cancel_link->createAttributes (array (
@@ -499,7 +499,7 @@ class HTMLOutput
 		$subscribe_label = new HTMLTag ('label', array (
 			'for' => 'hashover-subscribe',
 			'class' => 'hashover-' . $class . '-label',
-			'title' => $this->locales->locale ('subscribe-tip')
+			'title' => $this->locale->get ('subscribe-tip')
 		));
 
 		if (!empty ($id)) {
@@ -526,7 +526,7 @@ class HTMLOutput
 		$subscribe_label->appendChild ($subscribe);
 
 		// Add text to subscribe checkbox label element
-		$subscribe_label->appendInnerHTML ($this->locales->locale ('subscribe'));
+		$subscribe_label->appendInnerHTML ($this->locale->get ('subscribe'));
 
 		return $subscribe_label;
 	}
@@ -616,7 +616,7 @@ class HTMLOutput
 		$post_title->appendAttribute ('class', 'hashover-dashed-title');
 
 		// "Post Comment on" locale string
-		$post_comment_on = $this->locales->locale ('post-comment-on');
+		$post_comment_on = $this->locale->get ('post-comment-on');
 
 		// Add optional "on <page title>" to "Post Comment" title
 		if ($this->setup->displaysTitle === false or empty ($this->pageTitle)) {
@@ -779,7 +779,7 @@ class HTMLOutput
 		$main_form->appendChild ($required_fields);
 
 		// Comment form placeholder text
-		$comment_form = $this->locales->locale ('comment-form');
+		$comment_form = $this->locale->get ('comment-form');
 
 		// Create label element for comment textarea
 		if ($this->setup->usesLabels === true) {
@@ -802,7 +802,7 @@ class HTMLOutput
 			'cols' => '63',
 			'name' => 'comment',
 			'rows' => '5',
-			'title' => $this->locales->locale ('form-tip'),
+			'title' => $this->locale->get ('form-tip'),
 			'placeholder' => $comment_form
 		));
 
@@ -812,7 +812,7 @@ class HTMLOutput
 
 			// If the comment was a reply, have the main textarea use the reply textarea locale
 			if (!empty ($_COOKIE['replied'])) {
-				$reply_form_placeholder = $this->locales->locale ('reply-form');
+				$reply_form_placeholder = $this->locale->get ('reply-form');
 				$main_textarea->createAttribute ('placeholder', $reply_form_placeholder);
 			}
 		}
@@ -864,7 +864,7 @@ class HTMLOutput
 			if ($this->login->userIsLoggedIn === true) {
 				// Logged in
 				$login_button->appendAttribute ('class', 'hashover-logout');
-				$logout_locale = $this->locales->locale ('logout');
+				$logout_locale = $this->locale->get ('logout');
 
 				// Create logged in attributes
 				$login_button->createAttributes (array (
@@ -879,8 +879,8 @@ class HTMLOutput
 				// Create logged out attributes
 				$login_button->createAttributes (array (
 					'name' => 'login',
-					'value' => $this->locales->locale ('login'),
-					'title' => $this->locales->locale ('login-tip')
+					'value' => $this->locale->get ('login'),
+					'title' => $this->locale->get ('login-tip')
 				));
 			}
 
@@ -889,7 +889,7 @@ class HTMLOutput
 		}
 
 		// Post button locale
-		$post_button = $this->locales->locale ('post-button');
+		$post_button = $this->locale->get ('post-button');
 
 		// Create "Post Comment" button element
 		$main_post_button = new HTMLTag ('input', array (
@@ -937,7 +937,7 @@ class HTMLOutput
 
 			// Add popular comments title text
 			$popPlural = (count ($popularList) !== 1) ? 1 : 0;
-			$popular_comments_locale = $this->locales->locale ('popular-comments');
+			$popular_comments_locale = $this->locale->get ('popular-comments');
 			$pop_count_element->innerHTML ($popular_comments_locale[$popPlural]);
 
 			// Add popular comments title element to wrapper element
@@ -1021,12 +1021,12 @@ class HTMLOutput
 
 			// Array of select tag sort options
 			$sort_options = array (
-				array ('value' => 'ascending', 'innerHTML' => $this->locales->locale ('sort-ascending')),
-				array ('value' => 'descending', 'innerHTML' => $this->locales->locale ('sort-descending')),
-				array ('value' => 'by-date', 'innerHTML' => $this->locales->locale ('sort-by-date')),
-				array ('value' => 'by-likes', 'innerHTML' => $this->locales->locale ('sort-by-likes')),
-				array ('value' => 'by-replies', 'innerHTML' => $this->locales->locale ('sort-by-replies')),
-				array ('value' => 'by-name', 'innerHTML' => $this->locales->locale ('sort-by-name'))
+				array ('value' => 'ascending', 'innerHTML' => $this->locale->get ('sort-ascending')),
+				array ('value' => 'descending', 'innerHTML' => $this->locale->get ('sort-descending')),
+				array ('value' => 'by-date', 'innerHTML' => $this->locale->get ('sort-by-date')),
+				array ('value' => 'by-likes', 'innerHTML' => $this->locale->get ('sort-by-likes')),
+				array ('value' => 'by-replies', 'innerHTML' => $this->locale->get ('sort-by-replies')),
+				array ('value' => 'by-name', 'innerHTML' => $this->locale->get ('sort-by-name'))
 			);
 
 			// Create sort options for sort dropdown menu element
@@ -1052,17 +1052,17 @@ class HTMLOutput
 
 			// Create option group for threaded sort options
 			$threaded_optgroup = new HTMLTag ('optgroup', array (
-				'label' => $this->locales->locale ('sort-threads')
+				'label' => $this->locale->get ('sort-threads')
 			));
 
 			// Array of select tag threaded sort options
 			$threaded_sort_options = array (
-				array ('value' => 'threaded-descending', 'innerHTML' => $this->locales->locale ('sort-descending')),
-				array ('value' => 'threaded-by-date', 'innerHTML' => $this->locales->locale ('sort-by-date')),
-				array ('value' => 'threaded-by-likes', 'innerHTML' => $this->locales->locale ('sort-by-likes')),
-				array ('value' => 'by-popularity', 'innerHTML' => $this->locales->locale ('sort-by-popularity')),
-				array ('value' => 'by-discussion', 'innerHTML' => $this->locales->locale ('sort-by-discussion')),
-				array ('value' => 'threaded-by-name', 'innerHTML' => $this->locales->locale ('sort-by-name'))
+				array ('value' => 'threaded-descending', 'innerHTML' => $this->locale->get ('sort-descending')),
+				array ('value' => 'threaded-by-date', 'innerHTML' => $this->locale->get ('sort-by-date')),
+				array ('value' => 'threaded-by-likes', 'innerHTML' => $this->locale->get ('sort-by-likes')),
+				array ('value' => 'by-popularity', 'innerHTML' => $this->locale->get ('sort-by-popularity')),
+				array ('value' => 'by-discussion', 'innerHTML' => $this->locale->get ('sort-by-discussion')),
+				array ('value' => 'threaded-by-name', 'innerHTML' => $this->locale->get ('sort-by-name'))
 			);
 
 			// Create sort options for sort dropdown menu element
@@ -1131,7 +1131,7 @@ class HTMLOutput
 		), false);
 
 		// Add homepage hyperlink text
-		$homepage_link->innerHTML ($this->locales->locale ('hashover-comments'));
+		$homepage_link->innerHTML ($this->locale->get ('hashover-comments'));
 
 		// Add link back to HashOver homepage to end links wrapper element
 		$end_links_wrapper->innerHTML ($homepage_link->asHTML () . ' &#8210;');
@@ -1154,7 +1154,7 @@ class HTMLOutput
 				));
 
 				// Add RSS hyperlink text
-				$rss_link->innerHTML ($this->locales->locale ('rss-feed'));
+				$rss_link->innerHTML ($this->locale->get ('rss-feed'));
 
 				// Add RSS hyperlink to end links array
 				$end_links[] = $rss_link->asHTML ();
@@ -1170,7 +1170,7 @@ class HTMLOutput
 		), false);
 
 		// Add source code hyperlink text
-		$source_link->innerHTML ($this->locales->locale ('source-code'));
+		$source_link->innerHTML ($this->locale->get ('source-code'));
 
 		// Add source code hyperlink to end links array
 		$end_links[] = $source_link->asHTML ();
@@ -1221,7 +1221,7 @@ class HTMLOutput
 		$cancel_button = $this->queryLink ($this->setup->filePath);
 		$class = 'hashover-' . $type . '-cancel';
 		$action_type = 'hashover-' . $type;
-		$cancel_locale = $this->locales->locale ('cancel');
+		$cancel_locale = $this->locale->get ('cancel');
 
 		// Add ID attribute with JavaScript variable single quote break out
 		if (!empty ($permalink)) {
@@ -1270,7 +1270,7 @@ class HTMLOutput
 		}
 
 		// Reply form locale
-		$reply_form_placeholder = $this->locales->locale ('reply-form');
+		$reply_form_placeholder = $this->locale->get ('reply-form');
 
 		// Create label element for comment textarea
 		if ($this->setup->usesLabels === true) {
@@ -1293,7 +1293,7 @@ class HTMLOutput
 			'cols' => '62',
 			'name' => 'comment',
 			'rows' => '5',
-			'title' => $this->locales->locale ('form-tip'),
+			'title' => $this->locale->get ('form-tip'),
 			'placeholder' => $reply_form_placeholder
 		));
 
@@ -1350,7 +1350,7 @@ class HTMLOutput
 
 		// Create "Post Comment" button element
 		$reply_post_button = new HTMLTag ('input', array (), false, true);
-		$post_reply = $this->locales->locale ('post-reply');
+		$post_reply = $this->locale->get ('post-reply');
 
 		// Add ID attribute with JavaScript variable single quote break out
 		if (!empty ($permalink)) {
@@ -1381,16 +1381,16 @@ class HTMLOutput
 	public function editForm ($permalink, $file, $name = '', $website = '', $body, $status = '', $subscribed = true)
 	{
 		// "Edit Comment" locale string
-		$edit_comment = $this->locales->locale ('edit-comment');
+		$edit_comment = $this->locale->get ('edit-comment');
 
 		// "Save Edit" locale string
-		$save_edit = $this->locales->locale ('save-edit');
+		$save_edit = $this->locale->get ('save-edit');
 
 		// "Cancel" locale string
-		$cancel_edit = $this->locales->locale ('cancel');
+		$cancel_edit = $this->locale->get ('cancel');
 
 		// "Delete" locale string
-		$delete_comment = $this->locales->locale ('delete');
+		$delete_comment = $this->locale->get ('delete');
 
 		// Create wrapper element
 		$edit_form = new HTMLTag ('div');
@@ -1410,7 +1410,7 @@ class HTMLOutput
 			), false);
 
 			// Add status dropdown text
-			$edit_status_wrapper->innerHTML ($this->locales->locale ('status'));
+			$edit_status_wrapper->innerHTML ($this->locale->get ('status'));
 
 			// Create select wrapper element
 			$edit_status_select_wrapper = new HTMLTag ('span', array (
@@ -1419,9 +1419,9 @@ class HTMLOutput
 
 			// Status dropdown menu options
 			$status_options = array (
-				'approved' => $this->locales->locale ('status-approved'),
-				'pending' => $this->locales->locale ('status-pending'),
-				'deleted' => $this->locales->locale ('status-deleted')
+				'approved' => $this->locale->get ('status-approved'),
+				'pending' => $this->locale->get ('status-pending'),
+				'deleted' => $this->locale->get ('status-deleted')
 			);
 
 			// Create status dropdown menu element
@@ -1486,7 +1486,7 @@ class HTMLOutput
 			'cols' => '62',
 			'name' => 'comment',
 			'rows' => '10',
-			'title' => $this->locales->locale ('form-tip')
+			'title' => $this->locale->get ('form-tip')
 		), false);
 
 		// Add edit textarea text

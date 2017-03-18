@@ -34,7 +34,7 @@ class HashOver
 	public $misc;
 	public $setup;
 	public $readComments;
-	public $locales;
+	public $locale;
 	public $commentParser;
 	public $markdown;
 	public $cookies;
@@ -67,7 +67,7 @@ class HashOver
 
 		// Format comment count; Exclude "Showing" in API usages
 		$locale_key = ($this->usage['context'] === 'api') ? 'count-link' : $locale_key;
-		$showing_comments = $this->locales->locale[$locale_key][$prime_plural];
+		$showing_comments = $this->locale->text[$locale_key][$prime_plural];
 
 		// Whether to show reply count separately
 		if ($this->setup->showsReplyCount === true) {
@@ -77,7 +77,7 @@ class HashOver
 			// Check if there are any replies
 			if ($this->readComments->totalCount !== $this->readComments->primaryCount) {
 				$reply_plural = (($this->readComments->totalCount - $this->readComments->primaryCount) !== 1) ? 1 : 0;
-				$reply_locale = $this->locales->locale['count-replies'][$reply_plural];
+				$reply_locale = $this->locale->text['count-replies'][$reply_plural];
 				$reply_count = sprintf ($reply_locale, $this->readComments->totalCount - 1);
 
 				// If so, append reply count
@@ -99,7 +99,7 @@ class HashOver
 		$this->readComments = new ReadComments ($this->setup);
 
 		// Instantiate locales class
-		$this->locales = new Locales (
+		$this->locale = new Locale (
 			$this->setup->language,
 			$this->usage['mode']
 		);
@@ -143,10 +143,10 @@ class HashOver
 		// If no comments were found, setup a default message comment
 		if ($this->readComments->totalCount <= 1) {
 			$this->comments['comments'][] = array (
-				'title' => $this->locales->locale['be-first-name'],
+				'title' => $this->locale->text['be-first-name'],
 				'avatar' => $this->setup->httpImages . '/first-comment.' . $this->setup->imageFormat,
 				'permalink' => 'c1',
-				'notice' => $this->locales->locale['be-first-note'],
+				'notice' => $this->locale->text['be-first-note'],
 				'notice-class' => 'hashover-first'
 			);
 

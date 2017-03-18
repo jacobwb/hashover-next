@@ -45,7 +45,7 @@ try {
 		$link_text = $hashover->commentCount;
 	} else {
 		// If not set a "Post Comment" link in configured language
-		$link_text = $hashover->locales->locale['post-button'];
+		$link_text = $hashover->locale->text['post-button'];
 	}
 } catch (Exception $error) {
 	$link_text = 'Error!';

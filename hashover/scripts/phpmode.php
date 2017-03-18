@@ -31,7 +31,7 @@ class PHPMode
 {
 	public $setup;
 	public $html;
-	public $locales;
+	public $locale;
 	public $templater;
 	public $markdown;
 	public $comments;
@@ -54,7 +54,7 @@ class PHPMode
 	{
 		$this->setup = $setup;
 		$this->html = $html;
-		$this->locales = new Locales ($setup->language);
+		$this->locale = new Locale ($setup->language);
 		$this->templater = new Templater ($setup->usage['mode'], $setup);
 		$this->markdown = new Markdown ();
 		$this->comments = $comments;
@@ -252,7 +252,7 @@ class PHPMode
 				$comment_wrapper->appendAttribute ('class', 'hashover-user-owned');
 
 				// Define "Reply" link with original poster title
-				$replyTitle = $this->locales->locale ('commenter-tip');
+				$replyTitle = $this->locale->get ('commenter-tip');
 				$replyClass = 'hashover-no-email';
 
 				// Add "Reply" hyperlink to template
@@ -265,11 +265,11 @@ class PHPMode
 				// Check if commenter is subscribed
 				if (isset ($comment['subscribed'])) {
 					// If so, set subscribed title
-					$replyTitle = $name . ' ' . $this->locales->locale['subscribed-tip'];
+					$replyTitle = $name . ' ' . $this->locale->text['subscribed-tip'];
 					$replyClass = 'hashover-has-email';
 				} else{
 					// If not, set unsubscribed title
-					$replyTitle = $name . ' ' . $this->locales->locale['unsubscribed-tip'];
+					$replyTitle = $name . ' ' . $this->locale->text['unsubscribed-tip'];
 					$replyClass = 'hashover-no-email';
 				}
 			}
@@ -277,7 +277,7 @@ class PHPMode
 			// Get number of likes, append "Like(s)" locale
 			if (isset ($comment['likes'])) {
 				$plural = ($comment['likes'] === 1 ? 0 : 1);
-				$likeCount = $comment['likes'] . ' ' . $this->locales->locale['like'][$plural];
+				$likeCount = $comment['likes'] . ' ' . $this->locale->text['like'][$plural];
 			} else {
 				$likeCount = '';
 			}
@@ -289,7 +289,7 @@ class PHPMode
 			if ($this->setup->allowsDislikes === true) {
 				if (isset ($comment['dislikes'])) {
 					$plural = ($comment['dislikes'] === 1 ? 0 : 1);
-					$dislikeCount = $comment['dislikes'] . ' ' . $this->locales->locale['dislike'][$plural];
+					$dislikeCount = $comment['dislikes'] . ' ' . $this->locale->text['dislike'][$plural];
 				} else {
 					$dislikeCount = '';
 				}
@@ -325,9 +325,9 @@ class PHPMode
 
 				if ($template['reply-count'] > 0) {
 					if ($template['reply-count'] !== 1) {
-						$template['reply-count'] .= ' ' . $this->locales->locale ('replies');
+						$template['reply-count'] .= ' ' . $this->locale->get ('replies');
 					} else {
-						$template['reply-count'] .= ' ' . $this->locales->locale ('reply');
+						$template['reply-count'] .= ' ' . $this->locale->get ('reply');
 					}
 				}
 			}

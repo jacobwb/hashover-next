@@ -88,7 +88,7 @@ try {
 				if (!empty ($metadata_files[dirname ($comment)]['title'])) {
 					$comments[$output_key]['thread-title'] = $metadata_files[dirname ($comment)]['title'];
 				} else {
-					$comments[$output_key]['thread-title'] = $hashover->locales->locale['untitled'];
+					$comments[$output_key]['thread-title'] = $hashover->locale->text['untitled'];
 				}
 
 				$output_key++;
@@ -114,7 +114,7 @@ try {
 					if (!empty ($hashover->setup->metadata['title'])) {
 						$comments[$output_key]['thread-title'] = $hashover->setup->metadata['title'];
 					} else {
-						$comments[$output_key]['thread-title'] = $hashover->locales->locale['untitled'];
+						$comments[$output_key]['thread-title'] = $hashover->locale->text['untitled'];
 					}
 
 					$output_key++;

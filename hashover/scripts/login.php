@@ -31,7 +31,7 @@ class Login extends PostData
 {
 	public $setup;
 	public $cookies;
-	public $locales;
+	public $locale;
 	public $loginMethod;
 	public $fieldNeeded;
 	public $name;
@@ -48,14 +48,14 @@ class Login extends PostData
 
 		$this->setup = $setup;
 		$this->cookies = new Cookies ($setup);
-		$this->locales = new Locales ($setup->language);
+		$this->locale = new Locale ($setup->language);
 
 		// Instantiate login method class
 		$login_class = $this->setup->loginMethod;
-		$this->loginMethod = new $login_class ($setup, $this->cookies, $this->locales);
+		$this->loginMethod = new $login_class ($setup, $this->cookies, $this->locale);
 
 		// Error message to display to the user
-		$this->fieldNeeded = $this->locales->locale ('field-needed');
+		$this->fieldNeeded = $this->locale->get ('field-needed');
 
 		// Check if user is logged in
 		$this->getLogin ();
@@ -146,7 +146,7 @@ class Login extends PostData
 				}
 
 				throw new Exception (sprintf (
-					$this->fieldNeeded, $this->locales->locale ($field)
+					$this->fieldNeeded, $this->locale->get ($field)
 				));
 
 				return false;

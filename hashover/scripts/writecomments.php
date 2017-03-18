@@ -33,7 +33,7 @@ class WriteComments extends PostData
 	protected $mode;
 	protected $readComments;
 	protected $formatData;
-	protected $locales;
+	protected $locale;
 	protected $cookies;
 	protected $login;
 	protected $misc;
@@ -148,7 +148,7 @@ class WriteComments extends PostData
 		$this->mode = $setup->usage['mode'];
 		$this->readComments = $read_comments;
 		$this->formatData = $this->readComments->data;
-		$this->locales = new Locales ($setup->language);
+		$this->locale = new Locale ($setup->language);
 		$this->cookies = new Cookies ($setup);
 		$this->login = new Login ($setup);
 		$this->misc = new Misc ($this->mode);
@@ -239,7 +239,7 @@ class WriteComments extends PostData
 		}
 
 		// Throw exception as error message
-		throw new Exception ($this->locales->locale['comment-needed']);
+		throw new Exception ($this->locale->text['comment-needed']);
 
 		return false;
 	}
@@ -290,7 +290,7 @@ class WriteComments extends PostData
 
 			// Kick visitor back
 			if ($kickback !== false) {
-				$this->kickback ($this->locales->locale['logged-in']);
+				$this->kickback ($this->locale->text['logged-in']);
 			}
 
 		} catch (Exception $error) {
@@ -308,7 +308,7 @@ class WriteComments extends PostData
 		$this->login->clearLogin ();
 
 		// Kick visitor back
-		$this->kickback ($this->locales->locale['logged-out']);
+		$this->kickback ($this->locale->text['logged-out']);
 
 		return true;
 	}
@@ -437,7 +437,7 @@ class WriteComments extends PostData
 					$this->removeFromLatest ($this->file);
 
 					// Kick visitor back with comment deletion message
-					$this->kickback ($this->locales->locale['comment-deleted']);
+					$this->kickback ($this->locale->text['comment-deleted']);
 
 					return true;
 				}
@@ -446,7 +446,7 @@ class WriteComments extends PostData
 			}
 
 			// Kisk visitor back with comment posting error
-			$this->kickback ($this->locales->locale['post-fail'], true);
+			$this->kickback ($this->locale->text['post-fail'], true);
 
 		} catch (Exception $error) {
 			throw new Exception ($error->getMessage ());
@@ -526,13 +526,13 @@ class WriteComments extends PostData
 			// Set reply cookie
 			if (!empty ($this->replyTo)) {
 				// Kick visitor back; display message of reply requirement
-				throw new Exception ($this->locales->locale['reply-needed']);
+				throw new Exception ($this->locale->text['reply-needed']);
 
 				return false;
 			}
 
 			// Kick visitor back; display message of comment requirement
-			throw new Exception ($this->locales->locale['comment-needed']);
+			throw new Exception ($this->locale->text['comment-needed']);
 
 			return false;
 		}
@@ -720,7 +720,7 @@ class WriteComments extends PostData
 			}
 
 			// Kisk visitor back with comment posting error
-			$this->kickback ($this->locales->locale['post-fail'], true);
+			$this->kickback ($this->locale->text['post-fail'], true);
 
 		} catch (Exception $error) {
 			throw new Exception ($error->getMessage ());
@@ -853,7 +853,7 @@ class WriteComments extends PostData
 		}
 
 		// Kick visitor back with an error on failure
-		$this->kickback ($this->locales->locale['post-fail'], true);
+		$this->kickback ($this->locale->text['post-fail'], true);
 		return false;
 	}
 
