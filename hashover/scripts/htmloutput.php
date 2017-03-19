@@ -46,11 +46,9 @@ class HTMLOutput
 
 	public function __construct (Setup $setup, array $counts)
 	{
-		parent::__construct ($setup->language);
-
 		$this->setup = $setup;
 		$this->mode = $setup->usage['mode'];
-		$this->locale = new Locale ($setup->language, $setup->usage['mode']);
+		$this->locale = new Locale ($setup, $setup->usage['mode']);
 		$this->login = new Login ($setup);
 		$this->avatars = new Avatars ($setup);
 		$this->misc = new Misc ($this->mode);
@@ -90,21 +88,6 @@ class HTMLOutput
 		return urlencode (urldecode ($url));
 	}
 
-	// Add optional or required to a string
-	protected function optionality ($field)
-	{
-		if ($this->setup->fieldOptions[$field] === 'required') {
-			$optionality = 'required';
-		} else {
-			$optionality = 'optional';
-		}
-
-		return sprintf (
-			$this->locale->get ($field . '-tip'),
-			mb_strtolower ($this->locale->get ($optionality))
-		);
-	}
-
 	// Creates input elements for user login information
 	protected function loginInputs ($editForm = false, $name = '', $website = '')
 	{
@@ -117,7 +100,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-name',
 				'input-type' => 'text',
 				'input-name' => 'name',
-				'input-title' => $this->optionality ('name'),
+				'input-title' => $this->locale->text['name-tip'],
 				'input-value' => $this->misc->makeXSSsafe ($this->login->name)
 			),
 
@@ -128,7 +111,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-password',
 				'input-type' => 'password',
 				'input-name' => 'password',
-				'input-title' => $this->optionality ('password'),
+				'input-title' => $this->locale->text['password-tip'],
 				'input-value' => ''
 			),
 
@@ -139,7 +122,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-email',
 				'input-type' => 'email',
 				'input-name' => 'email',
-				'input-title' => $this->optionality ('email'),
+				'input-title' => $this->locale->text['email-tip'],
 				'input-value' => $this->misc->makeXSSsafe ($this->login->email)
 			),
 
@@ -150,7 +133,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-website',
 				'input-type' => 'url',
 				'input-name' => 'website',
-				'input-title' => $this->optionality ('website'),
+				'input-title' => $this->locale->text['website-tip'],
 				'input-value' => $this->misc->makeXSSsafe ($this->login->website)
 			)
 		);

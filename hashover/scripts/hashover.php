@@ -100,7 +100,7 @@ class HashOver
 
 		// Instantiate locales class
 		$this->locale = new Locale (
-			$this->setup->language,
+			$this->setup,
 			$this->usage['mode']
 		);
 

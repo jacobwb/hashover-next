@@ -148,7 +148,7 @@ class WriteComments extends PostData
 		$this->mode = $setup->usage['mode'];
 		$this->readComments = $read_comments;
 		$this->formatData = $this->readComments->data;
-		$this->locale = new Locale ($setup->language);
+		$this->locale = new Locale ($setup, $this->mode);
 		$this->cookies = new Cookies ($setup);
 		$this->login = new Login ($setup);
 		$this->misc = new Misc ($this->mode);
