@@ -804,12 +804,7 @@ HashOver.init = function ()
 			onclick: link.onclick
 		};
 
-		// Change hyperlink to "Cancel" hyperlink
-		link.textContent = locale.cancel;
-		link.title = locale.cancel;
-
-		// This resets the "Cancel" hyperlink to initial state onClick
-		link.onclick = function ()
+		function linkOnClick ()
 		{
 			// Remove fields from form wrapper
 			wrapper.textContent = '';
@@ -820,18 +815,22 @@ HashOver.init = function ()
 			link.onclick = reset.onclick;
 
 			return false;
-		};
+		}
+
+		// Change hyperlink to "Cancel" hyperlink
+		link.textContent = locale.cancel;
+		link.title = locale.cancel;
+
+		// This resets the "Cancel" hyperlink to initial state onClick
+		link.onclick = linkOnClick;
 <?php if ($hashover->setup->usesCancelButtons !== false): ?>
 
-		// Attach event listeners to "Cancel" button
-		getElement ('hashover-' + form + '-cancel-' + permalink, true).onclick = function ()
-		{
-			// Remove fields from form wrapper
-			wrapper.textContent = '';
-			link.onclick ();
+		// Get "Cancel" button
+		var cancelButtonId = 'hashover-' + form + '-cancel-' + permalink;
+		var cancelButton = getElement (cancelButtonId, true);
 
-			return false;
-		};
+		// Attach event listeners to "Cancel" button
+		cancelButton.onclick = linkOnClick;
 <?php endif; ?>
 	}
 
