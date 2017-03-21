@@ -30,6 +30,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 class WriteComments extends PostData
 {
 	protected $setup;
+	protected $encryption;
 	protected $mode;
 	protected $readComments;
 	protected $formatData;
@@ -145,6 +146,7 @@ class WriteComments extends PostData
 		parent::__construct ();
 
 		$this->setup = $setup;
+		$this->encryption = $setup->encryption;
 		$this->mode = $setup->usage['mode'];
 		$this->readComments = $read_comments;
 		$this->formatData = $this->readComments->data;
@@ -427,7 +429,7 @@ class WriteComments extends PostData
 
 				// Compare passwords
 				$edit_password = $this->encodeHTML ($this->postData['password']);
-				$passwords_match = $this->setup->encryption->verifyHash ($edit_password, $get_pass['password']);
+				$passwords_match = $this->encryption->verifyHash ($edit_password, $get_pass['password']);
 			}
 
 			// Check if password matches the one in the file
@@ -441,16 +443,17 @@ class WriteComments extends PostData
 
 					return true;
 				}
-			} else {
-				sleep (5);
 			}
 
-			// Kisk visitor back with comment posting error
+			// Otherwise sleep for 5 seconds
+			sleep (5);
+
+			// Then kick visitor back with comment posting error
 			$this->kickback ($this->locale->text['post-fail'], true);
 
 		} catch (Exception $error) {
-			throw new Exception ($error->getMessage ());
-			return false;
+			// On exception kick visitor back with error
+			$this->kickback ($error->getMessage (), true);
 		}
 
 		return false;
@@ -525,13 +528,13 @@ class WriteComments extends PostData
 
 			// Set reply cookie
 			if (!empty ($this->replyTo)) {
-				// Kick visitor back; display message of reply requirement
+				// Throw exception about reply requirement
 				throw new Exception ($this->locale->text['reply-needed']);
 
 				return false;
 			}
 
-			// Kick visitor back; display message of comment requirement
+			// Throw exception about comment requirement
 			throw new Exception ($this->locale->text['comment-needed']);
 
 			return false;
@@ -622,7 +625,7 @@ class WriteComments extends PostData
 		// Store e-mail if one is given
 		if ($this->setup->fieldOptions['email'] !== false) {
 			if (!empty ($this->email)) {
-				$encryption_keys = $this->setup->encryption->encrypt ($this->email);
+				$encryption_keys = $this->encryption->encrypt ($this->email);
 				$this->commentData['email'] = $encryption_keys['encrypted'];
 				$this->commentData['encryption'] = $encryption_keys['keys'];
 				$this->commentData['email_hash'] = md5 (mb_strtolower ($this->email));
@@ -666,7 +669,7 @@ class WriteComments extends PostData
 				if (!empty ($this->postData['password']) and !empty ($edit_comment['password'])) {
 					// Compare passwords
 					$edit_password = $this->encodeHTML ($this->postData['password']);
-					$passwords_match = $this->setup->encryption->verifyHash ($edit_password, $edit_comment['password']);
+					$passwords_match = $this->encryption->verifyHash ($edit_password, $edit_comment['password']);
 				}
 			}
 
@@ -702,29 +705,31 @@ class WriteComments extends PostData
 
 				// Attempt to write edited comment
 				if ($this->formatData->save ($edit_comment, $this->file, true)) {
-					// Return the comment data on success via AJAX
+					// If successful, check if request is via AJAX
 					if ($this->viaAJAX === true) {
+						// If so, return the comment data
 						return array (
 							'file' => $this->file,
 							'comment' => $edit_comment
 						);
 					}
 
-					// Kisk visitor back to posted comment
+					// Otherwise kick visitor back to posted comment
 					$this->kickback ('', false, 'c' . str_replace ('-', 'r', $this->file));
 
 					return true;
 				}
-			} else {
-				sleep (5);
 			}
 
-			// Kisk visitor back with comment posting error
+			// Otherwise sleep for 5 seconds
+			sleep (5);
+
+			// Then kick visitor back with comment posting error
 			$this->kickback ($this->locale->text['post-fail'], true);
 
 		} catch (Exception $error) {
-			throw new Exception ($error->getMessage ());
-			return false;
+			// On exception kick visitor back with error
+			$this->kickback ($error->getMessage (), true);
 		}
 
 		return false;
@@ -785,7 +790,7 @@ class WriteComments extends PostData
 				$webmaster_reply = 'In reply to ' . $reply_name . ':' . "\r\n\r\n" . $reply_body . "\r\n\r\n";
 
 				if (!empty ($reply_comment['email']) and !empty ($reply_comment['encryption'])) {
-					$reply_email = $this->setup->encryption->decrypt ($reply_comment['email'], $reply_comment['encryption']);
+					$reply_email = $this->encryption->decrypt ($reply_comment['email'], $reply_comment['encryption']);
 
 					if ($reply_email !== $this->email
 					    and !empty ($reply_comment['notifications'])
@@ -884,8 +889,10 @@ class WriteComments extends PostData
 			return $this->writeComment ($comment_file);
 
 		} catch (Exception $error) {
-			throw new Exception ($error->getMessage ());
-			return false;
+			// On exception kick visitor back with error
+			$this->kickback ($error->getMessage (), true);
 		}
+
+		return false;
 	}
 }
