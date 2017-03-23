@@ -105,7 +105,9 @@ class Settings
 
 	// External domains allowed to remotely load HashOver scripts
 	public $allowedDomains = array (
-		// '*.example.com'
+		// '*.example.com',
+		// '*.example.org',
+		// '*.example.net'
 	);
 
 	// General database options
