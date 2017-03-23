@@ -49,7 +49,7 @@ class Templater
 		}
 
 		// Load and escape HTML template
-		$this->theme = addcslashes (trim (file_get_contents ($theme)), "'");
+		$this->theme = addcslashes (trim (file_get_contents ($theme)), "\\'");
 	}
 
 	protected function fromComment ($key)

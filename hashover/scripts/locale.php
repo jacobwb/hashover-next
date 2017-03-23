@@ -105,7 +105,7 @@ class Locale
 	}
 
 	// Returns a locale string, optionally adding C-style escaping
-	public function get ($name, $add_slashes = true, $charlist = "'")
+	public function get ($name, $add_slashes = true, $charlist = "\\'")
 	{
 		// Don't escape given string in PHP mode or if told not to
 		if ($this->mode === 'php' or $add_slashes === false) {

@@ -36,11 +36,11 @@ class HTMLOutput
 	public $misc;
 	public $login;
 	public $commentCounts;
+	public $pageTitle;
+	public $pageURL;
 	public $popularComments;
 	public $comments;
 
-	protected $pageTitle;
-	protected $pageURL;
 	protected $emphasizedField;
 	protected $defaultLoginInputs;
 
@@ -57,8 +57,8 @@ class HTMLOutput
 		$this->pageURL = $this->setup->pageURL;
 
 		if ($this->mode !== 'php') {
-			$this->pageTitle = addcslashes ($this->pageTitle, "'");
-			$this->pageURL = addcslashes ($this->pageURL, "'");
+			$this->pageTitle = addcslashes ($this->pageTitle, "\\'");
+			$this->pageURL = addcslashes ($this->pageURL, "\\'");
 		}
 
 		// Set the field to emphasize after a failed post
@@ -236,7 +236,7 @@ class HTMLOutput
 			$background_image = 'background-image: url(\'' . $avatar_src . '\');';
 
 			if ($this->mode !== 'php') {
-				$avatar->createAttribute ('style', addcslashes ($background_image, "'"));
+				$avatar->createAttribute ('style', addcslashes ($background_image, "\\'"));
 			} else {
 				$avatar->createAttribute ('style', $background_image);
 			}
