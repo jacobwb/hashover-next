@@ -48,7 +48,7 @@ class HTMLOutput
 	{
 		$this->setup = $setup;
 		$this->mode = $setup->usage['mode'];
-		$this->locale = new Locale ($setup, $setup->usage['mode']);
+		$this->locale = new Locale ($setup);
 		$this->login = new Login ($setup);
 		$this->avatars = new Avatars ($setup);
 		$this->misc = new Misc ($this->mode);

@@ -29,13 +29,14 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class Locale
 {
+	public $setup;
 	public $mode;
 	public $text;
 
-	public function __construct (Setup $setup, $mode)
+	public function __construct (Setup $setup)
 	{
 		$this->setup = $setup;
-		$this->mode = $mode;
+		$this->mode = $setup->usage['mode'];
 
 		// Lower case language code
 		$language = strtolower ($setup->language);

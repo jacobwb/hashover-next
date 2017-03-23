@@ -48,7 +48,7 @@ class Login extends PostData
 
 		$this->setup = $setup;
 		$this->cookies = new Cookies ($setup);
-		$this->locale = new Locale ($setup, $setup->usage['mode']);
+		$this->locale = new Locale ($setup);
 
 		// Instantiate login method class
 		$login_class = $this->setup->loginMethod;

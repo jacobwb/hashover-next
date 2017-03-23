@@ -48,7 +48,7 @@ class CommentParser
 	{
 		$this->setup = $setup;
 		$this->login = new Login ($setup);
-		$this->locale = new Locale ($setup, $setup->usage['mode']);
+		$this->locale = new Locale ($setup);
 		$this->avatars = new Avatars ($setup);
 		$this->ampm = ($setup->uses12HourTime === false) ? 'H:i' : 'g:ia';
 		$this->current_datetime = new DateTime (date('Y-m-d'));
