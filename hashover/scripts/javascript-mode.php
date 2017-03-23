@@ -63,14 +63,27 @@ function string_true ($boolean)
 // Encodes JSON, returns output that conforms to coding standard
 function js_json ($string, $pretty_print = true, $tabs = 1)
 {
-	$search = array ('\\', "'", '"', "','", '    ', PHP_EOL);
-	$replace = array ('', "\'", "'", "', '", "\t", PHP_EOL . str_repeat ("\t", $tabs));
+	$json_options = 0;
+	$search = array ('\\/', "'", '"', "','", '    ', PHP_EOL);
+	$replace = array ('/', "\'", "'", "', '", "\t", PHP_EOL . str_repeat ("\t", $tabs));
 
-	// Encode string as JSON with pretty where possible
+	// Enable pretty print where possible
 	if ($pretty_print !== false and defined ('JSON_PRETTY_PRINT')) {
-		$json = json_encode ($string, JSON_PRETTY_PRINT);
+		$json_options |= JSON_PRETTY_PRINT;
+	}
+
+	// Check if Unicode escaping can be disabled
+	if (defined ('JSON_UNESCAPED_UNICODE')) {
+		// If so, encode string as JSON without Unicode escaping
+		$json = json_encode ($string, $json_options | JSON_UNESCAPED_UNICODE);
 	} else {
-		$json = json_encode ($string);
+		// If not, encode string as JSON normally
+		$json = json_encode ($string, $json_options);
+
+		// And decode Unicode escaped characters
+		$json = preg_replace_callback ('/\\\u([0-9a-f]{3,4})/i', function ($groups) {
+			return html_entity_decode ('&#x' . $groups[1] . ';');
+		}, $json);
 	}
 
 	// Conform JSON to coding standard
