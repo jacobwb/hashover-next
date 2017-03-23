@@ -40,19 +40,29 @@ try {
 	$hashover->setup->setPageURL ('request');
 	$hashover->initiate ();
 
-	// If there are more than one comment set a comment count link
+	// Executing script number
+	$hashover_script = $hashover->setup->executingScript;
+
+	// Link URL
+	$link_url = $hashover->misc->makeXSSsafe ($hashover->setup->pageURL);
+
+	// Check if there is more than one comment
 	if ($hashover->readComments->totalCount > 1) {
+		// If so, set comment count as link text
 		$link_text = $hashover->commentCount;
 	} else {
-		// If not set a "Post Comment" link in configured language
-		$link_text = $hashover->locale->text['post-button'];
+		// If not, set "Post Comment" locale string as link text
+		$link_text = $hashover->locale->get ('post-button');
 	}
+
 } catch (Exception $error) {
+	$hashover_script = null;
+	$link_url = null;
 	$link_text = 'Error!';
 }
 
 ?>
-// Copyright (C) 2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // I, Jacob Barkdull, hereby release this work into the public domain.
@@ -63,12 +73,12 @@ try {
 
 // Setup count link
 var countLink = document.createElement ('a');
-    countLink.href = '<?php echo $_GET['url']; ?>#comments';
+    countLink.href = '<?php echo $link_url; ?>#comments';
     countLink.textContent = '<?php echo $link_text; ?>';
 
-<?php if (!empty ($_GET['hashover-script'])): ?>
+<?php if (!empty ($hashover_script)): ?>
 // Get count link element
-var hashoverScript = 'hashover-script-<?php echo $_GET['hashover-script']; ?>';
+var hashoverScript = 'hashover-script-<?php echo $hashover_script; ?>';
 var thisScript = document.getElementById (hashoverScript);
 
 // Display count link
