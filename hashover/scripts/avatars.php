@@ -52,7 +52,7 @@ class Avatars
 
 		// If set to custom direct 404s to local avatar image
 		if ($setup->gravatarDefault === 'custom') {
-			$this->fallback = urlencode ($setup->absolutePath . $avatar . '.png');
+			$this->fallback = urlencode ($avatar . '.png');
 		} else {
 			// If not direct to a themed default
 			$this->fallback = $setup->gravatarDefault;
