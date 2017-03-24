@@ -47,23 +47,33 @@ class Avatars
 
 		// Default avatar
 		$avatar = $setup->httpImages . '/avatar';
-		$extension = '.' . (($setup->isMobile === true) ? 'svg' : 'png');
-		$this->avatar = $avatar . $extension;
-
-		// If set to custom direct 404s to local avatar image
-		if ($setup->gravatarDefault === 'custom') {
-			$this->fallback = urlencode ($avatar . '.png');
-		} else {
-			// If not direct to a themed default
-			$this->fallback = $setup->gravatarDefault;
-		}
+		$extension = ($setup->isMobile === true) ? 'svg' : 'png';
+		$this->avatar = $avatar . '.' . $extension;
 
 		// Use HTTPS if this file is requested with HTTPS
 		$this->http = ($this->isHTTPS ? 'https' : 'http') . '://';
 		$this->subdomain = $this->isHTTPS ? 'secure' : 'www';
 
+		// If set to custom, direct 404s to local avatar image
+		if ($setup->gravatarDefault === 'custom') {
+			$fallback = $avatar . '.png';
+
+			// Check if HashOver is being remotely accessed
+			if ($setup->remoteAccess === false) {
+				// If so, make avatar path absolute
+				$fallback = $setup->absolutePath . $fallback;
+			}
+
+			// URL encode fallback URL
+			$this->fallback = urlencode ($fallback);
+		} else {
+			// If not direct to a themed default
+			$this->fallback = $setup->gravatarDefault;
+		}
+
 		// Gravatar URL
-		$this->gravatar = $this->http . $this->subdomain . '.gravatar.com/avatar/';
+		$this->gravatar  = $this->http . $this->subdomain;
+		$this->gravatar .= '.gravatar.com/avatar/';
 	}
 
 	// Attempt to get Gravatar avatar image
