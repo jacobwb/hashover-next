@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -26,11 +26,12 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 }
 
 // Autoload class files
-spl_autoload_register (function ($classname) {
-	$classname = strtolower ($classname);
-	$error = '"' . $classname . '.php" file could not be included!';
+spl_autoload_register (function ($uri) {
+	$uri = str_replace ('\\', '/', strtolower ($uri));
+	$class_name = basename ($uri);
+	$error = '"' . $class_name . '.php" file could not be included!';
 
-	if (!@include ('./' . $classname . '.php')) {
+	if (!@include ('./' . $class_name . '.php')) {
 		// Return JavaScript code to display an error
 		$js_error  = 'var hashover = document.getElementById (\'hashover\') || document.body;' . PHP_EOL;
 		$js_error .= 'var error = \'<p><b>HashOver</b>: ' . $error . '</p>\';' . PHP_EOL . PHP_EOL;

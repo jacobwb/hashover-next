@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -51,7 +51,7 @@ class CommentParser
 		$this->locale = new Locale ($setup);
 		$this->avatars = new Avatars ($setup);
 		$this->ampm = ($setup->uses12HourTime === false) ? 'H:i' : 'g:ia';
-		$this->current_datetime = new DateTime (date('Y-m-d'));
+		$this->current_datetime = new \DateTime (date('Y-m-d'));
 	}
 
 	// Parse comment files
@@ -75,7 +75,7 @@ class CommentParser
 
 		// Format date and time
 		if ($this->setup->usesShortDates === true) {
-			$comment_datetime = new DateTime (date ('Y-m-d', $micro_date));
+			$comment_datetime = new \DateTime (date ('Y-m-d', $micro_date));
 			$interval = $comment_datetime->diff ($this->current_datetime);
 
 			foreach ($this->intervals as $i => $string) {

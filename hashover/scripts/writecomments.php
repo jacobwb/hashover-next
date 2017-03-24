@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -241,7 +241,7 @@ class WriteComments extends PostData
 		}
 
 		// Throw exception as error message
-		throw new Exception ($this->locale->text['comment-needed']);
+		throw new \Exception ($this->locale->text['comment-needed']);
 
 		return false;
 	}
@@ -252,14 +252,14 @@ class WriteComments extends PostData
 		foreach ($this->trapFields as $name) {
 			if (!empty ($_POST[$name])) {
 				// Block for filing trap fields
-				throw new Exception ('You are blocked!');
+				throw new \Exception ('You are blocked!');
 				return false;
 			}
 		}
 
 		// Check user's IP address against local blocklist
 		if ($this->spamCheck->checkList () === true) {
-			throw new Exception ('You are blocked!');
+			throw new \Exception ('You are blocked!');
 			return false;
 		}
 
@@ -269,13 +269,13 @@ class WriteComments extends PostData
 		{
 			// Check user's IP address against local or remote database
 			if ($this->spamCheck->{$this->setup->spamDatabase}() === true) {
-				throw new Exception ('You are blocked!');
+				throw new \Exception ('You are blocked!');
 				return false;
 			}
 
 			// Throw any error message as exception
 			if (!empty ($this->spamCheck->error)) {
-				throw new Exception ($this->spamCheck->error);
+				throw new \Exception ($this->spamCheck->error);
 				return false;
 			}
 		}
@@ -295,8 +295,8 @@ class WriteComments extends PostData
 				$this->kickback ($this->locale->text['logged-in']);
 			}
 
-		} catch (Exception $error) {
-			throw new Exception ($error->getMessage ());
+		} catch (\Exception $error) {
+			throw new \Exception ($error->getMessage ());
 			return false;
 		}
 
@@ -451,7 +451,7 @@ class WriteComments extends PostData
 			// Then kick visitor back with comment posting error
 			$this->kickback ($this->locale->text['post-fail'], true);
 
-		} catch (Exception $error) {
+		} catch (\Exception $error) {
 			// On exception kick visitor back with error
 			$this->kickback ($error->getMessage (), true);
 		}
@@ -529,13 +529,13 @@ class WriteComments extends PostData
 			// Set reply cookie
 			if (!empty ($this->replyTo)) {
 				// Throw exception about reply requirement
-				throw new Exception ($this->locale->text['reply-needed']);
+				throw new \Exception ($this->locale->text['reply-needed']);
 
 				return false;
 			}
 
 			// Throw exception about comment requirement
-			throw new Exception ($this->locale->text['comment-needed']);
+			throw new \Exception ($this->locale->text['comment-needed']);
 
 			return false;
 		}
@@ -727,7 +727,7 @@ class WriteComments extends PostData
 			// Then kick visitor back with comment posting error
 			$this->kickback ($this->locale->text['post-fail'], true);
 
-		} catch (Exception $error) {
+		} catch (\Exception $error) {
 			// On exception kick visitor back with error
 			$this->kickback ($error->getMessage (), true);
 		}
@@ -888,7 +888,7 @@ class WriteComments extends PostData
 			// Write the comment file
 			return $this->writeComment ($comment_file);
 
-		} catch (Exception $error) {
+		} catch (\Exception $error) {
 			// On exception kick visitor back with error
 			$this->kickback ($error->getMessage (), true);
 		}

@@ -50,14 +50,14 @@ class HashOver
 		$this->usage['context'] = $context;
 
 		// Instantiate and start statistics
-		$this->statistics = new Statistics ($mode);
+		$this->statistics = new HashOver\Statistics ($mode);
 		$this->statistics->executionStart ();
 
 		// Instantiate general setup class
-		$this->setup = new Setup ($this->usage);
+		$this->setup = new HashOver\Setup ($this->usage);
 
 		// Instantiate class of miscellaneous functions
-		$this->misc = new Misc ($mode);
+		$this->misc = new HashOver\Misc ($mode);
 	}
 
 	public function getCommentCount ($locale_key = 'showing-comments')
@@ -96,25 +96,25 @@ class HashOver
 	public function initiate ()
 	{
 		// Instantiate class for reading comments
-		$this->readComments = new ReadComments ($this->setup);
+		$this->readComments = new HashOver\ReadComments ($this->setup);
 
 		// Instantiate locales class
-		$this->locale = new Locale ($this->setup);
+		$this->locale = new HashOver\Locale ($this->setup);
 
 		// Instantiate cookies class
-		$this->cookies = new Cookies ($this->setup);
+		$this->cookies = new HashOver\Cookies ($this->setup);
 
 		// Instantiate login class
-		$this->login = new Login ($this->setup);
+		$this->login = new HashOver\Login ($this->setup);
 
 		// Instantiate comment parser class
-		$this->commentParser = new CommentParser ($this->setup);
+		$this->commentParser = new HashOver\CommentParser ($this->setup);
 
 		// Generate comment count
 		$this->commentCount = $this->getCommentCount ();
 
 		// Instantiate markdown class
-		$this->markdown = new Markdown ();
+		$this->markdown = new HashOver\Markdown ();
 	}
 
 	// Get reply array from comments via key
@@ -289,13 +289,13 @@ class HashOver
 		);
 
 		// Instantiate HTML output class
-		$this->html = new HTMLOutput (
+		$this->html = new HashOver\HTMLOutput (
 			$this->setup,
 			$commentCounts
 		);
 
 		// Instantiate comment theme templater class
-		$this->templater = new Templater (
+		$this->templater = new HashOver\Templater (
 			$this->usage['mode'],
 			$this->setup
 		);
@@ -305,7 +305,7 @@ class HashOver
 	public function displayComments ()
 	{
 		// Instantiate PHP mode class
-		$phpmode = new PHPMode (
+		$phpmode = new HashOver\PHPMode (
 			$this->setup,
 			$this->html,
 			$this->comments

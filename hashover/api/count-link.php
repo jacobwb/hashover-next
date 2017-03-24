@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2017 Jacob Barkdull
 // Generates a comment count hyperlink pointing to a specific page.
@@ -36,7 +36,7 @@ require ('oop-setup.php');
 
 try {
 	// Instantiate HashOver class
-	$hashover = new HashOver ('javascript', 'api');
+	$hashover = new \HashOver ('javascript', 'api');
 	$hashover->setup->setPageURL ('request');
 	$hashover->initiate ();
 
@@ -55,7 +55,7 @@ try {
 		$link_text = $hashover->locale->get ('post-button');
 	}
 
-} catch (Exception $error) {
+} catch (\Exception $error) {
 	$hashover_script = null;
 	$link_url = null;
 	$link_text = 'Error!';

@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -115,7 +115,7 @@ function get_json_response ()
 
 	try {
 		// Instanciate HashOver class
-		$hashover = new HashOver ('api');
+		$hashover = new \HashOver ('api');
 		$hashover->setup->setPageURL ($url);
 		$hashover->initiate ();
 
@@ -179,7 +179,7 @@ function get_json_response ()
 			// If failed, add error message to JSON
 			$json['error'] = 'Failed to save comment file!';
 		}
-	} catch (Exception $error) {
+	} catch (\Exception $error) {
 		$json['error'] = $error->getMessage ();
 	}
 

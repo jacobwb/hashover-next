@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -34,13 +34,13 @@ require ('oop-setup.php');
 
 try {
 	// Instantiate HashOver class
-	$hashover = new HashOver ('javascript', 'api');
+	$hashover = new \HashOver ('javascript', 'api');
 	$hashover->setup->setPageURL ('request');
 	$hashover->initiate ();
 
 	// Display error if the API is disabled
 	if ($hashover->setup->APIStatus ('latest') === 'disabled') {
-		throw new Exception ('This API is not enabled.');
+		throw new \Exception ('This API is not enabled.');
 	}
 
 	$latest = array ();
@@ -130,7 +130,7 @@ try {
 	// End statistics and add them as code comment
 	echo $hashover->statistics->executionEnd ();
 
-} catch (Exception $error) {
+} catch (\Exception $error) {
 	$misc = new Misc ('javascript');
 	$misc->displayError ($error->getMessage ());
 }

@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2015-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -85,7 +85,7 @@ class HTMLTag
 		$backtrace = debug_backtrace ();
 		$line = $backtrace[1]['line'];
 
-		throw new Exception ('Error on line ' . $line . ': ' . $error);
+		throw new \Exception ('Error on line ' . $line . ': ' . $error);
 	}
 
 	protected function getInnerHTML ()

@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -92,7 +92,7 @@ class Setup extends Settings
 			$version_parts = explode ('-', PHP_VERSION);
 			$version = current ($version_parts);
 
-			throw new Exception ('PHP ' . $version . ' is too old. Must be at least version 5.3.3.');
+			throw new \Exception ('PHP ' . $version . ' is too old. Must be at least version 5.3.3.');
 		}
 
 		// Check for required extensions
@@ -108,27 +108,27 @@ class Setup extends Settings
 
 		// Throw exception if for Blowfish hashing support isn't detected
 		if ((defined ('CRYPT_BLOWFISH') and CRYPT_BLOWFISH) === false) {
-			throw new Exception ('Failed to find CRYPT_BLOWFISH. Blowfish hashing support is required.');
+			throw new \Exception ('Failed to find CRYPT_BLOWFISH. Blowfish hashing support is required.');
 		}
 
 		// Throw exception if notification email is set to the default
 		if ($this->notificationEmail === 'example@example.com') {
-			throw new Exception ('You must use a UNIQUE notification e-mail in ' . __FILE__);
+			throw new \Exception ('You must use a UNIQUE notification e-mail in ' . __FILE__);
 		}
 
 		// Throw exception if encryption key is set to the default
 		if ($this->encryptionKey === '8CharKey') {
-			throw new Exception ('You must use a UNIQUE encryption key in ' . __FILE__);
+			throw new \Exception ('You must use a UNIQUE encryption key in ' . __FILE__);
 		}
 
 		// Throw exception if administrative password is set to the default
 		if ($this->adminPassword === 'password') {
-			throw new Exception ('You must use a UNIQUE admin password in ' . __FILE__);
+			throw new \Exception ('You must use a UNIQUE admin password in ' . __FILE__);
 		}
 
 		// Throw exception if the script wasn't requested by this server
 		if ($this->usage['mode'] === 'javascript' and $this->refererCheck () === false) {
-			throw new Exception ('External use not allowed.');
+			throw new \Exception ('External use not allowed.');
 		}
 
 		// Check if we are placing HashOver at a specific script's position
@@ -142,7 +142,7 @@ class Setup extends Settings
 				$this->executingScript = (int)($hashover_script);
 			} else {
 				// If not, throw an exception
-				throw new Exception ('Script query must have a numeric value.');
+				throw new \Exception ('Script query must have a numeric value.');
 			}
 		}
 
@@ -164,7 +164,7 @@ class Setup extends Settings
 		// Throw exceptions if an extension isn't loaded
 		foreach ($extensions as $extension) {
 			if (extension_loaded ($extension) === false) {
-				throw new Exception ('Failed to detect required extension: ' . $extension . '.');
+				throw new \Exception ('Failed to detect required extension: ' . $extension . '.');
 			}
 		}
 	}
@@ -205,7 +205,7 @@ class Setup extends Settings
 		$url = parse_url ($url);
 
 		if ($url === false or empty ($url['host'])) {
-			throw new Exception ('Failed to obtain domain name.');
+			throw new \Exception ('Failed to obtain domain name.');
 			return false;
 		}
 
@@ -296,7 +296,7 @@ class Setup extends Settings
 		}
 
 		// Error on failure
-		throw new Exception ('Failed to obtain page URL.');
+		throw new \Exception ('Failed to obtain page URL.');
 	}
 
 	public function setThreadDirectory ($directory_name = '')
@@ -381,7 +381,7 @@ class Setup extends Settings
 				$this->pageURL  = $url_parts['scheme'] . '://';
 				$this->pageURL .= $url_parts['host'];
 			} else {
-				throw new Exception ('URL needs a hostname and scheme.');
+				throw new \Exception ('URL needs a hostname and scheme.');
 				return;
 			}
 
@@ -401,8 +401,8 @@ class Setup extends Settings
 			// Set thread directory name to page URL
 			$this->setThreadDirectory ($this->threadDirectory);
 
-		} catch (Exception $error) {
-			throw new Exception ($error->getMessage ());
+		} catch (\Exception $error) {
+			throw new \Exception ($error->getMessage ());
 		}
 	}
 

@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2015 Jacob Barkdull
 // This file is part of HashOver.

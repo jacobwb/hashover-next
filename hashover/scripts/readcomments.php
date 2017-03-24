@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2016 Jacob Barkdull
 // This file is part of HashOver.
@@ -41,7 +41,7 @@ class ReadComments
 		$this->setup = $setup;
 
 		// Instantiate necessary class data format class
-		$data_class = 'Parse' . strtoupper ($setup->dataFormat);
+		$data_class = 'HashOver\\Parse' . strtoupper ($setup->dataFormat);
 		$this->data = new $data_class ($setup);
 
 		// Query a list of comments

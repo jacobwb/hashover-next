@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2015 Jacob Barkdull
 // This file is part of HashOver.
@@ -66,7 +66,7 @@ class ReadFiles
 				if ($update_metadata === true and
 				    $this->saveMetadata ($this->setup->metadata, $metadata_file) === false)
 				{
-					throw new Exception ('Failed to create metadata file.');
+					throw new \Exception ('Failed to create metadata file.');
 				}
 			}
 		}
@@ -111,14 +111,14 @@ class ReadFiles
 		if (!file_exists ($this->setup->dir)) {
 			// If no, attempt to create the directory
 			if (!@mkdir ($this->setup->dir, 0755, true) and !@chmod ($this->setup->dir, 0755)) {
-				throw new Exception ('Failed to create comment thread directory at "' . $this->setup->dir . '"');
+				throw new \Exception ('Failed to create comment thread directory at "' . $this->setup->dir . '"');
 				return false;
 			}
 		}
 
 		// If yes, check if it is or can be made to be writable
 		if (!is_writable ($this->setup->dir) and !@chmod ($this->setup->dir, 0755)) {
-			throw new Exception ('Comment thread directory at "' . $this->setup->dir . '" is not writable.');
+			throw new \Exception ('Comment thread directory at "' . $this->setup->dir . '" is not writable.');
 			return false;
 		}
 

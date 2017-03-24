@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -34,11 +34,12 @@ chdir ('../scripts/');
 require ('standard-setup.php');
 
 // Autoload class files
-spl_autoload_register (function ($classname) {
-	$classname = strtolower ($classname);
-	$error = '"' . $classname . '.php" file could not be included!';
+spl_autoload_register (function ($uri) {
+	$uri = str_replace ('\\', '/', strtolower ($uri));
+	$class_name = basename ($uri);
+	$error = '"' . $class_name . '.php" file could not be included!';
 
-	if (!@include ('./' . $classname . '.php')) {
+	if (!@include ('./' . $class_name . '.php')) {
 		echo '<?xml version="1.0" encoding="UTF-8"?>', PHP_EOL;
 		echo '<error>', $error, '</error>';
 		exit;
@@ -48,7 +49,7 @@ spl_autoload_register (function ($classname) {
 function create_rss (&$hashover)
 {
 	// Create new DOM document.
-	$xml = new DOMDocument ('1.0', 'UTF-8');
+	$xml = new \DOMDocument ('1.0', 'UTF-8');
 	$xml->preserveWhiteSpace = false;
 	$xml->formatOutput = true;
 
@@ -299,7 +300,7 @@ function create_rss (&$hashover)
 
 try {
 	// Instantiate HashOver class
-	$hashover = new HashOver ('rss', 'api');
+	$hashover = new \HashOver ('rss', 'api');
 	$hashover->setup->setPageURL ('request');
 	$hashover->initiate ();
 	$hashover->parsePrimary ();
@@ -307,7 +308,7 @@ try {
 	// Create RSS feed
 	create_rss ($hashover);
 
-} catch (Exception $error) {
+} catch (\Exception $error) {
 	$misc = new Misc ('rss');
 	$misc->displayError ($error->getMessage ());
 }

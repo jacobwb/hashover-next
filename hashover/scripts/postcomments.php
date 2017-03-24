@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2015-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -36,7 +36,7 @@ try {
 	$data = null;
 
 	// Instantiate HashOver class
-	$hashover = new HashOver ($mode);
+	$hashover = new \HashOver ($mode);
 	$hashover->setup->setPageURL ('request');
 	$hashover->setup->setPageTitle ('request');
 	$hashover->initiate ();
@@ -109,7 +109,7 @@ try {
 			'count' => $hashover->getCommentCount ()
 		));
 	}
-} catch (Exception $error) {
+} catch (\Exception $error) {
 	$misc = new Misc (isset ($_POST['ajax']) ? 'json' : 'php');
 	$misc->displayError ($error->getMessage ());
 }

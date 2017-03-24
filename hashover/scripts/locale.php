@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -58,7 +58,7 @@ class Locale
 			$language = strtoupper ($language);
 			$exception = $language . ' locale file could not be included!';
 
-			throw new Exception ($exception);
+			throw new \Exception ($exception);
 		}
 
 		// Prepare locale

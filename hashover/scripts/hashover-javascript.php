@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -32,7 +32,7 @@ require ('oop-setup.php');
 
 try {
 	// Instantiate HashOver class
-	$hashover = new HashOver ('javascript');
+	$hashover = new \HashOver ('javascript');
 	$hashover->setup->setPageURL ('request');
 	$hashover->setup->setPageTitle ('request');
 	$hashover->initiate ();
@@ -47,7 +47,7 @@ try {
 	if (!@include ('./javascript-mode.php')) {
 		ob_end_clean ();
 		$error = 'file "javascript-mode.php" could not be included!';
-		throw new Exception ($error);
+		throw new \Exception ($error);
 	}
 
 	// Get output buffer contents and turn off output buffering
@@ -85,7 +85,7 @@ try {
 	// Display statistics
 	echo $hashover->statistics->executionEnd ();
 
-} catch (Exception $error) {
+} catch (\Exception $error) {
 	$misc = new Misc ('javascript');
 	$misc->displayError ($error->getMessage ());
 }

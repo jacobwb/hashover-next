@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2015-2016 Jacob Barkdull
 // This file is part of HashOver.
@@ -51,7 +51,7 @@ class Login extends PostData
 		$this->locale = new Locale ($setup);
 
 		// Instantiate login method class
-		$login_class = $this->setup->loginMethod;
+		$login_class = 'HashOver\\' . $this->setup->loginMethod;
 		$this->loginMethod = new $login_class ($setup, $this->cookies, $this->locale);
 
 		// Error message to display to the user
@@ -145,7 +145,7 @@ class Login extends PostData
 					$this->cookies->setFailedOn ($field, $this->replyTo, false);
 				}
 
-				throw new Exception (sprintf (
+				throw new \Exception (sprintf (
 					$this->fieldNeeded, $this->locale->get ($field)
 				));
 

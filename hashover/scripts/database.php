@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -41,20 +41,20 @@ class Database
 
 		try {
 			if ($setup->databaseType === 'sqlite') {
-				$this->database = new PDO ('sqlite:' . $setup->rootDirectory . '/pages/' . $setup->databaseName . '.sqlite');
+				$this->database = new \PDO ('sqlite:' . $setup->rootDirectory . '/pages/' . $setup->databaseName . '.sqlite');
 			} else {
 				$sql_connection = 'host=' . $setup->databaseHost . ';'
 				                . 'dbname=' . $setup->databaseName . ';'
 				                . 'charset=' . $setup->databaseCharset;
 
-				$this->database = new PDO (
+				$this->database = new \PDO (
 					$setup->databaseType . ':' . $sql_connection,
 					$setup->databaseUser,
 					$setup->databasePassword
 				);
 			}
-		} catch (PDOException $error) {
-			throw new Exception ($error->getMessage ());
+		} catch (\PDOException $error) {
+			throw new \Exception ($error->getMessage ());
 		}
 	}
 
@@ -130,8 +130,8 @@ class Database
 				return false;
 			}
 
-		} catch (PDOException $error) {
-			throw new Exception ($error->getMessage ());
+		} catch (\PDOException $error) {
+			throw new \Exception ($error->getMessage ());
 			return false;
 		}
 
@@ -170,12 +170,12 @@ class Database
 
 			// Throw exception on failure
 			if ($status === false) {
-				throw new Exception ('Failed to create comment thread table "' . $this->setup->threadDirectory . '"');
+				throw new \Exception ('Failed to create comment thread table "' . $this->setup->threadDirectory . '"');
 				return false;
 			}
 
-		} catch (PDOException $error) {
-			throw new Exception ($error->getMessage ());
+		} catch (\PDOException $error) {
+			throw new \Exception ($error->getMessage ());
 			return false;
 		}
 

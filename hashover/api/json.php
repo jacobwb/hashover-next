@@ -1,4 +1,4 @@
-<?php
+<?php namespace HashOver;
 
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -35,11 +35,11 @@ require ('oop-setup.php');
 
 try {
 	// Instantiate HashOver class
-	$hashover = new HashOver ('json', 'api');
+	$hashover = new \HashOver ('json', 'api');
 
 	// Display error if the API is disabled
 	if (empty ($_POST['ajax']) and $hashover->setup->APIStatus ('json') === 'disabled') {
-		throw new Exception ('<b>HashOver</b>: This API is not enabled.');
+		throw new \Exception ('<b>HashOver</b>: This API is not enabled.');
 	}
 
 	// Configure HashOver and load comments
@@ -65,7 +65,7 @@ try {
 	// Return JSON data
 	echo json_encode ($data);
 
-} catch (Exception $error) {
+} catch (\Exception $error) {
 	$misc = new Misc ('json');
 	$misc->displayError ($error->getMessage ());
 }
