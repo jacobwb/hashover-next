@@ -509,6 +509,34 @@ class WriteComments extends PostData
 			// If so, mimic normal user login
 			$this->login->prepareCredentials ();
 			$this->login->updateCredentials ();
+
+			// Default status
+			$isModerated = $this->setup->usesModeration;
+			$default_service = ($isModerated === true) ? 'pending' : 'approved';
+
+			// Check for status in POST data
+			if (!empty ($this->postData['status'])) {
+				// If found, use it
+				$status = $this->postData['status'];
+			} else {
+				// If it's missing use default
+				$status = $default_service;
+			}
+
+			// Check if user is admin
+			if ($this->login->userIsAdmin === true) {
+				// If so, check if status is allowed
+				if (in_array ($this->postData['status'], $this->statusOptions, true)) {
+					// If so, use it
+					$this->commentData['status'] = $this->postData['status'];
+				} else {
+					// If not, use default
+					$this->commentData['status'] = $default_service;
+				}
+			} else {
+				// If not, store default status
+				$this->commentData['status'] = $default_service;
+			}
 		} else {
 			// If not, setup initial login information
 			if ($this->login->userIsLoggedIn !== true) {
@@ -591,17 +619,6 @@ class WriteComments extends PostData
 
 		// Store clean code
 		$this->commentData['body'] = $clean_code;
-
-		// Check if user is admin
-		if ($this->login->userIsAdmin === true) {
-			// If so, check if status is allowed
-			if (in_array ($this->postData['status'], $this->statusOptions, true)) {
-				$this->commentData['status'] = $this->postData['status'];
-			}
-		} else {
-			// If not, store default status
-			$this->commentData['status'] = ($this->setup->usesModeration === true) ? 'pending' : 'approved';
-		}
 
 		// Store posting date
 		$this->commentData['date'] = date (DATE_ISO8601);
