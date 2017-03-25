@@ -44,7 +44,7 @@ try {
 	$hashover_script = $hashover->setup->executingScript;
 
 	// Link URL
-	$link_url = $hashover->misc->makeXSSsafe ($hashover->setup->pageURL);
+	$link_url = addcslashes ($hashover->setup->pageURL, "\\'");
 
 	// Check if there is more than one comment
 	if ($hashover->readComments->totalCount > 1) {
