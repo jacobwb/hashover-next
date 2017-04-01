@@ -229,23 +229,9 @@ Copyright (C) 2016-2017 Jacob Barkdull
 	transition: border 150ms linear 0ms, background-color 150ms linear 0ms, box-shadow 150ms linear 0ms;
 }
 
-#hashover form input,
-#hashover form textarea,
-#hashover .hashover-title,
-#hashover .hashover-inputs,
-#hashover .hashover-inputs input,
-#hashover .hashover-submit,
-#hashover .hashover-inputs > *,
-#hashover .hashover-name-input:before,
-#hashover .hashover-password-input:before,
-#hashover .hashover-email-input:before,
-#hashover .hashover-website-input:before,
-#hashover .hashover-comment pre,
-#hashover .hashover-comment code,
-#hashover .hashover-comment label,
-#hashover .hashover-message,
-#hashover #hashover-more-link,
-#hashover .hashover-select-wrapper:before {
+#hashover *,
+#hashover *:before,
+#hashover *:after {
 	-o-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -563,14 +549,14 @@ Copyright (C) 2016-2017 Jacob Barkdull
 
 #hashover .hashover-reply .hashover-header {
 	padding: 12px 12px 0px 12px;
-	margin-left: 48px;
+	margin-left: 46px;
 	border-bottom: none;
 }
 
 #hashover .hashover-reply .hashover-reply,
 #hashover .hashover-reply .hashover-reply-form {
 	padding: 0px;
-	margin: 12px 0px 0px 48px;
+	margin: 12px 0px 0px 46px;
 }
 
 #hashover .hashover-comment .hashover-avatar {
@@ -630,7 +616,7 @@ Copyright (C) 2016-2017 Jacob Barkdull
 #hashover .hashover-reply .hashover-balloon,
 #hashover .hashover-reply-form .hashover-balloon {
 	padding: 12px;
-	margin-left: 48px;
+	margin-left: 46px;
 	margin-bottom: 1px;
 	border-top: none;
 }
