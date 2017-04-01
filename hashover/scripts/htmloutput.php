@@ -100,7 +100,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-name',
 				'input-type' => 'text',
 				'input-name' => 'name',
-				'input-title' => $this->locale->text['name-tip'],
+				'input-title' => $this->locale->get ('name-tip'),
 				'input-value' => $this->misc->makeXSSsafe ($this->login->name)
 			),
 
@@ -111,7 +111,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-password',
 				'input-type' => 'password',
 				'input-name' => 'password',
-				'input-title' => $this->locale->text['password-tip'],
+				'input-title' => $this->locale->get ('password-tip'),
 				'input-value' => ''
 			),
 
@@ -122,7 +122,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-email',
 				'input-type' => 'email',
 				'input-name' => 'email',
-				'input-title' => $this->locale->text['email-tip'],
+				'input-title' => $this->locale->get ('email-tip'),
 				'input-value' => $this->misc->makeXSSsafe ($this->login->email)
 			),
 
@@ -133,7 +133,7 @@ class HTMLOutput
 				'input-id' => 'hashover-main-website',
 				'input-type' => 'url',
 				'input-name' => 'website',
-				'input-title' => $this->locale->text['website-tip'],
+				'input-title' => $this->locale->get ('website-tip'),
 				'input-value' => $this->misc->makeXSSsafe ($this->login->website)
 			)
 		);
