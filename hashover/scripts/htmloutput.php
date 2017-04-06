@@ -822,15 +822,16 @@ class HTMLOutput
 		// Add page info fields to main form
 		$this->pageInfoFields ($main_form);
 
-		// Create hidden reply to input element
+		// Check if comment is a failed reply
 		if (!empty ($_COOKIE['replied'])) {
+			// Create hidden reply to input element
 			$reply_to_input = new HTMLTag ('input', array (
 				'type' => 'hidden',
 				'name' => 'reply-to',
 				'value' => $this->misc->makeXSSsafe ($_COOKIE['replied'])
 			), false, true);
 
-			// Add hidden reply to input element to form element
+			// And add hidden reply to input element to form element
 			$main_form->appendChild ($reply_to_input);
 		}
 
@@ -999,92 +1000,94 @@ class HTMLOutput
 		$count_sort_wrapper->appendChild ($count_element);
 
 		// JavaScript mode specific HTML
-		if ($this->commentCounts['total'] > 2 and $this->mode === 'javascript') {
-			// Create wrapper element for sort dropdown menu
-			$sort_wrapper = new HTMLTag ('span', array (
-				'id' => 'hashover-sort',
-				'class' => 'hashover-select-wrapper'
-			));
+		if ($this->mode === 'javascript') {
+			if ($this->commentCounts['total'] > 2) {
+				// Create wrapper element for sort dropdown menu
+				$sort_wrapper = new HTMLTag ('span', array (
+					'id' => 'hashover-sort',
+					'class' => 'hashover-select-wrapper'
+				));
 
-			// Hide comment count if collapse limit is set at zero
-			if ($this->setup->collapseLimit <= 0) {
-				$sort_wrapper->createAttribute ('style', 'display: none;');
+				// Hide comment count if collapse limit is set at zero
+				if ($this->setup->collapseLimit <= 0) {
+					$sort_wrapper->createAttribute ('style', 'display: none;');
+				}
+
+				// Create sort dropdown menu element
+				$sort_select = new HTMLTag ('select', array (
+					'id' => 'hashover-sort-select',
+					'name' => 'sort',
+					'size' => '1'
+				));
+
+				// Array of select tag sort options
+				$sort_options = array (
+					array ('value' => 'ascending', 'innerHTML' => $this->locale->get ('sort-ascending')),
+					array ('value' => 'descending', 'innerHTML' => $this->locale->get ('sort-descending')),
+					array ('value' => 'by-date', 'innerHTML' => $this->locale->get ('sort-by-date')),
+					array ('value' => 'by-likes', 'innerHTML' => $this->locale->get ('sort-by-likes')),
+					array ('value' => 'by-replies', 'innerHTML' => $this->locale->get ('sort-by-replies')),
+					array ('value' => 'by-name', 'innerHTML' => $this->locale->get ('sort-by-name'))
+				);
+
+				// Create sort options for sort dropdown menu element
+				for ($i = 0, $il = count ($sort_options); $i < $il; $i++) {
+					$option = new HTMLTag ('option', array (
+						'value' => $sort_options[$i]['value']
+					), false);
+
+					// Add option text
+					$option->innerHTML ($sort_options[$i]['innerHTML']);
+
+					// Add sort option element to sort dropdown menu
+					$sort_select->appendChild ($option);
+				}
+
+				// Create empty option group as spacer
+				$spacer_optgroup = new HTMLTag ('optgroup', array (
+					'label' => '&nbsp;'
+				));
+
+				// Add spacer option group to sort dropdown menu
+				$sort_select->appendChild ($spacer_optgroup);
+
+				// Create option group for threaded sort options
+				$threaded_optgroup = new HTMLTag ('optgroup', array (
+					'label' => $this->locale->get ('sort-threads')
+				));
+
+				// Array of select tag threaded sort options
+				$threaded_sort_options = array (
+					array ('value' => 'threaded-descending', 'innerHTML' => $this->locale->get ('sort-descending')),
+					array ('value' => 'threaded-by-date', 'innerHTML' => $this->locale->get ('sort-by-date')),
+					array ('value' => 'threaded-by-likes', 'innerHTML' => $this->locale->get ('sort-by-likes')),
+					array ('value' => 'by-popularity', 'innerHTML' => $this->locale->get ('sort-by-popularity')),
+					array ('value' => 'by-discussion', 'innerHTML' => $this->locale->get ('sort-by-discussion')),
+					array ('value' => 'threaded-by-name', 'innerHTML' => $this->locale->get ('sort-by-name'))
+				);
+
+				// Create sort options for sort dropdown menu element
+				for ($i = 0, $il = count ($threaded_sort_options); $i < $il; $i++) {
+					$option = new HTMLTag ('option', array (
+						'value' => $threaded_sort_options[$i]['value']
+					), false);
+
+					// Add option text
+					$option->innerHTML ($threaded_sort_options[$i]['innerHTML']);
+
+					// Add sort option element to threaded option group
+					$threaded_optgroup->appendChild ($option);
+				}
+
+				// Add threaded sort options group to sort dropdown menu
+				$sort_select->appendChild ($threaded_optgroup);
+
+				// Add sort dropdown menu element to sort wrapper element
+				$sort_wrapper->appendChild ($sort_select);
+
+				// Add comment count element to wrapper element
+				$count_sort_wrapper->appendChild ($sort_wrapper);
 			}
-
-			// Create sort dropdown menu element
-			$sort_select = new HTMLTag ('select', array (
-				'id' => 'hashover-sort-select',
-				'name' => 'sort',
-				'size' => '1'
-			));
-
-			// Array of select tag sort options
-			$sort_options = array (
-				array ('value' => 'ascending', 'innerHTML' => $this->locale->get ('sort-ascending')),
-				array ('value' => 'descending', 'innerHTML' => $this->locale->get ('sort-descending')),
-				array ('value' => 'by-date', 'innerHTML' => $this->locale->get ('sort-by-date')),
-				array ('value' => 'by-likes', 'innerHTML' => $this->locale->get ('sort-by-likes')),
-				array ('value' => 'by-replies', 'innerHTML' => $this->locale->get ('sort-by-replies')),
-				array ('value' => 'by-name', 'innerHTML' => $this->locale->get ('sort-by-name'))
-			);
-
-			// Create sort options for sort dropdown menu element
-			for ($i = 0, $il = count ($sort_options); $i < $il; $i++) {
-				$option = new HTMLTag ('option', array (
-					'value' => $sort_options[$i]['value']
-				), false);
-
-				// Add option text
-				$option->innerHTML ($sort_options[$i]['innerHTML']);
-
-				// Add sort option element to sort dropdown menu
-				$sort_select->appendChild ($option);
-			}
-
-			// Create empty option group as spacer
-			$spacer_optgroup = new HTMLTag ('optgroup', array (
-				'label' => '&nbsp;'
-			));
-
-			// Add spacer option group to sort dropdown menu
-			$sort_select->appendChild ($spacer_optgroup);
-
-			// Create option group for threaded sort options
-			$threaded_optgroup = new HTMLTag ('optgroup', array (
-				'label' => $this->locale->get ('sort-threads')
-			));
-
-			// Array of select tag threaded sort options
-			$threaded_sort_options = array (
-				array ('value' => 'threaded-descending', 'innerHTML' => $this->locale->get ('sort-descending')),
-				array ('value' => 'threaded-by-date', 'innerHTML' => $this->locale->get ('sort-by-date')),
-				array ('value' => 'threaded-by-likes', 'innerHTML' => $this->locale->get ('sort-by-likes')),
-				array ('value' => 'by-popularity', 'innerHTML' => $this->locale->get ('sort-by-popularity')),
-				array ('value' => 'by-discussion', 'innerHTML' => $this->locale->get ('sort-by-discussion')),
-				array ('value' => 'threaded-by-name', 'innerHTML' => $this->locale->get ('sort-by-name'))
-			);
-
-			// Create sort options for sort dropdown menu element
-			for ($i = 0, $il = count ($threaded_sort_options); $i < $il; $i++) {
-				$option = new HTMLTag ('option', array (
-					'value' => $threaded_sort_options[$i]['value']
-				), false);
-
-				// Add option text
-				$option->innerHTML ($threaded_sort_options[$i]['innerHTML']);
-
-				// Add sort option element to threaded option group
-				$threaded_optgroup->appendChild ($option);
-			}
-
-			// Add threaded sort options group to sort dropdown menu
-			$sort_select->appendChild ($threaded_optgroup);
-
-			// Add sort dropdown menu element to sort wrapper element
-			$sort_wrapper->appendChild ($sort_select);
-
-			// Add comment count element to wrapper element
-			$count_sort_wrapper->appendChild ($sort_wrapper);
 		}
 
 		// Add comment count and sort dropdown menu wrapper to comments section
