@@ -282,8 +282,10 @@ class HTMLOutput
 	// Creates name hyperlink/span element
 	public function nameElement ($element, $name, $permalink, $href = '')
 	{
+		// Decide what kind of element to create
 		switch ($element) {
 			case 'a': {
+				// A hyperlink pointing to the user's input URL
 				$name_link = new HTMLTag ('a', array (
 					'href' => $this->injectVar ($href),
 					'rel' => 'noopener noreferrer',
@@ -294,11 +296,13 @@ class HTMLOutput
 			}
 
 			case 'span': {
+				// A plain wrapper element
 				$name_link = new HTMLTag ('span', array (), false);
 				break;
 			}
 		}
 
+		// And add the same attributes and text to either element
 		$name_link->createAttribute ('class', 'hashover-name-' . $this->injectVar ($permalink));
 		$name_link->innerHTML ($this->injectVar ($name));
 
@@ -315,8 +319,12 @@ class HTMLOutput
 			'title' => $this->locale->get ('thread-tip')
 		), false);
 
+		// Get locale string
 		$thread_locale = $this->locale->get ('thread');
+
+		// Inject OP's name into the locale
 		$inner_html = sprintf ($thread_locale, $this->injectVar ($name));
+
 		$thread_link->innerHTML ($inner_html);
 
 		return $thread_link->asHTML ();
@@ -339,6 +347,7 @@ class HTMLOutput
 	// Creates date/permalink hyperlink element
 	public function dateLink ($permalink, $date)
 	{
+		// Create hyperlink element
 		$date_link = new HTMLTag ('a', array (
 			'href' => '#' . $this->injectVar ($permalink),
 			'class' => 'hashover-date-permalink',
@@ -371,6 +380,7 @@ class HTMLOutput
 	// Creates "Like" hyperlink element
 	public function likeLink ($type, $permalink, $class, $title, $text)
 	{
+		// Create hyperlink element
 		$link = new HTMLTag ('a', array (
 			'href' => '#',
 			'id' => 'hashover-' . $type . '-' . $this->injectVar ($permalink),
@@ -619,18 +629,24 @@ class HTMLOutput
 
 		// Check if message cookie is set
 		if (!empty ($_COOKIE['message']) or !empty ($_COOKIE['error'])) {
+			// If so, set the message element to open in PHP mode
 			if ($this->mode === 'php') {
 				$message_element->appendAttribute ('class', 'hashover-message-open');
 			}
 
+			// Check if the message is a normal message
 			if (!empty ($_COOKIE['message'])) {
+				// If so, get an XSS safe version of the message
 				$message = $this->misc->makeXSSsafe ($_COOKIE['message']);
 			} else {
+				// If not, get an XSS safe version of the error message
 				$message = $this->misc->makeXSSsafe ($_COOKIE['error']);
+
+				// And set a class to the message element indicating an error
 				$message_element->appendAttribute ('class', 'hashover-message-error');
 			}
 
-			// If so, put current message into message element
+			// And put current message into message element
 			$message_element->innerHTML ($message);
 		}
 
@@ -954,7 +970,7 @@ class HTMLOutput
 		// Create wrapper element for comment count and sort dropdown menu
 		$count_sort_wrapper = new HTMLTag ('div', array (
 			'id' => 'hashover-count-wrapper',
-			'class' => 'hashover-sort-count hashover-dashed-title'
+			'class' => 'hashover-count-sort hashover-dashed-title'
 		));
 
 		// Hide wrapper if comments are to be initially hidden
@@ -1573,28 +1589,39 @@ class HTMLOutput
 
 	public function asJSVar ($html, $var_name, $indent = "\t")
 	{
+		// Check if JavaScript minification is enabled
 		if ($this->setup->minifiesJavaScript === true and $this->setup->minifyLevel >= 3) {
+			// If so, remove whitespace collapsing code to a single line
 			$html = str_replace (array ("\t", PHP_EOL), array ('', ' '), $html);
 		} else {
+			// If not, convert literal tabs to JavaScript tabs
 			$html = str_replace ("\t", '\t', $html);
 		}
 
+		// Split the HTML into an array of lines
 		$html_lines = explode (PHP_EOL, $html);
+
+		// Initial output HTML
 		$var = '';
 
+		// Run through the rest of the lines
 		for ($i = 0, $il = count ($html_lines); $i < $il; $i++) {
+			// Skip empty lines
 			if (trim ($html_lines[$i]) === '') {
 				continue;
 			}
 
+			// Append indentation
 			$var .= $indent;
 
+			// Append variable concatenation code
 			if ($i === 0) {
 				$var .= 'var ' . $var_name . ' = \'';
 			} else {
 				$var .= '    ' . $var_name . ' += \'';
 			}
 
+			// Append the current line
 			$var .= $html_lines[$i] . '\n\';' . PHP_EOL;
 		}
 

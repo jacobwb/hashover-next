@@ -32,10 +32,14 @@ if ($hashover->setup->collapsesComments !== false) {
 	// Check if at least 1 comment is to be shown
 	if ($hashover->setup->collapseLimit >= 1) {
 		// If so, use the "Show X Other Comments" locale
+		$more_link_locale = $hashover->locale->get ('show-other-comments');
+
+		// Decide if count is pluralized
 		$other_comment_count = ($hashover->readComments->totalCount - 1) - $hashover->setup->collapseLimit;
 		$more_link_plural = ($other_comment_count !== 1) ? 1 : 0;
-		$more_link_locale = $hashover->locale->get ('show-other-comments');
 		$more_link_text = $more_link_locale[$more_link_plural];
+
+		// And inject the count into the locale string
 		$more_link_text = sprintf ($more_link_text, $other_comment_count);
 	} else {
 		// If not, show count according to `$showsReplyCount` setting
@@ -934,11 +938,14 @@ HashOver.init = function ()
 
 		// Decide which message element to use
 		if (isEdit === true) {
+			// An edit form message
 			element = getElement ('hashover-edit-message-' + permalink, true);
 		} else {
 			if (isReply !== true) {
+				// The primary comment form message
 				element = getElement ('hashover-message', true);
 			} else {
+				// Of a reply form message
 				element = getElement ('hashover-reply-message-' + permalink, true);
 			}
 		}

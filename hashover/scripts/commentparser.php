@@ -75,23 +75,28 @@ class CommentParser
 
 		// Format date and time
 		if ($this->setup->usesShortDates === true) {
+			// If so, get DateTime from comment
 			$comment_datetime = new \DateTime (date ('Y-m-d', $micro_date));
+
+			// Get the difference between today's date and the comment post date
 			$interval = $comment_datetime->diff ($this->current_datetime);
 
+			// And attempt to get a day, month, or year interval
 			foreach ($this->intervals as $i => $string) {
 				if ($interval->$i > 0) {
 					$date_locale = $this->locale->text[$string][($interval->$i !== 1)];
 					$comment_date = sprintf ($date_locale, $interval->$i);
-
 					break;
 				}
 			}
 
+			// Otherwise, use today locale
 			if (empty ($comment_date)) {
 				$get_time = date ($this->ampm, $micro_date);
 				$comment_date = sprintf ($this->locale->text['date-today'], $get_time);
 			}
 		} else {
+			// If not, use configurable date and time locale
 			$comment_date = date ('m/d/Y \a\t ' . $this->ampm, $micro_date);
 		}
 

@@ -76,8 +76,13 @@ class HashOver
 
 			// Check if there are any replies
 			if ($this->readComments->totalCount !== $this->readComments->primaryCount) {
+				// If so, decide if reply count is pluralized
 				$reply_plural = (($this->readComments->totalCount - $this->readComments->primaryCount) !== 1) ? 1 : 0;
+
+				// Get appropriate locale
 				$reply_locale = $this->locale->text['count-replies'][$reply_plural];
+
+				// Inject total comment count into reply count locale string
 				$reply_count = sprintf ($reply_locale, $this->readComments->totalCount - 1);
 
 				// If so, append reply count
@@ -163,7 +168,6 @@ class HashOver
 		}
 
 		// Run all comments through parser
-		// TODO: Fix structure when using starting point
 		foreach ($this->readComments->read ($start, $end) as $key => $comment) {
 			$key_parts = explode ('-', $key);
 			$indentions = count ($key_parts);

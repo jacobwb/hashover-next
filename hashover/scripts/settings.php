@@ -36,7 +36,6 @@ class Settings
 	// Primary settings
 	public $language		= 'en';				// Language used for forms, buttons, links, and tooltips
 	public $theme			= 'default';			// Comment Cascading Style Sheet (CSS)
-	public $timezone		= 'America/Los_Angeles';	// Timezone
 	public $usesModeration		= false;			// Whether comments must be approved before they appear to other visitors
 	public $dataFormat		= 'xml';			// Format comments will be stored in; options: xml, json, sql
 	public $defaultName		= 'Anonymous';			// Default name to use when one isn't given
@@ -53,6 +52,11 @@ class Settings
 	public $popularityThreshold	= 5;				// Minimum likes a comment needs to be popular
 	public $popularityLimit		= 2;				// Number of comments allowed to become popular
 
+	// Date and Time settings
+	public $timezone		= 'America/Los_Angeles';	// Timezone
+	public $uses12HourTime		= true;				// Whether to use 12 hour time format, otherwise use 24 hour format
+	public $usesShortDates		= true;				// Whether comment dates are shortened
+
 	// Field options, use true/false to enable/disable a field,
 	// use 'required' to require a field be properly filled
 	public $fieldOptions = array (
@@ -67,8 +71,6 @@ class Settings
 	public $formPosition		= 'top';			// Position for primary form; options: 'top' or 'bottom'
 	public $usesAutoLogin		= true;				// Whether a user's first comment automatically logs them in
 	public $showsReplyCount		= true;				// Whether to show reply count separately from total
-	public $uses12HourTime		= true;				// Whether to use 12 hour time format, otherwise use 24 hour format
-	public $usesShortDates		= true;				// Whether comment dates are shortened
 	public $iconMode		= 'image';			// How to display avatar icons (either 'image', 'count' or 'none')
 	public $iconSize		= '45';				// Size of Gravatar icons in pixels
 	public $imageFormat		= 'png';			// Format for icons and other images (use 'svg' for HDPI)
