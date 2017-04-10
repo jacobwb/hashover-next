@@ -1153,32 +1153,8 @@ HashOver.init = function ()
 		var elementsLength = formElements.length;
 		var queries = [];
 
-		// Get all form input names and values
-		for (var i = 0; i < elementsLength; i++) {
-			// Skip login/logout input
-			if (formElements[i].name === 'login' || formElements[i].name === 'logout') {
-				continue;
-			}
-
-			// Skip unchecked checkboxes
-			if (formElements[i].type === 'checkbox' && formElements[i].checked !== true) {
-				continue;
-			}
-
-			// Skip delete input
-			if (formElements[i].name === 'delete') {
-				continue;
-			}
-
-			// Add query to queries array
-			queries.push (formElements[i].name + '=' + encodeURIComponent (formElements[i].value));
-		}
-
-		// Add AJAX query to queries array
-		queries.push ('ajax=yes');
-
-		// Handle AJAX request return data
-		httpRequest.onreadystatechange = function ()
+		// AJAX response handler
+		function commentHandler ()
 		{
 			// Do nothing if request wasn't successful in a meaningful way
 			if (this.readyState !== 4 || this.status !== 200) {
@@ -1215,12 +1191,46 @@ HashOver.init = function ()
 			setTimeout (function () {
 				button.disabled = false;
 			}, 1000);
-		};
+		}
 
-		// Send request
-		httpRequest.open ('POST', form.action, true);
-		httpRequest.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
-		httpRequest.send (queries.join ('&'));
+		// Sends a request to post a comment
+		function sendRequest ()
+		{
+			// Handle AJAX request return data
+			httpRequest.onreadystatechange = commentHandler;
+
+			// Send post comment request
+			httpRequest.open ('POST', form.action, true);
+			httpRequest.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
+			httpRequest.send (queries.join ('&'));
+		}
+
+		// Get all form input names and values
+		for (var i = 0; i < elementsLength; i++) {
+			// Skip login/logout input
+			if (formElements[i].name === 'login' || formElements[i].name === 'logout') {
+				continue;
+			}
+
+			// Skip unchecked checkboxes
+			if (formElements[i].type === 'checkbox' && formElements[i].checked !== true) {
+				continue;
+			}
+
+			// Skip delete input
+			if (formElements[i].name === 'delete') {
+				continue;
+			}
+
+			// Add query to queries array
+			queries.push (formElements[i].name + '=' + encodeURIComponent (formElements[i].value));
+		}
+
+		// Add AJAX query to queries array
+		queries.push ('ajax=yes');
+
+		// Send post comment request
+		sendRequest ();
 
 		// Re-enable button after 20 seconds
 		setTimeout (function () {
