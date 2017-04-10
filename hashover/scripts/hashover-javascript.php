@@ -36,7 +36,7 @@ try {
 	$hashover->setup->setPageURL ('request');
 	$hashover->setup->setPageTitle ('request');
 	$hashover->initiate ();
-	$hashover->parsePrimary ($hashover->setup->collapsesComments);
+	$hashover->parsePrimary ();
 	$hashover->parsePopular ();
 	$hashover->finalize ();
 

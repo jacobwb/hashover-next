@@ -38,19 +38,69 @@ class Locale
 		$this->setup = $setup;
 		$this->mode = $setup->usage['mode'];
 
-		// Lower case language code
-		$language = strtolower ($setup->language);
+		// Get appropriate locale file
+		$locale_file_path = $this->getLocaleFile ();
 
-		// Path to PHP locale file
-		$locale_file_path = __DIR__ . '/locales/' . $language . '.php';
+		// Include the locale file
+		$this->includeLocaleFile ($locale_file_path);
 
-		// Default to English if locale doesn't exist
-		if (!file_exists ($locale_file_path)) {
-			$locale_file_path = __DIR__ . '/locales/en.php';
+		// Prepare locale
+		$this->prepareLocale ();
+	}
+
+	// Check for PHP locale file
+	protected function getLocaleFile ()
+	{
+		// Locales checklist
+		$locales = array ();
+
+		// Lowercase language code
+		$language = mb_strtolower ($this->setup->language);
+
+		// Check if we are automatically selecting the locale
+		if ($language === 'auto') {
+			// If so, get system locale
+			$system_locale = mb_strtolower (setlocale (LC_CTYPE, 0));
+
+			// Split the locale into specific parts
+			$locale_parts = explode ('.', $system_locale);
+			$language_parts = explode ('_', $locale_parts[0]);
+
+			// Add locale in 'en-us' format to checklist
+			$full_locale = str_replace ('_', '-', $locale_parts[0]);
+			$locales[] = $full_locale;
+
+			// Add front part of locale ('en') to checklist
+			$locales[] = $language_parts[0];
+
+			// Add end part of locale ('us') to checklist
+			if (!empty ($language_parts[1])) {
+				$locales[] = $language_parts[1];
+			}
+		} else {
+			// If not, add configured locale to checklist
+			$locales[] = $language;
 		}
 
+		foreach ($locales as $locale) {
+			// Locale file path
+			$locale_file = __DIR__ . '/locales/' . $locale . '.php';
+
+			// Check if a locale file exists for current locale
+			if (file_exists ($locale_file)) {
+				// If so, return PHP locale file path
+				return $locale_file;
+			}
+		}
+
+		// Otherwise, default to English
+		return __DIR__ . '/locales/en.php';
+	}
+
+	protected function includeLocaleFile ($file)
+	{
 		// Check if the locale file can be included
-		if (@include ($locale_file_path)) {
+		if (@include ($file)) {
 			// If so, set locale to array stored in the file
 			$this->text = $locale;
 		} else {
@@ -60,9 +110,6 @@ class Locale
 
 			throw new \Exception ($exception);
 		}
-
-		// Prepare locale
-		$this->prepareLocale ();
 	}
 
 	// Prepares locale by modifing them in various ways

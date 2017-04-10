@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -123,5 +123,20 @@ class ReadFiles
 		}
 
 		return true;
+	}
+
+	// Convert a string to OS-specific line endings
+	public function osLineEndings ($string)
+	{
+		// Convert string to UNIX line endings
+		$string = str_replace (array ("\r\n", "\r", "\n"), "\n", $string);
+
+		// Check if OS line endings isn't UNIX-style
+		if (PHP_EOL !== "\n") {
+			// If so, convert string to OS-specific line endings
+			$string = str_replace ("\n", PHP_EOL, $string);
+		}
+
+		return $string;
 	}
 }

@@ -34,7 +34,7 @@ class Settings
 	protected $adminPassword	= 'passwd';			// Login password to gain admin rights (case-sensitive)
 
 	// Primary settings
-	public $language		= 'en';				// Language used for forms, buttons, links, and tooltips
+	public $language		= 'auto';			// UI language, for example 'en', 'de', etc. 'auto' to use system locale
 	public $theme			= 'default';			// Comment Cascading Style Sheet (CSS)
 	public $usesModeration		= false;			// Whether comments must be approved before they appear to other visitors
 	public $dataFormat		= 'xml';			// Format comments will be stored in; options: xml, json, sql
@@ -53,9 +53,11 @@ class Settings
 	public $popularityLimit		= 2;				// Number of comments allowed to become popular
 
 	// Date and Time settings
-	public $timezone		= 'America/Los_Angeles';	// Timezone
-	public $uses12HourTime		= true;				// Whether to use 12 hour time format, otherwise use 24 hour format
-	public $usesShortDates		= true;				// Whether comment dates are shortened
+	public $serverTimezone		= 'America/Los_Angeles';	// Server timezone
+	public $usesUserTimezone	= true;				// Whether comment dates should use the user's timezone (JavaScript-mode)
+	public $usesShortDates		= true;				// Whether comment dates are shortened, for example "X days ago"
+	public $timeFormat		= 'g:ia';			// Time format, use 'H:i' for 24-hour format (see: http://php.net/manual/en/function.date.php)
+	public $dateFormat		= 'm/d/Y';			// Date format (see: http://php.net/manual/en/function.date.php)
 
 	// Field options, use true/false to enable/disable a field,
 	// use 'required' to require a field be properly filled
@@ -71,6 +73,7 @@ class Settings
 	public $formPosition		= 'top';			// Position for primary form; options: 'top' or 'bottom'
 	public $usesAutoLogin		= true;				// Whether a user's first comment automatically logs them in
 	public $showsReplyCount		= true;				// Whether to show reply count separately from total
+	public $countIncludesDeleted	= true;				// Whether comment counts should include deleted comments
 	public $iconMode		= 'image';			// How to display avatar icons (either 'image', 'count' or 'none')
 	public $iconSize		= '45';				// Size of Gravatar icons in pixels
 	public $imageFormat		= 'png';			// Format for icons and other images (use 'svg' for HDPI)
@@ -107,6 +110,7 @@ class Settings
 
 	// External domains allowed to remotely load HashOver scripts
 	public $allowedDomains = array (
+		'127.0.0.1:8000'
 		// '*.example.com',
 		// '*.example.org',
 		// '*.example.net'
@@ -135,8 +139,8 @@ class Settings
 
 	public function __construct ()
 	{
-		// Set timezone
-		date_default_timezone_set ($this->timezone);
+		// Set server timezone
+		date_default_timezone_set ($this->serverTimezone);
 
 		// Set encoding
 		mb_internal_encoding ('UTF-8');
@@ -185,11 +189,6 @@ class Settings
 	// Synchronizes specific settings after remote changes
 	public function syncSettings ()
 	{
-		// Collapse entire thread if comment form is to be collapsed
-		if ($this->collapsesUI === true) {
-			$this->collapseLimit = 0;
-		}
-
 		// Disable likes and dislikes if cookies are disabled
 		if ($this->setsCookies === false) {
 			$this->allowsLikes = false;

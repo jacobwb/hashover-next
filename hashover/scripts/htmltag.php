@@ -35,7 +35,7 @@ class HTMLTag
 	protected $attributes = array ();
 	protected $children = array ();
 
-	public function __construct ($tag = '', array $attributes = array (), $pretty = true, $singleton = false)
+	public function __construct ($tag = '', array $attributes = array (), $pretty = true, $singleton = false, $spaced = true)
 	{
 		if (!is_string ($tag) or !$this->isWord ($tag)) {
 			$this->throwError ('Tag must have a single word String value.');
@@ -53,7 +53,7 @@ class HTMLTag
 		}
 
 		$this->tag = !empty ($tag) ? $tag : 'span';
-		$this->createAttributes ($attributes);
+		$this->createAttributes ($attributes, $spaced);
 		$this->usesPrettyPrint = $pretty;
 		$this->isSingleton = $singleton;
 	}
@@ -104,11 +104,17 @@ class HTMLTag
 		return implode (PHP_EOL, $inner_html);
 	}
 
-	public function createAttribute ($name = '', $value = '')
+	public function createAttribute ($name = '', $value = '', $spaced = true)
 	{
 		if (!is_string ($name) or !$this->isWord ($name)) {
 			$this->throwError ('Attribute name must have a single word String value.');
 			return false;
+		}
+
+		if (is_array ($value)) {
+			$glue = ($spaced !== false) ? ' ' : '';
+			$this->attributes[$name] = implode ($glue, $value);
+			return true;
 		}
 
 		$this->attributes[$name] = $value;
@@ -143,7 +149,7 @@ class HTMLTag
 		return true;
 	}
 
-	public function createAttributes (array $attributes)
+	public function createAttributes (array $attributes, $spaced = true)
 	{
 		if (!is_array ($attributes)) {
 			$this->throwError ('Attributes parameter must have an Array value.');
@@ -151,7 +157,27 @@ class HTMLTag
 		}
 
 		foreach ($attributes as $key => $value) {
-			$this->createAttribute ($key, $value);
+			switch ($key) {
+				case 'children': {
+					if (is_array ($value)) {
+						for ($i = 0, $il = count ($value); $i < $il; $i++) {
+							$this->appendChild ($value[$i]);
+						}
+					}
+
+					break;
+				}
+
+				case 'innerHTML': {
+					$this->innerHTML ($value);
+					break;
+				}
+
+				default: {
+					$this->createAttribute ($key, $value, $spaced);
+					break;
+				}
+			}
 		}
 	}
 
@@ -163,11 +189,17 @@ class HTMLTag
 		}
 
 		if (!empty ($this->attributes[$name])) {
-			if ($spaced === true) {
+			if ($spaced !== false) {
 				$this->attributes[$name] .= ' ';
 			}
 		} else {
 			$this->attributes[$name] = '';
+		}
+
+		if (is_array ($value)) {
+			$glue = ($spaced !== false) ? ' ' : '';
+			$this->attributes[$name] .= implode ($glue, $value);
+			return true;
 		}
 
 		$this->attributes[$name] .= $value;
@@ -182,6 +214,11 @@ class HTMLTag
 		}
 
 		foreach ($attributes as $key => $value) {
+			if ($key === 'innerHTML') {
+				$this->appendInnerHTML ($value);
+				continue;
+			}
+
 			$this->appendAttribute ($key, $value, $spaced);
 		}
 	}
@@ -217,7 +254,7 @@ class HTMLTag
 			if (!empty ($this->children)) {
 				$inner_html = $this->getInnerHTML ();
 
-				if ($this->usesPrettyPrint === true) {
+				if ($this->usesPrettyPrint !== false) {
 					$tag .= PHP_EOL . "\t";
 					$tag .= str_replace (PHP_EOL, PHP_EOL . "\t", $inner_html);
 					$tag .= PHP_EOL;

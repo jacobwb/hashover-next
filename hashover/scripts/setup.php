@@ -81,11 +81,10 @@ class Setup extends Settings
 
 	public function __construct (array $usage)
 	{
+		parent::__construct ();
+
 		$this->usage = $usage;
 		$this->misc = new Misc ($usage['mode']);
-
-		// Execute parent constructor
-		parent::__construct ();
 
 		// Check if PHP version is the minimum required
 		if (version_compare (PHP_VERSION, '5.3.3') < 0) {
@@ -151,7 +150,7 @@ class Setup extends Settings
 
 		// Check if visitor is on mobile device
 		if (!empty ($_SERVER['HTTP_USER_AGENT'])) {
-			if (preg_match ('/(android|blackberry|phone)/i', $_SERVER['HTTP_USER_AGENT'])) {
+			if (preg_match ('/(android|blackberry|phone|mobile|tablet)/i', $_SERVER['HTTP_USER_AGENT'])) {
 				// Adjust settings to accommodate
 				$this->isMobile = true;
 				$this->imageFormat = 'svg';

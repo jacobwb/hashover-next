@@ -1,3 +1,118 @@
+Changes by Jacob Barkdull 2017-04-09
+--------------------------------------------------------------------------------
+* Added new language setting option
+
+	- Setting the `$language` setting to 'auto' will now cause HashOver to
+	  detect and use the system's locale. This is now the default.
+
+
+* Added new public `$usesUserTimezone` setting
+
+	- This setting controls whether the comment dates use the server's
+	  timezone or the user's local timezone. This is only possible in
+	  JavaScript mode, not PHP mode.
+
+
+* Added new public `$countIncludesDeleted` setting
+
+	- This setting controls whether deleted comments are included in the
+	  standard comment count as well as in the count used in the
+	  "Show X Other Comments" hyperlink.
+
+
+* Return of the "Popular Comments" section!
+
+	- This feature has been nonfunctional since the introduction of AJAX
+	  support. It is now functional again.
+
+
+* Fixed comment ownership issues
+
+	- When posting a comment while logged out or editing an existing
+	  comment and changing the name, the AJAX returned comment was not
+	  displaying the "Edit" button or indicating proper ownership. This is
+	  now fixed, though may see more improvements.
+
+
+* Changed date permalink URLs
+
+	- Permalink URLs now include a relative path along with the fragment in
+	  order to exclude the HashOver form specific URL queries.
+
+
+* Changed `$collapsesUI` setting behavior
+
+	- Previously, the button used to display the HashOver UI was the same
+	  button used to display all comments when `$collapsesComments` is
+	  enabled. This caused a few problems, and so is no longer the case.
+	  The behavior is now such that clicking the button simply displays the
+	  HashOver UI as it would be display be displayed with the
+	  `$collapsesUI` setting disabled.
+
+	- Fixed button not being displayed when there are no comments.
+	- Other minor improvements.
+
+
+* Added message area explaining what HTML and Markdown is allowed in comments.
+* Fixed incorrect `comment-needed` locale being displayed for failed replies.
+* XML and JSON comment files now use OS specific line endings.
+* Removed form position from locales; we don't always know where the form is.
+* Default theme: Removed padding from reply form, the bubble is now the form.
+* Default theme: Added some simple style to the optional form labels.
+* Default theme: Improved styling of messages.
+* The "Accepted HTML" form title has been split into two separate locales.
+* Improved message timeouts, they are now separated by form type.
+* Added innerHTML as allowed HTMLTag attribute for creation by array.
+* Added "mobile" and "tablet" keywords to mobile device detection regex.
+* Changed the text for some of the optional form labels.
+* The long format of comment post dates and times is now localized.
+* The comment post date and time formats are now fully configurable.
+* Renamed CSS class `hashover-sort-count` back to `hashover-count-sort`.
+* Added accepted Markdown string to all locales.
+* Other small bug fixes.
+
+
+Changes by Jacob Barkdull 2017-04-04
+--------------------------------------------------------------------------------
+* Default theme: Now using border-box everywhere.
+* Fixed: Locale text left unescaped in login field titles.
+
+
+Changes by Jacob Barkdull 2017-03-25
+--------------------------------------------------------------------------------
+* Fixed uncaught syntax error in AJAX response.
+* Improved how HashOver accesses its loader script.
+
+
+Changes by Jacob Barkdull 2017-03-24
+--------------------------------------------------------------------------------
+* No longer escaping Unicode in "JSON to coding standard" function.
+* Fixed possible XSS vulnerabilities.
+* Now using PHP's hideous namespacing.
+* Avatar bug fix and improvements.
+
+
+Changes by Jacob Barkdull 2017-03-21
+--------------------------------------------------------------------------------
+* Fixed error messages failing to redirect user back to comment form.
+* Added Chinese locale by Mr. Q and Takeman.
+
+
+Changes by Jacob Barkdull 2017-03-19
+--------------------------------------------------------------------------------
+* `Locales` class renamed to `Locale`.
+* Renamed public `locale` method of `Locale` class to `get`.
+* Renamed public `$locale` property of `Locale` class to `text`.
+* Added new public `set` method to `Locale` class.
+
+
+Changes by Jacob Barkdull 2017-03-11
+--------------------------------------------------------------------------------
+* Locales now adds C slashes by default.
+* Fixed Strict Mode uncaught syntax error.
+* Now requiring instead of including setup PHP files.
+
+
 Changes by Jacob Barkdull 2017-02-25
 --------------------------------------------------------------------------------
 * hashover/scripts/setup.php
@@ -146,7 +261,7 @@ Changes by Jacob Barkdull 2016-09-20
 
 Changes by Jacob Barkdull 2016-08-28
 --------------------------------------------------------------------------------
-* Added 3 new comment sorting methods.
+* Added 3 new comment sorting methods
 
 	- "By replies" sorts comments by the number of replies each comment has,
 	  in ascending order. Meaning the more replies a comment has, the more
@@ -2205,14 +2320,14 @@ Changed permalink naming scheme.
 Cleaned code.
 
 
-Changes by Jacob Barkdull 2012-30-01
+Changes by Jacob Barkdull 2012-01-30
 --------------------------------------------------------------------------------
 Added "Tread" links pointing to parent comments beside comment dates.
 Improved HTML tag layout and CSS style for Webkit browsers.
 Optimized JavaScript output for faster loading.
 
 
-Changes by Jacob Barkdull 2012-28-01
+Changes by Jacob Barkdull 2012-01-28
 --------------------------------------------------------------------------------
 Added optional shorter comment date format.
 Added subtle way to identify commenters whom will receive email notifications.
@@ -2221,14 +2336,14 @@ Improved HTML cleanup and automatic tag closing ("cleantags" function).
 Renamed "endtags" function to "cleantags".
 
 
-Changes by Jacob Barkdull 2012-25-01
+Changes by Jacob Barkdull 2012-01-25
 --------------------------------------------------------------------------------
 Optional Gravatar avatar icon integration.
 Improved HTML tag layout.
 Improved CSS style.
 
 
-Changes by Jacob Barkdull 2012-24-01
+Changes by Jacob Barkdull 2012-01-24
 --------------------------------------------------------------------------------
 Beginning of comment editing feature.
 Changed "Reply To Comment" and "Delete" links into buttons.
@@ -2239,12 +2354,12 @@ Minor CSS changes.
 Bug fixes.
 
 
-Changes by Jacob Barkdull 2012-17-01
+Changes by Jacob Barkdull 2012-01-17
 --------------------------------------------------------------------------------
 Beginning of RSS feed feature.
 
 
-Changes by Jacob Barkdull 2012-16-01
+Changes by Jacob Barkdull 2012-01-16
 --------------------------------------------------------------------------------
 Fixed bug that allowed anyone to delete any file with 0777 permissions.
 Fixed bug that allowed anyone to delete any comment, using a single password.
@@ -2253,12 +2368,12 @@ Removed encrypted emails and passwords from JavaScript output.
 General code clean up and other minor bug fixes.
 
 
-Changes by Jacob Barkdull 2011-24-10
+Changes by Jacob Barkdull 2011-10-24
 --------------------------------------------------------------------------------
 Fixed link to comment in notification emails.
 
 
-Changes by Jacob Barkdull 2011-05-10
+Changes by Jacob Barkdull 2011-10-05
 --------------------------------------------------------------------------------
 Added step about the system's CSS to installation note.
 Added basic style to the HTML output as fallback.
@@ -2266,7 +2381,7 @@ Fixed bug that disabled automatic hyperlinks.
 Fixed "style" tags.
 
 
-Changes by Jacob Barkdull 2011-29-09
+Changes by Jacob Barkdull 2011-09-29
 --------------------------------------------------------------------------------
 Changed how comment directories are named, filename now includes full path.
 Made the links to "Source Code" and "JavaScript" point to local server.
@@ -2274,7 +2389,7 @@ Added "link" query to use with "display" query.
 Changed how the "display" query is handled.
 
 
-Changes by Jacob Barkdull 2011-26-09
+Changes by Jacob Barkdull 2011-09-26
 --------------------------------------------------------------------------------
 Added "pagetitle" variable as a toggle for whether page title is shown or not.
 Added two steps about creating the "comments" directory to installation note.
@@ -2282,7 +2397,7 @@ Changed line 59 (now line 61) to run `$_SERVER["PHP_SELF"]` through basename.
 Other minor changes.
 
 
-Changes by Jacob Barkdull 2011-11-09
+Changes by Jacob Barkdull 2011-09-11
 --------------------------------------------------------------------------------
 Changed how the comment count's plurals are handled.
 Changed how displaying source code is handled.
@@ -2294,7 +2409,7 @@ PHP and JavaScript documentation.
 Cleaned up code.
 
 
-Changes by Jacob Barkdull 2011-25-08
+Changes by Jacob Barkdull 2011-08-25
 --------------------------------------------------------------------------------
 Replaced deprecated function `eregi_replace()` with `preg_replace()`.
 Improved how accepted HTML tags are handled.
@@ -2303,7 +2418,7 @@ Added <code> tag to accepted HTML.
 Fixed serious bugs.
 
 
-Changes by Jacob Barkdull 2011-21-08
+Changes by Jacob Barkdull 2011-08-21
 --------------------------------------------------------------------------------
 Added the "endtags" function for counting the number of open and closing HTML
 tags, if the number of open and closing HTML tags aren't the same it adds as
@@ -2316,7 +2431,7 @@ the options were displayed or were never hidden upon first time use
 or due to disabled/unaccepted cookies.
 
 
-Changes by Jacob Barkdull 2011-20-08
+Changes by Jacob Barkdull 2011-08-20
 --------------------------------------------------------------------------------
 Fixed a bug that allowed anyone to use a blank password to delete any comment
 if a password wasn't given when the target comment was posted (thanks "Outis").
@@ -2329,7 +2444,7 @@ Renamed "comment_form2" as "reply_form".
 Adjusted indention, x2 the padding.
 
 
-Changes by Jacob Barkdull 2011-19-08
+Changes by Jacob Barkdull 2011-08-19
 --------------------------------------------------------------------------------
 Added AGPL notice to JavaScript output. The JavaScript is now Free Software.
 Changed comments' flat text file format.
@@ -2344,7 +2459,7 @@ Cleaned up code.
 Added comments.
 
 
-Changes by Jacob Barkdull 2011-15-03
+Changes by Jacob Barkdull 2011-03-15
 --------------------------------------------------------------------------------
 Shortened the names of some variables.
 Changed HTML ID tags to more general names.

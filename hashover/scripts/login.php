@@ -141,8 +141,8 @@ class Login extends PostData
 		foreach ($this->setup->fieldOptions as $field => $status) {
 			if ($status === 'required' and empty ($this->$field)) {
 				// Don't set cookies if the request is via AJAX
-				if ($this->setup->viaAJAX !== true) {
-					$this->cookies->setFailedOn ($field, $this->replyTo, false);
+				if ($this->viaAJAX !== true) {
+					$this->cookies->setFailedOn ($field, $this->replyTo);
 				}
 
 				throw new \Exception (sprintf (

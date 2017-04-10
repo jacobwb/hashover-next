@@ -91,11 +91,13 @@ class PHPMode
 		}
 	}
 
-	protected function editCheck ($permalink, $comment, $subscribed = true)
+	protected function editCheck ($comment)
 	{
 		if (empty ($_GET['hashover-edit'])) {
 			return;
 		}
+
+		$permalink = !empty ($comment['permalink']) ? $comment['permalink'] : '';
 
 		if ($_GET['hashover-edit'] === $permalink) {
 			$file = $this->fileFromPermalink ($permalink);
@@ -105,6 +107,7 @@ class PHPMode
 			$status = !empty ($comment['status']) ? $comment['status'] : 'approved';
 			$name = !empty ($comment['name']) ? $comment['name'] : '';
 			$website = !empty ($comment['website']) ? $comment['website'] : '';
+			$subscribed = isset ($comment['subscribed']);
 
 			$form = new HTMLTag ('form', array (
 				'id' => 'hashover-edit-' . $permalink,
@@ -113,7 +116,9 @@ class PHPMode
 				'action' => $this->setup->httpScripts . '/postcomments.php'
 			), false);
 
-			$form->innerHTML ($this->html->editForm ($permalink, $file, $name, $website, $body, $status, $subscribed));
+			$edit_form = $this->html->editForm ($permalink, $file, $name, $website, $body, $status, $subscribed);
+
+			$form->innerHTML ($edit_form);
 
 			return $form->asHTML ();
 		}
@@ -145,58 +150,70 @@ class PHPMode
 		return $this->preTags[($grp[1])];
 	}
 
-	// Find parent comment via permalink
-	protected function findParent ($permalink)
+	// Returns the permalink of a comment's parent
+	protected function getParentPermalink ($permalink)
 	{
-		$currentLevel =& $this->comments['comments'];
+		$permalink_parts = explode ('r', $permalink);
+		array_pop ($permalink_parts);
 
-		// Split permalink into keys
-		$keys = substr ($permalink, 1);
-		$keys = explode ('r', $keys);
+		return implode ('r', $permalink_parts);
+	}
 
-		// Remove last key, get key count
-		array_pop ($keys);
-		$levels = count ($keys) - 1;
+	// Find a comment by its permalink
+	protected function findByPermalink ($permalink, $comments)
+	{
+		// Loop through all comments
+		foreach ($comments as $comment) {
+			// Return comment if its permalink matches
+			if ($comment['permalink'] === $permalink) {
+				return $comment;
+			}
 
-		// Return the comment if it's primary
-		if ($levels === 0) {
-			return $currentLevel[($keys[0] - 1)];
+			// Recursively check replies when present
+			if (!empty ($comment['replies'])) {
+				$reply = $this->findByPermalink ($permalink, $comment['replies']);
+
+				if ($reply !== null) {
+					return $reply;
+				}
+			}
 		}
 
-		// Get replies from each comment
-		for ($currentKey = 0; $currentKey < $levels; $currentKey++) {
-			$currentLevel =& $currentLevel[($keys[$currentKey] - 1)]['replies'];
-		}
-
-		return $currentLevel[($keys[$currentKey] - 1)];
+		// Otherwise return null
+		return null;
 	}
 
 	public function parseComment (array $comment, $parent = null, $popular = false)
 	{
 		$template = array ();
 		$nameClass = 'hashover-name-plain';
-		$template['permalink'] = $comment['permalink'];
-		$is_reply = (strpos ($comment['permalink'], 'r') !== false);
+		$permalink = $comment['permalink'];
+		$template['permalink'] = $permalink;
+		$is_reply = ($parent !== null);
 		$this->codeTagCount = 0;
 		$this->codeTags = array ();
 		$this->preTagCount = 0;
 		$this->preTags = array ();
 
 		// Text for avatar image alt attribute
-		$permatext = substr ($comment['permalink'], 1);
+		$permatext = substr ($permalink, 1);
 		$permatext = explode ('r', $permatext);
 		$permatext = array_pop ($permatext);
 
 		// Wrapper element for each comment
-		$comment_wrapper = $this->html->commentWrapper ($comment['permalink']);
+		$comment_wrapper = $this->html->commentWrapper ($permalink);
+
+		// Get parent comment via permalink
+		if ($is_reply === false and strpos ($permalink, 'r') !== false) {
+			$parent_permalink = $this->getParentPermalink ($permalink);
+			$parent = $this->findByPermalink ($parent_permalink, $this->comments['comments']);
+			$is_reply = ($parent !== null);
+		}
 
 		// Check if this comment is a popular comment
 		if ($popular === true) {
 			// Remove "-pop" from text for avatar
 			$permatext = str_replace ('-pop', '', $permatext);
-
-			// Get parent comment via permalink
-			$parent = $this->findParent ($comment['permalink']);
 		} else {
 			// Check if comment is a reply
 			if ($is_reply === true) {
@@ -206,7 +223,7 @@ class PHPMode
 		}
 
 		// Add avatar image to template
-		$template['avatar'] = $this->html->userAvatar ($permatext, $comment['permalink'], $comment['avatar']);
+		$template['avatar'] = $this->html->userAvatar ($permatext, $permalink, $comment['avatar']);
 
 		if (!isset ($comment['notice'])) {
 			$name = !empty ($comment['name']) ? $comment['name'] : $this->setup->defaultName;
@@ -235,10 +252,10 @@ class PHPMode
 				}
 
 				// If so, display name as a hyperlink
-				$nameLink = $this->html->nameElement ('a', $name, $comment['permalink'], $comment['website']);
+				$nameLink = $this->html->nameElement ('a', $name, $permalink, $comment['website']);
 			} else {
 				// If not, display name as plain text
-				$nameLink = $this->html->nameElement ('span', $name, $comment['permalink']);
+				$nameLink = $this->html->nameElement ('span', $name, $permalink);
 			}
 
 			// Add "Top of Thread" hyperlink to template
@@ -256,10 +273,10 @@ class PHPMode
 				$replyClass = 'hashover-no-email';
 
 				// Add "Reply" hyperlink to template
-				if (!empty ($_GET['hashover-edit']) and $_GET['hashover-edit'] === $comment['permalink']) {
-					$template['edit-link'] = $this->html->cancelLink ($comment['permalink'], 'edit');
+				if (!empty ($_GET['hashover-edit']) and $_GET['hashover-edit'] === $permalink) {
+					$template['edit-link'] = $this->html->cancelLink ($permalink, 'edit');
 				} else {
-					$template['edit-link'] = $this->html->formLink ('edit', $comment['permalink']);
+					$template['edit-link'] = $this->html->formLink ('edit', $permalink);
 				}
 			} else {
 				// Check if commenter is subscribed
@@ -283,7 +300,7 @@ class PHPMode
 			}
 
 			// Add like count to HTML template
-			$template['like-count'] = $this->html->likeCount ('likes', $comment['permalink'], $likeCount);
+			$template['like-count'] = $this->html->likeCount ('likes', $permalink, $likeCount);
 
 			// Get number of dislikes, append "Dislike(s)" locale
 			if ($this->setup->allowsDislikes === true) {
@@ -295,29 +312,29 @@ class PHPMode
 				}
 
 				// Add dislike count to HTML template
-				$template['dislike-count'] = $this->html->likeCount ('dislikes', $comment['permalink'], $dislikeCount);
+				$template['dislike-count'] = $this->html->likeCount ('dislikes', $permalink, $dislikeCount);
 			}
 
 			// Add name HTML to template
 			$template['name'] = $this->html->nameWrapper ($nameLink, $nameClass);
 
 			// Add date permalink hyperlink to template
-			$template['date'] = $this->html->dateLink ($comment['permalink'], $comment['date']);
+			$template['date'] = $this->html->dateLink ($permalink, $comment['date']);
 
 			// Add "Reply" hyperlink to template
-			if (!empty ($_GET['hashover-reply']) and $_GET['hashover-reply'] === $comment['permalink']) {
-				$template['reply-link'] = $this->html->cancelLink ($comment['permalink'], 'reply', $replyClass);
+			if (!empty ($_GET['hashover-reply']) and $_GET['hashover-reply'] === $permalink) {
+				$template['reply-link'] = $this->html->cancelLink ($permalink, 'reply', $replyClass);
 			} else {
-				$template['reply-link'] = $this->html->formLink ('reply', $comment['permalink'], $replyClass, $replyTitle);
+				$template['reply-link'] = $this->html->formLink ('reply', $permalink, $replyClass, $replyTitle);
 			}
 
 			// Add edit form HTML to template
 			if (isset ($comment['user-owned'])) {
-				$template['edit-form'] = $this->editCheck ($comment['permalink'], $comment, isset ($comment['subscribed']));
+				$template['edit-form'] = $this->editCheck ($comment);
 			}
 
 			// Add reply form HTML to template
-			$template['reply-form'] = $this->replyCheck ($comment['permalink']);
+			$template['reply-form'] = $this->replyCheck ($permalink);
 
 			// Add reply count to template
 			if (!empty ($comment['replies'])) {

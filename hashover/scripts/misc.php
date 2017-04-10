@@ -65,6 +65,12 @@ class Misc
 		return str_replace ($this->searchXSS, $this->replaceXSS, $string);
 	}
 
+	// JavaScript-specific escaping
+	public function jsEscape ($string, $characters = "\\'")
+	{
+		return addcslashes ($string, $characters);
+	}
+
 	// Returns error in HTML paragraph
 	public function displayError ($error = 'Something went wrong!')
 	{

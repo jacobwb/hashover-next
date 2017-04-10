@@ -70,6 +70,11 @@ class Cookies
 		if ($replied === true and !empty ($reply_to)) {
 			$this->set ('replied', $reply_to);
 		}
+
+		// Set comment text cookie
+		if (!empty ($_POST['comment'])) {
+			$this->set ('comment', $_POST['comment']);
+		}
 	}
 
 	// Expire a cookie
@@ -112,5 +117,8 @@ class Cookies
 
 		// Expire reply failure cookie
 		$this->expireCookie ('replied');
+
+		// Expire comment text cookie
+		$this->expireCookie ('comment');
 	}
 }

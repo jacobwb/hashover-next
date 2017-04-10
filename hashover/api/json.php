@@ -44,6 +44,7 @@ try {
 
 	// Configure HashOver and load comments
 	$hashover->setup->setPageURL ('request');
+	$hashover->setup->collapsesComments = false;
 	$hashover->initiate ();
 
 	// Setup where to start reading comments
@@ -53,7 +54,7 @@ try {
 	if ($hashover->readComments->totalCount > 1) {
 		// Parse primary comments
 		// TODO: Use starting point
-		$hashover->parsePrimary (false, 0);
+		$hashover->parsePrimary (0);
 
 		// Display as JSON data
 		$data = $hashover->comments;

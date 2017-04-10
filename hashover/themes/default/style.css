@@ -14,6 +14,12 @@ Copyright (C) 2016-2017 Jacob Barkdull
 	text-indent: initial;
 }
 
+#hashover :before,
+#hashover :after {
+	position: relative;
+	z-index: 3;
+}
+
 #hashover #hashover-requiredFields,
 #hashover .hashover-hidden,
 #hashover .hashover-notice > .hashover-balloon > .hashover-footer,
@@ -43,6 +49,23 @@ Copyright (C) 2016-2017 Jacob Barkdull
 	font-size: 18px;
 }
 
+#hashover form input,
+#hashover form textarea,
+#hashover .hashover-inputs,
+#hashover .hashover-select-wrapper,
+#hashover .hashover-submit,
+#hashover .hashover-avatar-image *,
+#hashover .hashover-avatar *,
+#hashover .hashover-inputs input,
+#hashover .hashover-comment textarea,
+#hashover .hashover-comment,
+#hashover .hashover-reply > .hashover-balloon,
+#hashover .hashover-reply-form,
+#hashover .hashover-reply .hashover-header,
+#hashover .hashover-form-footer {
+	border: 1px solid #AAAAAA;
+}
+
 #hashover .hashover-dashed-title {
 	display: inline-block;
 	width: 100%;
@@ -53,39 +76,87 @@ Copyright (C) 2016-2017 Jacob Barkdull
 }
 
 #hashover .hashover-message {
+	position: relative;
+	z-index: 1;
+}
+
+#hashover .hashover-formatting {
+	background-position: 0px -454px;
+}
+
+#hashover .hashover-message,
+#hashover .hashover-message > *,
+#hashover .hashover-formatting-message,
+#hashover .hashover-formatting-message > * {
 	display: block;
 	width: 100%;
 	max-height: 0px;
-	padding: 0px 12px;
-	text-align: center;
-	color: transparent;
-	-webkit-box-shadow: 0px 0px 0px 1px transparent inset;
-	-moz-box-shadow: 0px 0px 0px 1px transparent inset;
-	box-shadow: 0px 0px 0px 1px transparent inset;
 }
 
-#hashover .hashover-message.hashover-message-open {
-	max-height: 85px;
-	padding: 12px;
+#hashover .hashover-message > *,
+#hashover .hashover-formatting-message > * {
+	color: transparent;
+}
+
+#hashover .hashover-message > * {
+	padding: 0px 12px;
 	margin-bottom: 12px;
+	text-align: center;
+	border: 1px solid #AAAAAA;
+}
+
+#hashover .hashover-message.hashover-message-open > *,
+#hashover .hashover-formatting-message.hashover-message-open > * {
+	color: initial;
+}
+
+#hashover .hashover-message.hashover-message-open > * {
+	padding: 12px;
 	color: #0000CC;
 	background-color: rgba(225, 225, 255, 0.25);
-	-webkit-box-shadow: 0px 0px 0px 1px #00AACC inset;
-	-moz-box-shadow: 0px 0px 0px 1px #00AACC inset;
-	box-shadow: 0px 0px 0px 1px #00AACC inset;
+	border-color: #00AACC;
 }
 
-#hashover .hashover-message.hashover-message-error {
+#hashover .hashover-php-message-open,
+#hashover .hashover-php-message-open > * {
+	max-height: initial;
+}
+
+#hashover .hashover-message.hashover-message-error > * {
 	color: #CC0000;
 	background-color: rgba(255, 225, 225, 0.25);
-	-webkit-box-shadow: 0px 0px 0px 1px #CC0000 inset;
-	-moz-box-shadow: 0px 0px 0px 1px #CC0000 inset;
-	box-shadow: 0px 0px 0px 1px #CC0000 inset;
+	border-color: #CC0000;
 }
 
-#hashover .hashover-comment .hashover-message.hashover-message-open {
+#hashover .hashover-formatting-message > * {
+	margin-top: -1px;
+	border: 1px solid #AAAAAA;
+}
+
+#hashover .hashover-formatting-table {
+	display: table;
+	padding: 12px 0px 12px 0px;
+	background-color: #E5E5E5;
+}
+
+#hashover .hashover-formatting-table > * {
+	display: table-cell;
+	width: 50%;
+	padding: 0px 12px 0px 12px;
+	border-right: 1px solid #AAAAAA;
+	vertical-align: top;
+}
+
+#hashover .hashover-formatting-table > *:last-child {
+	border-right: none;
+}
+
+#hashover .hashover-comment .hashover-message {
+	margin-top: -1px;
+}
+
+#hashover .hashover-comment .hashover-message > * {
 	margin-bottom: 0px;
-	margin-top: 12px;
 }
 
 #hashover #hashover-form,
@@ -93,6 +164,9 @@ Copyright (C) 2016-2017 Jacob Barkdull
 #hashover .hashover-reply-form,
 #hashover .hashover-comment .hashover-footer,
 #hashover .hashover-message,
+#hashover .hashover-message > *,
+#hashover .hashover-formatting-message,
+#hashover .hashover-formatting-message > *,
 #hashover .hashover-comment form,
 #hashover .hashover-comment form .hashover-balloon {
 	overflow: hidden;
@@ -106,12 +180,8 @@ Copyright (C) 2016-2017 Jacob Barkdull
 #hashover .hashover-inputs {
 	display: table;
 	width: 100%;
-	margin-bottom: 6px;
-}
-
-#hashover #hashover-form .hashover-inputs {
 	padding: 12px;
-	margin-bottom: 0px;
+	border-bottom: none;
 }
 
 #hashover .hashover-inputs > * {
@@ -177,9 +247,6 @@ Copyright (C) 2016-2017 Jacob Barkdull
 
 #hashover #hashover-form .hashover-avatar-image {
 	width: 45px;
-}
-
-#hashover #hashover-form .hashover-avatar-image {
 	padding-right: 10px;
 }
 
@@ -203,22 +270,6 @@ Copyright (C) 2016-2017 Jacob Barkdull
 }
 
 #hashover form input,
-#hashover .hashover-submit,
-#hashover .hashover-avatar-image *,
-#hashover .hashover-avatar *,
-#hashover .hashover-inputs input,
-#hashover .hashover-comment form .hashover-balloon,
-#hashover .hashover-comment textarea,
-#hashover #hashover-form,
-#hashover .hashover-comment,
-#hashover .hashover-reply-form,
-#hashover .hashover-reply .hashover-header,
-#hashover .hashover-reply .hashover-balloon,
-#hashover .hashover-select-wrapper {
-	border: 1px solid #AAAAAA;
-}
-
-#hashover form input,
 #hashover form textarea,
 #hashover .hashover-submit,
 #hashover .hashover-inputs input,
@@ -239,20 +290,26 @@ Copyright (C) 2016-2017 Jacob Barkdull
 }
 
 #hashover form textarea {
+	position: relative;
 	width: 100%;
 	padding: 12px;
-	border: none;
 	vertical-align: top;
 	resize: vertical;
 }
 
-#hashover .hashover-comment .hashover-inputs {
-	margin-bottom: 12px;
+#hashover form textarea:focus {
+	z-index: 2;
 }
 
-#hashover form textarea,
-#hashover .hashover-comment > .hashover-balloon {
+#hashover .hashover-comment > .hashover-balloon,
+#hashover .hashover-edit-form,
+#hashover #hashover-end-links {
 	border-top: 1px solid #AAAAAA;
+}
+
+#hashover .hashover-comment > .hashover-balloon {
+	padding: 12px;
+	margin-bottom: -1px;
 	border-bottom: 1px solid #AAAAAA;
 }
 
@@ -269,6 +326,7 @@ Copyright (C) 2016-2017 Jacob Barkdull
 #hashover input[type="password"]:focus,
 #hashover .hashover-submit:focus {
 	border-color: #0055FF ! important;
+
 	-o-box-shadow: 0px 0px 2px #BFEFFF ! important;
 	-webkit-box-shadow: 0px 0px 2px #BFEFFF ! important;
 	-moz-box-shadow: 0px 0px 2px #BFEFFF ! important;
@@ -325,6 +383,7 @@ Copyright (C) 2016-2017 Jacob Barkdull
 #hashover .hashover-edit-delete:focus {
 	border-color: #222222 ! important;
 	background-color: #FF5959 ! important;
+
 	-o-box-shadow: 0px 0px 2px #FFEFBF ! important;
 	-webkit-box-shadow: 0px 0px 2px #FFEFBF ! important;
 	-moz-box-shadow: 0px 0px 2px #FFEFBF ! important;
@@ -343,6 +402,7 @@ Copyright (C) 2016-2017 Jacob Barkdull
 #hashover .hashover-submit[disabled] {
 	background-color: #E0E0E0 ! important;
 	color: #222222 ! important;
+
 	-o-box-shadow: none ! important;
 	-webkit-box-shadow: none ! important;
 	-moz-box-shadow: none ! important;
@@ -391,13 +451,14 @@ Copyright (C) 2016-2017 Jacob Barkdull
 }
 
 #hashover .hashover-emphasized-input,
-#hashover input.hashover-emphasized-input {
+#hashover .hashover-emphasized-input input {
 	border-color: #CC0000 ! important;
 }
 
 #hashover .hashover-emphasized-input:focus,
-#hashover input.hashover-emphasized-input:focus {
+#hashover .hashover-emphasized-input input:focus {
 	border-color: #FF0000 ! important;
+
 	-o-box-shadow: 0px 0px 2px #FFBFBF !important;
 	-webkit-box-shadow: 0px 0px 2px #FFBFBF !important;
 	-moz-box-shadow: 0px 0px 2px #FFBFBF !important;
@@ -405,10 +466,46 @@ Copyright (C) 2016-2017 Jacob Barkdull
 }
 
 #hashover form label {
+	cursor: pointer;
+}
+
+#hashover #hashover-form .hashover-comment-label,
+#hashover .hashover-comment-label:nth-child(2) {
+	background-color: #FCFCFC;
+}
+
+#hashover .hashover-inputs label,
+#hashover .hashover-comment-label {
+	padding: 5px;
+	display: inline-block;
+	background-color: rgba(200, 200, 200, 0.25);
+}
+
+#hashover .hashover-comment-label {
+	width: 100%;
+	display: block;
+	border: 1px solid #AAA;
+	margin-bottom: -1px;
+}
+
+#hashover .hashover-form-links {
+	display: inline-block;
+	vertical-align: middle;
+	margin-bottom: 12px;
+}
+
+#hashover .hashover-form-links > * {
 	display: inline-block;
 	margin-top: 7px;
-	vertical-align: middle;
-	cursor: pointer;
+	margin-right: 6px;
+}
+
+#hashover .hashover-form-links > *:last-child {
+	margin-right: 0px;
+}
+
+#hashover .hashover-form-buttons {
+	margin-bottom: 12px;
 }
 
 #hashover label input[type="checkbox"] {
@@ -418,33 +515,22 @@ Copyright (C) 2016-2017 Jacob Barkdull
 }
 
 #hashover .hashover-form-footer {
+	padding: 12px 12px 0px 12px;
 	overflow: hidden;
-}
-
-#hashover #hashover-form > .hashover-form-footer {
-	padding: 12px;
-}
-
-#hashover .hashover-comment .hashover-form-footer {
-	padding-top: 12px;
+	margin-top: -1px;
+	background-color: #F0F0F0;
 }
 
 #hashover .hashover-edit-form {
-	margin-top: 24px;
-}
-
-#hashover .hashover-edit-form .hashover-form-footer {
-	padding-bottom: 12px;
-	margin-bottom: 12px;
-	border-bottom: 1px solid #AAAAAA;
+	margin-top: 12px;
+	padding-top: 12px;
 }
 
 #hashover .hashover-edit-form .hashover-title {
 	margin-top: 3px;
 }
 
-#hashover #hashover-count,
-#hashover .hashover-comment form .hashover-title {
+#hashover #hashover-count {
 	float: left;
 }
 
@@ -473,17 +559,20 @@ Copyright (C) 2016-2017 Jacob Barkdull
 }
 
 #hashover a,
-#hashover a:link {
+#hashover a:link,
+#hashover .hashover-fake-link {
 	text-decoration: none;
 	color: #0000CC;
 	outline: none;
+	cursor: pointer;
 }
 
 #hashover a:visited {
 	color: #00268F;
 }
 
-#hashover a:hover {
+#hashover a:hover,
+#hashover .hashover-fake-link:hover {
 	text-decoration: underline;
 	cursor: pointer;
 	color: #005EFF;
@@ -508,7 +597,7 @@ Copyright (C) 2016-2017 Jacob Barkdull
 #hashover #hashover-form,
 #hashover .hashover-comment,
 #hashover .hashover-reply-form {
-	background-color: #F0F0F0;
+	background-color: #F5F5F5;
 }
 
 #hashover-form .hashover-inputs,
@@ -533,7 +622,7 @@ Copyright (C) 2016-2017 Jacob Barkdull
 
 #hashover .hashover-comment,
 #hashover .hashover-reply-form {
-	margin-bottom: 1em;
+	margin-bottom: 12px;
 }
 
 #hashover .hashover-comment > .hashover-header {
@@ -549,14 +638,14 @@ Copyright (C) 2016-2017 Jacob Barkdull
 
 #hashover .hashover-reply .hashover-header {
 	padding: 12px 12px 0px 12px;
-	margin-left: 46px;
+	margin-left: 48px;
 	border-bottom: none;
 }
 
 #hashover .hashover-reply .hashover-reply,
 #hashover .hashover-reply .hashover-reply-form {
 	padding: 0px;
-	margin: 12px 0px 0px 46px;
+	margin: 12px 0px 0px 48px;
 }
 
 #hashover .hashover-comment .hashover-avatar {
@@ -578,10 +667,16 @@ Copyright (C) 2016-2017 Jacob Barkdull
 	background-position: center center;
 	background-attachment: scroll;
 	background-repeat: no-repeat;
+
 	-o-background-size: 100% 100%;
 	-webkit-background-size: 100% 100%;
 	-moz-background-size: 100% 100%;
 	background-size: 100% 100%;
+
+	-o-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
 }
 
 #hashover .hashover-reply .hashover-avatar,
@@ -604,19 +699,17 @@ Copyright (C) 2016-2017 Jacob Barkdull
 	margin-bottom: 12px;
 }
 
-#hashover .hashover-comment .hashover-content p {
-	margin: 0px 0px 1em 0px;
+#hashover p {
+	margin: 0px 0px 12px 0px;
 }
 
-#hashover .hashover-comment .hashover-balloon {
-	padding: 12px;
-	margin-bottom: -1px;
+#hashover p:last-child {
+	margin-bottom: 0px;
 }
 
-#hashover .hashover-reply .hashover-balloon,
+#hashover .hashover-reply > .hashover-balloon,
 #hashover .hashover-reply-form .hashover-balloon {
-	padding: 12px;
-	margin-left: 46px;
+	margin-left: 48px;
 	margin-bottom: 1px;
 	border-top: none;
 }
@@ -712,6 +805,7 @@ Copyright (C) 2016-2017 Jacob Barkdull
 	margin-top: -3px;
 	vertical-align: middle;
 	cursor: pointer;
+
 	-webkit-border-radius: 4px 4px 4px 4px;
 	-moz-border-radius: 4px 4px 4px 4px;
 	border-radius: 4px 4px 4px 4px;
@@ -831,28 +925,37 @@ Copyright (C) 2016-2017 Jacob Barkdull
 	padding-left: 8px;
 }
 
+#hashover .hashover-formatting,
 #hashover .hashover-comment .hashover-buttons a {
 	display: inline-block;
 	vertical-align: middle;
 	min-height: 16px;
 	padding-left: 30px;
 	line-height: 16px;
-	color: #111111;
 	background-image: url('../../images/inputs-and-buttons.png');
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	overflow: hidden ! important;
 	opacity: 0.50;
 	filter: alpha(opacity=50);
-	transition: opacity 150ms linear 0ms;
+
+	-o-transition: opacity 150ms linear 0ms;
 	-webkit-transition: opacity 150ms linear 0ms;
 	-moz-transition: opacity 150ms linear 0ms;
-	-o-transition: opacity 150ms linear 0ms;
+	transition: opacity 150ms linear 0ms;
 }
 
+#hashover .hashover-formatting:hover,
 #hashover .hashover-comment .hashover-buttons a:hover {
 	opacity: 1.0;
 	filter: alpha(opacity=100);
+}
+
+#hashover .hashover-formatting,
+#hashover .hashover-formatting:hover,
+#hashover .hashover-comment .hashover-buttons a,
+#hashover .hashover-comment .hashover-buttons a:hover {
+	color: #111111;
 }
 
 #hashover .hashover-has-email {
@@ -918,19 +1021,23 @@ Copyright (C) 2016-2017 Jacob Barkdull
 	margin: 0px;
 }
 
-#hashover #hashover-more-link {
+#hashover .hashover-more-link {
 	display: block;
 	padding: 12px;
 	margin-bottom: 12px;
 	background-color: rgba(230, 237, 250, 0.6);
 	border: 1px dashed #AAAAFF;
 	text-align: center;
-	color: #404040;
 	opacity: 1.0;
 	filter: alpha(opacity=100);
 }
 
-#hashover #hashover-more-link:hover {
+#hashover .hashover-more-link,
+#hashover a.hashover-more-link {
+	color: #404040;
+}
+
+#hashover .hashover-more-link:hover {
 	background-color: rgba(230, 237, 250, 1.0);
 }
 
@@ -944,13 +1051,13 @@ Copyright (C) 2016-2017 Jacob Barkdull
 	background-attachment: scroll;
 	background-position: center center;
 	background-image: url('../../images/loading.gif');
+
 	image-rendering: -o-crisp-edges;
 	image-rendering: -webkit-optimize-contrast;
 	image-rendering: -moz-crisp-edges;
 	image-rendering: crisp-edges;
 	image-rendering: pixelated;
 	-ms-interpolation-mode: nearest-neighbor;
-	z-index: 1;
 }
 
 #hashover .hashover-embedded-image-wrapper.hashover-loading img {
@@ -967,34 +1074,37 @@ Copyright (C) 2016-2017 Jacob Barkdull
 	height: 100%;
 }
 
-#hashover #hashover-more-link.hashover-loading:before,
+#hashover .hashover-more-link.hashover-loading:before,
 #hashover .hashover-thread-link.hashover-loading:before {
 	margin-right: 8px;
 	margin-top: -8px;
 	margin-bottom: -6px;
 }
 
-#hashover #hashover-more-link.hashover-hide-morelink {
+#hashover .hashover-more-link.hashover-hide-more-link {
 	opacity: 0.0;
 	filter: alpha(opacity=0);
 }
 
-#hashover #hashover-more-link,
-#hashover .hashover-message {
-	-o-transition: all 250ms linear 0ms;
-	-webkit-transition: all 250ms linear 0ms;
-	-moz-transition: all 250ms linear 0ms;
-	transition: all 250ms linear 0ms;
+#hashover .hashover-more-link,
+#hashover .hashover-message.hashover-message-animated,
+#hashover .hashover-message.hashover-message-animated > *,
+#hashover .hashover-formatting-message.hashover-message-animated,
+#hashover .hashover-formatting-message.hashover-message-animated > * {
+	-o-transition: all 150ms linear 0ms;
+	-webkit-transition: all 150ms linear 0ms;
+	-moz-transition: all 150ms linear 0ms;
+	transition: all 150ms linear 0ms;
 }
 
 #hashover #hashover-end-links {
-	border-top: 1px solid #AAAAAA;
 	margin-top: -12px;
 	padding: 18px 0px 5px 0px;
 	text-align: center;
 }
 
 /* Handle HDPI */
+#hashover.hashover-mobile .hashover-formatting,
 #hashover.hashover-mobile .hashover-name-input:before,
 #hashover.hashover-mobile .hashover-password-input:before,
 #hashover.hashover-mobile .hashover-email-input:before,
@@ -1002,4 +1112,20 @@ Copyright (C) 2016-2017 Jacob Barkdull
 #hashover.hashover-mobile .hashover-required-input:after,
 #hashover.hashover-mobile .hashover-comment .hashover-buttons a {
 	background-image: url('../../images/inputs-and-buttons.svg');
+}
+
+@media only screen and (max-width: 640px) {
+	#hashover .hashover-formatting-table {
+		padding: 12px 12px 0px 12px;
+	}
+
+	#hashover .hashover-formatting-table > * {
+		display: table-row;
+		width: 100%;
+		border-bottom: 1px solid #AAAAAA;
+	}
+
+	#hashover .hashover-formatting-table p {
+		margin-bottom: 12px;
+	}
 }

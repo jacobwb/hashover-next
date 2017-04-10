@@ -65,12 +65,10 @@ try {
 
 		switch ($action) {
 			case 'login': {
-				if ($hashover->setup->allowsLogin !== true) {
-					$write_comments->postComment ();
-					break;
+				if ($hashover->setup->allowsLogin !== false) {
+					$write_comments->login ();
 				}
 
-				$write_comments->login ();
 				break;
 			}
 
@@ -101,11 +99,16 @@ try {
 	// Returns comment being saved as JSON
 	if (isset ($_POST['ajax']) and is_array ($data)) {
 		// Slit file into parts
-		$key_parts = explode ('-', $data['file']);
+		$file = $data['file'];
+		$key_parts = explode ('-', $file);
+
+		// Parsed comment data
+		$comment = $data['comment'];
+		$parsed = $hashover->commentParser->parse ($comment, $file, $key_parts);
 
 		// Echo JSON array
 		echo json_encode (array (
-			'comment' => $hashover->commentParser->parse ($data['comment'], $data['file'], $key_parts),
+			'comment' => $parsed,
 			'count' => $hashover->getCommentCount ()
 		));
 	}

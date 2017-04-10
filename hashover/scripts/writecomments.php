@@ -231,7 +231,7 @@ class WriteComments extends PostData
 
 			// Return true if POST file is in comment list
 			if (in_array ($comment_file, $this->readComments->commentList, true)) {
-				return true;
+				return $comment_file;
 			}
 
 			// Set cookies to indicate failure
@@ -412,33 +412,61 @@ class WriteComments extends PostData
 		}
 	}
 
+	// User comment authentication
+	protected function commentAuthentication ()
+	{
+		// Verify file exists
+		$file = $this->verifyFile ('file');
+
+		// Authentication data
+		$auth = array (
+			// Assume no authorization by default
+			'authorized' => false,
+			'user-owned' => false,
+
+			// Read original comment
+			'comment' => $this->formatData->read ($file)
+		);
+
+		// Return authorization data if we fail to get comment
+		if ($auth['comment'] === false) {
+			return $auth;
+		}
+
+		// Check if we have both required passwords
+		if (!empty ($this->postData['password'])
+		    and !empty ($auth['comment']['password']))
+		{
+			// If so, get the user input password
+			$user_password = $this->encodeHTML ($this->postData['password']);
+
+			// Get the comment password
+			$comment_password = $auth['comment']['password'];
+
+			// Attempt to compare the two passwords
+			$auth['user-owned'] = $this->encryption->verifyHash ($user_password, $comment_password);
+		}
+
+		// Set general authorization state
+		$auth['authorized'] = ($auth['user-owned'] or $this->login->userIsAdmin);
+
+		return $auth;
+	}
+
 	// Delete comment
 	public function deleteComment ()
 	{
 		try {
-			// Verify file exists
-			$this->verifyFile ('file');
+			// Authenticate user password
+			$auth = $this->commentAuthentication ();
 
-			// Assume passwords don't match by default
-			$passwords_match = false;
-
-			// Check if password and file values were given
-			if (!empty ($this->postData['password']) and !empty ($this->file)) {
-				// Read original comment
-				$get_pass = $this->formatData->read ($this->file);
-
-				// Compare passwords
-				$edit_password = $this->encodeHTML ($this->postData['password']);
-				$passwords_match = $this->encryption->verifyHash ($edit_password, $get_pass['password']);
-			}
-
-			// Check if password matches the one in the file
-			if ($passwords_match === true or $this->login->userIsAdmin === true) {
-				// Delete the comment file
+			// Check if user is authorized
+			if ($auth['authorized'] === true) {
+				// If so, delete the comment file
 				if ($this->formatData->delete ($this->file, $this->setup->userDeletionsUnlink)) {
 					$this->removeFromLatest ($this->file);
 
-					// Kick visitor back with comment deletion message
+					// And kick visitor back with comment deletion message
 					$this->kickback ($this->locale->text['comment-deleted']);
 
 					return true;
@@ -624,12 +652,16 @@ class WriteComments extends PostData
 		$this->commentData['date'] = date (DATE_ISO8601);
 
 		// Check if name is enabled and isn't empty
-		if ($this->setup->fieldOptions['name'] !== false and !empty ($this->name)) {
+		if ($this->setup->fieldOptions['name'] !== false) {
 			// Store name
-			$this->commentData['name'] = $this->name;
+			if (!empty ($this->name)) {
+				$this->commentData['name'] = $this->name;
+			}
+		}
 
-			// Store password and login ID if a password is given
-			if ($this->setup->fieldOptions['password'] !== false and !empty ($this->password)) {
+		// Store password and login ID if a password is given
+		if ($this->setup->fieldOptions['password'] !== false) {
+			if (!empty ($this->password)) {
 				$this->commentData['password'] = $this->password;
 
 				// Store login ID if login hash is non-empty
@@ -672,28 +704,17 @@ class WriteComments extends PostData
 	public function editComment ()
 	{
 		try {
-			// Verify file exists
-			$this->verifyFile ('file');
+			// Authenticate user password
+			$auth = $this->commentAuthentication ();
 
-			// Assume passwords don't match by default
-			$passwords_match = false;
-
-			if (!empty ($this->file)) {
-				// Read original comment
-				$edit_comment = $this->formatData->read ($this->file);
-
-				// Check if password and file values were given
-				if (!empty ($this->postData['password']) and !empty ($edit_comment['password'])) {
-					// Compare passwords
-					$edit_password = $this->encodeHTML ($this->postData['password']);
-					$passwords_match = $this->encryption->verifyHash ($edit_password, $edit_comment['password']);
-				}
-			}
-
-			// Check if password matches the one in the file
-			if ($passwords_match === true or $this->login->userIsAdmin === true) {
-				// Login normal user with edited credentials
-				if ($this->login->userIsAdmin === false) {
+			// Check if user is authorized
+			if ($auth['authorized'] === true) {
+				// Check if user is admin
+				if ($this->login->userIsAdmin === true) {
+					// If so, set status for update
+					$update_fields[] = 'status';
+				} else {
+					// If not, login normal user with edited credentials
 					$this->login (false);
 				}
 
@@ -703,31 +724,28 @@ class WriteComments extends PostData
 				// Set initial fields for update
 				$update_fields = $this->editableFields;
 
-				// Only set status for update if user is admin
-				if ($this->login->userIsAdmin === true) {
-					$update_fields[] = 'status';
-				}
-
 				// Only set protected fields for update if passwords match
-				if ($passwords_match === true) {
+				if ($auth['user-owned'] === true) {
 					$update_fields = array_merge ($update_fields, $this->protectedFields);
 				}
 
 				// Update login information and comment
 				foreach ($update_fields as $key) {
-					if (isset ($this->commentData[$key])) {
-						$edit_comment[$key] = $this->commentData[$key];
+					if (!empty ($this->commentData[$key])) {
+						$auth['comment'][$key] = $this->commentData[$key];
+					} else {
+						unset ($auth['comment'][$key]);
 					}
 				}
 
 				// Attempt to write edited comment
-				if ($this->formatData->save ($edit_comment, $this->file, true)) {
+				if ($this->formatData->save ($auth['comment'], $this->file, true)) {
 					// If successful, check if request is via AJAX
 					if ($this->viaAJAX === true) {
 						// If so, return the comment data
 						return array (
 							'file' => $this->file,
-							'comment' => $edit_comment
+							'comment' => $auth['comment']
 						);
 					}
 

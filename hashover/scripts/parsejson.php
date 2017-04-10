@@ -90,6 +90,9 @@ class ParseJSON extends ReadFiles
 			$json = json_encode ($contents);
 		}
 
+		// Convert line endings to OS specific style
+		$json = $this->osLineEndings ($json);
+
 		// Save the JSON data to the comment file
 		if (file_put_contents ($file, $json)) {
 			chmod ($file, 0600);

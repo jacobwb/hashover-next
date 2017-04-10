@@ -27,6 +27,9 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	}
 }
 
+// Count according to `$showsReplyCount` setting
+$show_number_comments = $hashover->getCommentCount ('show-number-comments');
+
 // Text for "Show X Other Comment(s)" link
 if ($hashover->setup->collapsesComments !== false) {
 	// Check if at least 1 comment is to be shown
@@ -34,16 +37,27 @@ if ($hashover->setup->collapsesComments !== false) {
 		// If so, use the "Show X Other Comments" locale
 		$more_link_locale = $hashover->locale->get ('show-other-comments');
 
+		// Shorter variables
+		$total_count = $hashover->readComments->totalCount;
+		$collapse_limit = $hashover->setup->collapseLimit;
+
+		// Get number of comments after collapse limit
+		$other_count = ($total_count - 1) - $collapse_limit;
+
+		// Subtract deleted comment counts
+		if ($hashover->setup->countIncludesDeleted === false) {
+			$other_count -= $hashover->readComments->collapsedDeletedCount;
+		}
+
 		// Decide if count is pluralized
-		$other_comment_count = ($hashover->readComments->totalCount - 1) - $hashover->setup->collapseLimit;
-		$more_link_plural = ($other_comment_count !== 1) ? 1 : 0;
+		$more_link_plural = ($other_count !== 1) ? 1 : 0;
 		$more_link_text = $more_link_locale[$more_link_plural];
 
 		// And inject the count into the locale string
-		$more_link_text = sprintf ($more_link_text, $other_comment_count);
+		$more_link_text = sprintf ($more_link_text, $other_count);
 	} else {
 		// If not, show count according to `$showsReplyCount` setting
-		$more_link_text = $hashover->getCommentCount ('show-number-comments');
+		$more_link_text = $show_number_comments;
 	}
 }
 
@@ -155,26 +169,27 @@ HashOver.init = function ()
 	"use strict";
 
 	var execStart		= Date.now ();
-	var httpRoot		= '<?php echo $hashover->setup->httpRoot; ?>';
+	var httpRoot		= '<?php echo $hashover->misc->jsEscape ($hashover->setup->httpRoot); ?>';
 	var URLRegex		= '((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+)';
 	var URLParts		= window.location.href.split ('#');
 	var elementsById	= {};
 	var trimRegex		= /^[\r\n]+|[\r\n]+$/g;
 	var streamMode		= <?php echo string_boolean ($hashover->setup->replyMode, 'stream'); ?>;
-	var streamDepth		= <?php echo $hashover->setup->streamDepth; ?>;
+	var streamDepth		= <?php echo $hashover->misc->jsEscape ($hashover->setup->streamDepth); ?>;
 	var blockCodeRegex	= <?php echo js_regex ($hashover->markdown->blockCodeRegex, false); ?>;
 	var inlineCodeRegex	= <?php echo js_regex ($hashover->markdown->inlineCodeRegex, false); ?>;
 	var blockCodeMarker	= /CODE_BLOCK\[([0-9]+)\]/g;
 	var inlineCodeMarker	= /CODE_INLINE\[([0-9]+)\]/g;
 	var collapsedCount	= 0;
-	var collapseLimit	= <?php echo $hashover->setup->collapseLimit; ?>;
-	var defaultName		= '<?php echo $hashover->setup->defaultName; ?>';
+	var collapseLimit	= <?php echo $hashover->misc->jsEscape ($hashover->setup->collapseLimit); ?>;
+	var defaultName		= '<?php echo $hashover->misc->jsEscape ($hashover->setup->defaultName); ?>';
 	var allowsDislikes	= <?php echo string_true ($allowsDislikes); ?>;
 	var allowsLikes		= <?php echo string_true ($allowsLikes); ?>;
+	var timeFormat		= <?php echo js_json ($hashover->setup->timeFormat, false); ?>;
 	var linkRegex		= new RegExp (URLRegex + '( {0,1})', 'ig');
 	var imageRegex		= new RegExp ('\\[img\\]<a.*?>' + URLRegex + '</a>\\[/img\\]', 'ig');
 	var imageExtensions	= <?php echo js_json ($hashover->setup->imageTypes, false); ?>;
-	var imagePlaceholder	= '<?php echo $hashover->setup->httpImages; ?>/place-holder.<?php echo $hashover->setup->imageFormat; ?>';
+	var imagePlaceholder	= '<?php echo $hashover->misc->jsEscape ($hashover->setup->httpImages); ?>/place-holder.<?php echo $hashover->misc->jsEscape ($hashover->setup->imageFormat); ?>';
 	var codeOpenRegex	= /<code>/i;
 	var codeTagRegex	= /(<code>)([\s\S]*?)(<\/code>)/ig;
 	var preOpenRegex	= /<pre>/i;
@@ -185,22 +200,22 @@ HashOver.init = function ()
 	var doubleEOL		= serverEOL + serverEOL;
 	var codeTagMarkerRegex	= /CODE_TAG\[([0-9]+)\]/g;
 	var preTagMarkerRegex	= /PRE_TAG\[([0-9]+)\]/g;
-	var messageCounts	= {};
+	var messageTimeouts	= {};
 	var userIsLoggedIn	= <?php echo string_boolean ($hashover->login->userIsLoggedIn); ?>;
-	var primaryCount	= <?php echo $hashover->readComments->primaryCount - 1; ?>;
-	var totalCount		= <?php echo $hashover->readComments->totalCount - 1; ?>;
+	var primaryCount	= <?php echo $hashover->misc->jsEscape ($hashover->readComments->primaryCount - 1); ?>;
+	var totalCount		= <?php echo $hashover->misc->jsEscape ($hashover->readComments->totalCount - 1); ?>;
 	var AJAXPost		= null;
 	var AJAXEdit		= null;
-	var httpScripts		= '<?php echo $hashover->setup->httpScripts; ?>';
+	var httpScripts		= '<?php echo $hashover->misc->jsEscape ($hashover->setup->httpScripts); ?>';
 	var commentStatuses	= ['approved', 'pending', 'deleted'];
 	var moreLink		= null;
 	var sortDiv		= null;
 	var moreDiv		= null;
 	var showingMore		= false;
-	var pageURL		= '<?php echo $hashover->html->pageURL; ?>';
+	var pageURL		= '<?php echo $hashover->misc->jsEscape ($hashover->html->pageURL); ?>';
 	var threadRegex		= /^(c[0-9r]+)r[0-9\-pop]+$/;
 	var appendCSS		= true;
-	var themeCSS		= httpRoot + '/themes/<?php echo $hashover->setup->theme; ?>/style.css';
+	var themeCSS		= httpRoot + '/themes/<?php echo $hashover->misc->jsEscape ($hashover->setup->theme); ?>/style.css';
 	var head		= document.head || document.getElementsByTagName ('head')[0];
 	var URLHref		= URLParts[0];
 	var HashOverDiv		= document.getElementById ('hashover');
@@ -219,19 +234,23 @@ HashOver.init = function ()
 	// Some locales, stored in JavaScript to avoid using a lot of PHP tags
 	var locale = {
 		cancel:			'<?php echo $hashover->locale->get ('cancel'); ?>',
-		externalImageTip:	'<?php echo $hashover->locale->get ('external-image-tip'); ?>',
-		like:			<?php echo js_json ($hashover->locale->get ('like', false), false); ?>,
-		liked:			'<?php echo $hashover->locale->get ('liked'); ?>',
-		unlike:			'<?php echo $hashover->locale->get ('unlike'); ?>',
-		likeComment:		'<?php echo $hashover->locale->get ('like-comment'); ?>',
-		likedComment:		'<?php echo $hashover->locale->get ('liked-comment'); ?>',
-		dislike:		<?php echo js_json ($hashover->locale->get ('dislike', false), false); ?>,
-		disliked:		'<?php echo $hashover->locale->get ('disliked'); ?>',
+		dateTime:		<?php echo js_json ($hashover->locale->get ('date-time'), false); ?>,
 		dislikeComment:		'<?php echo $hashover->locale->get ('dislike-comment'); ?>',
 		dislikedComment:	'<?php echo $hashover->locale->get ('disliked-comment'); ?>',
+		disliked:		'<?php echo $hashover->locale->get ('disliked'); ?>',
+		dislike:		<?php echo js_json ($hashover->locale->get ('dislike', false), false); ?>,
+		email:			'<?php echo $hashover->locale->get ('email'); ?>',
+		externalImageTip:	'<?php echo $hashover->locale->get ('external-image-tip'); ?>',
+		fieldNeeded:		'<?php echo $hashover->locale->get ('field-needed'); ?>',
+		likeComment:		'<?php echo $hashover->locale->get ('like-comment'); ?>',
+		likedComment:		'<?php echo $hashover->locale->get ('liked-comment'); ?>',
+		liked:			'<?php echo $hashover->locale->get ('liked'); ?>',
+		like:			<?php echo js_json ($hashover->locale->get ('like', false), false); ?>,
 		name:			'<?php echo $hashover->locale->get ('name'); ?>',
 		password:		'<?php echo $hashover->locale->get ('password'); ?>',
-		email:			'<?php echo $hashover->locale->get ('email'); ?>',
+		postCommentOn:		'<?php echo $hashover->html->postCommentOn; ?>',
+		today:			'<?php echo $hashover->locale->get ('date-today'); ?>',
+		unlike:			'<?php echo $hashover->locale->get ('unlike'); ?>',
 		website:		'<?php echo $hashover->locale->get ('website'); ?>'
 	};
 
@@ -452,6 +471,140 @@ HashOver.init = function ()
 
 		return element;
 	}
+<?php if ($hashover->setup->usesUserTimezone !== false): ?>
+
+	// Simple PHP date function port
+	function formatDate (format, date)
+	{
+		format = format || 'DATE_ISO8601';
+		date = date || new Date ();
+
+		var dayNames = <?php echo js_json ($hashover->locale->get ('date-day-names'), true, 2); ?>;
+
+		var monthNames = <?php echo js_json ($hashover->locale->get ('date-month-names'), true, 2); ?>;
+
+		var hours = date.getHours ();
+		var ampm = (hours >= 12) ? 'pm' : 'am';
+		var day = date.getDate ();
+		var weekDay = date.getDay ();
+		var dayName = dayNames[weekDay];
+		var monthIndex = date.getMonth ();
+		var monthName = monthNames[monthIndex];
+		var hours12 = (hours % 12) ? hours % 12 : 12;
+		var minutes = date.getMinutes ();
+		var month = monthIndex + 1;
+		var offsetHours = (date.getTimezoneOffset() / 60) * 100;
+		var offset = ((offsetHours < 1000) ? '0' : '') + offsetHours;
+		var offsetColon = offset.match (/[0-9]{2}/g).join (':');
+		var offsetPositivity = (offsetHours > 0) ? '-' : '+';
+		var seconds = date.getSeconds ();
+		var year = date.getFullYear ();
+		var formatParts = format.split ('');
+		var dateConstant;
+
+		var characters = {
+			a: ampm,
+			A: ampm.toUpperCase (),
+			d: (day < 10) ? '0' + day : day,
+			D: dayName.substr (0, 3),
+			F: monthName,
+			g: hours12,
+			G: hours,
+			h: (hours12 < 10) ? '0' + hours12 : hours12,
+			H: (hours < 10) ? '0' + hours : hours,
+			i: (minutes < 10) ? '0' + minutes : minutes,
+			j: day,
+			l: dayName,
+			m: (month < 10) ? '0' + month : month,
+			M: monthName.substr (0, 3),
+			n: month,
+			N: weekDay + 1,
+			O: offsetPositivity + offset,
+			P: offsetPositivity + offsetColon,
+			s: (seconds < 10) ? '0' + seconds : seconds,
+			w: weekDay,
+			y: ('' + year).substr (2),
+			Y: year
+		};
+
+		dateConstant = format.replace (/-/g, '_');
+		dateConstant = dateConstant.toUpperCase ();
+
+		switch (dateConstant) {
+			case 'DATE_ATOM':
+			case 'DATE_RFC3339':
+			case 'DATE_W3C': {
+				format = 'Y-m-d\TH:i:sP';
+				break;
+			}
+
+			case 'DATE_COOKIE': {
+				format = 'l, d-M-Y H:i:s';
+				break;
+			}
+
+			case 'DATE_ISO8601': {
+				format = 'Y-m-d\TH:i:sO';
+				break;
+			}
+
+			case 'DATE_RFC822':
+			case 'DATE_RFC1036': {
+				format = 'D, d M y H:i:s O';
+				break;
+			}
+
+			case 'DATE_RFC850': {
+				format = 'l, d-M-y H:i:s';
+				break;
+			}
+
+			case 'DATE_RFC1123':
+			case 'DATE_RFC2822':
+			case 'DATE_RSS': {
+				format = 'D, d M Y H:i:s O';
+				break;
+			}
+
+			case 'GNOME_DATE': {
+				format = 'D M d, g:i A';
+				break;
+			}
+
+			case 'US_DATE': {
+				format = 'm/d/Y';
+				break;
+			}
+
+			case 'STANDARD_DATE': {
+				format = 'Y-m-d';
+				break;
+			}
+
+			case '12H_TIME': {
+				format = 'g:ia';
+				break;
+			}
+
+			case '24H_TIME': {
+				format = 'H:i';
+				break;
+			}
+		}
+
+		for (var i = 0, c, il = formatParts.length; i < il; i++) {
+			if (i > 0 && formatParts[i - 1] === '\\') {
+				formatParts[i - 1] = '';
+				continue;
+			}
+
+			c = formatParts[i];
+			formatParts[i] = characters[c] || c;
+		}
+
+		return formatParts.join ('');
+	}
+<?php endif; ?>
 
 	// Add comment content to HTML template
 	function parseComment (comment, parent, collapse, sort, method, popular)
@@ -467,6 +620,7 @@ HashOver.init = function ()
 		var template = { permalink: permalink };
 		var isReply = (parent !== null);
 		var parentPermalink;
+		var commentDate = comment.date;
 		var codeTagCount = 0;
 		var codeTags = [];
 		var preTagCount = 0;
@@ -502,10 +656,12 @@ HashOver.init = function ()
 <?php if ($hashover->setup->collapsesComments !== false): ?>
 
 			// Append class to indicate collapsed comment
-			if (collapse === true && collapsedCount >= collapseLimit) {
-				classes += ' hashover-hidden';
-			} else {
-				collapsedCount++;
+			if (totalCount > 0) {
+				if (collapse === true && collapsedCount >= collapseLimit) {
+					classes += ' hashover-hidden';
+				} else {
+					collapsedCount++;
+				}
 			}
 <?php endif; ?>
 		}
@@ -648,8 +804,29 @@ HashOver.init = function ()
 			// Add name HTML to template
 			template.name = '<?php echo $hashover->html->nameWrapper ('nameLink', 'nameClass'); ?>';
 
-			// Add date permalink hyperlink to template
-			template.date = '<?php echo $hashover->html->dateLink ('permalink', 'comment.date'); ?>';
+<?php if ($hashover->setup->usesUserTimezone !== false): ?>
+			// Local comment post date
+			var postDate = new Date (comment['sort-date'] * 1000);
+
+<?php if ($hashover->setup->usesShortDates !== false): ?>
+			// Local comment post date to remove time from
+			var postDateCopy = new Date (postDate.getTime ());
+
+			// Local date
+			var localDate = new Date ();
+
+			// Format local time if the comment was posted today
+			if (postDateCopy.setHours (0, 0, 0, 0) === localDate.setHours (0, 0, 0, 0)) {
+				commentDate = locale.today.replace ('%s', formatDate (timeFormat, postDate));
+			}
+<?php else: ?>
+			// Format a long local date/time
+			commentDate = formatDate (locale.dateTime, postDate);
+<?php endif; ?>
+<?php endif; ?>
+
+			// Add date from comment as permalink hyperlink to template
+			template.date = '<?php echo $hashover->html->dateLink ('permalink', 'commentDate'); ?>';
 
 			// Add "Reply" hyperlink to template
 			template['reply-link'] = '<?php echo $hashover->html->formLink ('reply', 'permalink', 'replyClass', 'replyTitle'); ?>';
@@ -926,65 +1103,175 @@ HashOver.init = function ()
 		};
 	}
 
-	// Handle message element(s)
-	function showMessage (message, permalink, error, isReply, isEdit)
+	// Gets a computed element style by property
+	function compatComputedStyle (element, proterty, type)
 	{
+		var computedStyle;
+
+		// IE, other
+		if (window.getComputedStyle === undefined) {
+			computedStyle = element.currentStyle[proterty];
+		}
+
+		// Mozilla Firefox, Google Chrome
+		computedStyle = window.getComputedStyle (element, null);
+		computedStyle = computedStyle.getPropertyValue (proterty);
+
+		// Cast value to specified type
+		switch (type) {
+			case 'int': {
+				computedStyle = computedStyle.replace (/px|em/, '');
+				computedStyle = parseInt (computedStyle) || 0;
+				break;
+			}
+
+			case 'float': {
+				computedStyle = computedStyle.replace (/px|em/, '');
+				computedStyle = parseFloat (computedStyle) || 0.0;
+				break;
+			}
+		}
+
+		return computedStyle;
+	}
+
+	// Gets the client height of a message element
+	function getMessageHeight (element, setChild)
+	{
+		setChild = setChild || false;
+
+		var firstChild = element.children[0];
+		var maxHeight = 80;
+
+		// If so, set max-height style to initial
+		firstChild.style.maxHeight = 'initial';
+
+		// Get various computed styles
+		var borderTop = compatComputedStyle (firstChild, 'border-top-width', 'int');
+		var borderBottom = compatComputedStyle (firstChild, 'border-bottom-width', 'int');
+		var marginBottom = compatComputedStyle (firstChild, 'margin-bottom', 'int');
+		var border = borderTop + borderBottom;
+
+		// Calculate its client height
+		maxHeight = firstChild.clientHeight + border + marginBottom;
+
+		// Set its max-height style as well if told to
+		if (setChild === true) {
+			firstChild.style.maxHeight = maxHeight + 'px';
+		} else {
+			firstChild.style.maxHeight = '';
+		}
+
+		return maxHeight;
+	}
+
+	// Open a message element
+	function openMessage (element)
+	{
+		// Add classes to indicate message element is open
+		removeClass (element, 'hashover-message-animated');
+		addClass (element, 'hashover-message-open');
+
+		var maxHeight = getMessageHeight (element);
+		var firstChild = element.children[0];
+
+		// Remove class indicating message element is open
+		removeClass (element, 'hashover-message-open');
+
+		setTimeout (function () {
+			// Add class to indicate message element is open
+			addClass (element, 'hashover-message-open');
+			addClass (element, 'hashover-message-animated');
+
+			// Set max-height styles
+			element.style.maxHeight = maxHeight + 'px';
+			firstChild.style.maxHeight = maxHeight + 'px';
+
+			// Set max-height style to initial after transition
+			setTimeout (function () {
+				element.style.maxHeight = 'initial';
+				firstChild.style.maxHeight = 'initial';
+			}, 150);
+		}, 150);
+	}
+
+	// Close a message element
+	function closeMessage (element)
+	{
+		// Set max-height style to specific height before transition
+		element.style.maxHeight = getMessageHeight (element, true) + 'px';
+
+		setTimeout (function () {
+			// Remove max-height style from message elements
+			element.children[0].style.maxHeight = '';
+			element.style.maxHeight = '';
+
+			// Remove classes indicating message element is open
+			removeClass (element, 'hashover-message-open');
+			removeClass (element, 'hashover-message-error');
+		}, 150);
+	}
+
+	// Handle message element(s)
+	function showMessage (messageText, type, permalink, error, isReply, isEdit)
+	{
+		type = type || 'main';
 		permalink = permalink || '';
 		error = error || true;
 		isReply = isReply || false;
 		isEdit = isEdit || false;
 
-		var element;
+		var container;
+		var message;
 
 		// Decide which message element to use
 		if (isEdit === true) {
 			// An edit form message
-			element = getElement ('hashover-edit-message-' + permalink, true);
+			container = getElement ('hashover-edit-message-container-' + permalink, true);
+			message = getElement ('hashover-edit-message-' + permalink, true);
 		} else {
 			if (isReply !== true) {
 				// The primary comment form message
-				element = getElement ('hashover-message', true);
+				container = getElement ('hashover-message-container', true);
+				message = getElement ('hashover-message', true);
 			} else {
 				// Of a reply form message
-				element = getElement ('hashover-reply-message-' + permalink, true);
+				container = getElement ('hashover-reply-message-container-' + permalink, true);
+				message = getElement ('hashover-reply-message-' + permalink, true);
 			}
 		}
 
-		if (message !== undefined && message !== '') {
+		if (messageText !== undefined && messageText !== '') {
 			// Add message text to element
-			element.textContent = message;
+			message.textContent = messageText;
 
 			// Add class to indicate message is an error if set
 			if (error === true) {
-				addClass (element, 'hashover-message-error');
+				addClass (container, 'hashover-message-error');
 			}
 		}
 
 		// Add class to indicate message element is open
-		addClass (element, 'hashover-message-open');
+		openMessage (container);
 
 		// Add the comment to message counts
-		if (messageCounts[permalink] === undefined) {
-			messageCounts[permalink] = 0;
+		if (messageTimeouts[permalink] === undefined) {
+			messageTimeouts[permalink] = {};
+		}
+
+		// Clear necessary timeout
+		if (messageTimeouts[permalink][type] !== undefined) {
+			clearTimeout (messageTimeouts[permalink][type]);
 		}
 
 		// Add timeout to close message element after 10 seconds
-		setTimeout (function () {
-			if (messageCounts[permalink] <= 1) {
-				removeClass (element, 'hashover-message-open');
-				removeClass (element, 'hashover-message-error');
-			}
-
-			// Decrease count of open message timeouts
-			messageCounts[permalink]--;
+		messageTimeouts[permalink][type] = setTimeout (function () {
+			closeMessage (container);
 		}, 10000);
-
-		// Increase count of open message timeouts
-		messageCounts[permalink]++;
 	}
 
 	// Handles display of various warnings when user attempts to post or login
-	function emailValidator (form, subscribe, permalink, isReply, isEdit)
+	function emailValidator (form, subscribe, type, permalink, isReply, isEdit)
 	{
 		if (form.email === undefined) {
 			return true;
@@ -1015,7 +1302,7 @@ HashOver.init = function ()
 				}
 
 				message = '<?php echo $hashover->locale->get ('invalid-email'); ?>';
-				showMessage (message, permalink, true, isReply, isEdit);
+				showMessage (message, type, permalink, true, isReply, isEdit);
 				form.email.focus ();
 
 				return false;
@@ -1026,8 +1313,9 @@ HashOver.init = function ()
 	}
 
 	// Validate a comment form e-mail field
-	function validateEmail (permalink, form, isReply, isEdit)
+	function validateEmail (type, permalink, form, isReply, isEdit)
 	{
+		type = type || 'main';
 		permalink = permalink || null;
 		isReply = isReply || false;
 		isEdit = isEdit || false;
@@ -1050,15 +1338,13 @@ HashOver.init = function ()
 		}
 
 		// Validate form fields
-		return emailValidator (form, subscribe, permalink, isReply, isEdit);
+		return emailValidator (form, subscribe, type, permalink, isReply, isEdit);
 	}
 
 	// Validate a comment form
-	function commentValidator (form, skipComment)
+	function commentValidator (form, skipComment, isReply)
 	{
 		skipComment = skipComment || false;
-
-		var fieldNeeded = '<?php echo $hashover->locale->get ('field-needed'); ?>';
 
 		// Check each input field for if they are required
 		for (var field in fieldOptions) {
@@ -1078,7 +1364,7 @@ HashOver.init = function ()
 					form[field].focus ();
 
 					// Return error message to display to the user
-					return fieldNeeded.replace ('%s', locale[field]);
+					return locale.fieldNeeded.replace ('%s', locale[field]);
 				}
 
 				// Remove class indicating a failed post
@@ -1094,34 +1380,42 @@ HashOver.init = function ()
 			// Focus the comment textarea
 			form.comment.focus ();
 
+			// Error message to display to the user
+			if (isReply === true) {
+				var errorMessage = '<?php echo $hashover->locale->get ('reply-needed'); ?>';
+			} else {
+				var errorMessage = '<?php echo $hashover->locale->get ('comment-needed'); ?>';
+			}
+
 			// Return a error message to display to the user
-			return '<?php echo $hashover->locale->get ('comment-needed'); ?>';
+			return errorMessage;
 		}
 
 		return true;
 	}
 
 	// Validate required comment credentials
-	function validateComment (skipComment, form, permalink, isReply, isEdit)
+	function validateComment (skipComment, form, type, permalink, isReply, isEdit)
 	{
 		skipComment = skipComment || false;
+		type = type || 'main';
 		permalink = permalink || null;
 		isReply = isReply || false;
 		isEdit = isEdit || false;
 
 		// Validate comment form
-		var message = commentValidator (form, skipComment);
+		var message = commentValidator (form, skipComment, isReply);
 
 		// Display the validator's message
 		if (message !== true) {
-			showMessage (message, permalink, true, isReply, isEdit);
+			showMessage (message, type, permalink, true, isReply, isEdit);
 			return false;
 		}
 
 		// Validate e-mail if user isn't logged in or is editing
 		if (userIsLoggedIn === false || isEdit === true) {
 			// Return false on any failure
-			if (validateEmail (permalink, form, isReply, isEdit) === false) {
+			if (validateEmail (type, permalink, form, isReply, isEdit) === false) {
 				return false;
 			}
 		}
@@ -1130,15 +1424,16 @@ HashOver.init = function ()
 	}
 
 	// For posting comments, both traditionally and via AJAX
-	function postComment (destination, form, button, callback, permalink, close, isReply, isEdit)
+	function postComment (destination, form, button, callback, type, permalink, close, isReply, isEdit)
 	{
+		type = type || 'main';
 		permalink = permalink || '';
 		close = close || null;
 		isReply = isReply || false;
 		isEdit = isEdit || false;
 
 		// Return false if comment is invalid
-		if (validateComment (false, form, permalink, isReply, isEdit) === false) {
+		if (validateComment (false, form, type, permalink, isReply, isEdit) === false) {
 			return false;
 		}
 
@@ -1183,7 +1478,7 @@ HashOver.init = function ()
 				form.comment.value = '';
 			} else {
 				// If not, display the message return instead
-				showMessage (json.message, permalink, (json.type === 'error'), isReply, isEdit);
+				showMessage (json.message, type, permalink, (json.type === 'error'), isReply, isEdit);
 				return false;
 			}
 
@@ -1229,8 +1524,38 @@ HashOver.init = function ()
 		// Add AJAX query to queries array
 		queries.push ('ajax=yes');
 
+<?php if ($hashover->setup->usesAutoLogin !== false): ?>
+		// Check if the user is logged in
+		if (userIsLoggedIn !== true || isEdit === true) {
+			// If not, send a login request
+			var loginRequest = new XMLHttpRequest ();
+			var loginQueries = queries.concat (['login=Login']);
+
+			// Handle AJAX request return data
+			loginRequest.onreadystatechange = function ()
+			{
+				// Do nothing if request wasn't successful in a meaningful way
+				if (this.readyState !== 4 || this.status !== 200) {
+					return;
+				}
+
+				// Send post comment request after login
+				userIsLoggedIn = true;
+				sendRequest ();
+			};
+
+			// Send login request
+			loginRequest.open ('POST', form.action, true);
+			loginRequest.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
+			loginRequest.send (loginQueries.join ('&'));
+		} else {
+			// If so, send post comment request normally
+			sendRequest ();
+		}
+<?php else: ?>
 		// Send post comment request
 		sendRequest ();
+<?php endif; ?>
 
 		// Re-enable button after 20 seconds
 		setTimeout (function () {
@@ -1293,20 +1618,26 @@ HashOver.init = function ()
 		var parentPermalink = getParentPermalink (comment.permalink);
 		var parent = findByPermalink (parentPermalink, PHPContent.comments);
 
-		// Check if comment has replies
-		if (parent !== null && parent.replies !== undefined) {
-			// If so, add comment to reply array
-			if (index !== null) {
-				parent.replies.splice (index, 0, comment);
+		// Check if the parent comment exists
+		if (parent !== null) {
+			// If so, check if comment has replies
+			if (parent.replies !== undefined) {
+				// If so, add comment to reply array
+				if (index !== null) {
+					parent.replies.splice (index, 0, comment);
+					return;
+				}
+
+				parent.replies.push (comment);
 				return;
 			}
 
-			parent.replies.push (comment);
-			return;
+			// If not, create reply array
+			parent.replies = [comment];
 		}
 
-		// If not, create reply array
-		parent.replies = [comment];
+		// Otherwise, add to primary comments
+		PHPContent.comments.push (comment);
 	}
 
 	// For posting comments
@@ -1370,6 +1701,29 @@ HashOver.init = function ()
 	};
 
 <?php endif; ?>
+	// Attach click event to accepted HTML revealer hyperlinks
+	function acceptedHTMLOnclick (type, permalink)
+	{
+		permalink = (permalink !== undefined) ? '-' + permalink : '';
+
+		// Get accepted HTML message elements
+		var acceptedHTMLID = 'hashover-' + type + '-formatting';
+		var acceptedHTML = getElement (acceptedHTMLID + permalink, true);
+		var acceptedHTMLMessage = getElement (acceptedHTMLID + '-message' + permalink, true);
+
+		// Attach click event to accepted HTML revealer hyperlink
+		acceptedHTML.onclick = function ()
+		{
+			if (containsClass (acceptedHTMLMessage, 'hashover-message-open')) {
+				closeMessage (acceptedHTMLMessage);
+				return false;
+			}
+
+			openMessage (acceptedHTMLMessage);
+			return false;
+		}
+	}
+
 	// Displays reply form
 	function hashoverReply (permalink)
 	{
@@ -1412,16 +1766,19 @@ HashOver.init = function ()
 		// Get the element of comment being replied to
 		var destination = getElement (permalink, true);
 
+		// Attach click event to accepted HTML revealer hyperlink
+		acceptedHTMLOnclick ('reply', permalink);
+
 		// Onclick
 		postReply.onclick = function ()
 		{
-			return postComment (destination, form, this, AJAXPost, permalink, link.onclick, true, false);
+			return postComment (destination, form, this, AJAXPost, 'reply', permalink, link.onclick, true, false);
 		};
 
 		// Onsubmit
 		postReply.onsubmit = function ()
 		{
-			return postComment (destination, form, this, AJAXPost, permalink, link.onclick, true, false);
+			return postComment (destination, form, this, AJAXPost, 'reply', permalink, link.onclick, true, false);
 		};
 
 		// Focus comment field
@@ -1511,16 +1868,19 @@ HashOver.init = function ()
 		// Get the element of comment being replied to
 		var destination = getElement (permalink, true);
 
+		// Attach click event to accepted HTML revealer hyperlink
+		acceptedHTMLOnclick ('edit', permalink);
+
 		// Onclick
 		saveEdit.onclick = function ()
 		{
-			return postComment (destination, form, this, AJAXEdit, permalink, link.onclick, false, true);
+			return postComment (destination, form, this, AJAXEdit, 'edit', permalink, link.onclick, false, true);
 		};
 
 		// Onsubmit
 		saveEdit.onsubmit = function ()
 		{
-			return postComment (destination, form, this, AJAXEdit, permalink, link.onclick, false, true);
+			return postComment (destination, form, this, AJAXEdit, 'edit', permalink, link.onclick, false, true);
 		};
 
 		return false;
@@ -1533,7 +1893,7 @@ HashOver.init = function ()
 		finishedCallback = finishedCallback || null;
 
 		// Add class to hide the more hyperlink
-		moreLink.className = 'hashover-hide-morelink';
+		addClass (moreLink, 'hashover-hide-more-link');
 
 		setTimeout (function () {
 			// Remove the more hyperlink from page
@@ -1541,12 +1901,13 @@ HashOver.init = function ()
 				sortDiv.removeChild (moreLink);
 			}
 
-			// Show hidden form elements
-			getElement ('hashover-form-section').style.display = '';
+			// Show comment count and sort options
 			getElement ('hashover-count-wrapper').style.display = '';
-			getElement ('hashover-count').style.display = '';
-			getElement ('hashover-sort').style.display = '';
-			getElement ('hashover-end-links').style.display = '';
+
+			// Show popular comments section
+			ifElement ('hashover-popular-section', function (popularSection) {
+				popularSection.style.display = '';
+			});
 
 			// Get each hidden comment element
 			var collapsed = sortDiv.getElementsByClassName ('hashover-hidden');
@@ -1599,7 +1960,7 @@ HashOver.init = function ()
 			} else {
 				// If not, append to its parent's element
 				parent = getParentPermalink (comments[i].permalink, true);
-				element = getElement (parent, true);
+				element = getElement (parent, true) || moreDiv;
 			}
 
 			// Otherwise append it to the primary element
@@ -1828,7 +2189,7 @@ HashOver.init = function ()
 
 		// Set request queries
 		queries  = 'url=' + encodeURIComponent (pageURL);
-		queries += '&thread=<?php echo $hashover->setup->threadDirectory; ?>';
+		queries += '&thread=<?php echo $hashover->misc->jsEscape ($hashover->setup->threadDirectory); ?>';
 		queries += '&comment=' + file;
 		queries += '&action=' + action;
 
@@ -2249,7 +2610,7 @@ HashOver.init = function ()
 	// Initial HTML
 <?php
 
-	$initialHTML = $hashover->html->initialHTML ($hashover->commentParser->popularList, false);
+	$initialHTML = $hashover->html->initialHTML ($hashover->popularList, false);
 	echo $hashover->html->asJSVar ($initialHTML, 'initialHTML');
 
 ?>
@@ -2303,17 +2664,74 @@ HashOver.init = function ()
 	// Add initial event handlers
 	parseAll (PHPContent.comments, sortDiv, collapseComments);
 
+<?php if ($hashover->setup->collapsesUI !== false): ?>
+	// Decide button text
+	var uncollapseText = (totalCount > 1) ? '<?php echo $show_number_comments; ?>' : locale.postCommentOn;
+
+	// Create hyperlink to uncollapse the comment UI
+	var uncollapseUILink = createElement ('a', {
+		href: '#',
+		className: 'hashover-more-link',
+		title: uncollapseText,
+		textContent: uncollapseText,
+
+		onclick: function () {
+			// Add class to hide the uncollapse UI hyperlink
+			addClass (this, 'hashover-hide-more-link');
+
+			setTimeout (function () {
+				// Remove the uncollapse UI hyperlink from page
+				if (HashOverDiv.contains (uncollapseUILink) === true) {
+					HashOverDiv.removeChild (uncollapseUILink);
+				}
+
+				// Element to unhide
+				var uncollapseIDs = [
+					'hashover-form-section',
+					'hashover-comments-section',
+					'hashover-end-links'
+				];
+
+				// Show hidden form elements
+				for (var i = 0, il = uncollapseIDs.length; i < il; i++) {
+					ifElement (uncollapseIDs[i], function (element) {
+						element.style.display = '';
+					});
+				}
+
+				// Show popular comments section
+				if (collapseLimit > 0) {
+					ifElement ('hashover-popular-section', function (popularSection) {
+						popularSection.style.display = '';
+					});
+				}
+			}, 350);
+
+			return false;
+		}
+	});
+
+	// Add uncollapse hyperlink to HashOver div
+	HashOverDiv.appendChild (uncollapseUILink);
+
+<?php endif; ?>
 <?php if ($hashover->setup->collapsesComments !== false): ?>
+	// More button text
+	var moreLinkText = '<?php echo $more_link_text; ?>';
+
 	// Check whether there are more than the collapse limit
 	if (totalCount > collapseLimit) {
 		// Create element for the comments
-		moreDiv = createElement ('div', { id: 'hashover-more-section' });
+		moreDiv = createElement ('div', {
+			className: 'hashover-more-section'
+		});
 
 		// If so, create "More Comments" hyperlink
 		moreLink = createElement ('a', {
 			href: '#',
-			id: 'hashover-more-link',
-			textContent: '<?php echo $more_link_text; ?>',
+			className: 'hashover-more-link',
+			title: moreLinkText,
+			textContent: moreLinkText,
 
 			onclick: function () {
 				return showMoreComments (this);
@@ -2331,6 +2749,9 @@ HashOver.init = function ()
 	}
 
 <?php endif; ?>
+	// Attach click event to accepted HTML revealer hyperlink
+	acceptedHTMLOnclick ('main');
+
 	// Attach event listeners to "Post Comment" button
 	var postButton = getElement ('hashover-post-button');
 

@@ -34,15 +34,10 @@ class CommentParser
 	public $login;
 	public $locale;
 	public $avatars;
-	public $popularList = array ();
 
-	protected $ampm;
-
-	protected $intervals = array (
-		'y' => 'date-years',
-		'm' => 'date-months',
-		'd' => 'date-days'
-	);
+	protected $dateIntervalLocales;
+	protected $todayLocale;
+	protected $currentDateTime;
 
 	public function __construct (Setup $setup)
 	{
@@ -50,16 +45,28 @@ class CommentParser
 		$this->login = new Login ($setup);
 		$this->locale = new Locale ($setup);
 		$this->avatars = new Avatars ($setup);
-		$this->ampm = ($setup->uses12HourTime === false) ? 'H:i' : 'g:ia';
-		$this->current_datetime = new \DateTime (date('Y-m-d'));
+		$this->currentDateTime = new \DateTime (date('Y-m-d'));
+
+		$this->dateIntervalLocales = array (
+			'y' => $this->locale->text['date-years'],
+			'm' => $this->locale->text['date-months'],
+			'd' => $this->locale->text['date-days']
+		);
+
+		$this->todayLocale = $this->locale->text['date-today'];
+		$this->dateTimeLocale = $this->locale->text['date-time'];
 	}
 
 	// Parse comment files
-	public function parse (array $comment, $key, $key_parts, $popular = false, $popular_listed = true)
+	public function parse (array $comment, $key, $key_parts, $popular = false)
 	{
+		$micro_date = 0;
 		$output = array ();
-		$micro_date = strtotime ($comment['date']);
-		$popularity = 0;
+
+		// Get micro time of comment post date
+		if (!empty ($comment['date'])) {
+			$micro_date = strtotime ($comment['date']);
+		}
 
 		// Generate permalink
 		if (count ($key_parts) > 1) {
@@ -73,31 +80,31 @@ class CommentParser
 			$output['permalink'] .= '-pop';
 		}
 
-		// Format date and time
+		// Check if short dates are enabled
 		if ($this->setup->usesShortDates === true) {
 			// If so, get DateTime from comment
 			$comment_datetime = new \DateTime (date ('Y-m-d', $micro_date));
 
 			// Get the difference between today's date and the comment post date
-			$interval = $comment_datetime->diff ($this->current_datetime);
+			$interval = $comment_datetime->diff ($this->currentDateTime);
 
 			// And attempt to get a day, month, or year interval
-			foreach ($this->intervals as $i => $string) {
+			foreach ($this->dateIntervalLocales as $i => $date_locale) {
 				if ($interval->$i > 0) {
-					$date_locale = $this->locale->text[$string][($interval->$i !== 1)];
-					$comment_date = sprintf ($date_locale, $interval->$i);
+					$date_plural = ($interval->$i !== 1);
+					$comment_date = sprintf ($date_locale[$date_plural], $interval->$i);
 					break;
 				}
 			}
 
 			// Otherwise, use today locale
 			if (empty ($comment_date)) {
-				$get_time = date ($this->ampm, $micro_date);
-				$comment_date = sprintf ($this->locale->text['date-today'], $get_time);
+				$comment_time = date ($this->setup->timeFormat, $micro_date);
+				$comment_date = sprintf ($this->todayLocale, $comment_time);
 			}
 		} else {
 			// If not, use configurable date and time locale
-			$comment_date = date ('m/d/Y \a\t ' . $this->ampm, $micro_date);
+			$comment_date = date ($this->dateTimeLocale, $micro_date);
 		}
 
 		// Add name to output
@@ -131,29 +138,12 @@ class CommentParser
 		// Add number of likes to output
 		if (!empty ($comment['likes'])) {
 			$output['likes'] =(int) $comment['likes'];
-
-			// Add number of likes to popularity value
-			$popularity += $output['likes'];
 		}
 
 		// If enabled, add number of dislikes to output
 		if ($this->setup->allowsDislikes === true) {
 			if (!empty ($comment['dislikes'])) {
 				$output['dislikes'] =(int) $comment['dislikes'];
-
-				// Subtract number of dislikes to popularity value
-				$popularity -= $output['dislikes'];
-			}
-		}
-
-		// Add comment to popular comments list if popular enough
-		if ($popular_listed === true) {
-			if ($popularity >= $this->setup->popularityThreshold) {
-				$this->popularList[] = array (
-					'popularity' => $popularity,
-					'key' => $key,
-					'parts' => $key_parts
-				);
 			}
 		}
 

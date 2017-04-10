@@ -104,10 +104,10 @@ class ParseXML extends ReadFiles
 						$newValue .= "\t\t";
 					}
 
-					$newValue .= $line . PHP_EOL;
+					$newValue .= $line . "\n";
 				}
 
-				$value = PHP_EOL . $newValue . "\t";
+				$value = "\n" . $newValue . "\t";
 			}
 
 			$text_node = $dom->createTextNode ($value);
@@ -120,6 +120,9 @@ class ParseXML extends ReadFiles
 
 		// Replace double spaces with single tab
 		$tabbed_dom = str_replace ('  ', "\t", $dom->saveXML ());
+
+		// Convert line endings to OS specific style
+		$tabbed_dom = $this->osLineEndings ($tabbed_dom);
 
 		// Attempt to write file
 		if (file_put_contents ($file, $tabbed_dom, LOCK_EX)) {

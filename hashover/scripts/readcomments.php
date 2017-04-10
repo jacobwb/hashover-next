@@ -33,8 +33,11 @@ class ReadComments
 	public $data;
 	public $commentList = array ();
 	public $threadCount = array ();
-	public $totalCount = 1;
 	public $primaryCount = 1;
+	public $totalCount = 1;
+	public $primaryDeletedCount = 0;
+	public $collapsedDeletedCount = 0;
+	public $totalDeletedCount = 0;
 
 	public function __construct (Setup $setup)
 	{
@@ -52,15 +55,16 @@ class ReadComments
 	public function queryComments ()
 	{
 		// Query a list of comments
-		$this->commentList = $this->data->query ();
+		$comment_list = $this->data->query ();
 
 		// Organize comments if comments could be queried
-		if ($this->commentList !== false) {
+		if ($comment_list !== false) {
+			$this->commentList = $comment_list;
 			$this->organizeComments ();
 		}
 	}
 
-	// Count the comments
+	// Counts a comment
 	public function countComment ($comment)
 	{
 		// Count replies
@@ -85,20 +89,55 @@ class ReadComments
 			$this->threadCount[$comment] = 1;
 		}
 
-		// Count all comments
+		// Count all other comments
 		$this->totalCount++;
 	}
 
-	// Check for missing comments
-	protected function findMissingComments ($key_parts)
+	// Explode a string, cast substrings to integers
+	protected function intExplode ($delimiter, $string)
 	{
+		$parts = explode ($delimiter, $string);
+		$ints = array ();
+
+		for ($i = 0, $il = count ($parts); $i < $il; $i++) {
+			$ints[] = (int)($parts[$i]);
+		}
+
+		return $ints;
+	}
+
+	// Counts a deleted comment
+	public function countDeleted ($comment)
+	{
+		// Count deleted replies
+		if (strpos ($comment, '-') === false) {
+			$this->primaryDeletedCount++;
+		}
+
+		// Get count from comment key
+		$comment_parts = $this->intExplode ('-', $comment);
+		$comment_count = array_sum ($comment_parts);
+
+		// Count collapsed deleted comments
+		if ($comment_count > $this->setup->collapseLimit) {
+			$this->collapsedDeletedCount++;
+		}
+
+		// Count all other deleted comments
+		$this->totalDeletedCount++;
+	}
+
+	// Check for missing comments
+	protected function findMissingComments ($key)
+	{
+		// Get integers from key
+		$key_parts = $this->intExplode ('-', $key);
+
 		// Initial comment tree
 		$comment_tree = '';
 
 		// Run through each key
-		foreach ($key_parts as $key => $value) {
-			$reply =(int) $value;
-
+		foreach ($key_parts as $key => $reply) {
 			// Check for comments counting backward from the current
 			for ($i = 1; $i <= $reply; $i++) {
 				// Current level to check for
@@ -115,6 +154,7 @@ class ReadComments
 
 					// Count the missing comment
 					$this->countComment ($current);
+					$this->countDeleted ($current);
 				}
 			}
 
@@ -132,7 +172,7 @@ class ReadComments
 	{
 		foreach ($this->commentList as $key) {
 			// Check for missing comments
-			$this->findMissingComments (explode ('-', $key));
+			$this->findMissingComments ($key);
 
 			// Count comment
 			$this->countComment ($key);
@@ -149,7 +189,7 @@ class ReadComments
 		$limit_count = 0;
 		$allowed_count = 0;
 
-		foreach ($this->commentList as $key => $comment) {
+		foreach ($this->commentList as $i => $key) {
 			// Skip until starting point is reached
 			if ($limit_count < $start) {
 				$limit_count++;
@@ -162,21 +202,28 @@ class ReadComments
 			}
 
 			// Skip deleted comments
-			if ($comment === 'missing') {
-				$comments[$key]['status'] = 'missing';
+			if ($key === 'missing') {
+				$comments[$i]['status'] = 'missing';
 				continue;
 			}
 
 			// Read comment
-			$read_comment = $this->data->read ($comment);
+			$comment = $this->data->read ($key);
 
 			// See if it read successfully
-			if ($read_comment !== false) {
+			if ($comment !== false) {
 				// If so, add the comment to output
-				$comments[$key] = $read_comment;
+				$comments[$i] = $comment;
+
+				// And count deleted status comments
+				if (!empty ($comment['status'])
+				    and $comment['status'] === 'deleted')
+				{
+					$this->countDeleted ($key);
+				}
 			} else {
 				// If not, set comment status as a read error
-				$comments[$key]['status'] = 'read-error';
+				$comments[$i]['status'] = 'read-error';
 				continue;
 			}
 
