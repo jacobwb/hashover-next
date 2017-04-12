@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2015 Jacob Barkdull
+// Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -29,8 +29,28 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class SpamCheck
 {
-	public $blocklist = '../blocklist.txt';
+	public $blocklist = '../blocklist.json';
 	public $error;
+
+	// Compare array of IP addresses to user's IP
+	public function checkIPs ($ips = array ())
+	{
+		// Do nothing if input isn't an array
+		if (!is_array ($ips)) {
+			return false;
+		}
+
+		// Run through each IP
+		for ($ip = count ($ips) - 1; $ip >= 0; $ip--) {
+			// Return true if they match
+			if ($ips[$ip] === $_SERVER['REMOTE_ADDR']) {
+				return true;
+			}
+		}
+
+		// Otherwise, return false
+		return false;
+	}
 
 	// Return false if visitor's IP address is in block list file
 	public function checkList ()
@@ -40,14 +60,17 @@ class SpamCheck
 			return false;
 		}
 
-		// Convert blocklist into array
-		$ips = explode (PHP_EOL, file_get_contents ($this->blocklist));
+		// Read blocklist file
+		$data = @file_get_contents ($this->blocklist);
 
-		// Run through each IP comparing them to user's IP
-		for ($ip = count ($ips) - 1; $ip >= 0; $ip--) {
-			// Return true if they match
-			if ($ips[$ip] === $_SERVER['REMOTE_ADDR']) {
-				return true;
+		// Check for file read error
+		if ($data !== false) {
+			// Parse blocklist file
+			$blocklist = @json_decode ($data, true);
+
+			// Check user's IP address against blocklist
+			if ($blocklist !== null) {
+				return $this->checkIPs ($blocklist);
 			}
 		}
 
@@ -117,13 +140,8 @@ class SpamCheck
 			// If so, convert CSV database into array
 			$ips = explode (',', file_get_contents ($spam_database));
 
-			// Run through each IP comparing them to user's IP
-			for ($ip = count ($ips) - 1; $ip >= 0; $ip--) {
-				// Return true if they match
-				if ($ips[$ip] === $_SERVER['REMOTE_ADDR']) {
-					return true;
-				}
-			}
+			// And check user's IP address against CSV database
+			return $this->checkIPs ($ips);
 		} else {
 			// If not, set error message
 			$this->error = 'No local database found!';
