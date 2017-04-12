@@ -2666,7 +2666,7 @@ HashOver.init = function ()
 
 <?php if ($hashover->setup->collapsesUI !== false): ?>
 	// Decide button text
-	var uncollapseText = (totalCount > 1) ? '<?php echo $show_number_comments; ?>' : locale.postCommentOn;
+	var uncollapseText = (totalCount >= 1) ? '<?php echo $show_number_comments; ?>' : locale.postCommentOn;
 
 	// Create hyperlink to uncollapse the comment UI
 	var uncollapseUILink = createElement ('a', {
