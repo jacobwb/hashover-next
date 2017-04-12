@@ -29,28 +29,25 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 
 class SpamCheck
 {
+	public $blocklist = '../blocklist.txt';
 	public $error;
-
-	public function __construct ()
-	{
-		// Blocklist file
-		$this->blocklist = '../blocklist.txt';
-	}
 
 	// Return false if visitor's IP address is in block list file
 	public function checkList ()
 	{
 		// Check if blocklist file exists
-		if (file_exists ($this->blocklist)) {
-			// Convert blocklist into array
-			$ips = explode (PHP_EOL, file_get_contents ($this->blocklist));
+		if (!file_exists ($this->blocklist)) {
+			return false;
+		}
 
-			// Run through each IP comparing them to user's IP
-			for ($ip = count ($ips) - 1; $ip >= 0; $ip--) {
-				// Return true if they match
-				if ($ips[$ip] === $_SERVER['REMOTE_ADDR']) {
-					return true;
-				}
+		// Convert blocklist into array
+		$ips = explode (PHP_EOL, file_get_contents ($this->blocklist));
+
+		// Run through each IP comparing them to user's IP
+		for ($ip = count ($ips) - 1; $ip >= 0; $ip--) {
+			// Return true if they match
+			if ($ips[$ip] === $_SERVER['REMOTE_ADDR']) {
+				return true;
 			}
 		}
 
