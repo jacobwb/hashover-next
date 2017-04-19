@@ -334,24 +334,27 @@ class Setup extends Settings
 	protected function getIgnoredQueries ()
 	{
 		// Ignored URL queries list file
-		$ignored_queries_file = $this->getAbsolutePath ('ignore-queries.txt');
+		$ignored_queries = $this->getAbsolutePath ('ignored-queries.json');
+
+		// Queries to be ignored
+		$queries = $this->ignoredQueries;
 
 		// Check if ignored URL queries list file exists
-		if (file_exists ($ignored_queries_file)) {
+		if (file_exists ($ignored_queries)) {
 			// If so, get ignored URL queries list
-			$data = @file_get_contents ($ignored_queries_file);
+			$data = @file_get_contents ($ignored_queries);
 
-			// Check if file read successfully
-			if ($data !== false) {
-				// If so, merge ignored URL queries list to default list
-				$ignored_queries = explode (PHP_EOL, $data);
-				$ignored_queries = array_merge ($ignored_queries, $this->ignoredQueries);
+			// Parse ignored URL queries list JSON
+			$json = @json_decode ($data, true);
 
-				return $ignored_queries;
+			// Check if file parsed successfully
+			if ($json !== null) {
+				// If so, merge ignored URL queries file with defaults
+				$queries = array_merge ($json, $queries);
 			}
 		}
 
-		return $this->ignoredQueries;
+		return $queries;
 	}
 
 	public function setPageURL ($url = '')
