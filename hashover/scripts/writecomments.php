@@ -158,7 +158,7 @@ class WriteComments extends PostData
 
 		$this->metalevels = array (
 			$setup->dir,
-			$setup->rootDirectory . '/pages'
+			$setup->getAbsolutePath ('pages')
 		);
 
 		// Default email headers

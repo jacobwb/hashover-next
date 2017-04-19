@@ -135,7 +135,8 @@ function parseTemplate (object, count, sort, method) {
 <?php
 
 	// Load HTML template
-	$theme_layout = explode (PHP_EOL, file_get_contents ($hashover->setup->rootDirectory . '/themes/' . $hashover->setup->theme . '/widget-layout.html'));
+	$html_template = $hashover->setup->getAbsolutePath ('themes/' . $hashover->setup->theme . '/widget-layout.html');
+	$theme_layout = explode (PHP_EOL, file_get_contents ($html_template));
 	$theme_layout = str_replace ("\t", '\t', $theme_layout);
 
 	for ($line = 0, $length = count ($theme_layout); $line < $length; $line++) {

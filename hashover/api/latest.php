@@ -123,7 +123,7 @@ try {
 		}
 	}
 
-	if (!include ($hashover->setup->rootDirectory . '/scripts/widget-output.php')) {
+	if (!include ($hashover->setup->getAbsolutePath ('scripts/widget-output.php'))) {
 		exit ('document.write (\'<b>HashOver</b>: Error! File "widget-output.php" could not be included!\');');
 	}
 

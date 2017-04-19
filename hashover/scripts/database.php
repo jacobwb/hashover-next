@@ -41,7 +41,8 @@ class Database
 
 		try {
 			if ($setup->databaseType === 'sqlite') {
-				$this->database = new \PDO ('sqlite:' . $setup->rootDirectory . '/pages/' . $setup->databaseName . '.sqlite');
+				$sqlite_file = $setup->getAbsolutePath ('pages/' . $setup->databaseName . '.sqlite');
+				$this->database = new \PDO ('sqlite:' . $sqlite_file);
 			} else {
 				$sql_connection = 'host=' . $setup->databaseHost . ';'
 				                . 'dbname=' . $setup->databaseName . ';'

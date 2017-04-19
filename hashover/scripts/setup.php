@@ -41,12 +41,15 @@ class Setup extends Settings
 	public $URLQueries;
 	public $executingScript = false;
 
-	// Default metadata
-	public $metadata = array (
-		'title' => '',
-		'url' => '',
-		'status' => 'open',
-		'latest' => array ()
+	// Required extensions to check for
+	public $extensions = array (
+		'date',
+		'dom',
+		'mbstring',
+		'mcrypt',
+		'pcre',
+		'PDO',
+		'SimpleXML'
 	);
 
 	// Characters that aren't allowed in directory names
@@ -69,14 +72,18 @@ class Setup extends Settings
 		' '
 	);
 
-	public $extensions = array (
-		'date',
-		'dom',
-		'mbstring',
-		'mcrypt',
-		'pcre',
-		'PDO',
-		'SimpleXML'
+	// HashOver-specific URL queries to be ignored
+	public $ignoredQueries = array (
+		'hashover-reply',
+		'hashover-edit'
+	);
+
+	// Default metadata
+	public $metadata = array (
+		'title' => '',
+		'url' => '',
+		'status' => 'open',
+		'latest' => array ()
 	);
 
 	public function __construct (array $usage)
@@ -98,7 +105,7 @@ class Setup extends Settings
 		$this->extensionsLoaded ($this->extensions);
 
 		// JSON settings file path
-		$json_settings = $this->rootDirectory . '/settings.json';
+		$json_settings = $this->getAbsolutePath ('settings.json');
 
 		// Check for JSON settings file; parse it if it exists
 		if (file_exists ($json_settings)) {
@@ -168,10 +175,18 @@ class Setup extends Settings
 		}
 	}
 
+	public function getAbsolutePath ($file)
+	{
+		return $this->rootDirectory . '/' . trim ($file, '/');
+	}
+
 	protected function JSONSettings ($path)
 	{
+		// Get JSON data
+		$data = @file_get_contents ($path);
+
 		// Load and decode JSON settings file
-		$json_settings = json_decode (file_get_contents ($path), true);
+		$json_settings = @json_decode ($data, true);
 
 		// Return void on failure
 		if ($json_settings === null) {
@@ -313,7 +328,30 @@ class Setup extends Settings
 
 		// Final comment directory name
 		$this->threadDirectory = $directory_name;
-		$this->dir = $this->rootDirectory . '/pages/' . $directory_name;
+		$this->dir = $this->getAbsolutePath ('pages/' . $directory_name);
+	}
+
+	protected function getIgnoredQueries ()
+	{
+		// Ignored URL queries list file
+		$ignored_queries_file = $this->getAbsolutePath ('ignore-queries.txt');
+
+		// Check if ignored URL queries list file exists
+		if (file_exists ($ignored_queries_file)) {
+			// If so, get ignored URL queries list
+			$data = @file_get_contents ($ignored_queries_file);
+
+			// Check if file read successfully
+			if ($data !== false) {
+				// If so, merge ignored URL queries list to default list
+				$ignored_queries = explode (PHP_EOL, $data);
+				$ignored_queries = array_merge ($ignored_queries, $this->ignoredQueries);
+
+				return $ignored_queries;
+			}
+		}
+
+		return $this->ignoredQueries;
 	}
 
 	public function setPageURL ($url = '')
@@ -345,31 +383,23 @@ class Setup extends Settings
 				$this->filePath = $url_parts['path'];
 			}
 
+			// Remove unwanted URL queries
 			if (!empty ($url_parts['query'])) {
-				$url_parts['query'] = explode ('&', $url_parts['query']);
-				$ignore_queries = array ('hashover-reply', 'hashover-edit');
-				$ignore_queries_file = $this->rootDirectory . '/ignore-queries.txt';
+				$url_queries = explode ('&', $url_parts['query']);
+				$ignored_queries = $this->getIgnoredQueries ();
 
-				// Remove unwanted URL queries
-				if (file_exists ($ignore_queries_file)) {
-					$ignore_queries_file = explode (PHP_EOL, file_get_contents ($ignore_queries_file));
-					$ignore_queries = array_merge ($ignore_queries_file, $ignore_queries);
-				}
+				for ($q = 0, $ql = count ($url_queries); $q < $ql; $q++) {
+					if (!in_array ($url_queries[$q], $ignored_queries, true)) {
+						$equals = explode ('=', $url_queries[$q]);
 
-				for ($q = 0, $ql = count ($url_parts['query']); $q < $ql; $q++) {
-					if (!in_array ($url_parts['query'][$q], $ignore_queries, true)) {
-						$equals = explode ('=', $url_parts['query'][$q]);
-
-						if (!in_array ($equals[0], $ignore_queries, true)) {
-							$this->URLQueryList[] = $url_parts['query'][$q];
+						if (!in_array ($equals[0], $ignored_queries, true)) {
+							$this->URLQueryList[] = $url_queries[$q];
 						}
 					}
 				}
 
 				$this->URLQueries = implode ('&', $this->URLQueryList);
 				$this->threadDirectory .= '-' . $this->URLQueries;
-			} else {
-				$url_parts['query'] = array ();
 			}
 
 			// Encode HTML characters in page URL

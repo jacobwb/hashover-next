@@ -53,15 +53,12 @@ class ParseJSON extends ReadFiles
 		// Read JSON comment file
 		$data = @file_get_contents ($file);
 
-		// Check for file read error
-		if ($data !== false) {
-			// Parse JSON comment file
-			$json = @json_decode ($data, true);
+		// Parse JSON comment file
+		$json = @json_decode ($data, true);
 
-			// Check for JSON parse error
-			if ($json !== null) {
-				return $json;
-			}
+		// Check for JSON parse error
+		if ($json !== null) {
+			return $json;
 		}
 
 		return false;

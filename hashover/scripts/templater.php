@@ -41,11 +41,11 @@ class Templater
 	{
 		$this->mode = $mode;
 		$this->setup = $setup;
-		$theme = $this->setup->rootDirectory . '/themes/' . $this->setup->theme . '/layout.html';
+		$theme = $this->setup->getAbsolutePath ('themes/' . $this->setup->theme . '/layout.html');
 
 		// Use default theme if theme in settings doesn't exist
 		if (!file_exists ($theme)) {
-			$theme = $this->setup->rootDirectory . '/themes/default/layout.html';
+			$theme = $this->setup->getAbsolutePath ('themes/default/layout.html');
 		}
 
 		// Load and escape HTML template
