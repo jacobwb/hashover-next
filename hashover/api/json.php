@@ -33,6 +33,9 @@ require ('standard-setup.php');
 require ('javascript-setup.php');
 require ('oop-setup.php');
 
+// Tell browser output is JSON
+header ('Content-Type: application/json');
+
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json', 'api');

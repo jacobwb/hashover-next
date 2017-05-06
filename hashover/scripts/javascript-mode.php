@@ -143,6 +143,9 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 }
 
 ?>
+// @licstart  The following is the entire license notice for the
+//  JavaScript code in this page.
+//
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
 //
@@ -158,6 +161,9 @@ function js_regex_array ($regexes, $strings, $tabs = "\t")
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
+//
+// @licend  The above is the entire license notice for the
+//  JavaScript code in this page.
 
 
 // Initial HashOver object

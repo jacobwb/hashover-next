@@ -1,5 +1,5 @@
 // @licstart  The following is the entire license notice for the
-// JavaScript code in this page.
+//  JavaScript code in this page.
 //
 // Copyright (C) 2010-2017 Jacob Barkdull
 // This file is part of HashOver.
@@ -17,8 +17,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 //
-// @licend  The above is the entire license notice
-// for the JavaScript code in this page.
+// @licend  The above is the entire license notice for the
+//  JavaScript code in this page.
+//
 //--------------------
 //
 // Get Complete Source Code:
