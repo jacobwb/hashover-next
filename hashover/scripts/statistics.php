@@ -80,11 +80,11 @@ class Statistics
 		}
 
 		// Statistics inner-comment
-		$statistics = PHP_EOL . PHP_EOL;
-		$statistics .= "\t" . 'HashOver Statistics:' . PHP_EOL . PHP_EOL;
-		$statistics .= "\t\t" . 'Execution Time     : ' . $execution_stat . PHP_EOL;
-		$statistics .= "\t\t" . 'Script Memory Peak : ' . $this->scriptMemory . ' MiB' . PHP_EOL;
-		$statistics .= "\t\t" . 'System Memory Peak : ' . $this->systemMemory . ' MiB';
+		$statistics  = PHP_EOL . PHP_EOL;
+		$statistics .= "\t" . 'HashOver Statistics' . PHP_EOL . PHP_EOL;
+		$statistics .= "\t" . 'Execution Time     : ' . $execution_stat . PHP_EOL;
+		$statistics .= "\t" . 'Script Memory Peak : ' . $this->scriptMemory . ' MiB' . PHP_EOL;
+		$statistics .= "\t" . 'System Memory Peak : ' . $this->systemMemory . ' MiB';
 		$statistics .= PHP_EOL . PHP_EOL;
 
 		// Return statistics as JavaScript comment

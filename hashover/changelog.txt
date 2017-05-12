@@ -1,3 +1,37 @@
+Changes by Jacob Barkdull 2017-05-12
+--------------------------------------------------------------------------------
+* hashover/scripts/javascript-mode.php
+
+	- Major code refactoring.
+	- `HashOver` object converted to constructor function.
+	- `HashOver` constructor `init ()` method split into multiple methods.
+	- High likelihood of new expected bugs, please report.
+
+
+* hashover/scripts/phpmode.php
+
+	- Fixed: Thread hyperlink ID no longer uses parent comment's permalink.
+
+
+* Fixed: When HashOver is the first script tag (index 0) the `$executingScript`
+  property was being set as `false`, instead of zero as intended.
+
+* Fixed: "Edit" hyperlink being displayed to anonymous users.
+* Fixed: All anonymous users being treated as the same user.
+* `HTMLOutput` class split into new `FormUI` and `CommentsUI` classes.
+* CSS class `hashover-sort-div` renamed to `hashover-sort-section`.
+* Default theme: Minor change in look of sort select element.
+* Other minor bug fixes.
+
+
+Changes by Jacob Barkdull 2017-05-06
+--------------------------------------------------------------------------------
+* Moved IP blocklist file to JSON format.
+* Moved ignored URL query list file to JSON format.
+* Marked JavaScript files as Free Software readable by GNU LibreJS.
+* Improvements to GNU LibreJS compatibility.
+
+
 Changes by Jacob Barkdull 2017-04-09
 --------------------------------------------------------------------------------
 * Added new language setting option

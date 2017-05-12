@@ -27,7 +27,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	}
 }
 
-class HTMLOutput
+class FormUI
 {
 	public $setup;
 	public $mode;
@@ -82,19 +82,6 @@ class HTMLOutput
 		$this->defaultLoginInputs = $this->loginInputs ();
 	}
 
-	protected function injectVar ($var)
-	{
-		// Return variable as JavaScript concatenation statement
-		if ($this->mode !== 'php') {
-			if (!empty ($var)) {
-				return '\' + ' . $var . ' + \'';
-			}
-		}
-
-		// Return variable normally by default
-		return $var;
-	}
-
 	// Re-encode a URL
 	protected function safeURLEncode ($url)
 	{
@@ -102,9 +89,9 @@ class HTMLOutput
 	}
 
 	// Creates input elements for user login information
-	protected function loginInputs ($permalink = '', $editForm = false, $name = '', $website = '')
+	protected function loginInputs ($permalink = '', $edit_form = false, $name = '', $website = '')
 	{
-		$permalink = !empty ($permalink) ? '-' . $this->injectVar ($permalink) : '';
+		$permalink = !empty ($permalink) ? '-' . $permalink : '';
 
 		// Login input attribute information
 		$login_input_attributes = array (
@@ -154,11 +141,11 @@ class HTMLOutput
 		);
 
 		// Change input values to specified values
-		if ($editForm === true) {
-			$login_input_attributes['name']['input-value'] = $this->injectVar ($name);
+		if ($edit_form === true) {
+			$login_input_attributes['name']['input-value'] = $name;
 			$login_input_attributes['password']['placeholder'] = $this->locale->get ('confirm-password');
 			$login_input_attributes['password']['input-title'] = $this->locale->get ('confirm-password');
-			$login_input_attributes['website']['input-value'] = $this->injectVar ($website);
+			$login_input_attributes['website']['input-value'] = $website;
 		}
 
 		// Create wrapper element for styling login inputs
@@ -273,243 +260,6 @@ class HTMLOutput
 		return $avatar;
 	}
 
-	// Creates a wrapper element for each comment
-	public function commentWrapper ($permalink, $classes = '', $innerHTML = '')
-	{
-		$comment_wrapper = new HTMLTag ('div', array (
-			'id' => $this->injectVar ($permalink),
-			'class' => 'hashover-comment'
-		), false);
-
-		if ($this->mode !== 'php') {
-			$comment_wrapper->appendAttribute ('class', $this->injectVar ($classes), false);
-			$comment_wrapper->innerHTML ($this->injectVar ($innerHTML));
-
-			return $comment_wrapper->asHTML ();
-		}
-
-		return $comment_wrapper;
-	}
-
-	// Creates wrapper element to name element
-	public function nameWrapper ($name_Link, $name_class)
-	{
-		$name_wrapper = new HTMLTag ('span', array (
-			'class' => 'hashover-comment-name ' . $this->injectVar ($name_class),
-			'innerHTML' => $this->injectVar ($name_Link)
-		), false);
-
-		return $name_wrapper->asHTML ();
-	}
-
-	// Creates name hyperlink/span element
-	public function nameElement ($element, $name, $permalink, $href = '')
-	{
-		$name_text = $this->injectVar ($name);
-		$name_class = 'hashover-name-' . $this->injectVar ($permalink);
-
-		// Decide what kind of element to create
-		switch ($element) {
-			case 'a': {
-				// A hyperlink pointing to the user's input URL
-				$name_link = new HTMLTag ('a', array (
-					'href' => $this->injectVar ($href),
-					'class' => $name_class,
-					'rel' => 'noopener noreferrer',
-					'target' => '_blank',
-					'title' => $name_text,
-					'innerHTML' => $name_text
-				), false);
-
-				break;
-			}
-
-			case 'span': {
-				// A plain wrapper element
-				$name_link = new HTMLTag ('span', array (
-					'class' => $name_class,
-					'innerHTML' => $name_text
-				), false);
-
-				break;
-			}
-		}
-
-		return $name_link->asHTML ();
-	}
-
-	// Creates "Top of Thread" hyperlink element
-	public function threadLink ($permalink, $parent, $name)
-	{
-		// Get locale string
-		$thread_locale = $this->locale->get ('thread');
-
-		// Inject OP's name into the locale
-		$inner_html = sprintf ($thread_locale, $this->injectVar ($name));
-
-		// Create hyperlink element
-		$thread_link = new HTMLTag ('a', array (
-			'href' => '#' . $this->injectVar ($parent),
-			'id' => 'hashover-thread-link-' . $this->injectVar ($permalink),
-			'class' => 'hashover-thread-link',
-			'title' => $this->locale->get ('thread-tip'),
-			'innerHTML' => $inner_html
-		), false);
-
-		return $thread_link->asHTML ();
-	}
-
-	// Creates hyperlink with URL queries to link reference
-	protected function queryLink ($href = '', array $queries = array ())
-	{
-		$link = new HTMLTag ('a', array ('href' => $href), false);
-		$queries = array_merge ($this->setup->URLQueryList, $queries);
-
-		// Add URL queries to link reference
-		if (!empty ($queries)) {
-			$link->appendAttribute ('href', '?' . implode ('&', $queries), false);
-		}
-
-		return $link;
-	}
-
-	// Creates date/permalink hyperlink element
-	public function dateLink ($permalink, $date)
-	{
-		// Create hyperlink element
-		$date_link = $this->queryLink ($this->setup->filePath);
-
-		// Append more attributes
-		$date_link->appendAttributes (array (
-			'href' => '#' . $this->injectVar ($permalink),
-			'class' => 'hashover-date-permalink',
-			'title' => 'Permalink',
-			'innerHTML' => $this->injectVar ($date)
-		), false);
-
-		return $date_link->asHTML ();
-	}
-
-	// Creates element to hold a count of likes/dislikes each comment has
-	public function likeCount ($type, $permalink, $text)
-	{
-		// CSS class
-		$class = 'hashover-' . $type;
-
-		// Create element
-		$count = new HTMLTag ('span', array (
-			'id' => $class . '-' . $this->injectVar ($permalink),
-			'class' => $class,
-			'innerHTML' => $this->injectVar ($text)
-		), false);
-
-		return $count->asHTML ();
-	}
-
-	// Creates "Like"/"Dislike" hyperlink element
-	public function likeLink ($type, $permalink, $class, $title, $text)
-	{
-		// Create hyperlink element
-		$link = new HTMLTag ('a', array (
-			'href' => '#',
-			'id' => 'hashover-' . $type . '-' . $this->injectVar ($permalink),
-			'class' => $this->injectVar ($class),
-			'title' => $this->injectVar ($title),
-			'innerHTML' => $this->injectVar ($text)
-		), false);
-
-		return $link->asHTML ();
-	}
-
-	// Creates a form control hyperlink element
-	public function formLink ($type, $permalink, $class = '', $title = '')
-	{
-		$form = 'hashover-' . $type;
-		$permalink = $this->injectVar ($permalink);
-		$link = $this->queryLink ('', array ($form . '=' . $permalink));
-		$title_locale = ($type === 'reply') ? 'reply-to-comment' : 'edit-your-comment';
-
-		// Create more attributes
-		$link->createAttributes (array (
-			'id' => $form. '-link-' . $permalink,
-			'class' => 'hashover-comment-' . $type,
-			'title' => $this->locale->get ($title_locale)
-		));
-
-		// Append href attribute
-		$link->appendAttribute ('href', '#' . $form . '-' . $permalink, false);
-
-		// Append attributes
-		if ($type === 'reply') {
-			$link->appendAttributes (array (
-				'class' => $this->injectVar ($class),
-				'title' => '- ' . $this->injectVar ($title)
-			));
-		}
-
-		// Add link text
-		$link->innerHTML ($this->locale->get ($type));
-
-		return $link->asHTML ();
-	}
-
-	// Creates "Cancel" hyperlink element
-	public function cancelLink ($permalink, $for, $class = '')
-	{
-		$cancel_link = $this->queryLink ($this->setup->filePath);
-		$cancel_locale = $this->locale->get ('cancel');
-
-		// Append href attribute
-		$cancel_link->appendAttribute ('href', '#' . $permalink, false);
-
-		// Create more attributes
-		$cancel_link->createAttributes (array (
-			'class' => 'hashover-comment-' . $for,
-			'title' => $cancel_locale
-		));
-
-		// Append optional class
-		if (!empty ($class)) {
-			$cancel_link->appendAttribute ('class', $class);
-		}
-
-		// Add "Cancel" hyperlink text
-		$cancel_link->innerHTML ($cancel_locale);
-
-		return $cancel_link->asHTML ();
-	}
-
-	public function userAvatar ($text, $href, $src)
-	{
-		// If avatars set to images
-		if ($this->setup->iconMode !== 'none') {
-			// Create wrapper element for avatar image
-			$avatar_wrapper = new HTMLTag ('span', array (
-				'class' => 'hashover-avatar'
-			), false);
-
-			if ($this->setup->iconMode === 'image') {
-				// Create avatar image element
-				$comments_avatar = new HTMLTag ('div', array (
-					'style' => $this->getAvatarBackground ($this->injectVar ($src))
-				), false);
-			} else {
-				// Avatars set to count
-				// Create element displaying comment number user will be
-				$comments_avatar = new HTMLTag ('a', array (
-					'href' => '#' . $this->injectVar ($href),
-					'title' => 'Permalink',
-					'innerHTML' => $this->injectVar ($text)
-				), false);
-			}
-
-			// Add comments avatar to avatar image wrapper element
-			$avatar_wrapper->appendChild ($comments_avatar);
-
-			return $avatar_wrapper->asHTML ();
-		}
-	}
-
 	protected function subscribeLabel ($id = '', $class = 'main', $checked = true)
 	{
 		// Create subscribe checkbox label element
@@ -520,7 +270,7 @@ class HTMLOutput
 		));
 
 		if (!empty ($id)) {
-			$subscribe_label->appendAttribute ('for', '-' . $this->injectVar ($id), false);
+			$subscribe_label->appendAttribute ('for', '-' . $id, false);
 		}
 
 		// Create subscribe element checkbox
@@ -531,7 +281,7 @@ class HTMLOutput
 		), false, true);
 
 		if (!empty ($id)) {
-			$subscribe->appendAttribute ('id', '-' . $this->injectVar ($id), false);
+			$subscribe->appendAttribute ('id', '-' . $id, false);
 		}
 
 		// Check checkbox
@@ -564,7 +314,7 @@ class HTMLOutput
 
 	protected function commentForm (HTMLTag $form, $type, $placeholder, $text, $permalink = '')
 	{
-		$permalink = !empty ($permalink) ? '-' . $this->injectVar ($permalink) : '';
+		$permalink = !empty ($permalink) ? '-' . $permalink : '';
 		$title_locale = ($type === 'reply') ? 'reply-form' : 'comment-form';
 
 		// Create textarea
@@ -685,7 +435,7 @@ class HTMLOutput
 
 	protected function acceptedHTML ($type, $permalink = '')
 	{
-		$permalink = !empty ($permalink) ? '-' . $this->injectVar ($permalink) : '';
+		$permalink = !empty ($permalink) ? '-' . $permalink : '';
 		$accepted_format = $this->locale->get ('comment-formatting');
 
 		// Create accepted HTML message revealer hyperlink
@@ -700,7 +450,7 @@ class HTMLOutput
 		return $accepted_html;
 	}
 
-	public function initialHTML (array $popular_list, $hashover_wrapper = true)
+	public function initialHTML ($hashover_wrapper = true)
 	{
 		// Create element that HashOver comments will appear in
 		$hashover_element = new HTMLTag ('div', array (
@@ -1056,7 +806,7 @@ class HTMLOutput
 			$hashover_element->appendChild ($form_section);
 		}
 
-		if (!empty ($popular_list)) {
+		if ($this->commentCounts['popular'] > 0) {
 			// Create wrapper element for popular comments
 			$popular_section = new HTMLTag ('div', array (
 				'id' => 'hashover-popular-section'
@@ -1080,9 +830,9 @@ class HTMLOutput
 			));
 
 			// Add popular comments title text
-			$popPlural = (count ($popular_list) !== 1) ? 1 : 0;
+			$popular_plural = ($this->commentCounts['popular'] !== 1) ? 1 : 0;
 			$popular_comments_locale = $this->locale->get ('popular-comments');
-			$pop_count_element->innerHTML ($popular_comments_locale[$popPlural]);
+			$pop_count_element->innerHTML ($popular_comments_locale[$popular_plural]);
 
 			// Add popular comments title element to wrapper element
 			$pop_count_wrapper->appendChild ($pop_count_element);
@@ -1229,7 +979,7 @@ class HTMLOutput
 
 		// Create element that will hold the comments
 		$sort_div = new HTMLTag ('div', array (
-			'id' => 'hashover-sort-div'
+			'id' => 'hashover-sort-section'
 		), false);
 
 		// Add comments to HashOver element
@@ -1356,409 +1106,5 @@ class HTMLOutput
 
 		// Return just the HashOver wrapper element's innerHTML
 		return $hashover_element->innerHTML;
-	}
-
-	public function cancelButton ($type, $permalink)
-	{
-		$permalink = $this->injectVar ($permalink);
-		$cancel_button = $this->queryLink ($this->setup->filePath);
-		$class = 'hashover-' . $type . '-cancel';
-		$cancel_locale = $this->locale->get ('cancel');
-
-		// Add ID attribute with JavaScript variable single quote break out
-		if (!empty ($permalink)) {
-			$cancel_button->createAttribute ('id', $class . '-' . $permalink);
-		}
-
-		// Append href attribute
-		$cancel_button->appendAttribute ('href', '#' . $permalink, false);
-
-		// Create more attributes
-		$cancel_button->createAttributes (array (
-			'class' => 'hashover-submit ' . $class,
-			'title' => $cancel_locale,
-			'innerHTML' => $cancel_locale
-		));
-
-		return $cancel_button;
-	}
-
-	public function replyForm ($permalink = '', $file = '', $subscribed = true)
-	{
-		// Create HashOver reply form
-		$reply_form = new HTMLTag ('div', array (
-			'class' => 'hashover-balloon'
-		));
-
-		// If avatars are enabled
-		if ($this->setup->iconMode !== 'none') {
-			// Create avatar element for HashOver reply form
-			$reply_avatar = new HTMLTag ('div', array (
-				'class' => 'hashover-avatar-image'
-			));
-
-			// Add count element to avatar element
-			$reply_avatar->appendChild ($this->avatar ('+'));
-
-			// Add avatar element to inputs wrapper element
-			$reply_form->appendChild ($reply_avatar);
-		}
-
-		// Display default login inputs when logged out
-		if ($this->login->userIsLoggedIn === false) {
-			$reply_login_inputs = $this->loginInputs ($permalink);
-			$reply_form->appendChild ($reply_login_inputs);
-		}
-
-		// Create label element for comment textarea
-		if ($this->setup->usesLabels === true) {
-			$reply_comment_label = new HTMLTag ('label', array (
-				'for' => 'hashover-reply-comment-' . $this->injectVar ($permalink),
-				'class' => 'hashover-comment-label',
-				'innerHTML' => $this->locale->get ('reply-to-comment')
-			), false);
-
-			// Add comment label to form element
-			$reply_form->appendChild ($reply_comment_label);
-		}
-
-		// Reply form locale
-		$reply_form_placeholder = $this->locale->get ('reply-form');
-
-		// Create reply textarea element and add it to form element
-		$this->commentForm ($reply_form, 'reply', $reply_form_placeholder, '', $permalink);
-
-		// Add page info fields to reply form
-		$this->pageInfoFields ($reply_form);
-
-		// Create hidden reply to input element
-		if (!empty ($file)) {
-			$reply_to_input = new HTMLTag ('input', array (
-				'type' => 'hidden',
-				'name' => 'reply-to',
-				'value' => $this->injectVar ($file)
-			), false, true);
-
-			// Add hidden reply to input element to form element
-			$reply_form->appendChild ($reply_to_input);
-		}
-
-		// Create reply form footer element
-		$reply_form_footer = new HTMLTag ('div', array (
-			'class' => 'hashover-form-footer'
-		));
-
-		// Create wrapper for form links
-		$reply_form_links_wrapper = new HTMLTag ('span', array (
-			'class' => 'hashover-form-links'
-		));
-
-		// Add checkbox label element to reply form footer element
-		if ($this->setup->fieldOptions['email'] !== false) {
-			if ($this->login->userIsLoggedIn === false or !empty ($this->login->email)) {
-				$reply_form_links_wrapper->appendChild ($this->subscribeLabel ($permalink, 'reply', $subscribed));
-			}
-		}
-
-		// Create and add accepted HTML revealer hyperlink
-		if ($this->mode === 'javascript') {
-			$reply_form_links_wrapper->appendChild ($this->acceptedHTML ('reply', $permalink));
-		}
-
-		// Add reply form links wrapper to reply form footer element
-		$reply_form_footer->appendChild ($reply_form_links_wrapper);
-
-		// Create wrapper for form buttons
-		$reply_form_buttons_wrapper = new HTMLTag ('span', array (
-			'class' => 'hashover-form-buttons'
-		));
-
-		// Create "Cancel" link element
-		if ($this->setup->usesCancelButtons === true) {
-			// Add "Cancel" link element to reply form footer element
-			$reply_cancel_button = $this->cancelButton ('reply', $permalink);
-			$reply_form_buttons_wrapper->appendChild ($reply_cancel_button);
-		}
-
-		// Create "Post Comment" button element
-		$reply_post_button = new HTMLTag ('input', array (), false, true);
-
-		// Add ID attribute with JavaScript variable single quote break out
-		if (!empty ($permalink)) {
-			$reply_post_button->createAttribute ('id', 'hashover-reply-post-' . $this->injectVar ($permalink));
-		}
-
-		// Post reply locale
-		$post_reply = $this->locale->get ('post-reply');
-
-		// Continue with other attributes
-		$reply_post_button->createAttributes (array (
-			'class' => 'hashover-submit hashover-reply-post',
-			'type' => 'submit',
-			'name' => 'post',
-			'value' => $post_reply,
-			'title' => $post_reply
-		));
-
-		// Add "Post Comment" element to reply form footer element
-		$reply_form_buttons_wrapper->appendChild ($reply_post_button);
-
-		// Add reply form buttons wrapper to reply form footer element
-		$reply_form_footer->appendChild ($reply_form_buttons_wrapper);
-
-		// Add reply form footer to reply form element
-		$reply_form->appendChild ($reply_form_footer);
-
-		return $reply_form->asHTML ();
-	}
-
-	public function editForm ($permalink, $file, $name = '', $website = '', $body, $status = '', $subscribed = true)
-	{
-		// "Edit Comment" locale string
-		$edit_comment = $this->locale->get ('edit-comment');
-
-		// "Save Edit" locale string
-		$save_edit = $this->locale->get ('save-edit');
-
-		// "Cancel" locale string
-		$cancel_edit = $this->locale->get ('cancel');
-
-		// "Delete" locale string
-		$delete_comment = $this->locale->get ('delete');
-
-		// Create wrapper element
-		$edit_form = new HTMLTag ('div');
-
-		// Create edit form title element
-		$edit_form_title = new HTMLTag ('div', array (
-			'class' => 'hashover-title hashover-dashed-title',
-			'innerHTML' => $edit_comment
-		), false);
-
-		if ($this->login->userIsAdmin === true) {
-			// Create status dropdown wrapper element
-			$edit_status_wrapper = new HTMLTag ('span', array (
-				'class' => 'hashover-edit-status',
-				'innerHTML' => $this->locale->get ('status')
-			), false);
-
-			// Create select wrapper element
-			$edit_status_select_wrapper = new HTMLTag ('span', array (
-				'class' => 'hashover-select-wrapper'
-			), false);
-
-			// Status dropdown menu options
-			$status_options = array (
-				'approved' => $this->locale->get ('status-approved'),
-				'pending' => $this->locale->get ('status-pending'),
-				'deleted' => $this->locale->get ('status-deleted')
-			);
-
-			// Create status dropdown menu element
-			$edit_status_dropdown = new HTMLTag ('select', array (
-				'id' => 'hashover-edit-status-' . $this->injectVar ($permalink),
-				'name' => 'status',
-				'size' => '1'
-			));
-
-			foreach ($status_options as $value => $inner_html) {
-				// Create status dropdown menu option element
-				$edit_status_option = new HTMLTag ('option', array (
-					'value' => $value,
-					'innerHTML' => $inner_html
-				));
-
-				// Set option as selected if it matches the comment status given
-				if ($value === $status) {
-					$edit_status_option->createAttribute ('selected', 'true');
-				}
-
-				// Add option element to status dropdown menu
-				$edit_status_dropdown->appendChild ($edit_status_option);
-			}
-
-			// Add status dropdown menu to select wrapper element
-			$edit_status_select_wrapper->appendChild ($edit_status_dropdown);
-
-			// Add select wrapper to status dropdown wrapper element
-			$edit_status_wrapper->appendChild ($edit_status_select_wrapper);
-
-			// Add status dropdown wrapper to edit form title element
-			$edit_form_title->appendChild ($edit_status_wrapper);
-		}
-
-		// Append edit form title to edit form wrapper
-		$edit_form->appendChild ($edit_form_title);
-
-		// Append default login inputs
-		$edit_login_inputs = $this->loginInputs ($permalink, true, $name, $website);
-		$edit_form->appendChild ($edit_login_inputs);
-
-		// Create label element for comment textarea
-		if ($this->setup->usesLabels === true) {
-			$edit_comment_label = new HTMLTag ('label', array (
-				'for' => 'hashover-edit-comment-' . $this->injectVar ($permalink),
-				'class' => 'hashover-comment-label',
-				'innerHTML' => $this->locale->get ('edit-your-comment')
-			), false);
-
-			// Add comment label to form element
-			$edit_form->appendChild ($edit_comment_label);
-		}
-
-		// Comment form placeholder text
-		$edit_placeholder = $this->locale->get ('comment-form');
-
-		// Edit form textarea text value
-		$edit_body = $this->injectVar ($body);
-
-		// Create edit textarea element and add it to form element
-		$this->commentForm ($edit_form, 'edit', $edit_placeholder, $edit_body, $permalink);
-
-		// Add page info fields to edit form
-		$this->pageInfoFields ($edit_form);
-
-		// Create hidden comment file input element
-		$edit_file_input = new HTMLTag ('input', array (
-			'type' => 'hidden',
-			'name' => 'file',
-			'value' => $this->injectVar ($file)
-		), false, true);
-
-		// Add hidden page title input element to form element
-		$edit_form->appendChild ($edit_file_input);
-
-		// Create wrapper element for edit form buttons
-		$edit_form_footer = new HTMLTag ('div', array (
-			'class' => 'hashover-form-footer'
-		));
-
-		// Create wrapper for form links
-		$edit_form_links_wrapper = new HTMLTag ('span', array (
-			'class' => 'hashover-form-links'
-		));
-
-		// Add checkbox label element to edit form buttons wrapper element
-		if ($this->setup->fieldOptions['email'] !== false) {
-			$edit_form_links_wrapper->appendChild ($this->subscribeLabel ($permalink, 'edit', $subscribed));
-		}
-
-		// Create and add accepted HTML revealer hyperlink
-		if ($this->mode === 'javascript') {
-			$edit_form_links_wrapper->appendChild ($this->acceptedHTML ('edit', $permalink));
-		}
-
-		// Add edit form links wrapper to edit form footer element
-		$edit_form_footer->appendChild ($edit_form_links_wrapper);
-
-		// Create wrapper for form buttons
-		$edit_form_buttons_wrapper = new HTMLTag ('span', array (
-			'class' => 'hashover-form-buttons'
-		));
-
-		// Create "Cancel" link element
-		if ($this->setup->usesCancelButtons === true) {
-			// Add "Cancel" hyperlink element to edit form footer element
-			$edit_cancel_button = $this->cancelButton ('edit', $permalink);
-			$edit_form_buttons_wrapper->appendChild ($edit_cancel_button);
-		}
-
-		// Create "Post Comment" button element
-		$save_edit_button = new HTMLTag ('input', array (), false, true);
-
-		// Add ID attribute with JavaScript variable single quote break out
-		if (!empty ($permalink)) {
-			$save_edit_button->createAttribute ('id', 'hashover-edit-post-' . $this->injectVar ($permalink));
-		}
-
-		// Continue with other attributes
-		$save_edit_button->createAttributes (array (
-			'class' => 'hashover-submit hashover-edit-post',
-			'type' => 'submit',
-			'name' => 'edit',
-			'value' => $save_edit,
-			'title' => $save_edit
-		));
-
-		// Add "Save Edit" element to edit form footer element
-		$edit_form_buttons_wrapper->appendChild ($save_edit_button);
-
-		// Create "Delete" button element
-		$delete_button = new HTMLTag ('input', array (), false, true);
-
-		// Add ID attribute with JavaScript variable single quote break out
-		if (!empty ($permalink)) {
-			$delete_button->createAttribute ('id', 'hashover-edit-delete-' . $this->injectVar ($permalink));
-		}
-
-		// Continue with other attributes
-		$delete_button->createAttributes (array (
-			'class' => 'hashover-submit hashover-edit-delete',
-			'type' => 'submit',
-			'name' => 'delete',
-			'value' => $delete_comment,
-			'title' => $delete_comment
-		));
-
-		// Add "Delete" element to edit form footer element
-		$edit_form_buttons_wrapper->appendChild ($delete_button);
-
-		// Add edit form buttons wrapper to edit form footer element
-		$edit_form_footer->appendChild ($edit_form_buttons_wrapper);
-
-		// Add form buttons to edit form element
-		$edit_form->appendChild ($edit_form_footer);
-
-		return $edit_form->innerHTML;
-	}
-
-	public function asJSVar ($html, $var_name, $indent = "\t")
-	{
-		// Check if JavaScript minification is enabled
-		if ($this->setup->minifiesJavaScript === true and $this->setup->minifyLevel >= 3) {
-			// If so, remove whitespace collapsing code to a single line
-			$html = str_replace (array ("\t", PHP_EOL), array ('', ' '), $html);
-		} else {
-			// If not, convert literal tabs to JavaScript tabs
-			$html = str_replace ("\t", '\t', $html);
-		}
-
-		// Trim newlines from start of end of input HTML
-		$html = trim ($html, "\r\n");
-
-		// Split the HTML into an array of lines
-		$lines = explode (PHP_EOL, $html);
-		$line_count = count ($lines);
-
-		// Initial output HTML
-		$var = '';
-
-		if ($line_count > 0) {
-			// Variable declaration code line
-			$var .= $indent . 'var ' . $var_name . ' = \'' . $lines[0];
-			$var .= (($line_count > 1) ? '\n' : '') . '\';' . PHP_EOL;
-
-			// Run through the rest of the lines
-			for ($i = 1; $i < $line_count; $i++) {
-				// Skip empty lines
-				if (trim ($lines[$i]) === '') {
-					continue;
-				}
-
-				// Append indentation
-				$var .= $indent;
-
-				// Append variable concatenation code
-				$var .= '    ' . $var_name . ' += \'';
-
-				// Append the current line
-				$var .= $lines[$i];
-
-				// And close concatenation code
-				$var .= '\n\';' . PHP_EOL;
-			}
-		}
-
-		return $var;
 	}
 }

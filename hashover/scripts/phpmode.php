@@ -30,7 +30,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 class PHPMode
 {
 	public $setup;
-	public $html;
+	public $ui;
 	public $locale;
 	public $templater;
 	public $markdown;
@@ -50,10 +50,10 @@ class PHPMode
 	protected $paragraphRegex = '/(?:\r\n|\r|\n){2}/';
 	protected $lineRegex = '/(?:\r\n|\r|\n)/';
 
-	public function __construct (Setup $setup, HTMLOutput $html, array $comments)
+	public function __construct (Setup $setup, CommentsUI $ui, array $comments)
 	{
 		$this->setup = $setup;
-		$this->html = $html;
+		$this->ui = $ui;
 		$this->locale = new Locale ($setup);
 		$this->templater = new Templater ($setup->usage['mode'], $setup);
 		$this->markdown = new Markdown ();
@@ -85,7 +85,7 @@ class PHPMode
 				'action' => $this->setup->httpScripts . '/postcomments.php'
 			));
 
-			$form->innerHTML ($this->html->replyForm ($permalink, $file));
+			$form->innerHTML ($this->ui->replyForm ($permalink, $file));
 
 			return $form->asHTML ();
 		}
@@ -116,7 +116,7 @@ class PHPMode
 				'action' => $this->setup->httpScripts . '/postcomments.php'
 			), false);
 
-			$edit_form = $this->html->editForm ($permalink, $file, $name, $website, $body, $status, $subscribed);
+			$edit_form = $this->ui->editForm ($permalink, $file, $name, $website, $body, $status, $subscribed);
 
 			$form->innerHTML ($edit_form);
 
@@ -126,11 +126,11 @@ class PHPMode
 
 	protected function codeTagReplace ($grp)
 	{
-		$codePlaceholder = $grp[1] . 'CODE_TAG[' . $this->codeTagCount . ']' . $grp[3];
+		$code_placeholder = $grp[1] . 'CODE_TAG[' . $this->codeTagCount . ']' . $grp[3];
 		$this->codeTags[$this->codeTagCount] = trim ($grp[2], "\r\n");
 		$this->codeTagCount++;
 
-		return $codePlaceholder;
+		return $code_placeholder;
 	}
 
 	protected function codeTagReturn ($grp) {
@@ -139,11 +139,11 @@ class PHPMode
 
 	protected function preTagReplace ($grp)
 	{
-		$prePlaceholder = $grp[1] . 'PRE_TAG[' . $this->preTagCount . ']' . $grp[3];
+		$pre_placeholder = $grp[1] . 'PRE_TAG[' . $this->preTagCount . ']' . $grp[3];
 		$this->preTags[$this->preTagCount] = trim ($grp[2], "\r\n");
 		$this->preTagCount++;
 
-		return $prePlaceholder;
+		return $pre_placeholder;
 	}
 
 	protected function preTagReturn ($grp) {
@@ -186,7 +186,7 @@ class PHPMode
 	public function parseComment (array $comment, $parent = null, $popular = false)
 	{
 		$template = array ();
-		$nameClass = 'hashover-name-plain';
+		$name_class = 'hashover-name-plain';
 		$permalink = $comment['permalink'];
 		$template['permalink'] = $permalink;
 		$is_reply = ($parent !== null);
@@ -201,12 +201,12 @@ class PHPMode
 		$permatext = array_pop ($permatext);
 
 		// Wrapper element for each comment
-		$comment_wrapper = $this->html->commentWrapper ($permalink);
+		$comment_wrapper = $this->ui->commentWrapper ($permalink);
 
 		// Get parent comment via permalink
 		if ($is_reply === false and strpos ($permalink, 'r') !== false) {
 			$parent_permalink = $this->getParentPermalink ($permalink);
-			$parent = $this->findByPermalink ($parent_permalink, $this->comments['comments']);
+			$parent = $this->findByPermalink ($parent_permalink, $this->comments['primary']);
 			$is_reply = ($parent !== null);
 		}
 
@@ -223,7 +223,7 @@ class PHPMode
 		}
 
 		// Add avatar image to template
-		$template['avatar'] = $this->html->userAvatar ($permatext, $permalink, $comment['avatar']);
+		$template['avatar'] = $this->ui->userAvatar ($comment['avatar'], $permalink, $permatext);
 
 		if (!isset ($comment['notice'])) {
 			$name = !empty ($comment['name']) ? $comment['name'] : $this->setup->defaultName;
@@ -232,12 +232,12 @@ class PHPMode
 			// Check if user's name is a Twitter handle
 			if ($name[0] === '@') {
 				$name = mb_substr ($name, 1);
-				$nameClass = 'hashover-name-twitter';
+				$name_class = 'hashover-name-twitter';
 				$is_twitter = true;
-				$nameLength = mb_strlen ($name);
+				$name_length = mb_strlen ($name);
 
 				// Check if Twitter handle is valid length
-				if ($nameLength > 1 and $nameLength <= 30) {
+				if ($name_length > 1 and $name_length <= 30) {
 					// Set website to Twitter profile if a specific website wasn't given
 					if (empty ($comment['website'])) {
 						$comment['website'] = 'http://twitter.com/' . $name;
@@ -248,20 +248,20 @@ class PHPMode
 			// Check whether user gave a website
 			if (!empty ($comment['website'])) {
 				if ($is_twitter === false) {
-					$nameClass = 'hashover-name-website';
+					$name_class = 'hashover-name-website';
 				}
 
 				// If so, display name as a hyperlink
-				$nameLink = $this->html->nameElement ('a', $name, $permalink, $comment['website']);
+				$name_link = $this->ui->nameElement ('a', $comment['website'], $permalink, $name);
 			} else {
 				// If not, display name as plain text
-				$nameLink = $this->html->nameElement ('span', $name, $permalink);
+				$name_link = $this->ui->nameElement ('span', $permalink, $name);
 			}
 
 			// Add "Top of Thread" hyperlink to template
 			if ($is_reply === true) {
 				$parent_name = !empty ($parent['name']) ? $parent['name'] : $this->setup->defaultName;
-				$template['thread-link'] = $this->html->threadLink ($parent['permalink'], $parent['permalink'], $parent_name);
+				$template['thread-link'] = $this->ui->threadLink ($parent['permalink'], $comment['permalink'], $parent_name);
 			}
 
 			if (isset ($comment['user-owned'])) {
@@ -269,63 +269,67 @@ class PHPMode
 				$comment_wrapper->appendAttribute ('class', 'hashover-user-owned');
 
 				// Define "Reply" link with original poster title
-				$replyTitle = $this->locale->get ('commenter-tip');
-				$replyClass = 'hashover-no-email';
+				$reply_title = $this->locale->get ('commenter-tip');
+				$reply_class = 'hashover-no-email';
 
 				// Add "Reply" hyperlink to template
 				if (!empty ($_GET['hashover-edit']) and $_GET['hashover-edit'] === $permalink) {
-					$template['edit-link'] = $this->html->cancelLink ($permalink, 'edit');
+					$template['edit-link'] = $this->ui->cancelLink ($permalink, 'edit');
 				} else {
-					$template['edit-link'] = $this->html->formLink ('edit', $permalink);
+					$template['edit-link'] = $this->ui->formLink ('edit', $permalink);
 				}
 			} else {
 				// Check if commenter is subscribed
 				if (isset ($comment['subscribed'])) {
 					// If so, set subscribed title
-					$replyTitle = $name . ' ' . $this->locale->text['subscribed-tip'];
-					$replyClass = 'hashover-has-email';
+					$reply_title = $name . ' ' . $this->locale->text['subscribed-tip'];
+					$reply_class = 'hashover-has-email';
 				} else{
 					// If not, set unsubscribed title
-					$replyTitle = $name . ' ' . $this->locale->text['unsubscribed-tip'];
-					$replyClass = 'hashover-no-email';
+					$reply_title = $name . ' ' . $this->locale->text['unsubscribed-tip'];
+					$reply_class = 'hashover-no-email';
 				}
 			}
 
-			// Get number of likes, append "Like(s)" locale
+			// Check if the comment has been liked
 			if (isset ($comment['likes'])) {
+				// Add likes to HTML template
+				$template['likes'] = $comment['likes'];
+
+				// Get "X Like(s)" locale
 				$plural = ($comment['likes'] === 1 ? 0 : 1);
-				$likeCount = $comment['likes'] . ' ' . $this->locale->text['like'][$plural];
-			} else {
-				$likeCount = '';
+				$like_count = $comment['likes'] . ' ' . $this->locale->text['like'][$plural];
+
+				// Add like count to HTML template
+				$template['like-count'] = $this->ui->likeCount ('likes', $permalink, $like_count);
 			}
 
-			// Add like count to HTML template
-			$template['like-count'] = $this->html->likeCount ('likes', $permalink, $likeCount);
+			// Check if dislikes are enabled and the comment's been disliked
+			if ($this->setup->allowsDislikes === true
+			    and isset ($comment['dislikes']))
+			{
+				// Add likes to HTML template
+				$template['dislikes'] = $comment['dislikes'];
 
-			// Get number of dislikes, append "Dislike(s)" locale
-			if ($this->setup->allowsDislikes === true) {
-				if (isset ($comment['dislikes'])) {
-					$plural = ($comment['dislikes'] === 1 ? 0 : 1);
-					$dislikeCount = $comment['dislikes'] . ' ' . $this->locale->text['dislike'][$plural];
-				} else {
-					$dislikeCount = '';
-				}
+				// Get "X Dislike(s)" locale
+				$plural = ($comment['dislikes'] === 1 ? 0 : 1);
+				$dislike_count = $comment['dislikes'] . ' ' . $this->locale->text['dislike'][$plural];
 
 				// Add dislike count to HTML template
-				$template['dislike-count'] = $this->html->likeCount ('dislikes', $permalink, $dislikeCount);
+				$template['dislike-count'] = $this->ui->likeCount ('dislikes', $permalink, $dislike_count);
 			}
 
 			// Add name HTML to template
-			$template['name'] = $this->html->nameWrapper ($nameLink, $nameClass);
+			$template['name'] = $this->ui->nameWrapper ($name_class, $name_link);
 
 			// Add date permalink hyperlink to template
-			$template['date'] = $this->html->dateLink ($permalink, $comment['date']);
+			$template['date'] = $this->ui->dateLink ($permalink, $comment['date']);
 
 			// Add "Reply" hyperlink to template
 			if (!empty ($_GET['hashover-reply']) and $_GET['hashover-reply'] === $permalink) {
-				$template['reply-link'] = $this->html->cancelLink ($permalink, 'reply', $replyClass);
+				$template['reply-link'] = $this->ui->cancelLink ($permalink, 'reply', $reply_class);
 			} else {
-				$template['reply-link'] = $this->html->formLink ('reply', $permalink, $replyClass, $replyTitle);
+				$template['reply-link'] = $this->ui->formLink ('reply', $permalink, $reply_class, $reply_title);
 			}
 
 			// Add edit form HTML to template
@@ -413,7 +417,7 @@ class PHPMode
 			$template['comment'] = $comment['notice'];
 
 			// Set name to 'Comment Deleted!'
-			$template['name'] = $this->html->nameWrapper ($comment['title'], $nameClass);
+			$template['name'] = $this->ui->nameWrapper ($name_class, $comment['title']);
 		}
 
 		// Comment HTML template

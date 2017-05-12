@@ -87,16 +87,23 @@ class Cookies
 	}
 
 	// Get cookie value
-	public function getValue ($name)
+	public function getValue ($name, $trim = false)
 	{
 		// Check if it exists
 		if (!empty ($_COOKIE[$name])) {
+			$value = $_COOKIE[$name];
+
 			// Strip escaping backslashes from cookie value
 			if (get_magic_quotes_gpc ()) {
-				return stripslashes ($_COOKIE[$name]);
+				return stripslashes ($value);
 			}
 
-			return $_COOKIE[$name];
+			// Return trimmed value if told to
+			if ($trim === true) {
+				return trim ($value, " \r\n\t");
+			}
+
+			return $value;
 		}
 
 		// If not set return null

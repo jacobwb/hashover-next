@@ -38,12 +38,13 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 require ('standard-setup.php');
 
 // Autoload class files
-spl_autoload_register (function ($classname) {
-	$classname = strtolower ($classname);
+spl_autoload_register (function ($uri) {
+	$uri = str_replace ('\\', '/', strtolower ($uri));
+	$class_name = basename ($uri);
 
-	if (!@include ('./' . $classname . '.php')) {
+	if (!@include ('./' . $class_name . '.php')) {
 		echo json_encode (array (
-			'error' => $classname . '.php" file could not be included!'
+			'error' => $class_name . '.php" file could not be included!'
 		));
 
 		exit;

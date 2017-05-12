@@ -30,15 +30,16 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 class Login extends PostData
 {
 	public $setup;
+	public $encryption;
 	public $cookies;
 	public $locale;
 	public $loginMethod;
 	public $fieldNeeded;
-	public $name;
-	public $password;
-	public $loginHash;
-	public $email;
-	public $website;
+	public $name = '';
+	public $password = '';
+	public $loginHash = '';
+	public $email = '';
+	public $website = '';
 	public $userIsLoggedIn = false;
 	public $userIsAdmin = false;
 
@@ -47,6 +48,7 @@ class Login extends PostData
 		parent::__construct ();
 
 		$this->setup = $setup;
+		$this->encryption = $setup->encryption;
 		$this->cookies = new Cookies ($setup);
 		$this->locale = new Locale ($setup);
 
@@ -70,13 +72,34 @@ class Login extends PostData
 		}
 
 		// Set password
-		if (isset ($_POST['password'])) {
-			$this->loginMethod->password = $this->setup->encryption->createHash ($_POST['password']);
+		if (!empty ($_POST['password'])) {
+			$this->loginMethod->password = $this->encryption->createHash ($_POST['password']);
+		} else {
+			$this->loginMethod->password = '';
 		}
 
-		// RIPEMD-160 hash used to indicate user login
-		if (isset ($_POST['name']) and isset ($_POST['password'])) {
-			$this->loginMethod->loginHash = hash ('ripemd160', $_POST['name'] . $_POST['password']);
+		// Attempt to get login hash
+		$login_hash = $this->cookies->getValue ('hashover-login');
+
+		// Check that login hash cookie is not set
+		if ($login_hash === null) {
+			// If so, attempt to get name
+			$name = !empty ($_POST['name']) ? $_POST['name'] : null;;
+
+			// Attempt to get password
+			$password = !empty ($_POST['password']) ? $_POST['password'] : null;
+
+			// Generate a random password
+			$random_password = bin2hex (openssl_random_pseudo_bytes (16));
+
+			// Use user password or random password
+			$password = $password ? $password : $random_password;
+
+			// And generate a RIPEMD-160 hash to indicate user login
+			$this->loginMethod->loginHash = hash ('ripemd160', $name . $password);
+		} else {
+			// If not, use existing hash
+			$this->loginMethod->loginHash = $login_hash;
 		}
 
 		// Set e-mail address

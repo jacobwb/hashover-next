@@ -152,10 +152,16 @@ class CommentParser
 			// Admin owns every comment
 			$output['user-owned'] = true;
 		} else {
-			// Check this comment belongs to logged in user
+			// Check if the user is logged in
 			if ($this->login->userIsLoggedIn === true and !empty ($comment['login_id'])) {
+				// If so, check this comment belongs to logged in user
 				if ($this->login->loginHash === $comment['login_id']) {
 					$output['user-owned'] = true;
+				}
+
+				// Check if the comment is editable
+				if (!empty ($comment['password'])) {
+					$output['editable'] = true;
 				}
 			}
 		}

@@ -32,65 +32,73 @@ class Templater
 	public $mode;
 	public $setup;
 	public $theme;
-	public $comment;
+	public $template;
 
-	protected $newline_search = array ("\r\n", "\r", "\n");
-	protected $newline_replace = array ("\n", "\n", PHP_EOL);
+	protected $curlyRegex = '/\{([a-z]+):([a-z_-]+)\}/i';
+	protected $newlineSearch = array ("\r\n", "\r", "\n");
+	protected $newlineReplace = array ("\n", "\n", PHP_EOL);
 
 	public function __construct ($mode = 'php', Setup $setup)
 	{
 		$this->mode = $mode;
 		$this->setup = $setup;
-		$theme = $this->setup->getAbsolutePath ('themes/' . $this->setup->theme . '/layout.html');
+		$relative_path = 'themes/' . $this->setup->theme . '/layout.html';
+		$theme = $this->setup->getAbsolutePath ($relative_path);
 
 		// Use default theme if theme in settings doesn't exist
 		if (!file_exists ($theme)) {
-			$theme = $this->setup->getAbsolutePath ('themes/default/layout.html');
+			$relative_path = 'themes/default/layout.html';
+			$theme = $this->setup->getAbsolutePath ($relative_path);
 		}
 
-		// Load and escape HTML template
-		$this->theme = addcslashes (trim (file_get_contents ($theme)), "\\'");
+		// Attempt to read template HTML file
+		$theme_html = @file_get_contents ($theme);
+
+		// Check if template file read successfully
+		if ($theme_html !== false) {
+			// If so, load and escape HTML template
+			$this->theme = addcslashes (trim ($theme_html), "\\'");
+		} else {
+			// If not, throw exception
+			throw new \Exception ('Failed to load template file.');
+		}
 	}
 
-	protected function fromComment ($key)
+	protected function curlyVariable ($key)
+	{
+		return '{{' . $key . '}}';
+	}
+
+	protected function fromTemplate ($key)
 	{
 		if ($this->mode !== 'php') {
-			return '\' + (comment[\'' . $key . '\'] || \'\') + \'';
+			return $this->curlyVariable ($key);
 		}
 
-		if (!empty ($this->comment[$key])) {
-			return $this->comment[$key];
+		if (!empty ($this->template[$key])) {
+			return $this->template[$key];
 		}
 
 		return '';
 	}
 
-	protected function fromVariable ($key = '')
-	{
-		if ($this->mode !== 'php') {
-			return '\' + (template[\'' . $key . '\'] || \'\') + \'';
-		}
-
-		return $this->fromComment ($key);
-	}
-
 	protected function placeholder ($id)
 	{
 		$span_id  = 'hashover-placeholder-' . $id;
-		$span_id .= '-' . $this->fromVariable ('permalink');
+		$span_id .= '-' . $this->fromTemplate ('permalink');
 
 		$placeholder = new HTMLTag ('span', array (
 			'id' => $span_id
 		), false);
 
-		if (!empty ($this->comment[$id])) {
-			$placeholder->innerHTML ($this->comment[$id]);
+		if (!empty ($this->template[$id])) {
+			$placeholder->innerHTML ($this->template[$id]);
 		}
 
 		return $placeholder->asHTML ();
 	}
 
-	protected function mainCallback ($var)
+	protected function parser ($var)
 	{
 		if (empty ($var[1]) or empty ($var[2])) {
 			return '';
@@ -98,11 +106,7 @@ class Templater
 
 		switch ($var[1]) {
 			case 'hashover': {
-				return $this->fromVariable ($var[2]);
-			}
-
-			case 'comment': {
-				return $this->fromComment ($var[2]);
+				return $this->fromTemplate ($var[2]);
 			}
 
 			case 'placeholder': {
@@ -111,12 +115,12 @@ class Templater
 		}
 	}
 
-	public function parseTemplate (array $comment = array ())
+	public function parseTemplate (array $template = array ())
 	{
-		$this->comment = $comment;
-		$template = preg_replace_callback ('/{([a-z]+):([a-z_-]+)}/i', 'self::mainCallback', $this->theme);
-		$template = str_replace ($this->newline_search, $this->newline_replace, $template);
+		$this->template = $template;
+		$template = preg_replace_callback ($this->curlyRegex, 'self::parser', $this->theme);
+		$template = str_replace ($this->newlineSearch, $this->newlineReplace, $template);
 
-		return str_replace ("+ '' +", '+', $template);
+		return $template;
 	}
 }

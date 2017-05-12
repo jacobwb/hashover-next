@@ -244,8 +244,9 @@ class HTMLTag
 	{
 		$attributes = '';
 
-		foreach ($this->attributes as $attribute => $value) {
-			$attributes .= ' ' . $attribute . '="' . $value . '"';
+		foreach ($this->attributes as $name => $value) {
+			$value = str_replace ('"', '&quot;', $value);
+			$attributes .= ' ' . $name . '="' . $value . '"';
 		}
 
 		$tag = '<' . $this->tag . $attributes . '>';

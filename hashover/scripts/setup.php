@@ -138,7 +138,7 @@ class Setup extends Settings
 		}
 
 		// Check if we are placing HashOver at a specific script's position
-		if (!empty ($_GET['hashover-script'])) {
+		if (isset ($_GET['hashover-script'])) {
 			// If so, make the script query XSS safe
 			$hashover_script = $this->misc->makeXSSsafe ($_GET['hashover-script']);
 

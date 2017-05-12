@@ -72,7 +72,7 @@ try {
 
 		// Convert JSON space indention to tab indention, when minification is not enabled
 		$json_search = array ('    ', PHP_EOL);
-		$json_replace = array ("\t", PHP_EOL . "\t");
+		$json_replace = array ("\t", PHP_EOL . "\t\t");
 		$json_comments = str_replace ($json_search, $json_replace, $json_comments);
 	} else {
 		// Encode comments as JSON

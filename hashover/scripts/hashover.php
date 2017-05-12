@@ -40,9 +40,10 @@ class HashOver
 	public $cookies;
 	public $commentCount;
 	public $popularList = array ();
+	public $popularCount = 0;
 	public $rawComments = array ();
 	public $comments = array ();
-	public $html;
+	public $ui;
 	public $templater;
 
 	public function __construct ($mode = 'php', $context = 'normal')
@@ -168,15 +169,43 @@ class HashOver
 		return $level;
 	}
 
+	// Adds a comment to the popular list if it has enough likes
+	protected function checkPopularity (array $comment, $key, array $key_parts)
+	{
+		$popularity = 0;
+
+		// Add number of likes to popularity value
+		if (!empty ($comment['likes'])) {
+			$popularity += $comment['likes'];
+		}
+
+		// Subtract number of dislikes to popularity value
+		if ($this->setup->allowsDislikes === true) {
+			if (!empty ($comment['dislikes'])) {
+				$popularity -= $comment['dislikes'];
+			}
+		}
+
+		// Add comment to popular comments list if popular enough
+		if ($popularity >= $this->setup->popularityThreshold) {
+			$this->popularList[] = array (
+				'popularity' => $popularity,
+				'comment' => $comment,
+				'key' => $key,
+				'parts' => $key_parts
+			);
+		}
+	}
+
 	// Parse primary comments
 	public function parsePrimary ($start = 0)
 	{
 		// Initial comments array
-		$this->comments['comments'] = array ();
+		$this->comments['primary'] = array ();
 
 		// If no comments were found, setup a default message comment
 		if ($this->readComments->totalCount <= 1) {
-			$this->comments['comments'][] = array (
+			$this->comments['primary'][] = array (
 				'title' => $this->locale->text['be-first-name'],
 				'avatar' => $this->setup->httpImages . '/first-comment.' . $this->setup->imageFormat,
 				'permalink' => 'c1',
@@ -211,29 +240,9 @@ class HashOver
 			$indentions = count ($key_parts);
 			$status = 'approved';
 
+			// Check comment's popularity
 			if ($this->setup->popularityLimit > 0) {
-				$popularity = 0;
-
-				// Add number of likes to popularity value
-				if (!empty ($comment['likes'])) {
-					$popularity += $comment['likes'];
-				}
-
-				// Subtract number of dislikes to popularity value
-				if ($this->setup->allowsDislikes === true) {
-					if (!empty ($comment['dislikes'])) {
-						$popularity -= $comment['dislikes'];
-					}
-				}
-
-				// Add comment to popular comments list if popular enough
-				if ($popularity >= $this->setup->popularityThreshold) {
-					$this->popularList[] = array (
-						'popularity' => $popularity,
-						'key' => $key,
-						'parts' => $key_parts
-					);
-				}
+				$this->checkPopularity ($comment, $key, $key_parts);
 			}
 
 			// Stop parsing after end point
@@ -242,7 +251,7 @@ class HashOver
 			}
 
 			if ($indentions > 1 and $this->setup->streamDepth > 0) {
-				$level =& $this->comments['comments'][$key_parts[0] - 1];
+				$level =& $this->comments['primary'][$key_parts[0] - 1];
 
 				if ($this->setup->replyMode === 'stream'
 				    and $indentions > $this->setup->streamDepth)
@@ -253,7 +262,7 @@ class HashOver
 					$level =& $this->getRepliesLevel ($level, $indentions, $key_parts);
 				}
 			} else {
-				$level =& $this->comments['comments'][];
+				$level =& $this->comments['primary'][];
 			}
 
 			// Set status to what's stored in the comment
@@ -315,14 +324,14 @@ class HashOver
 		}
 
 		// Reset array keys
-		$this->comments['comments'] = array_values ($this->comments['comments']);
+		$this->comments['primary'] = array_values ($this->comments['primary']);
 	}
 
 	// Parse popular comments
 	public function parsePopular ()
 	{
 		// Initial popular comments array
-		$this->comments['popularComments'] = array ();
+		$this->comments['popular'] = array ();
 
 		// If no comments or popularity limit is 0, return void
 		if ($this->readComments->totalCount <= 1
@@ -338,14 +347,18 @@ class HashOver
 
 		// Calculate how many popular comments will be shown
 		$limit = $this->setup->popularityLimit;
-		$count = min ($limit, count ($this->popularList));
+		$count = count ($this->popularList);
+		$this->popularCount = min ($limit, $count);
 
-		// Read, parse, and add popular comments to output
-		for ($i = 0; $i < $count; $i++) {
+		// Run through each popular comment
+		for ($i = 0; $i < $this->popularCount; $i++) {
 			$item =& $this->popularList[$i];
-			$comment = $this->readComments->data->read ($item['key']);
-			$parsed = $this->commentParser->parse ($comment, $item['key'], $item['parts'], true);
-			$this->comments['popularComments'][$i] = $parsed;
+
+			// Parse comment
+			$parsed = $this->commentParser->parse ($item['comment'], $item['key'], $item['parts'], true);
+
+			// And add it to popular comments
+			$this->comments['popular'][$i] = $parsed;
 		}
 	}
 
@@ -360,10 +373,11 @@ class HashOver
 			'show-count' => $this->commentCount,
 			'primary' => $this->readComments->primaryCount,
 			'total' => $this->readComments->totalCount,
+			'popular' => $this->popularCount
 		);
 
-		// Instantiate HTML output class
-		$this->html = new HashOver\HTMLOutput (
+		// Instantiate UI output class
+		$this->ui = new HashOver\CommentsUI (
 			$this->setup,
 			$commentCounts
 		);
@@ -381,26 +395,26 @@ class HashOver
 		// Instantiate PHP mode class
 		$phpmode = new HashOver\PHPMode (
 			$this->setup,
-			$this->html,
+			$this->ui,
 			$this->comments
 		);
 
 		// Run popular comments through parser
-		if (!empty ($this->comments['popularComments'])) {
-			foreach ($this->comments['popularComments'] as $comment) {
-				$this->html->popularComments .= $phpmode->parseComment ($comment, null, true) . PHP_EOL;
+		if (!empty ($this->comments['popular'])) {
+			foreach ($this->comments['popular'] as $comment) {
+				$this->ui->popularComments .= $phpmode->parseComment ($comment, null, true) . PHP_EOL;
 			}
 		}
 
 		// Run primary comments through parser
-		if (!empty ($this->comments['comments'])) {
-			foreach ($this->comments['comments'] as $comment) {
-				$this->html->comments .= $phpmode->parseComment ($comment, null) . PHP_EOL;
+		if (!empty ($this->comments['primary'])) {
+			foreach ($this->comments['primary'] as $comment) {
+				$this->ui->comments .= $phpmode->parseComment ($comment, null) . PHP_EOL;
 			}
 		}
 
-		// Start HTML output with initial HTML
-		$html  = $this->html->initialHTML ($this->popularList);
+		// Start UI output with initial HTML
+		$html  = $this->ui->initialHTML ();
 
 		// End statistics and add them as code comment
 		$html .= $this->statistics->executionEnd ();

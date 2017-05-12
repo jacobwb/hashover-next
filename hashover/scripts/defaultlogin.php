@@ -30,6 +30,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 class DefaultLogin
 {
 	public $setup;
+	public $encryption;
 	public $cookies;
 	public $locale;
 	public $name;
@@ -41,6 +42,7 @@ class DefaultLogin
 	public function __construct (Setup $setup, Cookies $cookies, Locale $locale)
 	{
 		$this->setup = $setup;
+		$this->encryption = $setup->encryption;
 		$this->cookies = $cookies;
 		$this->locale = $locale;
 
@@ -54,41 +56,50 @@ class DefaultLogin
 	// Set login credentials
 	public function setCredentials ()
 	{
-		// Generate encrypted string / decryption key from e-mail
-		$encryption_keys = $this->setup->encryption->encrypt ($this->email);
-
 		// Set login cookies
 		$this->cookies->set ('name', $this->name);
 		$this->cookies->set ('password', $this->password);
-		$this->cookies->set ('email', $encryption_keys['encrypted']);
-		$this->cookies->set ('encryption', $encryption_keys['keys']);
 		$this->cookies->set ('website', $this->website);
+
+		// Check if an email was given
+		if (!empty ($this->email)) {
+			// If so, generate encrypted string / decryption keys from e-mail
+			$email = $this->encryption->encrypt ($this->email);
+
+			// And set e-mail and encryption cookies
+			$this->cookies->set ('email', $email['encrypted']);
+			$this->cookies->set ('encryption', $email['keys']);
+		} else {
+			// If not, expire e-mail and encryption cookies
+			$this->cookies->expireCookie ('email');
+			$this->cookies->expireCookie ('encryption');
+		}
 	}
 
 	// Get login credentials
 	public function getCredentials ()
 	{
-		// Set user name via cookie
-		$this->name = trim ($this->cookies->getValue ('name'), " \r\n\t");
+		// Get user name via cookie
+		$this->name = $this->cookies->getValue ('name', true);
 
-		// Set user password via cookie
-		$this->password = trim ($this->cookies->getValue ('password'), " \r\n\t");
+		// Get user password via cookie
+		$this->password = $this->cookies->getValue ('password', true);
 
 		// Decrypt email cookie
-		$encrypted_email = trim ($this->cookies->getValue ('email'), " \r\n\t");
-		$encryption_keys = trim ($this->cookies->getValue ('encryption'), " \r\n\t");
-		$decrypted_email = $this->setup->encryption->decrypt ($encrypted_email, $encryption_keys);
+		$encrypted_email = $this->cookies->getValue ('email', true);
+		$encryption = $this->cookies->getValue ('encryption', true);
+		$email = $this->encryption->decrypt ($encrypted_email, $encryption);
 
 		// Validate e-mail address
-		if (filter_var ($decrypted_email, FILTER_VALIDATE_EMAIL)) {
-			$this->email = trim ($decrypted_email, " \r\n\t");
+		if (filter_var ($email, FILTER_VALIDATE_EMAIL)) {
+			$this->email = trim ($email, " \r\n\t");
 		}
 
-		// Set user website via cookie
-		$this->website = trim ($this->cookies->getValue ('website'), " \r\n\t");
+		// Get user website via cookie
+		$this->website = $this->cookies->getValue ('website', true);
 
-		// Set login hash via cookie
-		$this->loginHash = trim ($this->cookies->getValue ('hashover-login'), " \r\n\t");
+		// Get login hash via cookie
+		$this->loginHash = $this->cookies->getValue ('hashover-login', true);
 	}
 
 	// Main login method

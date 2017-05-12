@@ -282,7 +282,7 @@ function create_rss (&$hashover)
 	}
 
 	// Add item element to main RSS element
-	foreach ($hashover->comments['comments'] as $comment) {
+	foreach ($hashover->comments['primary'] as $comment) {
 		parse_comments ($comment, $rss, $xml, $hashover);
 	}
 

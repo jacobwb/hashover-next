@@ -126,8 +126,7 @@ class ParseXML extends ReadFiles
 
 		// Attempt to write file
 		if (file_put_contents ($file, $tabbed_dom, LOCK_EX)) {
-			chmod ($file, 0600);
-
+			@chmod ($file, 0600);
 			return true;
 		}
 

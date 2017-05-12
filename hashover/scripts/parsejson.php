@@ -92,7 +92,7 @@ class ParseJSON extends ReadFiles
 
 		// Save the JSON data to the comment file
 		if (file_put_contents ($file, $json)) {
-			chmod ($file, 0600);
+			@chmod ($file, 0600);
 			return true;
 		}
 

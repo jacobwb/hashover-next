@@ -663,12 +663,12 @@ class WriteComments extends PostData
 		if ($this->setup->fieldOptions['password'] !== false) {
 			if (!empty ($this->password)) {
 				$this->commentData['password'] = $this->password;
-
-				// Store login ID if login hash is non-empty
-				if (!empty ($this->loginHash)) {
-					$this->commentData['login_id'] = $this->loginHash;
-				}
 			}
+		}
+
+		// Store login ID if login hash is non-empty
+		if (!empty ($this->loginHash)) {
+			$this->commentData['login_id'] = $this->loginHash;
 		}
 
 		// Store e-mail if one is given
