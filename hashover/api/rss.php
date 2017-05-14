@@ -31,6 +31,7 @@ header ('Content-Type: application/xml; charset=utf-8');
 chdir ('../scripts/');
 
 // Do some standard HashOver setup work
+require ('nocache-headers.php');
 require ('standard-setup.php');
 
 // Autoload class files

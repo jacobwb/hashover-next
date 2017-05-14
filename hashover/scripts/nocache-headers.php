@@ -25,26 +25,9 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	}
 }
 
-// Tell browser output is JavaScript
-header ('Content-Type: application/javascript');
-
-// Do some standard HashOver setup work
-require ('nocache-headers.php');
-require ('standard-setup.php');
-
-// Autoload class files
-spl_autoload_register (function ($uri) {
-	$uri = str_replace ('\\', '/', strtolower ($uri));
-	$class_name = basename ($uri);
-	$error = '"' . $class_name . '.php" file could not be included!';
-
-	if (!@include ('./' . $class_name . '.php')) {
-		// Return JavaScript code to display an error
-		$js_error  = 'var hashover = document.getElementById (\'hashover\') || document.body;' . PHP_EOL;
-		$js_error .= 'var error = \'<p><b>HashOver</b>: ' . $error . '</p>\';' . PHP_EOL . PHP_EOL;
-		$js_error .= 'hashover.innerHTML += error;';
-
-		echo $js_error;
-		exit;
-	}
-});
+// Disable browser cache
+header ('Expires: Wed, 08 May 1991 12:00:00 GMT');
+header ('Last-Modified: ' . gmdate ('D, d M Y H:i:s') . ' GMT');
+header ('Cache-Control: no-store, no-cache, must-revalidate');
+header ('Cache-Control: post-check=0, pre-check=0', false);
+header ('Pragma: no-cache');

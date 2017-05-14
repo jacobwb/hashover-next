@@ -34,22 +34,8 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	}
 }
 
-// Do some standard HashOver setup work
-require ('standard-setup.php');
-
-// Autoload class files
-spl_autoload_register (function ($uri) {
-	$uri = str_replace ('\\', '/', strtolower ($uri));
-	$class_name = basename ($uri);
-
-	if (!@include ('./' . $class_name . '.php')) {
-		echo json_encode (array (
-			'error' => $class_name . '.php" file could not be included!'
-		));
-
-		exit;
-	}
-});
+// Setup HashOver for JSON
+require ('json-setup.php');
 
 // Sets cookie indicating what comment was liked
 function set_like (&$hashover, $like_cookie, $set, &$likes)

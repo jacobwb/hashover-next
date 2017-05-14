@@ -25,16 +25,13 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	}
 }
 
-// Do some standard HashOver setup work
-require ('standard-setup.php');
-require ('javascript-setup.php');
-require ('oop-setup.php');
+// Setup HashOver for JSON
+require ('json-setup.php');
+
+// Mode is based on whether request is AJAX
+$mode = isset ($_POST['ajax']) ? 'json' : 'php';
 
 try {
-	// Mode is based on whether request is AJAX
-	$mode = isset ($_POST['ajax']) ? 'javascript' : 'php';
-	$data = null;
-
 	// Instantiate HashOver class
 	$hashover = new \HashOver ($mode);
 	$hashover->setup->setPageURL ('request');
@@ -97,7 +94,7 @@ try {
 	}
 
 	// Returns comment being saved as JSON
-	if (isset ($_POST['ajax']) and is_array ($data)) {
+	if (isset ($_POST['ajax']) and isset ($data) and is_array ($data)) {
 		// Slit file into parts
 		$file = $data['file'];
 		$key_parts = explode ('-', $file);
@@ -113,6 +110,7 @@ try {
 		));
 	}
 } catch (\Exception $error) {
-	$misc = new Misc (isset ($_POST['ajax']) ? 'json' : 'php');
-	$misc->displayError ($error->getMessage ());
+	$misc = new Misc ($mode);
+	$message = $error->getMessage ();
+	$misc->displayError ($message);
 }

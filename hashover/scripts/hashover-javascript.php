@@ -25,10 +25,8 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 	}
 }
 
-// Do some standard HashOver setup work
-require ('standard-setup.php');
+// Setup HashOver for JavaScript
 require ('javascript-setup.php');
-require ('oop-setup.php');
 
 try {
 	// Instantiate HashOver class
