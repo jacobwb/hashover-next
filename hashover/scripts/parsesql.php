@@ -73,7 +73,7 @@ class ParseSQL extends Database
 
 		if ($results !== false) {
 			$results->execute ();
-			$fetchAll = $results->fetchAll (PDO::FETCH_NUM);
+			$fetchAll = $results->fetchAll (\PDO::FETCH_NUM);
 			$return_array = array ();
 
 			for ($i = 0, $il = count ($fetchAll); $i < $il; $i++) {
@@ -108,7 +108,7 @@ class ParseSQL extends Database
 		);
 
 		if ($result !== false) {
-			return (array) $result->fetch (PDO::FETCH_ASSOC);
+			return (array) $result->fetch (\PDO::FETCH_ASSOC);
 		}
 
 		return false;
