@@ -77,6 +77,9 @@ class Locale
 			if (!empty ($language_parts[1])) {
 				$locales[] = $language_parts[1];
 			}
+		}else
+		if($language === 'manual'){
+			$locales[] = $_GET['lang'];
 		} else {
 			// If not, add configured locale to checklist
 			$locales[] = $language;
