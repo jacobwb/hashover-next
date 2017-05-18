@@ -34,7 +34,7 @@ class Settings
 	protected $adminPassword	= 'passwd';			// Login password to gain admin rights (case-sensitive)
 
 	// Primary settings
-	public $language		= 'auto';			// UI language, for example 'en', 'de', etc. 'auto' to use system locale
+	public $language		= 'auto';			// UI language, for example 'en', 'de', etc. 'auto' to use system locale, 'manual' to pass required locale to "lang" URL parameter
 	public $theme			= 'default';			// Comment Cascading Style Sheet (CSS)
 	public $usesModeration		= false;			// Whether comments must be approved before they appear to other visitors
 	public $dataFormat		= 'xml';			// Format comments will be stored in; options: xml, json, sql
