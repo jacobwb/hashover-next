@@ -55,7 +55,7 @@ class Login extends PostData
 		$this->loginMethod = new $login_class ($setup, $this->cookies, $this->locale);
 
 		// Error message to display to the user
-		$this->fieldNeeded = $this->locale->get ('field-needed');
+		$this->fieldNeeded = $this->locale->get('field-needed');
 
 		// Check if user is logged in
 		$this->getLogin ();
