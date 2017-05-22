@@ -34,7 +34,9 @@ class Settings
 	protected $adminPassword	= 'passwd';			// Login password to gain admin rights (case-sensitive)
 
 	// Primary settings
-	public $language		= 'auto';			// UI language, for example 'en', 'de', etc. 'auto' to use system locale, 'manual' to pass required locale to "lang" URL parameter
+	public $language		= 'auto';			// UI language, for example 'en', 'de', etc. 'auto' to use system locale
+	public $languageVARNames	= [];				// The list of parameters to check for to get language required, [order is important],if not used leave the array void.
+									// 	E.G ['Lang', 'MyLang'] it'll get the language required from the $_GET, $_POST, $_COOKIE variable that has the names: "Lang" or "MyLang"
 	public $theme			= 'default';			// Comment Cascading Style Sheet (CSS)
 	public $usesModeration		= false;			// Whether comments must be approved before they appear to other visitors
 	public $dataFormat		= 'xml';			// Format comments will be stored in; options: xml, json, sql
