@@ -59,6 +59,10 @@ class Locale
 
 		// Check if we are automatically selecting the locale
 		if ($language === 'auto') {
+			
+			// get the languages from GET, POST or COOKIES
+			foreach($this->setup->languageVARNames as $VARname) if(isset($_REQUEST[$VARname])) $locales[] = $_REQUEST[$VARname];
+			
 			// If so, get system locale
 			$system_locale = mb_strtolower (setlocale (LC_CTYPE, 0));
 
@@ -77,9 +81,6 @@ class Locale
 			if (!empty ($language_parts[1])) {
 				$locales[] = $language_parts[1];
 			}
-		}else
-		if($language === 'manual'){
-			$locales[] = $_GET['lang'];
 		} else {
 			// If not, add configured locale to checklist
 			$locales[] = $language;
