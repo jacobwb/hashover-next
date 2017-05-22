@@ -53,6 +53,7 @@ class Settings
 	public $streamDepth		= 3;				// In stream mode, the number of reply indentions to allow before the thread flattens
 	public $popularityThreshold	= 5;				// Minimum likes a comment needs to be popular
 	public $popularityLimit		= 2;				// Number of comments allowed to become popular
+	public $readCommentsDESC	= true;				// Whether it must read the comment in DESC order
 
 	// Webmaster notification email
 	public $notEmail_subject_txt		= 'New comment';	// The initial part of E-Mail notification subject
