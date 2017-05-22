@@ -41,7 +41,6 @@ class ReadComments
 
 	public function __construct (Setup $setup)
 	{
-		
 		$this->setup = $setup;
 
 		// Instantiate necessary class data format class
