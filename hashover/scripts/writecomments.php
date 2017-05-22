@@ -189,7 +189,7 @@ class WriteComments extends PostData
 	protected function setHeaders ($email, $user = true)
 	{
 		$this->headers  = 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
-		$this->headers .= 'From: ' . $email . "\r\n";
+		if(NULL!=$this->setup->emailSender) $this->headers .= 'From: ' . $this->setup->emailSender . "\r\n";
 		$this->headers .= 'Reply-To: ' . $email;
 
 		// Set commenter's headers to new value as well
@@ -860,8 +860,7 @@ class WriteComments extends PostData
 				if (!empty ($this->email)) {
 					$from_line .= ' <' . $this->email . '>';
 				}
-				
-				// Custom subject generation
+
 				$webmaster_subject = $this->setup->notEmail_subject_txt;
 				if($this->setup->notEmail_subject_appName)	$webmaster_subject .= ' ' . $writerName;
 				if($this->setup->notEmail_subject_appEmail)	$webmaster_subject .= ' ' . $this->email;
