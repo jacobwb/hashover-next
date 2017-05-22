@@ -862,9 +862,9 @@ class WriteComments extends PostData
 				}
 
 				$webmaster_subject = $this->setup->notEmail_subject_txt;
-				if($this->setup->notEmail_subject_appName)	$webmaster_subject .= ' ' . $writerName;
-				if($this->setup->notEmail_subject_appEmail)	$webmaster_subject .= ' ' . $this->email;
-				if($this->setup->notEmail_subject_appPage)	$webmaster_subject .= ' ' . $this->setup->pageURL;
+				if($this->setup->notEmail_subject_appName)	$webmaster_subject .= ' - ' . $writerName;
+				if($this->setup->notEmail_subject_appEmail)	$webmaster_subject .= ' - ' . $this->email;
+				if($this->setup->notEmail_subject_appPage)	$webmaster_subject .= ' - ' . $this->setup->pageURL;
 
 				$webmaster_message  = 'From ' . $from_line . ":\r\n\r\n";
 				$webmaster_message .= $mail_comment . "\r\n\r\n";
