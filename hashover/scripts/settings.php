@@ -60,10 +60,10 @@ class Settings
 	public $notEmail_subject_appEmail	= false;		// Whether append the sender email to the E-Mail notification subject. NOTE, this is useful to prevent grouping done by Webmail softwares like GMail, when more emails arrive with the same subject. So you can never lose a comment.
 	public $notEmail_subject_appName	= false;		// Whether append the name to the E-Mail notification subject. NOTE, this is useful to prevent grouping done by Webmail softwares like GMail, when more emails arrive with the same subject. So you can never lose a comment.
 	public $notEmail_subject_appPage	= false;		// Whether append the page to the E-Mail notification subject. NOTE, this is useful to prevent grouping done by Webmail softwares like GMail, when more emails arrive with the same subject. So you can never lose a comment.
-	
+
 	// Emails
 	public $emailSender			= NULL;			// Sender email, leave null to select it automatically		
-	
+
 	// Date and Time settings
 	public $serverTimezone		= 'America/Los_Angeles';	// Server timezone
 	public $usesUserTimezone	= true;				// Whether comment dates should use the user's timezone (JavaScript-mode)
