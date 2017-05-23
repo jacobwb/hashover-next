@@ -43,6 +43,7 @@ class Settings
 	public $defaultName		= 'Anonymous';			// Default name to use when one isn't given
 	public $allowsImages		= true;				// Whether external image URLs wrapped in [img] tags are embedded
 	public $allowsLogin		= true;				// Whether users can login and logout (when false form cookies are still set)
+	public $allowsReplies 		= true;				// Whether a "Reply" button is displayed
 	public $allowsLikes		= true;				// Whether a "Like" link is displayed
 	public $allowsDislikes		= false;			// Whether a "Dislike" link is displayed; allowing Reddit-style voting
 	public $usesAJAX		= true;				// Whether AJAX is used for posting, editing, and loading comments
