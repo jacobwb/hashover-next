@@ -62,6 +62,7 @@ if ($hashover->setup->collapsesComments !== false) {
 }
 
 // Some short variables (FIXME: this is cosmetic)
+$allowsReplies = $hashover->setup->allowsReplies;
 $allowsLikes = !!$hashover->setup->allowsLikes;
 $allowsDislikes = !!$hashover->setup->allowsDislikes;
 $likesOrDislikes = ($allowsLikes or $allowsDislikes);
@@ -189,6 +190,7 @@ HashOver.init = function ()
 	var collapsedCount	= 0;
 	var collapseLimit	= <?php echo $hashover->misc->jsEscape ($hashover->setup->collapseLimit); ?>;
 	var defaultName		= '<?php echo $hashover->misc->jsEscape ($hashover->setup->defaultName); ?>';
+	var allowsReplies	= <?php echo string_true ($allowsReplies); ?>;
 	var allowsDislikes	= <?php echo string_true ($allowsDislikes); ?>;
 	var allowsLikes		= <?php echo string_true ($allowsLikes); ?>;
 	var timeFormat		= <?php echo js_json ($hashover->setup->timeFormat, false); ?>;
@@ -834,8 +836,10 @@ HashOver.init = function ()
 			// Add date from comment as permalink hyperlink to template
 			template.date = '<?php echo $hashover->html->dateLink ('permalink', 'commentDate'); ?>';
 
+<?php if ($allowsReplies !== false): ?>
 			// Add "Reply" hyperlink to template
 			template['reply-link'] = '<?php echo $hashover->html->formLink ('reply', 'permalink', 'replyClass', 'replyTitle'); ?>';
+<?php endif; ?>
 
 			// Add reply count to template
 			if (comment.replies !== undefined) {
