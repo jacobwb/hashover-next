@@ -189,7 +189,7 @@ class WriteComments extends PostData
 	protected function setHeaders ($email, $user = true)
 	{
 		$this->headers  = 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
-		$this->headers .= 'From: ' . $email . "\r\n";
+		if(NULL!=$this->setup->emailSender) $this->headers .= 'From: ' . $this->setup->emailSender . "\r\n";
 		$this->headers .= 'Reply-To: ' . $email;
 
 		// Set commenter's headers to new value as well
@@ -811,7 +811,8 @@ class WriteComments extends PostData
 
 			// Send notification e-mails
 			$permalink = 'c' . str_replace ('-', 'r', $comment_file);
-			$from_line = !empty ($this->name) ? $this->name : $this->setup->defaultName;
+			$writerName = !empty ($this->name) ? $this->name : $this->setup->defaultName;
+			$from_line = $writerName;
 			$mail_comment = html_entity_decode (strip_tags ($this->commentData['body']), ENT_COMPAT, 'UTF-8');
 			$mail_comment = $this->indentedWordwrap ($mail_comment);
 			$webmaster_reply = '';
@@ -860,6 +861,11 @@ class WriteComments extends PostData
 					$from_line .= ' <' . $this->email . '>';
 				}
 
+				$webmaster_subject = $this->setup->notEmail_subject_txt;
+				if($this->setup->notEmail_subject_appName)	$webmaster_subject .= ' - ' . $writerName;
+				if($this->setup->notEmail_subject_appEmail)	$webmaster_subject .= ' - ' . $this->email;
+				if($this->setup->notEmail_subject_appPage)	$webmaster_subject .= ' - ' . $this->setup->pageURL;
+
 				$webmaster_message  = 'From ' . $from_line . ":\r\n\r\n";
 				$webmaster_message .= $mail_comment . "\r\n\r\n";
 				$webmaster_message .= $webmaster_reply . '----' . "\r\n\r\n";
@@ -867,7 +873,7 @@ class WriteComments extends PostData
 				$webmaster_message .= 'Page: ' . $this->setup->pageURL;
 
 				// Send
-				mail ($this->setup->notificationEmail, 'New Comment', $webmaster_message, $this->headers);
+				mail ($this->setup->notificationEmail, $webmaster_subject, $webmaster_message, $this->headers);
 			}
 
 			// Set/update user login cookie

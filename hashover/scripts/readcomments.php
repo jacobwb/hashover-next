@@ -179,7 +179,11 @@ class ReadComments
 		}
 
 		// Sort comments by their keys alphabetically in ascending order
-		uksort ($this->commentList, 'strnatcasecmp');
+		if($this->setup->readCommentsDESC){
+			uksort($this->commentList, create_function('$a,$b', 'return -strnatcasecmp($a,$b);')); // DESC
+		}else{
+			uksort($this->commentList, 'strnatcasecmp'); // ASC
+		}
 	}
 
 	// Read comments

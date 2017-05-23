@@ -35,12 +35,15 @@ class Settings
 
 	// Primary settings
 	public $language		= 'auto';			// UI language, for example 'en', 'de', etc. 'auto' to use system locale
+	public $languageVARNames	= [];				// The list of parameters to check for to get language required, [order is important],if not used leave the array void.
+									// 	E.G ['Lang', 'MyLang'] it'll get the language required from the $_GET, $_POST, $_COOKIE variable that has the names: "Lang" or "MyLang"
 	public $theme			= 'default';			// Comment Cascading Style Sheet (CSS)
 	public $usesModeration		= false;			// Whether comments must be approved before they appear to other visitors
 	public $dataFormat		= 'xml';			// Format comments will be stored in; options: xml, json, sql
 	public $defaultName		= 'Anonymous';			// Default name to use when one isn't given
 	public $allowsImages		= true;				// Whether external image URLs wrapped in [img] tags are embedded
 	public $allowsLogin		= true;				// Whether users can login and logout (when false form cookies are still set)
+	public $allowsReplies 		= true;				// Whether a "Reply" button is displayed
 	public $allowsLikes		= true;				// Whether a "Like" link is displayed
 	public $allowsDislikes		= false;			// Whether a "Dislike" link is displayed; allowing Reddit-style voting
 	public $usesAJAX		= true;				// Whether AJAX is used for posting, editing, and loading comments
@@ -51,6 +54,16 @@ class Settings
 	public $streamDepth		= 3;				// In stream mode, the number of reply indentions to allow before the thread flattens
 	public $popularityThreshold	= 5;				// Minimum likes a comment needs to be popular
 	public $popularityLimit		= 2;				// Number of comments allowed to become popular
+	public $readCommentsDESC	= true;				// Whether it must read the comment in DESC order
+
+	// Webmaster notification email
+	public $notEmail_subject_txt		= 'New comment';	// The initial part of E-Mail notification subject
+	public $notEmail_subject_appEmail	= false;		// Whether append the sender email to the E-Mail notification subject. NOTE, this is useful to prevent grouping done by Webmail softwares like GMail, when more emails arrive with the same subject. So you can never lose a comment.
+	public $notEmail_subject_appName	= false;		// Whether append the name to the E-Mail notification subject. NOTE, this is useful to prevent grouping done by Webmail softwares like GMail, when more emails arrive with the same subject. So you can never lose a comment.
+	public $notEmail_subject_appPage	= false;		// Whether append the page to the E-Mail notification subject. NOTE, this is useful to prevent grouping done by Webmail softwares like GMail, when more emails arrive with the same subject. So you can never lose a comment.
+
+	// Emails
+	public $emailSender			= NULL;			// Sender email, leave null to select it automatically		
 
 	// Date and Time settings
 	public $serverTimezone		= 'America/Los_Angeles';	// Server timezone
