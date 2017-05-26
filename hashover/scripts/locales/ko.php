@@ -20,7 +20,7 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 // English text for forms, buttons, links, and tooltips
 $locale = array (
 	'comment-form'		=> '댓글을 적으세요...',
-	'reply-form'		=> '답글을 적으세요꾸미기...',
+	'reply-form'		=> '답글을 적으세요...',
 	'comment-formatting'	=> '꾸미기',
 	'accepted-format'	=> '사용가능한 %s 형식',
 	'accepted-html'		=> '&lt;b&gt;, &lt;strong&gt;, &lt;u&gt;, &lt;i&gt;, &lt;em&gt;, &lt;s&gt;, &lt;big&gt;, &lt;small&gt;, &lt;sup&gt;, &lt;sub&gt;, &lt;pre&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;blockquote&gt;, &lt;code&gt; 코드삽입, URL은 자동으로 링크로 변환되고, [img]Image URL[/img] 외부 그림을 표시합니다.',
