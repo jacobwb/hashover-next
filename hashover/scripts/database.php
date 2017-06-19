@@ -88,6 +88,7 @@ class Database
 			case 'update': {
 				$query = 'UPDATE `' . $this->setup->threadDirectory . '` '
 				       . 'SET'
+				       . ' status=:status,'
 				       . ' body=:body,'
 				       . ' name=:name,'
 				       . ' password=:password,'
