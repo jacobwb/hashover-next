@@ -39,7 +39,8 @@ require ('standard-setup.php');
 
 // Autoload class files
 spl_autoload_register (function ($classname) {
-	$classname = strtolower ($classname);
+	$classname = str_replace ('\\', '/', strtolower ($classname));
+	$classname = basename ($classname);
 
 	if (!@include ('./' . $classname . '.php')) {
 		echo json_encode (array (

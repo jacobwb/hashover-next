@@ -709,6 +709,9 @@ class WriteComments extends PostData
 
 			// Check if user is authorized
 			if ($auth['authorized'] === true) {
+				// Set initial fields for update
+				$update_fields = $this->editableFields;
+
 				// Check if user is admin
 				if ($this->login->userIsAdmin === true) {
 					// If so, set status for update
@@ -720,9 +723,6 @@ class WriteComments extends PostData
 
 				// Setup necessary comment data
 				$this->setupCommentData (true);
-
-				// Set initial fields for update
-				$update_fields = $this->editableFields;
 
 				// Only set protected fields for update if passwords match
 				if ($auth['user-owned'] === true) {
