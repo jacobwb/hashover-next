@@ -8,7 +8,9 @@ Copyright (C) 2016-2017 Jacob Barkdull
 	conditions, unless such conditions are required by law.
 
 -----------------------------------------------------------------------------*/
-
+#hashover *{
+	direction: rtl;
+}
 
 #hashover {
 	text-indent: initial;
