@@ -106,3 +106,8 @@ Contributing
 When sending a "Pull Request", committing code, or otherwise sending, submitting, or transmitting code in any other way, please place a [GNU Affero General Public License](http://www.gnu.org/licenses/agpl.html) notice or any compatible license notice at the top of the code (if one isn't already present) and assign your contribution's copyright to yourself or "Jacob Barkdull". This gives me the necessary rights to distribute your contribution in HashOver under the GNU Affero General Public License.
 
 HashOver is partially written in JavaScript, plain, standard, non-jQuery JavaScript. If your contribution improves or adds new functionality to the JavaScipt portions of HashOver, your contribution must also be written in plain, standard, non-jQuery JavaScript. Contributions using or assuming the presence of jQuery, Underscore, AngularJS, Prototype, React, Node.js, or any other abstraction layer, library, and/or framework will be rejected.
+
+support right to left languages
+---
+If your language have a right to left (RTL) direction, you should change style from default to default_rtl, in my case my language is persian(fa) so I choose "fa" for language and "default_rtl" for style.
+You can see the output of my job here, https://sirajeh.ir
