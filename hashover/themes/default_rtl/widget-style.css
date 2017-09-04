@@ -1,0 +1,229 @@
+/*-----------------------------------------------------------------------------
+
+Copyright (C) 2014 Jacob Barkdull
+
+	I, Jacob Barkdull, hereby release this work into the public domain.
+	This applies worldwide. If this is not legally possible, I grant any
+	entity the right to use this work for any purpose, without any
+	conditions, unless such conditions are required by law.
+
+-----------------------------------------------------------------------------*/
+@import url(iransans/fontiran.css);
+@import url("font-awesome.min.css");
+@import url("font-awesome.css");
+#hashover-widgwt *{
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	font-family: "IRANSans";
+	list-style-type: none;
+	text-decoration: none;
+	direction:rtl;
+	border-collapse: collapse;
+}
+
+
+#hashover-widget,
+#hashover-widget .hashover-widget-comment,
+#hashover-widget hr {
+	clear: both;
+}
+
+#hashover-widget .hashover-widget-comment pre,
+#hashover-widget .hashover-widget-comment code,
+#hashover-widget .hashover-widget-comment label {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-o-box-sizing: border-box;
+}
+
+#hashover-widget .hashover-balloon,
+#hashover-widget img,
+#hashover-widget .hashover-widget-comment pre,
+#hashover-widget .hashover-widget-comment code,
+#hashover-widget .hashover-avatar span,
+#hashover-widget .hashover-avatar a,
+#hashover-widget .hashover-widget-comment label {
+	border-radius: 5px 5px 5px 5px;
+	-moz-border-radius: 5px 5px 5px 5px;
+	-webkit-border-radius: 5px 5px 5px 5px;
+	-o-border-radius: 5px 5px 5px 5px;
+}
+
+#hashover-widget hr {
+	border: 0px;
+	height: 1px;
+	background-color: #808080;
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+
+#hashover-widget a, #hashover-widget a:link {
+	text-decoration: none;
+	color: #0000CC;
+	outline: none;
+}
+
+#hashover-widget a:visited {
+	color: #00268F;
+}
+
+#hashover-widget a:hover {
+	text-decoration: underline;
+	cursor: pointer;
+	color: #005EFF;
+}
+
+#hashover-widget .hashover-balloon {
+	overflow: hidden;
+	padding-bottom: 8px;
+	background-color: #F7F9FF;
+	border: 1px solid #808080 ! important;
+	text-align: left;
+	height: auto;
+	width: auto;
+}
+
+#hashover-widget .hashover-widget-comment {
+	margin: 0.5em 0px 0.5em 0px;
+}
+
+#hashover-widget .hashover-widget-comment .hashover-content {
+	padding: 0px 8px 0px 8px;
+	line-height: 1.4em;
+}
+
+#hashover-widget .hashover-widget-comment .hashover-content img {
+	max-width: 100%;
+	max-height: 640px;
+	cursor: pointer;
+}
+
+#hashover-widget .hashover-widget-comment hr {
+	background-color: #C1C1C1;
+	margin: 0px;
+}
+
+#hashover-widget .hashover-widget-comment .hashover-widget-name {
+	font-size: 16px;
+	display: inline-block;
+	padding-top: 1px;
+	font-weight: bold;
+}
+
+#hashover-widget .hashover-post-comment {
+	margin: 1em 0px 0.5em 0px;
+	display: inline-block;
+	width: 100%;
+	padding-bottom: 8px;
+	border-bottom: 1px dashed rgb(190, 190, 190);
+}
+
+#hashover-widget .hashover-widget-comment .hashover-widget-name.at {
+	color: #00268F;
+}
+
+#hashover-widget .hashover-widget-comment .hashover-title {
+	display: inline-block;
+	clear: right;
+}
+
+#hashover-widget .hashover-widget-comment .hashover-header {
+	border-bottom: 1px solid #808080;
+	margin-bottom: 8px;
+	line-height: normal;
+	padding: 8px;
+	overflow: hidden;
+}
+
+#hashover-widget .hashover-avatar span,
+#hashover-widget .hashover-avatar img,
+#hashover-widget .hashover-avatar a {
+	display: inline-block;
+	width: 45px;
+	height: 45px;
+	border: 1px solid #808080;
+	vertical-align: top;
+	background-color: rgba(255, 255, 255, 0.8);
+	font-size: 14px;
+	text-align: center;
+	line-height: 34px;
+	color: #808080;
+}
+
+#hashover-widget .hashover-avatar {
+	display: inline-block;
+	position: relative;
+	float: left;
+	padding-right: 10px;
+}
+
+#hashover-widget .hashover-avatar img {
+	width: 32px;
+	height: 32px;
+}
+
+#hashover-widget .hashover-widget-comment pre,
+#hashover-widget .hashover-widget-comment code,
+#hashover-widget .hashover-widget-comment blockquote,
+#hashover-widget .hashover-widget-comment ol,
+#hashover-widget .hashover-widget-comment ul {
+	vertical-align: top;
+}
+
+#hashover-widget .hashover-widget-comment pre,
+#hashover-widget .hashover-widget-comment code {
+	width: 100%;
+	max-height: 200px;
+	display: inline-block;
+	overflow: auto;
+	border: 1px solid #C1C1C1;
+	background-color: #F5F5F5;
+	white-space: pre;
+	padding: 5px;
+	margin: 0px;
+}
+
+#hashover-widget .hashover-widget-comment blockquote,
+#hashover-widget .hashover-widget-comment ol,
+#hashover-widget .hashover-widget-comment ul {
+	padding-left: 10px;
+	margin: 0px 20px 8px 20px;
+}
+
+#hashover-widget .hashover-widget-comment blockquote {
+	border-left: 3px solid rgba(0, 0, 0, 0.3);
+	margin: 8px 20px 4px 20px;
+}
+
+#hashover-widget .hashover-widget-comment .hashover-date {
+	display: inline-block;
+}
+
+#hashover-widget .hashover-widget-comment .hashover-date a,
+#hashover-widget .hashover-widget-comment .hashover-date a:visited,
+#hashover-widget .hashover-widget-comment .hashover-date span {
+	color: #606060;
+}
+
+#hashover-widget .hashover-widget-comment .hashover-date a:hover,
+#hashover-widget .hashover-widget-comment .hashover-date a:active {
+	color: #101010;
+}
+
+#hashover-widget .hashover-widget-comment.hashover-first .hashover-title {
+	font-size: 16px;
+	display: inline-block;
+	position: relative;
+	top: 12px;
+	left: 10px;
+	vertical-align: top;
+}
+
+#hashover-widget .hashover-widget-comment .hashover-footer {
+	border-top: 1px solid #808080;
+	margin-top: 8px;
+	padding: 8px 8px 0px 8px;
+	overflow: hidden;
+}

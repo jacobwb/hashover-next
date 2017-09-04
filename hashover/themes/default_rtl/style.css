@@ -1,0 +1,1133 @@
+/*-----------------------------------------------------------------------------
+
+Copyright (C) 2016-2017 Jacob Barkdull
+
+	I, Jacob Barkdull, hereby release this work into the public domain.
+	This applies worldwide. If this is not legally possible, I grant any
+	entity the right to use this work for any purpose, without any
+	conditions, unless such conditions are required by law.
+
+-----------------------------------------------------------------------------*/
+#hashover *{
+	direction: rtl;
+}
+
+#hashover {
+	text-indent: initial;
+}
+
+#hashover :before,
+#hashover :after {
+	position: relative;
+	z-index: 3;
+}
+
+#hashover #hashover-requiredFields,
+#hashover .hashover-hidden,
+#hashover .hashover-notice > .hashover-balloon > .hashover-footer,
+#hashover .hashover-first .hashover-balloon,
+#hashover .hashover-first .hashover-avatar:before,
+#hashover .hashover-first .hashover-avatar:after {
+	display: none ! important;
+}
+
+#hashover,
+#hashover-top-comments,
+#hashover-sort-div,
+#hashover .hashover-inputs {
+	clear: both;
+}
+
+#hashover #hashover-form-section,
+#hashover #hashover-popular-section,
+#hashover #hashover-comments-section {
+	margin-bottom: 36px;
+}
+
+#hashover .hashover-title,
+#hashover #hashover-count,
+#hashover .hashover-comment-name {
+	display: inline-block;
+	font-size: 18px;
+}
+
+#hashover form input,
+#hashover form textarea,
+#hashover .hashover-inputs,
+#hashover .hashover-select-wrapper,
+#hashover .hashover-submit,
+#hashover .hashover-avatar-image *,
+#hashover .hashover-avatar *,
+#hashover .hashover-inputs input,
+#hashover .hashover-comment textarea,
+#hashover .hashover-comment,
+#hashover .hashover-reply > .hashover-balloon,
+#hashover .hashover-reply-form,
+#hashover .hashover-reply .hashover-header,
+#hashover .hashover-form-footer {
+	border: 1px solid #AAAAAA;
+}
+
+#hashover .hashover-dashed-title {
+	display: inline-block;
+	width: 100%;
+	margin-bottom: 12px;
+	padding-bottom: 10px;
+	vertical-align: top;
+	border-bottom: 1px dashed rgb(190, 190, 190);
+}
+
+#hashover .hashover-message {
+	position: relative;
+	z-index: 1;
+}
+
+#hashover .hashover-formatting {
+	background-position: 0px -454px;
+}
+
+#hashover .hashover-message,
+#hashover .hashover-message > *,
+#hashover .hashover-formatting-message,
+#hashover .hashover-formatting-message > * {
+	display: block;
+	width: 100%;
+	max-height: 0px;
+}
+
+#hashover .hashover-message > *,
+#hashover .hashover-formatting-message > * {
+	color: transparent;
+}
+
+#hashover .hashover-message > * {
+	padding: 0px 0px 0px 12px;
+	margin-bottom: 12px;
+	text-align: center;
+	border: 1px solid #AAAAAA;
+}
+
+#hashover .hashover-message.hashover-message-open > *,
+#hashover .hashover-formatting-message.hashover-message-open > * {
+	color: initial;
+}
+
+#hashover .hashover-message.hashover-message-open > * {
+	padding: 12px;
+	color: #0000CC;
+	background-color: rgba(225, 225, 255, 0.25);
+	border-color: #00AACC;
+}
+
+#hashover .hashover-php-message-open,
+#hashover .hashover-php-message-open > * {
+	max-height: initial;
+}
+
+#hashover .hashover-message.hashover-message-error > * {
+	color: #CC0000;
+	background-color: rgba(255, 225, 225, 0.25);
+	border-color: #CC0000;
+}
+
+#hashover .hashover-formatting-message > * {
+	margin-top: -1px;
+	border: 1px solid #AAAAAA;
+}
+
+#hashover .hashover-formatting-table {
+	display: table;
+	padding: 12px 0px 12px 0px;
+	background-color: #E5E5E5;
+}
+
+#hashover .hashover-formatting-table > * {
+	display: table-cell;
+	width: 50%;
+	padding: 0px 12px 0px 12px;
+	border-right: 1px solid #AAAAAA;
+	vertical-align: top;
+}
+
+#hashover .hashover-formatting-table > *:last-child {
+	border-right: none;
+}
+
+#hashover .hashover-comment .hashover-message {
+	margin-top: -1px;
+}
+
+#hashover .hashover-comment .hashover-message > * {
+	margin-bottom: 0px;
+}
+
+#hashover #hashover-form,
+#hashover .hashover-comment,
+#hashover .hashover-reply-form,
+#hashover .hashover-comment .hashover-footer,
+#hashover .hashover-message,
+#hashover .hashover-message > *,
+#hashover .hashover-formatting-message,
+#hashover .hashover-formatting-message > *,
+#hashover .hashover-comment form,
+#hashover .hashover-comment form .hashover-balloon {
+	overflow: hidden;
+}
+
+#hashover form,
+#hashover .hashover-comment form {
+	display: block;
+}
+
+#hashover .hashover-inputs {
+	display: table;
+	width: 100%;
+	padding: 12px;
+	border-bottom: none;
+}
+
+#hashover .hashover-inputs > * {
+	display: table-cell;
+	vertical-align: middle;
+	line-height: 16px;
+}
+
+#hashover .hashover-name-input input,
+#hashover .hashover-password-input input,
+#hashover .hashover-email-input input,
+#hashover .hashover-website-input input {
+	background-image: -webkit-linear-gradient(#F0F0F0, #FCFCFC, #FCFCFC, #FCFCFC);
+	background-image: -moz-linear-gradient(#F0F0F0, #FCFCFC, #FCFCFC, #FCFCFC);
+	background-image: linear-gradient(#F0F0F0, #FCFCFC, #FCFCFC, #FCFCFC);
+}
+
+#hashover .hashover-name-input,
+#hashover .hashover-password-input,
+#hashover .hashover-email-input,
+#hashover .hashover-website-input {
+	position: relative;
+}
+
+#hashover .hashover-name-input:before,
+#hashover .hashover-password-input:before,
+#hashover .hashover-email-input:before,
+#hashover .hashover-website-input:before,
+#hashover .hashover-required-input:after {
+	content: " ";
+	display: inline-block;
+	position: absolute;
+	top: 50%;
+	left: 0px;
+	width: 28px;
+	height: 32px;
+	margin-top: -16px;
+	background-image: url('../../images/inputs-and-buttons.png');
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	border: 1px solid transparent;
+	pointer-events: none;
+}
+
+#hashover .hashover-required-input:after {
+	left: auto;
+	right: 0px;
+	background-position: 0px -419px;
+}
+
+#hashover.hashover-logged-out .hashover-inputs > *,
+#hashover .hashover-comment .hashover-inputs > * {
+	padding: 0px 3px 0px 3px;
+}
+
+#hashover .hashover-comment,
+#hashover .hashover-reply-form,
+#hashover .hashover-comment .hashover-avatar,
+#hashover .hashover-comment .hashover-comment-name,
+#hashover .hashover-avatar-image {
+	position: relative;
+}
+
+#hashover #hashover-form .hashover-avatar-image {
+	width: 45px;
+	padding-right: 10px;
+}
+
+#hashover .hashover-avatar-image *,
+#hashover .hashover-avatar * {
+	vertical-align: middle;
+}
+
+#hashover form input,
+#hashover form textarea,
+#hashover .hashover-inputs input,
+#hashover .hashover-submit {
+	padding: 2px;
+	margin: 0px;
+	background-color: #FCFCFC;
+	font-size: 13px;
+	font-family: "Arial", "Helvetica", "FreeSans", sans-serif;
+	color: #222222;
+	outline-offset: none;
+	outline: -webkit-focus-ring-color none;
+}
+
+#hashover form input,
+#hashover form textarea,
+#hashover .hashover-submit,
+#hashover .hashover-inputs input,
+#hashover .hashover-comment label {
+	-o-transition: border 150ms linear 0ms, background-color 150ms linear 0ms, box-shadow 150ms linear 0ms;
+	-webkit-transition: border 150ms linear 0ms, background-color 150ms linear 0ms, box-shadow 150ms linear 0ms;
+	-moz-transition: border 150ms linear 0ms, background-color 150ms linear 0ms, box-shadow 150ms linear 0ms;
+	transition: border 150ms linear 0ms, background-color 150ms linear 0ms, box-shadow 150ms linear 0ms;
+}
+
+#hashover *,
+#hashover *:before,
+#hashover *:after {
+	-o-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+#hashover form textarea {
+	position: relative;
+	width: 100%;
+	padding: 12px;
+	vertical-align: top;
+	resize: vertical;
+}
+
+#hashover form textarea:focus {
+	z-index: 2;
+}
+
+#hashover .hashover-comment > .hashover-balloon,
+#hashover .hashover-edit-form,
+#hashover #hashover-end-links {
+	border-top: 1px solid #AAAAAA;
+}
+
+#hashover .hashover-comment > .hashover-balloon {
+	padding: 12px;
+	margin-bottom: -1px;
+	border-bottom: 1px solid #AAAAAA;
+}
+
+#hashover textarea:hover,
+#hashover input:hover,
+#hashover .hashover-submit:hover {
+	background-color: #FCFCFC;
+	border-color: #606060;
+	text-decoration: none;
+}
+
+#hashover textarea:focus,
+#hashover input[type="text"]:focus,
+#hashover input[type="password"]:focus,
+#hashover .hashover-submit:focus {
+	border-color: #0055FF ! important;
+
+	-o-box-shadow: 0px 0px 2px #BFEFFF ! important;
+	-webkit-box-shadow: 0px 0px 2px #BFEFFF ! important;
+	-moz-box-shadow: 0px 0px 2px #BFEFFF ! important;
+	box-shadow: 0px 0px 2px #BFEFFF ! important;
+}
+
+#hashover .hashover-submit {
+	background-color: #F5F8FC;
+	padding: 6px 10px 6px 10px;
+	margin-right: 5px;
+}
+
+#hashover .hashover-post-button,
+#hashover .hashover-reply-post,
+#hashover .hashover-edit-post {
+	background-color: #8CB1FF;
+	border-color: #0055AA;
+	color: #FCFCFC;
+}
+
+#hashover .hashover-footer *,
+#hashover .hashover-form-footer * {
+	vertical-align: top;
+	line-height: 15px;
+}
+
+#hashover .hashover-post-button:hover,
+#hashover .hashover-reply-post:hover,
+#hashover .hashover-edit-post:hover {
+	background-color: #73A1FF;
+	border-color: #0055AA;
+}
+
+#hashover .hashover-post-button:focus,
+#hashover .hashover-reply-post:focus,
+#hashover .hashover-edit-post:focus {
+	background-color: #6698FF ! important;
+	border-color: #222222 ! important;
+}
+
+#hashover .hashover-edit-delete {
+	float: right;
+	margin-left: 12px;
+	background-color: #FF8C8C;
+	border-color: #AA0000;
+	color: #FCFCFC;
+}
+
+#hashover .hashover-edit-delete:hover {
+	background-color: #FF6666;
+	border-color: #AA0000;
+}
+
+#hashover .hashover-edit-delete:focus {
+	border-color: #222222 ! important;
+	background-color: #FF5959 ! important;
+
+	-o-box-shadow: 0px 0px 2px #FFEFBF ! important;
+	-webkit-box-shadow: 0px 0px 2px #FFEFBF ! important;
+	-moz-box-shadow: 0px 0px 2px #FFEFBF ! important;
+	box-shadow: 0px 0px 2px #FFEFBF ! important;
+}
+
+#hashover .hashover-submit:hover {
+	cursor: pointer;
+}
+
+#hashover .hashover-submit:focus,
+#hashover .hashover-submit[disabled] {
+	border-color: #000000;
+}
+
+#hashover .hashover-submit[disabled] {
+	background-color: #E0E0E0 ! important;
+	color: #222222 ! important;
+
+	-o-box-shadow: none ! important;
+	-webkit-box-shadow: none ! important;
+	-moz-box-shadow: none ! important;
+	box-shadow: none ! important;
+}
+
+#hashover .hashover-inputs input {
+	width: 100%;
+	height: 32px;
+	font-size: 14px;
+	padding-left: 30px;
+	padding-right: 6px;
+	color: #808080;
+}
+
+#hashover .hashover-required-input input {
+	padding-right: 30px;
+}
+
+#hashover .hashover-inputs input:focus {
+	color: #222222;
+}
+
+#hashover .hashover-inputs > :first-child {
+	padding-left: 0px;
+}
+
+#hashover .hashover-inputs > :nth-last-child(1) {
+	padding-right: 0px;
+}
+
+#hashover .hashover-name-input:before {
+	background-position: 0px 1px;
+}
+
+#hashover .hashover-password-input:before {
+	background-position: 0px -27px;
+}
+
+#hashover .hashover-email-input:before {
+	background-position: 0px -55px;
+}
+
+#hashover .hashover-website-input:before {
+	background-position: 0px -83px;
+}
+
+#hashover .hashover-emphasized-input,
+#hashover .hashover-emphasized-input input {
+	border-color: #CC0000 ! important;
+}
+
+#hashover .hashover-emphasized-input:focus,
+#hashover .hashover-emphasized-input input:focus {
+	border-color: #FF0000 ! important;
+
+	-o-box-shadow: 0px 0px 2px #FFBFBF !important;
+	-webkit-box-shadow: 0px 0px 2px #FFBFBF !important;
+	-moz-box-shadow: 0px 0px 2px #FFBFBF !important;
+	box-shadow: 0px 0px 2px #FFBFBF !important;
+}
+
+#hashover form label {
+	cursor: pointer;
+}
+
+#hashover #hashover-form .hashover-comment-label,
+#hashover .hashover-comment-label:nth-child(2) {
+	background-color: #FCFCFC;
+}
+
+#hashover .hashover-inputs label,
+#hashover .hashover-comment-label {
+	padding: 5px;
+	display: inline-block;
+	background-color: rgba(200, 200, 200, 0.25);
+}
+
+#hashover .hashover-comment-label {
+	width: 100%;
+	display: block;
+	border: 1px solid #AAA;
+	margin-bottom: -1px;
+}
+
+#hashover .hashover-form-links {
+	display: inline-block;
+	vertical-align: middle;
+	margin-bottom: 12px;
+}
+
+#hashover .hashover-form-links > * {
+	display: inline-block;
+	margin-top: 7px;
+	margin-left: 6px;
+}
+
+#hashover .hashover-form-links > *:last-child {
+	margin-left: 0px;
+}
+
+#hashover .hashover-form-buttons {
+	margin-bottom: 12px;
+}
+
+#hashover label input[type="checkbox"] {
+	margin: -1px 0px 0px 4px;
+	vertical-align: middle;
+	padding: 0px;
+}
+
+#hashover .hashover-form-footer {
+	padding: 12px 12px 0px 12px;
+	overflow: hidden;
+	margin-top: -1px;
+	background-color: #F0F0F0;
+}
+
+#hashover .hashover-edit-form {
+	margin-top: 12px;
+	padding-top: 12px;
+}
+
+#hashover .hashover-edit-form .hashover-title {
+	margin-top: 3px;
+}
+
+#hashover #hashover-count {
+	float: right;
+}
+
+#hashover #hashover-sort,
+#hashover .hashover-edit-status,
+#hashover .hashover-comment .hashover-footer .hashover-buttons,
+#hashover .hashover-form-buttons,
+#hashover .hashover-thread-link {
+	float: left;
+}
+
+#hashover select {
+	height: 24px;
+}
+
+#hashover hr {
+	border: 0px;
+	height: 1px;
+	background-color: #AAAAAA;
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+
+#hashover input::-moz-focus-inner {
+	border: 0px;
+}
+
+#hashover a,
+#hashover a:link,
+#hashover .hashover-fake-link {
+	text-decoration: none;
+	color: #0000CC;
+	outline: none;
+	cursor: pointer;
+}
+
+#hashover a:visited {
+	color: #00268F;
+}
+
+#hashover a:hover,
+#hashover .hashover-fake-link:hover {
+	text-decoration: underline;
+	cursor: pointer;
+	color: #005EFF;
+}
+
+#hashover a.hashover-submit {
+	display: inline-block;
+	color: #222222;
+}
+
+#hashover .hashover-reply .hashover-avatar *,
+#hashover .hashover-comment form .hashover-avatar-image * {
+	width: 32px;
+	height: 32px;
+	line-height: 34px;
+}
+
+#hashover .hashover-reply .hashover-avatar a {
+	font-size: 14px;
+}
+
+#hashover #hashover-form,
+#hashover .hashover-comment,
+#hashover .hashover-reply-form {
+	background-color: #F5F5F5;
+}
+
+#hashover-form .hashover-inputs,
+#hashover .hashover-comment > .hashover-header {
+	/* Light blue */
+	/*background-color: #E5F0FF;*/
+
+	/* Light green */
+	background-color: #E5FFF0;
+
+	/* Light red (pink-ish) */
+	/*background-color: #FFE5F0;*/
+}
+
+#hashover .hashover-avatar-image *,
+#hashover .hashover-avatar *,
+#hashover .hashover-reply .hashover-header,
+#hashover .hashover-comment .hashover-balloon,
+#hashover .hashover-reply .hashover-header {
+	background-color: #FCFCFC;
+}
+
+#hashover .hashover-comment,
+#hashover .hashover-reply-form {
+	margin-bottom: 12px;
+}
+
+#hashover .hashover-comment > .hashover-header {
+	padding: 12px;
+}
+
+#hashover .hashover-reply,
+#hashover .hashover-reply-form {
+	border: none;
+	padding: 0px 12px 0px 12px;
+	margin: 13px 0px 12px 0px;
+}
+
+#hashover .hashover-reply .hashover-header {
+	padding: 12px 12px 0px 12px;
+	margin-right: 48px;
+	border-bottom: none;
+}
+
+#hashover .hashover-reply .hashover-reply,
+#hashover .hashover-reply .hashover-reply-form {
+	padding: 0px;
+	margin: 12px 48px 0px 0px;
+}
+
+#hashover .hashover-comment .hashover-avatar {
+	display: inline-block;
+	height: auto;
+	margin-left: 10px;
+}
+
+#hashover .hashover-avatar-image *,
+#hashover .hashover-avatar *,
+#hashover .hashover-avatar a {
+	display: inline-block;
+	width: 45px;
+	height: 45px;
+	font-size: 18px;
+	text-align: center;
+	line-height: 45px;
+	color: #808080;
+	background-position: center center;
+	background-attachment: scroll;
+	background-repeat: no-repeat;
+
+	-o-background-size: 100% 100%;
+	-webkit-background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	background-size: 100% 100%;
+
+	-o-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+}
+
+#hashover .hashover-reply .hashover-avatar,
+#hashover .hashover-comment form .hashover-avatar-image {
+	position: absolute;
+	display: inline-block;
+	top: 0px;
+	right: 12px;
+	padding: 0px;
+	float: right;
+}
+
+#hashover .hashover-reply .hashover-reply .hashover-avatar,
+#hashover .hashover-reply form .hashover-avatar-image {
+	right: 0px;
+}
+
+#hashover .hashover-comment .hashover-content {
+	line-height: 1.5em;
+	margin-bottom: 12px;
+}
+
+#hashover p {
+	margin: 0px 0px 12px 0px;
+}
+
+#hashover p:last-child {
+	margin-bottom: 0px;
+}
+
+#hashover .hashover-reply > .hashover-balloon,
+#hashover .hashover-reply-form .hashover-balloon {
+	margin-right: 48px;
+	margin-bottom: 1px;
+	border-top: none;
+}
+
+#hashover .hashover-comment .hashover-content img {
+	display: block;
+	max-width: 100%;
+	max-height: 640px;
+	cursor: pointer;
+}
+
+#hashover .hashover-avatar-image:before,
+#hashover .hashover-avatar-image:after,
+#hashover .hashover-comment .hashover-avatar:before,
+#hashover .hashover-comment .hashover-avatar:after {
+	content: " ";
+	position: absolute;
+	display: block;
+	bottom: -13px;
+	right: 50%;
+	margin-right: -10px;
+	width: 0px;
+	height: 0px;
+	border-width: 10px;
+	border-color: transparent;
+	border-style: solid outset solid;
+	pointer-events: none;
+}
+
+#hashover .hashover-avatar-image:before,
+#hashover .hashover-avatar-image:after {
+	margin-right: -15px;
+}
+
+#hashover .hashover-avatar-image:before,
+#hashover .hashover-comment .hashover-avatar:before,
+#hashover .hashover-comment form .hashover-avatar-image:before {
+	border-bottom-color: #AAAAAA;
+}
+
+#hashover .hashover-avatar-image:after,
+#hashover .hashover-comment .hashover-avatar:after,
+#hashover .hashover-comment form .hashover-avatar-image:after {
+	border-bottom-color: #FCFCFC;
+	bottom: -14px;
+}
+
+#hashover .hashover-reply .hashover-avatar:before,
+#hashover .hashover-reply .hashover-avatar:after,
+#hashover .hashover-comment form .hashover-avatar-image:before,
+#hashover .hashover-comment form .hashover-avatar-image:after {
+	border-style: solid solid outset;
+	border-color: transparent;
+	margin-right: auto;
+	margin-bottom: -8px;
+	top: auto;
+	right: auto;
+	bottom: 50%;
+	left: -15px;
+	border-width: 8px;
+}
+
+#hashover .hashover-reply .hashover-avatar:before,
+#hashover .hashover-comment form .hashover-avatar-image:before {
+	border-left-color: #AAAAAA;
+}
+
+#hashover .hashover-reply .hashover-avatar:after,
+#hashover .hashover-comment form .hashover-avatar-image:after {
+	border-left-color: #FCFCFC;
+	left: -16px;
+}
+
+#hashover.hashover-logged-out .hashover-comment form .hashover-avatar-image:after {
+	border-left-color: #FCFCFC;
+}
+
+#hashover .hashover-select-wrapper select {
+	border: none;
+	background-color: #F5F8FC;
+	padding: 0px 2px 0px 12px;
+	cursor: pointer;
+}
+
+#hashover .hashover-select-wrapper,
+#hashover .hashover-embedded-image-wrapper {
+	display: inline-block;
+	position: relative;
+}
+
+#hashover .hashover-select-wrapper {
+	overflow: hidden;
+	margin-top: -3px;
+	vertical-align: middle;
+	cursor: pointer;
+
+	-webkit-border-radius: 4px 4px 4px 4px;
+	-moz-border-radius: 4px 4px 4px 4px;
+	border-radius: 4px 4px 4px 4px;
+}
+
+#hashover .hashover-select-wrapper:before {
+	content: "\25BC";
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	display: inline-block;
+	height: 100%;
+	width: 25px;
+	padding: 5px 0px 0px 4px;
+	margin: 0px;
+	font-size: 14px;
+	line-height: 12px;
+	text-align: center;
+	pointer-events: none;
+	background-color: #F5F8FC;
+}
+
+#hashover .hashover-select-wrapper:hover select,
+#hashover .hashover-select-wrapper:hover:before {
+	background-color: #FCFCFC;
+}
+
+#hashover .hashover-comment-name {
+	vertical-align: middle;
+}
+
+#hashover .hashover-name-twitter:before {
+	content: "@";
+	color: #00268F;
+	cursor: default;
+}
+
+#hashover .hashover-comment .hashover-title {
+	display: inline-block;
+	vertical-align: middle;
+	clear: right;
+}
+
+#hashover .hashover-comment pre,
+#hashover .hashover-comment code,
+#hashover .hashover-comment blockquote,
+#hashover .hashover-comment ol,
+#hashover .hashover-comment ul {
+	vertical-align: top;
+}
+
+#hashover .hashover-comment pre,
+#hashover .hashover-comment code {
+	display: inline-block;
+	width: 100%;
+	max-height: 400px;
+	white-space: pre;
+	padding: 5px;
+	margin: 0px;
+	font-family: monospace;
+	font-size: 12px;
+	background-color: #EEEEEE;
+	overflow: auto;
+}
+
+#hashover code.hashover-inline {
+	display: inline;
+	padding: 1px 0px 0px 4px;
+}
+
+#hashover .hashover-comment blockquote,
+#hashover .hashover-comment ol,
+#hashover .hashover-comment ul {
+	padding-left: 10px;
+	margin: 0px 24px 0px 24px;
+}
+
+#hashover .hashover-comment blockquote {
+	border-left: 3px solid rgba(0, 0, 0, 0.3);
+}
+
+#hashover .hashover-comment .hashover-date {
+	display: inline-block;
+	vertical-align: middle;
+	margin-top: -1px;
+}
+
+#hashover .hashover-comment .hashover-date-permalink,
+#hashover .hashover-comment .hashover-date-permalink:visited,
+#hashover .hashover-comment .hashover-date > * {
+	color: #606060;
+}
+
+#hashover .hashover-comment .hashover-date-permalink:hover,
+#hashover .hashover-comment .hashover-date-permalink:active {
+	color: #101010;
+}
+
+#hashover .hashover-comment .hashover-date-permalink,
+#hashover .hashover-comment .hashover-replies,
+#hashover .hashover-comment .hashover-likes,
+#hashover .hashover-comment .hashover-dislikes {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#hashover .hashover-comment .hashover-date-permalink,
+#hashover .hashover-comment .hashover-replies,
+#hashover .hashover-comment .hashover-likes,
+#hashover .hashover-comment .hashover-dislikes {
+	float: right;
+}
+
+#hashover .hashover-comment .hashover-replies,
+#hashover .hashover-comment .hashover-likes,
+#hashover .hashover-comment .hashover-dislikes {
+	padding-left: 8px;
+}
+
+#hashover .hashover-formatting,
+#hashover .hashover-comment .hashover-buttons a {
+	display: inline-block;
+	vertical-align: middle;
+	min-height: 16px;
+	padding-left: 30px;
+	line-height: 16px;
+	background-image: url('../../images/inputs-and-buttons.png');
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	overflow: hidden ! important;
+	opacity: 0.50;
+	filter: alpha(opacity=50);
+
+	-o-transition: opacity 150ms linear 0ms;
+	-webkit-transition: opacity 150ms linear 0ms;
+	-moz-transition: opacity 150ms linear 0ms;
+	transition: opacity 150ms linear 0ms;
+}
+
+#hashover .hashover-formatting:hover,
+#hashover .hashover-comment .hashover-buttons a:hover {
+	opacity: 1.0;
+	filter: alpha(opacity=100);
+}
+
+#hashover .hashover-formatting,
+#hashover .hashover-formatting:hover,
+#hashover .hashover-comment .hashover-buttons a,
+#hashover .hashover-comment .hashover-buttons a:hover {
+	color: #111111;
+}
+
+#hashover .hashover-has-email {
+	background-position: left -258px;
+}
+
+#hashover .hashover-no-email {
+	background-position: left -286px;
+}
+
+#hashover .hashover-comment .hashover-like,
+#hashover .hashover-comment .hashover-liked:active,
+#hashover .hashover-comment .hashover-dislike {
+	background-position: left -174px;
+}
+
+#hashover .hashover-comment .hashover-liked,
+#hashover .hashover-comment .hashover-like:active {
+	background-position: left -202px;
+}
+
+#hashover .hashover-comment .hashover-like.hashover-dislikes-enabled {
+	background-position: left -314px;
+}
+
+#hashover .hashover-comment .hashover-liked.hashover-dislikes-enabled,
+#hashover .hashover-comment .hashover-like.hashover-dislikes-enabled:active {
+	background-position: left -370px;
+}
+
+#hashover .hashover-comment .hashover-disliked,
+#hashover .hashover-comment .hashover-dislike:active {
+	background-position: left -230px;
+}
+
+#hashover .hashover-comment .hashover-dislike.hashover-likes-enabled {
+	background-position: left -342px;
+}
+
+#hashover .hashover-comment .hashover-disliked.hashover-likes-enabled,
+#hashover .hashover-comment .hashover-dislike.hashover-likes-enabled:active {
+	background-position: left -398px;
+}
+
+#hashover .hashover-comment .hashover-comment-edit {
+	background-position: 2px -147px;
+}
+
+#hashover .hashover-comment .hashover-like.hashover-dislikes-enabled,
+#hashover .hashover-comment .hashover-liked.hashover-dislikes-enabled,
+#hashover .hashover-comment .hashover-dislike.hashover-likes-enabled,
+#hashover .hashover-comment .hashover-disliked.hashover-likes-enabled {
+	height: 15px;
+	font-size: 0px;
+	color: transparent;
+}
+
+#hashover .hashover-deleted > .hashover-header > .hashover-comment-name {
+	color: #FF0000;
+}
+
+#hashover .hashover-notice > .hashover-balloon > .hashover-content {
+	margin: 0px;
+}
+
+#hashover .hashover-more-link {
+	display: block;
+	padding: 12px;
+	margin-bottom: 12px;
+	background-color: rgba(230, 237, 250, 0.6);
+	border: 1px dashed #AAAAFF;
+	text-align: center;
+	opacity: 1.0;
+	filter: alpha(opacity=100);
+}
+
+#hashover .hashover-more-link,
+#hashover a.hashover-more-link {
+	color: #404040;
+}
+
+#hashover .hashover-more-link:hover {
+	background-color: rgba(230, 237, 250, 1.0);
+}
+
+#hashover .hashover-loading:before {
+	content: " " ! important;
+	display: inline-block;
+	min-width: 16px;
+	min-height: 16px;
+	vertical-align: middle;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: center center;
+	background-image: url('../../images/loading.gif');
+
+	image-rendering: -o-crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
+	-ms-interpolation-mode: nearest-neighbor;
+}
+
+#hashover .hashover-embedded-image-wrapper.hashover-loading img {
+	filter: grayscale(1.0);
+	opacity: 0.25;
+	filter: alpha(opacity=25);
+}
+
+#hashover .hashover-embedded-image-wrapper.hashover-loading:before {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+#hashover .hashover-more-link.hashover-loading:before,
+#hashover .hashover-thread-link.hashover-loading:before {
+	margin-left: 8px;
+	margin-top: -8px;
+	margin-bottom: -6px;
+}
+
+#hashover .hashover-more-link.hashover-hide-more-link {
+	opacity: 0.0;
+	filter: alpha(opacity=0);
+}
+
+#hashover .hashover-more-link,
+#hashover .hashover-message.hashover-message-animated,
+#hashover .hashover-message.hashover-message-animated > *,
+#hashover .hashover-formatting-message.hashover-message-animated,
+#hashover .hashover-formatting-message.hashover-message-animated > * {
+	-o-transition: all 150ms linear 0ms;
+	-webkit-transition: all 150ms linear 0ms;
+	-moz-transition: all 150ms linear 0ms;
+	transition: all 150ms linear 0ms;
+}
+
+#hashover #hashover-end-links {
+	margin-top: -12px;
+	padding: 18px 0px 5px 0px;
+	text-align: center;
+}
+
+/* Handle HDPI */
+#hashover.hashover-mobile .hashover-formatting,
+#hashover.hashover-mobile .hashover-name-input:before,
+#hashover.hashover-mobile .hashover-password-input:before,
+#hashover.hashover-mobile .hashover-email-input:before,
+#hashover.hashover-mobile .hashover-website-input:before,
+#hashover.hashover-mobile .hashover-required-input:after,
+#hashover.hashover-mobile .hashover-comment .hashover-buttons a {
+	background-image: url('../../images/inputs-and-buttons.svg');
+}
+
+@media only screen and (max-width: 640px) {
+	#hashover .hashover-formatting-table {
+		padding: 12px 12px 0px 12px;
+	}
+
+	#hashover .hashover-formatting-table > * {
+		display: table-row;
+		width: 100%;
+		border-bottom: 1px solid #AAAAAA;
+	}
+
+	#hashover .hashover-formatting-table p {
+		margin-bottom: 12px;
+	}
+}
