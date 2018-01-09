@@ -104,14 +104,6 @@ class Setup extends Settings
 		// Check for required extensions
 		$this->extensionsLoaded ($this->extensions);
 
-		// JSON settings file path
-		$json_settings = $this->getAbsolutePath ('settings.json');
-
-		// Check for JSON settings file; parse it if it exists
-		if (file_exists ($json_settings)) {
-			$this->JSONSettings ($json_settings);
-		}
-
 		// Throw exception if for Blowfish hashing support isn't detected
 		if ((defined ('CRYPT_BLOWFISH') and CRYPT_BLOWFISH) === false) {
 			throw new \Exception ('Failed to find CRYPT_BLOWFISH. Blowfish hashing support is required.');
@@ -173,44 +165,6 @@ class Setup extends Settings
 				throw new \Exception ('Failed to detect required extension: ' . $extension . '.');
 			}
 		}
-	}
-
-	public function getAbsolutePath ($file)
-	{
-		return $this->rootDirectory . '/' . trim ($file, '/');
-	}
-
-	protected function JSONSettings ($path)
-	{
-		// Get JSON data
-		$data = @file_get_contents ($path);
-
-		// Load and decode JSON settings file
-		$json_settings = @json_decode ($data, true);
-
-		// Return void on failure
-		if ($json_settings === null) {
-			return;
-		}
-
-		// Loop through each setting
-		foreach ($json_settings as $key => $value) {
-			// Convert setting name to camelCase
-			$title_case_key = ucwords (str_replace ('-', ' ', strtolower ($key)));
-			$setting = lcfirst (str_replace (' ', '', $title_case_key));
-
-			// Check if the JSON setting property exists in the defaults
-			if (property_exists ($this, $setting)) {
-				// Check if the JSON value is the same type as the default
-				if (gettype ($value) === gettype ($this->{$setting})) {
-					// Override default setting
-					$this->{$setting} = $value;
-				}
-			}
-		}
-
-		// Synchronize settings
-		$this->syncSettings ();
 	}
 
 	protected function getDomainWithPort ($url = '')
@@ -467,25 +421,6 @@ class Setup extends Settings
 
 		// Encode HTML characters in page title
 		$this->pageTitle = htmlspecialchars ($this->pageTitle, false, 'UTF-8', false);
-	}
-
-	// Check if a give API format is enabled
-	public function APIStatus ($api)
-	{
-		// Check if all available APIs are enabled
-		if ($this->enablesAPI === true) {
-			return 'enabled';
-		}
-
-		// Check if the given API is enabled
-		if (is_array ($this->enablesAPI)) {
-			if (in_array ($api, $this->enablesAPI)) {
-				return 'enabled';
-			}
-		}
-
-		// Assume API is disabled by default
-		return 'disabled';
 	}
 
 	// Check if user name and password again admin name and password

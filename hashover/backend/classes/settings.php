@@ -166,6 +166,14 @@ class Settings
 		$this->domain		= $_SERVER['HTTP_HOST'];	// Domain name for refer checking & notifications
 		$this->absolutePath	= $protocol . $this->domain;	// Absolute path or remote access
 
+		// JSON settings file path
+		$json_settings = $this->getAbsolutePath ('settings.json');
+
+		// Check for JSON settings file; parse it if it exists
+		if (file_exists ($json_settings)) {
+			$this->JSONSettings ($json_settings);
+		}
+
 		// Synchronize settings
 		$this->syncSettings ();
 	}
@@ -183,6 +191,41 @@ class Settings
 		}
 
 		return false;
+	}
+
+	public function getAbsolutePath ($file)
+	{
+		return $this->rootDirectory . '/' . trim ($file, '/');
+	}
+
+	protected function JSONSettings ($path)
+	{
+		// Get JSON data
+		$data = @file_get_contents ($path);
+
+		// Load and decode JSON settings file
+		$json_settings = @json_decode ($data, true);
+
+		// Return void on failure
+		if ($json_settings === null) {
+			return;
+		}
+
+		// Loop through each setting
+		foreach ($json_settings as $key => $value) {
+			// Convert setting name to camelCase
+			$title_case_key = ucwords (str_replace ('-', ' ', strtolower ($key)));
+			$setting = lcfirst (str_replace (' ', '', $title_case_key));
+
+			// Check if the JSON setting property exists in the defaults
+			if (property_exists ($this, $setting)) {
+				// Check if the JSON value is the same type as the default
+				if (gettype ($value) === gettype ($this->{$setting})) {
+					// Override default setting
+					$this->{$setting} = $value;
+				}
+			}
+		}
 	}
 
 	// Synchronizes specific settings after remote changes
@@ -218,7 +261,29 @@ class Settings
 			$this->usesAutoLogin = false;
 		}
 
-		$this->httpScripts	= $this->httpRoot . '/scripts';	// Script directory for HTTP
-		$this->httpImages	= $this->httpRoot . '/images';	// Image directory for HTTP
+		// Script directory for HTTP
+		$this->httpScripts = $this->httpRoot . '/scripts';
+
+		// Image directory for HTTP
+		$this->httpImages = $this->httpRoot . '/images';
+	}
+
+	// Check if a give API format is enabled
+	public function APIStatus ($api)
+	{
+		// Check if all available APIs are enabled
+		if ($this->enablesAPI === true) {
+			return 'enabled';
+		}
+
+		// Check if the given API is enabled
+		if (is_array ($this->enablesAPI)) {
+			if (in_array ($api, $this->enablesAPI)) {
+				return 'enabled';
+			}
+		}
+
+		// Assume API is disabled by default
+		return 'disabled';
 	}
 }
