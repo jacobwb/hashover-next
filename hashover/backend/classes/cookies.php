@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -16,16 +16,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
 
 class Cookies
 {
@@ -51,6 +41,8 @@ class Cookies
 	// Set a cookie with expiration date
 	public function set ($name, $value = '', $date = '')
 	{
+		$name = 'hashover-' . $name;
+
 		// Use specific expiration date or the one in Settings
 		$date = !empty ($date) ? $date : $this->setup->cookieExpiration;
 
@@ -72,35 +64,31 @@ class Cookies
 		}
 
 		// Set comment text cookie
-		if (!empty ($_POST['comment'])) {
-			$this->set ('comment', $_POST['comment']);
-		}
-	}
+		$comment = $this->setup->getRequest ('comment');
 
-	// Expire a cookie
-	public function expireCookie ($cookie)
-	{
-		// Set its expiration date to 1 if it exists
-		if (isset ($_COOKIE[$cookie])) {
-			$this->set ($cookie, '', 1);
+		// Check if comment is set
+		if ($comment !== false) {
+			$this->set ('comment', $comment);
 		}
 	}
 
 	// Get cookie value
 	public function getValue ($name, $trim = false)
 	{
+		$name = 'hashover-' . $name;
+
 		// Check if it exists
 		if (!empty ($_COOKIE[$name])) {
 			$value = $_COOKIE[$name];
 
 			// Strip escaping backslashes from cookie value
 			if (get_magic_quotes_gpc ()) {
-				return stripslashes ($value);
+				$value = stripslashes ($value);
 			}
 
 			// Return trimmed value if told to
 			if ($trim === true) {
-				return trim ($value, " \r\n\t");
+				$value = trim ($value, " \r\n\t");
 			}
 
 			return $value;
@@ -108,6 +96,15 @@ class Cookies
 
 		// If not set return null
 		return null;
+	}
+
+	// Expire a cookie
+	public function expireCookie ($cookie)
+	{
+		// Set its expiration date to 1 if it exists
+		if ($this->getValue ($cookie) !== null) {
+			$this->set ($cookie, '', 1);
+		}
 	}
 
 	// Expire HashOver's default cookies

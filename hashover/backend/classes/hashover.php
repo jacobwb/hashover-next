@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,23 +17,13 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 class HashOver
 {
 	public $usage = array ();
 	public $statistics;
 	public $misc;
 	public $setup;
-	public $readComments;
+	public $thread;
 	public $locale;
 	public $commentParser;
 	public $markdown;
@@ -59,6 +49,9 @@ class HashOver
 		// Instantiate general setup class
 		$this->setup = new HashOver\Setup ($this->usage);
 
+		// Instantiate class for reading comments
+		$this->thread = new HashOver\Thread ($this->setup);
+
 		// Instantiate class of miscellaneous functions
 		$this->misc = new HashOver\Misc ($mode);
 	}
@@ -66,13 +59,13 @@ class HashOver
 	public function getCommentCount ($locale_key = 'showing-comments')
 	{
 		// Shorter variables
-		$primary_count = $this->readComments->primaryCount;
-		$total_count = $this->readComments->totalCount;
+		$primary_count = $this->thread->primaryCount;
+		$total_count = $this->thread->totalCount;
 
 		// Subtract deleted comment counts
 		if ($this->setup->countIncludesDeleted === false) {
-			$primary_count -= $this->readComments->primaryDeletedCount;
-			$total_count -= $this->readComments->totalDeletedCount;
+			$primary_count -= $this->thread->primaryDeletedCount;
+			$total_count -= $this->thread->totalDeletedCount;
 		}
 
 		// Decide which locale to use; Exclude "Showing" in API usages
@@ -82,7 +75,7 @@ class HashOver
 		$prime_plural = ($primary_count !== 2) ? 1 : 0;
 
 		// Get appropriate locale
-		$showing_comments_locale = $this->locale->get ($locale_key);
+		$showing_comments_locale = $this->locale->text[$locale_key];
 		$showing_comments = $showing_comments_locale[$prime_plural];
 
 		// Whether to show reply count separately
@@ -117,14 +110,14 @@ class HashOver
 	// Begin initialization work
 	public function initiate ()
 	{
-		// Instantiate class for reading comments
-		$this->readComments = new HashOver\ReadComments ($this->setup);
+		// Query a list of comments
+		$this->thread->queryComments ();
 
 		// Where to stop reading comments
-		if ($this->usage['mode'] === 'javascript'
+		if ($this->usage['mode'] !== 'php'
 		    and $this->setup->collapsesComments !== false
 		    and $this->setup->popularityLimit <= 0
-		    and $this->setup->usesAJAX !== false)
+		    and $this->setup->usesAjax !== false)
 		{
 			// Use collapse limit when collapsing and AJAX is enabled
 			$end = $this->setup->collapseLimit;
@@ -134,7 +127,7 @@ class HashOver
 		}
 
 		// TODO: Fix structure when using starting point
-		$this->rawComments = $this->readComments->read (0, $end);
+		$this->rawComments = $this->thread->read (0, $end);
 
 		// Instantiate locales class
 		$this->locale = new HashOver\Locale ($this->setup);
@@ -155,15 +148,31 @@ class HashOver
 		$this->markdown = new HashOver\Markdown ();
 	}
 
+	// Save various metadata about the page
+	public function defaultMetadata ()
+	{
+		// Localhost equivalent addresses
+		$addresses = array ('127.0.0.1', '::1', 'localhost');
+
+		// Do nothing if we're on localhost
+		if (in_array ($_SERVER['REMOTE_ADDR'], $addresses, true)) {
+			return;
+		}
+
+		// Attempt to save default page metadata
+		$this->thread->data->saveMeta ('page-info', array (
+			'url' => $this->setup->pageURL,
+			'title' => $this->setup->pageTitle
+		));
+	}
+
 	// Get reply array from comments via key
 	protected function &getRepliesLevel (&$level, $level_count, &$key_parts)
 	{
 		for ($i = 1; $i < $level_count; $i++) {
-			if (!isset ($level)) {
-				break;
+			if (isset ($level)) {
+				$level =& $level['replies'][$key_parts[$i] - 1];
 			}
-
-			$level =& $level['replies'][$key_parts[$i] - 1];
 		}
 
 		return $level;
@@ -204,7 +213,7 @@ class HashOver
 		$this->comments['primary'] = array ();
 
 		// If no comments were found, setup a default message comment
-		if ($this->readComments->totalCount <= 1) {
+		if ($this->thread->totalCount <= 1) {
 			$this->comments['primary'][] = array (
 				'title' => $this->locale->text['be-first-name'],
 				'avatar' => $this->setup->httpImages . '/first-comment.' . $this->setup->imageFormat,
@@ -223,9 +232,9 @@ class HashOver
 		$allowed_count = 0;
 
 		// Where to stop reading comments
-		if ($this->usage['mode'] === 'javascript'
+		if ($this->usage['mode'] !== 'php'
 		    and $this->setup->collapsesComments !== false
-		    and $this->setup->usesAJAX !== false)
+		    and $this->setup->usesAjax !== false)
 		{
 			// Use collapse limit when collapsing and AJAX is enabled
 			$end = $this->setup->collapseLimit;
@@ -275,7 +284,7 @@ class HashOver
 				case 'pending': {
 					$parsed = $this->commentParser->parse ($comment, $key, $key_parts, false);
 
-					if (!isset ($parsed['user-owned'])) {
+					if (!isset ($parsed['editable'])) {
 						$level = $this->commentParser->notice ('pending', $key, $last_date);
 						break;
 					}
@@ -334,7 +343,7 @@ class HashOver
 		$this->comments['popular'] = array ();
 
 		// If no comments or popularity limit is 0, return void
-		if ($this->readComments->totalCount <= 1
+		if ($this->thread->totalCount <= 1
 		    or $this->setup->popularityLimit <= 0)
 		{
 			return;
@@ -371,8 +380,8 @@ class HashOver
 		// Various comment count numbers
 		$commentCounts = array (
 			'show-count' => $this->commentCount,
-			'primary' => $this->readComments->primaryCount,
-			'total' => $this->readComments->totalCount,
+			'primary' => $this->thread->primaryCount,
+			'total' => $this->thread->totalCount,
 			'popular' => $this->popularCount
 		);
 
@@ -392,6 +401,9 @@ class HashOver
 	// Display all comments as HTML
 	public function displayComments ()
 	{
+		// Set/update default page metadata
+		$this->defaultMetadata ();
+
 		// Instantiate PHP mode class
 		$phpmode = new HashOver\PHPMode (
 			$this->setup,

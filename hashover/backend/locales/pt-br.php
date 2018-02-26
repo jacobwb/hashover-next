@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // I, Jacob Barkdull, hereby release this work into the public domain.
@@ -9,16 +9,8 @@
 // conditions, unless such conditions are required by law.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
-
-// Brazilian Portuguese  text for forms, buttons, links, and tooltips
-$locale = array(
+// Brazilian Portuguese text for forms, buttons, links, and tooltips
+$locale = array (
 	'comment-form'		=> 'Digite aqui seu comentário...',
 	'reply-form'		=> 'Digite a resposta aqui...',
 	'comment-formatting'	=> 'Formatação',
@@ -61,6 +53,7 @@ $locale = array(
 	'comment-deleted'	=> 'Comentário suprimido!',
 	'post-reply'		=> 'Enviar resposta',
 	'delete'		=> 'Apagar',
+	'permanently-delete'	=> 'Apagar Permanentemente',
 	'subscribe'		=> 'Notifique-me sobre respostas',
 	'subscribe-tip'		=> 'Assine para receber notícias por email.',
 	'edit-comment'		=> 'Editar comentários',

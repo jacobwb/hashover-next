@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,16 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 class PHPMode
 {
 	public $setup;
@@ -37,18 +27,18 @@ class PHPMode
 	public $comments;
 
 	protected $trimTagRegexes = array (
-		'blockquote' => '/(<blockquote>)([\s\S]*?)(<\/blockquote>)/i',
-		'ul' => '/(<ul>)([\s\S]*?)(<\/ul>)/i',
-		'ol' => '/(<ol>)([\s\S]*?)(<\/ol>)/i'
+		'blockquote' => '/(<blockquote>)([\s\S]*?)(<\/blockquote>)/iS',
+		'ul' => '/(<ul>)([\s\S]*?)(<\/ul>)/iS',
+		'ol' => '/(<ol>)([\s\S]*?)(<\/ol>)/iS'
 	);
 
-	protected $linkRegex = '/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+) {0,1}/i';
+	protected $linkRegex = '/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+) {0,1}/iS';
 	protected $codeTagCount = 0;
 	protected $codeTags = array ();
 	protected $preTagCount = 0;
 	protected $preTags = array ();
-	protected $paragraphRegex = '/(?:\r\n|\r|\n){2}/';
-	protected $lineRegex = '/(?:\r\n|\r|\n)/';
+	protected $paragraphRegex = '/(?:\r\n|\r|\n){2}/S';
+	protected $lineRegex = '/(?:\r\n|\r|\n)/S';
 
 	public function __construct (Setup $setup, CommentsUI $ui, array $comments)
 	{
@@ -82,7 +72,7 @@ class PHPMode
 				'id' => 'hashover-reply-' . $permalink,
 				'class' => 'hashover-reply-form',
 				'method' => 'post',
-				'action' => $this->setup->httpScripts . '/postcomments.php'
+				'action' => $this->setup->httpBackend . '/form-actions.php'
 			));
 
 			$form->innerHTML ($this->ui->replyForm ($permalink, $file));
@@ -113,7 +103,7 @@ class PHPMode
 				'id' => 'hashover-edit-' . $permalink,
 				'class' => 'hashover-edit-form',
 				'method' => 'post',
-				'action' => $this->setup->httpScripts . '/postcomments.php'
+				'action' => $this->setup->httpBackend . '/form-actions.php'
 			), false);
 
 			$edit_form = $this->ui->editForm ($permalink, $file, $name, $website, $body, $status, $subscribed);
@@ -187,8 +177,9 @@ class PHPMode
 	{
 		$template = array ();
 		$name_class = 'hashover-name-plain';
-		$permalink = $comment['permalink'];
-		$template['permalink'] = $permalink;
+		$comment_key = $comment['permalink'];
+		$permalink = 'hashover-' . $comment['permalink'];
+		$template['permalink'] = $comment_key;
 		$is_reply = ($parent !== null);
 		$this->codeTagCount = 0;
 		$this->codeTags = array ();
@@ -196,7 +187,7 @@ class PHPMode
 		$this->preTags = array ();
 
 		// Text for avatar image alt attribute
-		$permatext = substr ($permalink, 1);
+		$permatext = substr ($comment_key, 1);
 		$permatext = explode ('r', $permatext);
 		$permatext = array_pop ($permatext);
 
@@ -204,8 +195,8 @@ class PHPMode
 		$comment_wrapper = $this->ui->commentWrapper ($permalink);
 
 		// Get parent comment via permalink
-		if ($is_reply === false and strpos ($permalink, 'r') !== false) {
-			$parent_permalink = $this->getParentPermalink ($permalink);
+		if ($is_reply === false and strpos ($comment_key, 'r') !== false) {
+			$parent_permalink = $this->getParentPermalink ($comment_key);
 			$parent = $this->findByPermalink ($parent_permalink, $this->comments['primary']);
 			$is_reply = ($parent !== null);
 		}
@@ -252,16 +243,17 @@ class PHPMode
 				}
 
 				// If so, display name as a hyperlink
-				$name_link = $this->ui->nameElement ('a', $comment['website'], $permalink, $name);
+				$name_link = $this->ui->nameElement ('a', $comment_key, $name, $comment['website']);
 			} else {
 				// If not, display name as plain text
-				$name_link = $this->ui->nameElement ('span', $permalink, $name);
+				$name_link = $this->ui->nameElement ('span', $comment_key, $name);
 			}
 
 			// Add "Top of Thread" hyperlink to template
 			if ($is_reply === true) {
+				$parent_thread = 'hashover-' . $parent['permalink'];
 				$parent_name = !empty ($parent['name']) ? $parent['name'] : $this->setup->defaultName;
-				$template['thread-link'] = $this->ui->threadLink ($parent['permalink'], $comment['permalink'], $parent_name);
+				$template['parent-link'] = $this->ui->parentThreadLink ($parent_thread, $comment_key, $parent_name);
 			}
 
 			if (isset ($comment['user-owned'])) {
@@ -269,15 +261,8 @@ class PHPMode
 				$comment_wrapper->appendAttribute ('class', 'hashover-user-owned');
 
 				// Define "Reply" link with original poster title
-				$reply_title = $this->locale->get ('commenter-tip');
+				$reply_title = $this->locale->text['commenter-tip'];
 				$reply_class = 'hashover-no-email';
-
-				// Add "Reply" hyperlink to template
-				if (!empty ($_GET['hashover-edit']) and $_GET['hashover-edit'] === $permalink) {
-					$template['edit-link'] = $this->ui->cancelLink ($permalink, 'edit');
-				} else {
-					$template['edit-link'] = $this->ui->formLink ('edit', $permalink);
-				}
 			} else {
 				// Check if commenter is subscribed
 				if (isset ($comment['subscribed'])) {
@@ -291,6 +276,16 @@ class PHPMode
 				}
 			}
 
+			// Check if the comment is editable for the user
+			if (isset ($comment['editable'])) {
+				// If so, add "Edit" hyperlink to template
+				if (!empty ($_GET['hashover-edit']) and $_GET['hashover-edit'] === $comment_key) {
+					$template['edit-link'] = $this->ui->cancelLink ($permalink, 'edit');
+				} else {
+					$template['edit-link'] = $this->ui->formLink ('', 'edit', $comment_key);
+				}
+			}
+
 			// Check if the comment has been liked
 			if (isset ($comment['likes'])) {
 				// Add likes to HTML template
@@ -301,7 +296,7 @@ class PHPMode
 				$like_count = $comment['likes'] . ' ' . $this->locale->text['like'][$plural];
 
 				// Add like count to HTML template
-				$template['like-count'] = $this->ui->likeCount ('likes', $permalink, $like_count);
+				$template['like-count'] = $this->ui->likeCount ('likes', $comment_key, $like_count);
 			}
 
 			// Check if dislikes are enabled and the comment's been disliked
@@ -316,29 +311,34 @@ class PHPMode
 				$dislike_count = $comment['dislikes'] . ' ' . $this->locale->text['dislike'][$plural];
 
 				// Add dislike count to HTML template
-				$template['dislike-count'] = $this->ui->likeCount ('dislikes', $permalink, $dislike_count);
+				$template['dislike-count'] = $this->ui->likeCount ('dislikes', $comment_key, $dislike_count);
 			}
 
 			// Add name HTML to template
 			$template['name'] = $this->ui->nameWrapper ($name_class, $name_link);
 
+			// Append status text to date
+			if (!empty ($comment['status-text'])) {
+				$comment['date'] .= ' (' . $comment['status-text'] . ')';
+			}
+
 			// Add date permalink hyperlink to template
 			$template['date'] = $this->ui->dateLink ($permalink, $comment['date']);
 
 			// Add "Reply" hyperlink to template
-			if (!empty ($_GET['hashover-reply']) and $_GET['hashover-reply'] === $permalink) {
+			if (!empty ($_GET['hashover-reply']) and $_GET['hashover-reply'] === $comment_key) {
 				$template['reply-link'] = $this->ui->cancelLink ($permalink, 'reply', $reply_class);
 			} else {
-				$template['reply-link'] = $this->ui->formLink ('reply', $permalink, $reply_class, $reply_title);
+				$template['reply-link'] = $this->ui->formLink ('', 'reply', $comment_key, $reply_class, $reply_title);
 			}
 
 			// Add edit form HTML to template
-			if (isset ($comment['user-owned'])) {
+			if (isset ($comment['editable'])) {
 				$template['edit-form'] = $this->editCheck ($comment);
 			}
 
 			// Add reply form HTML to template
-			$template['reply-form'] = $this->replyCheck ($permalink);
+			$template['reply-form'] = $this->replyCheck ($comment_key);
 
 			// Add reply count to template
 			if (!empty ($comment['replies'])) {
@@ -346,9 +346,9 @@ class PHPMode
 
 				if ($template['reply-count'] > 0) {
 					if ($template['reply-count'] !== 1) {
-						$template['reply-count'] .= ' ' . $this->locale->get ('replies');
+						$template['reply-count'] .= ' ' . $this->locale->text['replies'];
 					} else {
-						$template['reply-count'] .= ' ' . $this->locale->get ('reply');
+						$template['reply-count'] .= ' ' . $this->locale->text['reply'];
 					}
 				}
 			}
@@ -357,24 +357,26 @@ class PHPMode
 			$template['comment'] = $comment['body'];
 
 			// Remove [img] tags
-			$template['comment'] = preg_replace ('/\[(img|\/img)\]/i', '', $template['comment']);
+			$template['comment'] = preg_replace ('/\[(img|\/img)\]/iS', '', $template['comment']);
 
 			// Add HTML anchor tag to URLs (hyperlinks)
 			$template['comment'] = preg_replace ($this->linkRegex, '<a href="\\1" rel="noopener noreferrer" target="_blank">\\1</a>', $template['comment']);
 
 			// Parse markdown in comment
-			$template['comment'] = $this->markdown->parseMarkdown ($template['comment']);
+			if ($this->setup->usesMarkdown !== false) {
+				$template['comment'] = $this->markdown->parseMarkdown ($template['comment']);
+			}
 
 			// Check for code tags
 			if (mb_strpos ($template['comment'], '<code>') !== false) {
 				// Replace code tags with placeholder text
-				$template['comment'] = preg_replace_callback ('/(<code>)([\s\S]*?)(<\/code>)/i', 'self::codeTagReplace', $template['comment']);
+				$template['comment'] = preg_replace_callback ('/(<code>)([\s\S]*?)(<\/code>)/iS', 'self::codeTagReplace', $template['comment']);
 			}
 
 			// Check for pre tags
 			if (mb_strpos ($template['comment'], '<pre>') !== false) {
 				// Replace pre tags with placeholder text
-				$template['comment'] = preg_replace_callback ('/(<pre>)([\s\S]*?)(<\/pre>)/i', 'self::preTagReplace', $template['comment']);
+				$template['comment'] = preg_replace_callback ('/(<pre>)([\s\S]*?)(<\/pre>)/iS', 'self::preTagReplace', $template['comment']);
 			}
 
 			// Check for various multi-line tags
@@ -398,12 +400,12 @@ class PHPMode
 
 			// Replace code tag placeholders with original code tag HTML
 			if ($this->codeTagCount > 0) {
-				$pd_comment = preg_replace_callback ('/CODE_TAG\[([0-9]+)\]/', 'self::codeTagReturn', $pd_comment);
+				$pd_comment = preg_replace_callback ('/CODE_TAG\[([0-9]+)\]/S', 'self::codeTagReturn', $pd_comment);
 			}
 
 			// Replace pre tag placeholders with original pre tag HTML
 			if ($this->preTagCount > 0) {
-				$pd_comment = preg_replace_callback ('/PRE_TAG\[([0-9]+)\]/', 'self::preTagReturn', $pd_comment);
+				$pd_comment = preg_replace_callback ('/PRE_TAG\[([0-9]+)\]/S', 'self::preTagReturn', $pd_comment);
 			}
 
 			// Add paragraph'd comment data to template
@@ -421,7 +423,7 @@ class PHPMode
 		}
 
 		// Comment HTML template
-		$comment_wrapper->innerHTML ($this->templater->parseTemplate ($template));
+		$comment_wrapper->innerHTML ($this->templater->parseTheme ($template));
 
 		// Recursively parse replies
 		if (!empty ($comment['replies'])) {

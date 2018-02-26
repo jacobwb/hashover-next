@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,16 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 // Parse comments and create deleted comment note
 class CommentParser
 {
@@ -34,6 +24,7 @@ class CommentParser
 	public $login;
 	public $locale;
 	public $avatars;
+	public $cookies;
 
 	protected $dateIntervalLocales;
 	protected $todayLocale;
@@ -45,6 +36,7 @@ class CommentParser
 		$this->login = new Login ($setup);
 		$this->locale = new Locale ($setup);
 		$this->avatars = new Avatars ($setup);
+		$this->cookies = new Cookies ($setup);
 		$this->currentDateTime = new \DateTime (date('Y-m-d'));
 
 		$this->dateIntervalLocales = array (
@@ -119,7 +111,7 @@ class CommentParser
 				$hash = !empty ($comment['email_hash']) ? $comment['email_hash'] : '';
 				$output['avatar'] = $this->avatars->getGravatar ($hash);
 			} else {
-				$output['avatar'] = '#' . end ($key_parts);
+				$output['avatar'] = end ($key_parts);
 			}
 		}
 
@@ -147,17 +139,11 @@ class CommentParser
 			}
 		}
 
-		// Authenticate comment editing rights
-		if ($this->login->userIsAdmin === true) {
-			// Admin owns every comment
-			$output['user-owned'] = true;
-		} else {
-			// Check if the user is logged in
-			if ($this->login->userIsLoggedIn === true and !empty ($comment['login_id'])) {
-				// If so, check this comment belongs to logged in user
-				if ($this->login->loginHash === $comment['login_id']) {
-					$output['user-owned'] = true;
-				}
+		// Check if the user is logged in
+		if ($this->login->userIsLoggedIn === true and !empty ($comment['login_id'])) {
+			// If so, check this comment belongs to logged in user
+			if ($this->login->loginHash === $comment['login_id']) {
+				$output['user-owned'] = true;
 
 				// Check if the comment is editable
 				if (!empty ($comment['password'])) {
@@ -166,12 +152,20 @@ class CommentParser
 			}
 		}
 
-		// Get "Like" cookie value
-		$like_cookie_name = md5 ($this->setup->domain . $this->setup->threadDirectory . '/' . $key);
+		// Admin is allowed to edit every comment
+		if ($this->login->userIsAdmin === true) {
+			$output['editable'] = true;
+		}
+
+		// Create like cookie hash
+		$like_hash = md5 ($this->setup->domain . $this->setup->threadName . '/' . $key);
+
+		// Get like cookie
+		$like_cookie = $this->cookies->getValue ($like_hash);
 
 		// Check if comment has been liked or disliked
-		if (!empty ($_COOKIE[$like_cookie_name])) {
-			switch ($_COOKIE[$like_cookie_name]) {
+		if ($like_cookie !== null) {
+			switch ($like_cookie) {
 				case 'liked': {
 					$output['liked'] = true;
 					break;
@@ -198,9 +192,8 @@ class CommentParser
 				// If so, add comment status to output
 				$output['status'] =(string) $status;
 
-				// And append status to date
-				$status_locale = mb_strtolower ($this->locale->text[$status . '-name']);
-				$output['date'] .= ' (' . $status_locale . ')';
+				// And add status text to output
+				$output['status-text'] = mb_strtolower ($this->locale->text[$status . '-name']);
 			}
 		}
 

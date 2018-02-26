@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2017 Jacob Barkdull
+// Copyright (C) 2017-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,14 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
-
 // Tell browser output is JavaScript
 header ('Content-Type: application/javascript');
 
@@ -38,12 +30,14 @@ spl_autoload_register (function ($uri) {
 	$class_name = basename ($uri);
 	$error = '"' . $class_name . '.php" file could not be included!';
 
-	if (!@include ('./' . $class_name . '.php')) {
-		// Return JavaScript code to display an error
+	// Check if class file cound be included
+	if (!@include ('classes/' . $class_name . '.php')) {
+		// If not, construct JavaScript code to display an error
 		$js_error  = 'var hashover = document.getElementById (\'hashover\') || document.body;' . PHP_EOL;
 		$js_error .= 'var error = \'<p><b>HashOver</b>: ' . $error . '</p>\';' . PHP_EOL . PHP_EOL;
 		$js_error .= 'hashover.innerHTML += error;';
 
+		// Display JavaScript code
 		echo $js_error;
 		exit;
 	}

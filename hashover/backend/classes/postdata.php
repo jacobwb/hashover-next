@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,16 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 class PostData
 {
 	public $postData = array ();
@@ -37,53 +27,56 @@ class PostData
 
 	public function __construct ()
 	{
+		// Use POST or GET based on whether request is for JSONP
+		$postget = isset ($_GET['jsonp']) ? $_GET : $_POST;
+
 		// Set status
-		if (isset ($_POST['status'])) {
-			$this->postData['status'] = $this->ForceUTF8 ($_POST['status']);
+		if (isset ($postget['status'])) {
+			$this->postData['status'] = $this->ForceUTF8 ($postget['status']);
 		}
 
 		// Set name
-		if (isset ($_POST['name'])) {
-			$this->postData['name'] = $this->ForceUTF8 ($_POST['name']);
+		if (isset ($postget['name'])) {
+			$this->postData['name'] = $this->ForceUTF8 ($postget['name']);
 		}
 
 		// Set password
-		if (isset ($_POST['password'])) {
-			$this->postData['password'] = $this->ForceUTF8 ($_POST['password']);
+		if (isset ($postget['password'])) {
+			$this->postData['password'] = $this->ForceUTF8 ($postget['password']);
 		}
 
 		// Set e-mail address
-		if (isset ($_POST['email'])) {
-			$this->postData['email'] = $this->ForceUTF8 ($_POST['email']);
+		if (isset ($postget['email'])) {
+			$this->postData['email'] = $this->ForceUTF8 ($postget['email']);
 		}
 
 		// Set website URL
-		if (isset ($_POST['website'])) {
-			$this->postData['website'] = $this->ForceUTF8 ($_POST['website']);
+		if (isset ($postget['website'])) {
+			$this->postData['website'] = $this->ForceUTF8 ($postget['website']);
 		}
 
 		// Set comment
-		if (isset ($_POST['comment'])) {
-			$this->postData['comment'] = $this->ForceUTF8 ($_POST['comment']);
+		if (isset ($postget['comment'])) {
+			$this->postData['comment'] = $this->ForceUTF8 ($postget['comment']);
 		}
 
 		// Set indicator of remote access
-		if (isset ($_POST['remote-access'])) {
+		if (isset ($postget['remote-access'])) {
 			$this->remoteAccess = true;
 		}
 
 		// Get comment file
-		if (isset ($_POST['file'])) {
-			$this->file = $_POST['file'];
+		if (isset ($postget['file'])) {
+			$this->file = $postget['file'];
 		}
 
 		// Get reply comment file
-		if (isset ($_POST['reply-to'])) {
-			$this->replyTo = $_POST['reply-to'];
+		if (isset ($postget['reply-to'])) {
+			$this->replyTo = $postget['reply-to'];
 		}
 
 		// Set indicator of AJAX requests
-		if (isset ($_POST['ajax'])) {
+		if (isset ($postget['ajax'])) {
 			$this->viaAJAX = true;
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // I, Jacob Barkdull, hereby release this work into the public domain.
@@ -9,16 +9,8 @@
 // conditions, unless such conditions are required by law.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
-
 // Romanian text for forms, buttons, links, and tooltips
-$locale = array(
+$locale = array (
 	'comment-form'		=> 'Scrie comentariu aici...',
 	'reply-form'		=> 'Scrie reply aici...',
 	'comment-formatting'	=> 'Formatarea',
@@ -61,6 +53,7 @@ $locale = array(
 	'comment-deleted'	=> 'Comentariu sters!',
 	'post-reply'		=> 'Adauga Reply',
 	'delete'		=> 'Sterge',
+	'permanently-delete'	=> 'Permiteți ștergerea definitivă',
 	'subscribe'		=> 'Notifica-ma de raspunsuri',
 	'subscribe-tip'		=> 'Subscribe la notificari pe mail',
 	'edit-comment'		=> 'Editare comentariu',

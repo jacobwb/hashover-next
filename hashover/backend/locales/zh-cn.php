@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // I, Jacob Barkdull, hereby release this work into the public domain.
@@ -8,14 +8,6 @@
 // entity the right to use this work for any purpose, without any
 // conditions, unless such conditions are required by law.
 
-
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
 
 // Simplified Chinese text for forms, buttons, links, and tooltips
 $locale = array (
@@ -61,6 +53,7 @@ $locale = array (
 	'comment-deleted'	=> '评论已删除！',
 	'post-reply'		=> '发表回复',
 	'delete'		=> '删除',
+	'permanently-delete'	=> '永久删除',
 	'subscribe'		=> '有回复通知我',
 	'subscribe-tip'		=> '订阅电子邮件通知',
 	'edit-comment'		=> '编辑评论',

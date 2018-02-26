@@ -1,0 +1,15 @@
+#settings {
+	width: 100%;
+}
+
+#settings tr:nth-child(odd) {
+	background-color: #F5F5F5;
+}
+
+input, textarea, select, .select-wrapper {
+	margin: 0px;
+}
+
+table tr {
+	height: 35px;
+}

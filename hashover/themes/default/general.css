@@ -1,0 +1,113 @@
+body {
+	margin: 0px;
+	padding: 15px;
+	cursor: default;
+}
+
+body, td, textarea, input, select {
+	font-family: "Cantarell","Arial","Helvetica","FreeSans",sans-serif;
+	color: #000000;
+	font-size: 16px;
+}
+
+*, :after, :before {
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+body, a, a:link {
+	text-decoration: none;
+	text-transform: none;
+}
+
+a, a:link {
+	color: #3485C7;
+}
+
+a, a:link, input, textarea, .select-wrapper, .animate-all {
+	-moz-transition: all 150ms linear 0s;
+	-webkit-transition: all 150ms linear 0s;
+	-o-transition: all 150ms linear 0s;
+	transition: all 150ms linear 0s;
+}
+
+a:visited {
+	color: #3485C7;
+}
+
+a:hover {
+	color: #266394;
+	cursor: pointer;
+}
+
+h1 {
+	font-size: 28px;
+	font-weight: normal;
+	line-height: 1.25em;
+}
+
+h1, h2 {
+	margin: 0px;
+	font-weight: normal;
+	overflow: hidden;
+}
+
+.underlined {
+	display: block;
+	padding-bottom: 0.5em;
+	margin-bottom: 0.5em;
+	border-bottom: 1px solid #CCCCCC;
+}
+
+.muted-text {
+	color: #808080;
+}
+
+.striped-rows-odd tr:nth-child(odd) {
+	background-color: #F5F5F5;
+}
+
+.striped-rows-even tr:nth-child(even) {
+	background-color: #F5F5F5;
+}
+
+.column-borders td {
+	border-right: 1px solid #CCCCCC;
+}
+
+.striped-rows-even.column-borders tr:first-child > td,
+.column-borders td:last-child {
+	border: none;
+}
+
+p, .p-spaced {
+	margin: 0px 0px 1em 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+p:last-child {
+	margin-bottom: 0px;
+}
+
+table {
+	width: 100%;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
+.margin-left-children > * {
+	margin-left: 10px;
+}
+
+.margin-right-children > * {
+	margin-right: 10px;
+}

@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -16,16 +16,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
 
 class FormUI
 {
@@ -59,18 +49,16 @@ class FormUI
 		$this->pageTitle = $this->setup->pageTitle;
 		$this->pageURL = $this->setup->pageURL;
 
-		if ($this->mode !== 'php') {
-			$this->pageTitle = $this->misc->jsEscape ($this->pageTitle);
-			$this->pageURL = $this->misc->jsEscape ($this->pageURL);
-		}
+		// Attempt to get form field submission failed on
+		$failedField = $this->cookies->getValue ('failed-on');
 
 		// Set the field to emphasize after a failed post
-		if (!empty ($_COOKIE['failed-on'])) {
-			$this->emphasizedField = $this->cookies->getValue ('failed-on');
+		if ($failedField !== null) {
+			$this->emphasizedField = $failedField;
 		}
 
 		// "Post a comment" locale strings
-		$post_comment_on = $this->locale->get ('post-comment-on');
+		$post_comment_on = $this->locale->text['post-comment-on'];
 		$this->postCommentOn = $post_comment_on[0];
 
 		// Add optional "on <page title>" to "Post a comment" title
@@ -98,44 +86,44 @@ class FormUI
 			'name' => array (
 				'wrapper-class' => 'hashover-name-input',
 				'label-class' => 'hashover-name-label',
-				'placeholder' => $this->locale->get ('name'),
+				'placeholder' => $this->locale->text['name'],
 				'input-id' => 'hashover-main-name' . $permalink,
 				'input-type' => 'text',
 				'input-name' => 'name',
-				'input-title' => $this->locale->get ('name-tip'),
+				'input-title' => $this->locale->text['name-tip'],
 				'input-value' => $this->misc->makeXSSsafe ($this->login->name)
 			),
 
 			'password' => array (
 				'wrapper-class' => 'hashover-password-input',
 				'label-class' => 'hashover-password-label',
-				'placeholder' => $this->locale->get ('password'),
+				'placeholder' => $this->locale->text['password'],
 				'input-id' => 'hashover-main-password' . $permalink,
 				'input-type' => 'password',
 				'input-name' => 'password',
-				'input-title' => $this->locale->get ('password-tip'),
+				'input-title' => $this->locale->text['password-tip'],
 				'input-value' => ''
 			),
 
 			'email' => array (
 				'wrapper-class' => 'hashover-email-input',
 				'label-class' => 'hashover-email-label',
-				'placeholder' => $this->locale->get ('email'),
+				'placeholder' => $this->locale->text['email'],
 				'input-id' => 'hashover-main-email' . $permalink,
 				'input-type' => 'email',
 				'input-name' => 'email',
-				'input-title' => $this->locale->get ('email-tip'),
+				'input-title' => $this->locale->text['email-tip'],
 				'input-value' => $this->misc->makeXSSsafe ($this->login->email)
 			),
 
 			'website' => array (
 				'wrapper-class' => 'hashover-website-input',
 				'label-class' => 'hashover-website-label',
-				'placeholder' => $this->locale->get ('website'),
+				'placeholder' => $this->locale->text['website'],
 				'input-id' => 'hashover-main-website' . $permalink,
 				'input-type' => 'url',
 				'input-name' => 'website',
-				'input-title' => $this->locale->get ('website-tip'),
+				'input-title' => $this->locale->text['website-tip'],
 				'input-value' => $this->misc->makeXSSsafe ($this->login->website)
 			)
 		);
@@ -143,8 +131,8 @@ class FormUI
 		// Change input values to specified values
 		if ($edit_form === true) {
 			$login_input_attributes['name']['input-value'] = $name;
-			$login_input_attributes['password']['placeholder'] = $this->locale->get ('confirm-password');
-			$login_input_attributes['password']['input-title'] = $this->locale->get ('confirm-password');
+			$login_input_attributes['password']['placeholder'] = $this->locale->text['confirm-password'];
+			$login_input_attributes['password']['input-title'] = $this->locale->text['confirm-password'];
 			$login_input_attributes['website']['input-value'] = $website;
 		}
 
@@ -216,20 +204,6 @@ class FormUI
 		return $login_inputs;
 	}
 
-	protected function getAvatarBackground ($avatar_src)
-	{
-		// Background image CSS
-		$background_image = 'background-image: url(\'%s\');';
-
-		// Escape background image in JavaScript mode
-		if ($this->mode !== 'php') {
-			$background_image = $this->misc->jsEscape ($background_image);
-		}
-
-		// Inject avatar URL into background image CSS
-		return sprintf ($background_image, $avatar_src);
-	}
-
 	protected function avatar ($text)
 	{
 		// If avatars set to images
@@ -247,26 +221,24 @@ class FormUI
 
 			// Create avatar image element
 			$avatar = new HTMLTag ('div', array (
-				'style' => $this->getAvatarBackground ($avatar_src)
+				'style' => 'background-image: url(\'' . $avatar_src . '\');'
 			), false);
 		} else {
 			// Avatars set to count
 			// Create element displaying comment number user will be
-			$avatar = new HTMLTag ('span', array (
-				'innerHTML' => $text
-			), false);
+			$avatar = new HTMLTag ('span', $text, false);
 		}
 
 		return $avatar;
 	}
 
-	protected function subscribeLabel ($id = '', $class = 'main', $checked = true)
+	protected function subscribeLabel ($id = '', $type = 'main', $checked = true)
 	{
 		// Create subscribe checkbox label element
 		$subscribe_label = new HTMLTag ('label', array (
-			'for' => 'hashover-subscribe',
-			'class' => 'hashover-' . $class . '-label',
-			'title' => $this->locale->get ('subscribe-tip')
+			'for' => 'hashover-' . $type . '-subscribe',
+			'class' => 'hashover-' . $type . '-label',
+			'title' => $this->locale->text['subscribe-tip']
 		));
 
 		if (!empty ($id)) {
@@ -275,7 +247,7 @@ class FormUI
 
 		// Create subscribe element checkbox
 		$subscribe = new HTMLTag ('input', array (
-			'id' => 'hashover-subscribe',
+			'id' => 'hashover-' . $type . '-subscribe',
 			'type' => 'checkbox',
 			'name' => 'subscribe'
 		), false, true);
@@ -293,7 +265,7 @@ class FormUI
 		$subscribe_label->appendChild ($subscribe);
 
 		// Add text to subscribe checkbox label element
-		$subscribe_label->appendInnerHTML ($this->locale->get ('subscribe'));
+		$subscribe_label->appendInnerHTML ($this->locale->text['subscribe']);
 
 		return $subscribe_label;
 	}
@@ -301,11 +273,11 @@ class FormUI
 	protected function acceptedFormatCell ($format, $locale_key)
 	{
 		$title = new HTMLTag ('p', array ('class' => 'hashover-title'));
-		$accepted_format = sprintf ($this->locale->get ('accepted-format'), $format);
+		$accepted_format = sprintf ($this->locale->text['accepted-format'], $format);
 		$title->innerHTML ($accepted_format);
 
 		$paragraph = new HTMLTag ('p');
-		$paragraph->innerHTML ($this->locale->get ($locale_key));
+		$paragraph->innerHTML ($this->locale->text[$locale_key]);
 
 		return new HTMLTag ('div', array (
 			'children' => array ($title, $paragraph)
@@ -324,7 +296,7 @@ class FormUI
 			'cols' => '63',
 			'name' => 'comment',
 			'rows' => '6',
-			'title' => $this->locale->get ($title_locale)
+			'title' => $this->locale->text[$title_locale]
 		), false);
 
 		// Set the placeholder attribute if one is given
@@ -339,8 +311,8 @@ class FormUI
 			}
 
 			// If the comment was a reply, have the textarea use the reply textarea locale
-			if (!empty ($_COOKIE['replied'])) {
-				$reply_form_placeholder = $this->locale->get ('reply-form');
+			if ($this->cookies->getValue ('replied') !== null) {
+				$reply_form_placeholder = $this->locale->text['reply-form'];
 				$textarea->createAttribute ('placeholder', $reply_form_placeholder);
 			}
 		}
@@ -371,34 +343,51 @@ class FormUI
 		}
 
 		// Create accepted HTML message element
-		$accepted_html_message = new HTMLTag ('div', array (
+		$accepted_formatting_message = new HTMLTag ('div', array (
 			'id' => 'hashover-' . $type . '-formatting-message' . $permalink,
-			'class' => 'hashover-formatting-message',
+			'class' => 'hashover-formatting-message'
+		));
+
+		// Create formatting table
+		$accepted_formatting_table = new HTMLTag ('div', array (
+			'class' => 'hashover-formatting-table',
 
 			'children' => array (
-				new HTMLTag ('div', array (
-					'class' => 'hashover-formatting-table',
-
-					'children' => array (
-						$this->acceptedFormatCell ('HTML', 'accepted-html'),
-						$this->acceptedFormatCell ('Markdown', 'accepted-markdown')
-					)
-				))
+				$this->acceptedFormatCell ('HTML', 'accepted-html')
 			)
 		));
 
+		// Append Markdown cell if Markdown is enabled
+		if ($this->setup->usesMarkdown !== false) {
+			$markdown_cell = $this->acceptedFormatCell ('Markdown', 'accepted-markdown');
+			$accepted_formatting_table->appendChild ($markdown_cell);
+		}
+
+		// Append formatting table to formatting message
+		$accepted_formatting_message->appendChild ($accepted_formatting_table);
+
 		// Ensure the accepted HTML message is open in PHP mode
 		if ($this->mode === 'php') {
-			$accepted_html_message->appendAttribute ('class', 'hashover-message-open');
-			$accepted_html_message->appendAttribute ('class', 'hashover-php-message-open');
+			$accepted_formatting_message->appendAttribute ('class', 'hashover-message-open');
+			$accepted_formatting_message->appendAttribute ('class', 'hashover-php-message-open');
 		}
 
 		// Add accepted HTML message element to form element
-		$form->appendChild ($accepted_html_message);
+		$form->appendChild ($accepted_formatting_message);
 	}
 
 	protected function pageInfoFields (HTMLTag $form)
 	{
+		// Create hidden comment thread input element
+		$thread_input = new HTMLTag ('input', array (
+			'type' => 'hidden',
+			'name' => 'thread',
+			'value' => $this->setup->threadName
+		), false, true);
+
+		// Add hidden comments thread input element to form element
+		$form->appendChild ($thread_input);
+
 		// Create hidden page URL input element
 		$url_input = new HTMLTag ('input', array (
 			'type' => 'hidden',
@@ -433,13 +422,13 @@ class FormUI
 		}
 	}
 
-	protected function acceptedHTML ($type, $permalink = '')
+	protected function acceptedFormatting ($type, $permalink = '')
 	{
 		$permalink = !empty ($permalink) ? '-' . $permalink : '';
-		$accepted_format = $this->locale->get ('comment-formatting');
+		$accepted_format = $this->locale->text['comment-formatting'];
 
 		// Create accepted HTML message revealer hyperlink
-		$accepted_html = new HTMLTag ('span', array (
+		$accepted_formatting = new HTMLTag ('span', array (
 			'id' => 'hashover-' . $type . '-formatting' . $permalink,
 			'class' => 'hashover-fake-link hashover-formatting',
 			'title' => $accepted_format,
@@ -447,14 +436,15 @@ class FormUI
 		));
 
 		// Return the hyperlink
-		return $accepted_html;
+		return $accepted_formatting;
 	}
 
 	public function initialHTML ($hashover_wrapper = true)
 	{
 		// Create element that HashOver comments will appear in
 		$hashover_element = new HTMLTag ('div', array (
-			'id' => 'hashover'
+			'id' => 'hashover',
+			'class' => 'hashover'
 		), false);
 
 		// Add class for differentiating desktop and mobile styling
@@ -472,7 +462,7 @@ class FormUI
 		}
 
 		// Create element for jump anchor
-		$jump_anchor = new HTMLTag ('span', array (
+		$jump_anchor = new HTMLTag ('div', array (
 			'id' => 'comments'
 		));
 
@@ -485,7 +475,7 @@ class FormUI
 		));
 
 		// Hide primary form wrapper if comments are to be initially hidden
-		if ($this->mode === 'javascript' and $this->setup->collapsesUI === true) {
+		if ($this->mode !== 'php' and $this->setup->collapsesInterface === true) {
 			$form_section->createAttribute ('style', 'display: none;');
 		}
 
@@ -515,7 +505,9 @@ class FormUI
 		));
 
 		// Check if message cookie is set
-		if (!empty ($_COOKIE['message']) or !empty ($_COOKIE['error'])) {
+		if ($this->cookies->getValue ('message') !== null
+		    or $this->cookies->getValue ('error') !== null)
+		{
 			// If so, set the message element to open in PHP mode
 			if ($this->mode === 'php') {
 				$message_container->appendAttribute ('class', array (
@@ -525,7 +517,7 @@ class FormUI
 			}
 
 			// Check if the message is a normal message
-			if (!empty ($_COOKIE['message'])) {
+			if ($this->cookies->getValue ('message') !== null) {
 				// If so, get an XSS safe version of the message
 				$message = $this->misc->makeXSSsafe ($this->cookies->getValue ('message'));
 			} else {
@@ -551,7 +543,7 @@ class FormUI
 			'id' => 'hashover-form',
 			'class' => 'hashover-balloon',
 			'name' => 'hashover-form',
-			'action' => $this->setup->httpScripts . '/postcomments.php',
+			'action' => $this->setup->httpBackend . '/form-actions.php',
 			'method' => 'post'
 		));
 
@@ -670,7 +662,7 @@ class FormUI
 		$main_form->appendChild ($required_fields);
 
 		// Post button locale
-		$post_button = $this->locale->get ('post-button');
+		$post_button = $this->locale->text['post-button'];
 
 		// Create label element for comment textarea
 		if ($this->setup->usesLabels === true) {
@@ -688,7 +680,7 @@ class FormUI
 		$comment_text = $this->misc->makeXSSsafe ($this->cookies->getValue ('comment'));
 
 		// Comment form placeholder text
-		$comment_form = $this->locale->get ('comment-form');
+		$comment_form = $this->locale->text['comment-form'];
 
 		// Create main textarea element and add it to form element
 		$this->commentForm ($main_form, 'main', $comment_form, $comment_text);
@@ -697,7 +689,7 @@ class FormUI
 		$this->pageInfoFields ($main_form);
 
 		// Check if comment is a failed reply
-		if (!empty ($_COOKIE['replied'])) {
+		if ($this->cookies->getValue ('replied') !== null) {
 			// If so, get the comment being replied to
 			$replied = $this->cookies->getValue ('replied');
 
@@ -730,8 +722,8 @@ class FormUI
 		}
 
 		// Create and add accepted HTML revealer hyperlink
-		if ($this->mode === 'javascript') {
-			$main_form_links_wrapper->appendChild ($this->acceptedHTML ('main'));
+		if ($this->mode !== 'php') {
+			$main_form_links_wrapper->appendChild ($this->acceptedFormatting ('main'));
 		}
 
 		// Add main form links wrapper to main form footer element
@@ -754,7 +746,7 @@ class FormUI
 			if ($this->login->userIsLoggedIn === true) {
 				// Logged in
 				$login_button->appendAttribute ('class', 'hashover-logout');
-				$logout_locale = $this->locale->get ('logout');
+				$logout_locale = $this->locale->text['logout'];
 
 				// Create logged in attributes
 				$login_button->createAttributes (array (
@@ -769,8 +761,8 @@ class FormUI
 				// Create logged out attributes
 				$login_button->createAttributes (array (
 					'name' => 'login',
-					'value' => $this->locale->get ('login'),
-					'title' => $this->locale->get ('login-tip')
+					'value' => $this->locale->text['login'],
+					'title' => $this->locale->text['login-tip']
 				));
 			}
 
@@ -813,8 +805,8 @@ class FormUI
 			), false);
 
 			// Hide popular comments wrapper if comments are to be initially hidden
-			if ($this->mode === 'javascript') {
-				if ($this->setup->collapsesUI === true or $this->setup->collapseLimit <= 0) {
+			if ($this->mode !== 'php') {
+				if ($this->setup->collapsesInterface === true or $this->setup->collapseLimit <= 0) {
 					$popular_section->createAttribute ('style', 'display: none;');
 				}
 			}
@@ -831,7 +823,7 @@ class FormUI
 
 			// Add popular comments title text
 			$popular_plural = ($this->commentCounts['popular'] !== 1) ? 1 : 0;
-			$popular_comments_locale = $this->locale->get ('popular-comments');
+			$popular_comments_locale = $this->locale->text['popular-comments'];
 			$pop_count_element->innerHTML ($popular_comments_locale[$popular_plural]);
 
 			// Add popular comments title element to wrapper element
@@ -882,9 +874,9 @@ class FormUI
 		$count_sort_wrapper->appendChild ($count_element);
 
 		// JavaScript mode specific HTML
-		if ($this->mode === 'javascript') {
+		if ($this->mode !== 'php') {
 			// Hide wrapper if comments are to be initially hidden
-			if ($this->setup->collapsesUI === true) {
+			if ($this->setup->collapsesInterface === true) {
 				$comments_section->createAttribute ('style', 'display: none;');
 			}
 
@@ -905,17 +897,17 @@ class FormUI
 					'id' => 'hashover-sort-select',
 					'name' => 'sort',
 					'size' => '1',
-					'title' => $this->locale->get ('sort')
+					'title' => $this->locale->text['sort']
 				));
 
 				// Array of select tag sort options
 				$sort_options = array (
-					array ('value' => 'ascending', 'innerHTML' => $this->locale->get ('sort-ascending')),
-					array ('value' => 'descending', 'innerHTML' => $this->locale->get ('sort-descending')),
-					array ('value' => 'by-date', 'innerHTML' => $this->locale->get ('sort-by-date')),
-					array ('value' => 'by-likes', 'innerHTML' => $this->locale->get ('sort-by-likes')),
-					array ('value' => 'by-replies', 'innerHTML' => $this->locale->get ('sort-by-replies')),
-					array ('value' => 'by-name', 'innerHTML' => $this->locale->get ('sort-by-name'))
+					array ('value' => 'ascending', 'innerHTML' => $this->locale->text['sort-ascending']),
+					array ('value' => 'descending', 'innerHTML' => $this->locale->text['sort-descending']),
+					array ('value' => 'by-date', 'innerHTML' => $this->locale->text['sort-by-date']),
+					array ('value' => 'by-likes', 'innerHTML' => $this->locale->text['sort-by-likes']),
+					array ('value' => 'by-replies', 'innerHTML' => $this->locale->text['sort-by-replies']),
+					array ('value' => 'by-name', 'innerHTML' => $this->locale->text['sort-by-name'])
 				);
 
 				// Create sort options for sort dropdown menu element
@@ -939,17 +931,17 @@ class FormUI
 
 				// Create option group for threaded sort options
 				$threaded_optgroup = new HTMLTag ('optgroup', array (
-					'label' => $this->locale->get ('sort-threads')
+					'label' => $this->locale->text['sort-threads']
 				));
 
 				// Array of select tag threaded sort options
 				$threaded_sort_options = array (
-					array ('value' => 'threaded-descending', 'innerHTML' => $this->locale->get ('sort-descending')),
-					array ('value' => 'threaded-by-date', 'innerHTML' => $this->locale->get ('sort-by-date')),
-					array ('value' => 'threaded-by-likes', 'innerHTML' => $this->locale->get ('sort-by-likes')),
-					array ('value' => 'by-popularity', 'innerHTML' => $this->locale->get ('sort-by-popularity')),
-					array ('value' => 'by-discussion', 'innerHTML' => $this->locale->get ('sort-by-discussion')),
-					array ('value' => 'threaded-by-name', 'innerHTML' => $this->locale->get ('sort-by-name'))
+					array ('value' => 'threaded-descending', 'innerHTML' => $this->locale->text['sort-descending']),
+					array ('value' => 'threaded-by-date', 'innerHTML' => $this->locale->text['sort-by-date']),
+					array ('value' => 'threaded-by-likes', 'innerHTML' => $this->locale->text['sort-by-likes']),
+					array ('value' => 'by-popularity', 'innerHTML' => $this->locale->text['sort-by-popularity']),
+					array ('value' => 'by-discussion', 'innerHTML' => $this->locale->text['sort-by-discussion']),
+					array ('value' => 'threaded-by-name', 'innerHTML' => $this->locale->text['sort-by-name'])
 				);
 
 				// Create sort options for sort dropdown menu element
@@ -1005,12 +997,12 @@ class FormUI
 		));
 
 		// Hide end links wrapper if comments are to be initially hidden
-		if ($this->mode === 'javascript' and $this->setup->collapsesUI === true) {
+		if ($this->mode !== 'php' and $this->setup->collapsesInterface === true) {
 			$end_links_wrapper->createAttribute ('style', 'display: none;');
 		}
 
 		// HashOver Comments hyperlink text
-		$homepage_link_text = $this->locale->get ('hashover-comments');
+		$homepage_link_text = $this->locale->text['hashover-comments'];
 
 		// Create link back to HashOver homepage (fixme! get a real page!)
 		$homepage_link = new HTMLTag ('a', array (
@@ -1028,8 +1020,8 @@ class FormUI
 		$end_links = array ();
 
 		if ($this->commentCounts['total'] > 1) {
-			if ($this->setup->displaysRSSLink === true
-			    and $this->setup->APIStatus ('rss') !== 'disabled')
+			if ($this->setup->appendsRss === true
+			    and $this->setup->apiStatus ('rss') !== 'disabled')
 			{
 				// Create RSS feed link
 				$rss_link = new HTMLTag ('a', array (), false);
@@ -1037,7 +1029,7 @@ class FormUI
 				$rss_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
 
 				// RSS Feed hyperlink text
-				$rss_link_text = $this->locale->get ('rss-feed');
+				$rss_link_text = $this->locale->text['rss-feed'];
 
 				$rss_link->createAttributes (array (
 					'id' => 'hashover-rss-link',
@@ -1052,11 +1044,11 @@ class FormUI
 		}
 
 		// Source Code hyperlink text
-		$source_link_text = $this->locale->get ('source-code');
+		$source_link_text = $this->locale->text['source-code'];
 
 		// Create link to HashOver source code (fixme! can be done better)
 		$source_link = new HTMLTag ('a', array (
-			'href' => $this->setup->httpScripts . '/hashover.php?source',
+			'href' => $this->setup->httpBackend . '/source-viewer.php',
 			'id' => 'hashover-source-link',
 			'rel' => 'hashover-source',
 			'target' => '_blank',
@@ -1067,24 +1059,15 @@ class FormUI
 		// Add source code hyperlink to end links array
 		$end_links[] = $source_link->asHTML ();
 
-		if ($this->mode === 'javascript') {
+		if ($this->mode !== 'php') {
 			// Create link to HashOver JavaScript source code
 			$javascript_link = new HTMLTag ('a', array (
-				'href' => $this->setup->httpScripts . '/hashover-javascript.php',
+				'href' => $this->setup->httpRoot . '/comments.php',
 				'id' => 'hashover-javascript-link',
 				'rel' => 'hashover-javascript',
 				'target' => '_blank',
 				'title' => 'JavaScript'
 			), false);
-
-			// Append attributes
-			$javascript_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
-			$javascript_link->appendAttribute ('href', '&title=' . $this->safeURLEncode ($this->setup->pageTitle), false);
-
-			if (!empty ($_GET['hashover-script'])) {
-				$hashover_script = $this->misc->makeXSSsafe ($this->safeURLEncode ($_GET['hashover-script']));
-				$javascript_link->appendAttribute ('href', '&hashover-script=' . $hashover_script, false);
-			}
 
 			// Add JavaScript code hyperlink text
 			$javascript_link->innerHTML ('JavaScript');

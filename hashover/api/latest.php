@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -16,119 +16,140 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
 
-// Change to the scripts directory
-chdir ('../scripts/');
+// Change to the HashOver directory
+chdir (realpath ('../'));
 
 // Setup HashOver for JavaScript
-require ('javascript-setup.php');
+require ('backend/javascript-setup.php');
 
 try {
-	// Instantiate HashOver class
-	$hashover = new \HashOver ('javascript', 'api');
-	$hashover->setup->setPageURL ('request');
-	$hashover->initiate ();
+	// Instantiate general setup class
+	$setup = new Setup (array (
+		'mode' => 'javascript',
+		'context' => 'api'
+	));
 
-	// Display error if the API is disabled
-	if ($hashover->setup->APIStatus ('latest') === 'disabled') {
+	// Throw exception if the "Latest Comments" API is disabled
+	if ($setup->apiStatus ('latest') === 'disabled') {
 		throw new \Exception ('This API is not enabled.');
 	}
 
-	$latest = array ();
-	$comments = array ();
-	$output_key = 0;
+	// Instantiate HashOver statistics class
+	$statistics = new Statistics ('javascript');
 
-	if (!empty ($_GET['global']) and $_GET['global'] === 'yes') {
-		$file = './pages/';
-		$metadata = json_decode (file_get_contents ($file . '.metadata'), true);
-	} else {
-		$file = $hashover->setup->dir . '/';
-		$metadata = $hashover->setup->metadata;
-	}
+	// Start execution timer
+	$statistics->executionStart ();
 
-	if (!empty ($metadata)) {
-		for ($i = 0, $il = count ($metadata['latest']); $i < $il; $i++) {
-			$tryfile = $file . $metadata['latest'][$i] . '.' . $hashover->setup->dataFormat;
+	// Instantiate JavaScript build class
+	$javascript = new JavaScriptBuild ('api/frontends/latest');
 
-			if (file_exists ($tryfile) and is_readable ($tryfile)) {
-				$latest[basename ($metadata['latest'][$i])] = $tryfile;
-			}
-		}
+	// Register initial constructor
+	$javascript->registerFile ('constructor.js');
 
-		if (!empty ($_GET['global']) and $_GET['global'] === 'yes') {
-			foreach ($latest as $key => $comment) {
-				if (empty ($metadata_files[dirname ($comment)])) {
-					$metadata_files[dirname ($comment)] = json_decode (file_get_contents (dirname ($comment) . '/.metadata'), true);
-				}
+	// Change to standard frontend directory
+	$javascript->changeDirectory ('frontend');
 
-				$comment_data = $hashover->readComments->data->read ($comment, true);
+	// Register HashOver script tag getter method
+	$javascript->registerFile ('getscript.js');
 
-				if (!empty ($comment_data['status']) and $comment_data['status'] !== 'approved') {
-					continue;
-				}
+	// Register backend path setter
+	$javascript->registerFile ('backendpath.js');
 
-				if ($hashover->setup->latestTrimWidth > 0) {
-					if (mb_strwidth ($comment_data['body']) > $hashover->setup->latestTrimWidth) {
-						$comment_data['body'] = mb_strimwidth ($comment_data['body'], 0, $hashover->setup->latestTrimWidth, '...');
-					}
-				}
+	// Register page URL getter method
+	$javascript->registerFile ('geturl.js');
 
-				$comments[$output_key] = $hashover->commentParser->parse ($comment_data, $key, false);
-				$comments[$output_key]['thread-url'] = $metadata_files[dirname ($comment)]['url'];
+	// Register page title getter method
+	$javascript->registerFile ('gettitle.js');
 
-				if (!empty ($metadata_files[dirname ($comment)]['title'])) {
-					$comments[$output_key]['thread-title'] = $metadata_files[dirname ($comment)]['title'];
-				} else {
-					$comments[$output_key]['thread-title'] = $hashover->locale->text['untitled'];
-				}
+	// Register backend queries getter method
+	$javascript->registerFile ('getbackendqueries.js');
 
-				$output_key++;
-			}
-		} else {
-			$comment_list = $hashover->readComments->data->query ($latest, false);
+	// Register element creation methods
+	$javascript->registerFile ('elements.js');
 
-			if ($comment_list !== false) {
-				foreach ($comment_list as $key => $comment) {
-					$comment_data = $hashover->readComments->data->read ($comment);
+	// Register main HashOver element getter method
+	$javascript->registerFile ('getmainelement.js');
 
-					if (!empty ($comment_data['status']) and $comment_data['status'] !== 'approved') {
-						continue;
-					}
+	// Register error message handler method
+	$javascript->registerFile ('displayerror.js');
 
-					if ($hashover->setup->latestTrimWidth > 0) {
-						$comment_data['body'] = rtrim (mb_strimwidth ($comment_data['body'], 0, $hashover->setup->latestTrimWidth, '...'));
-					}
+	// Register AJAX-related methods
+	$javascript->registerFile ('ajax.js');
 
-					$comments[$output_key] = $hashover->commentParser->parse ($comment_data, $key, false);
-					$comments[$output_key]['thread-url'] = $hashover->setup->metadata['url'];
+	// Register pre-compiled regular expressions
+	$javascript->registerFile ('regex.js');
 
-					if (!empty ($hashover->setup->metadata['title'])) {
-						$comments[$output_key]['thread-title'] = $hashover->setup->metadata['title'];
-					} else {
-						$comments[$output_key]['thread-title'] = $hashover->locale->text['untitled'];
-					}
+	// Register end-of-line trimmer method
+	$javascript->registerFile ('eoltrim.js');
 
-					$output_key++;
-				}
-			}
-		}
-	}
+	// Register parent permalink getter method
+	$javascript->registerFile ('permalinks.js');
 
-	if (!include ($hashover->setup->getAbsolutePath ('scripts/widget-output.php'))) {
-		exit ('document.write (\'<b>HashOver</b>: Error! File "widget-output.php" could not be included!\');');
-	}
+	// Register markdown methods
+	$javascript->registerFile ('markdown.js', array (
+		'include' => $setup->usesMarkdown
+	));
 
-	// End statistics and add them as code comment
-	echo $hashover->statistics->executionEnd ();
+	// Register date/time methods
+	$javascript->registerFile ('datetime.js', array (
+		'include' => $setup->usesUserTimezone
+	));
+
+	// Register search and replace methods
+	$javascript->registerFile ('strings.js');
+
+	// Register optional method handler method
+	$javascript->registerFile ('optionalmethod.js');
+
+	// Register comment parsing methods
+	$javascript->registerFile ('comments.js');
+
+	// Register embedded image method
+	$javascript->registerFile ('embedimage.js', array (
+		'include' => $setup->allowsImages,
+
+		'dependencies' => array (
+			'openembeddedimage.js'
+		)
+	));
+
+	// Register control event handler attacher method
+	$javascript->registerFile ('addcontrols.js');
+
+	// Register classList polyfill methods
+	$javascript->registerFile ('classes.js');
+
+	// Register theme stylesheet appender method
+	$javascript->registerFile ('appendcss.js', array (
+		'include' => $setup->appendsCss
+	));
+
+	// Change back to latest frontend directory
+	$javascript->changeDirectory ('api/frontends/latest');
+
+	// Register initialization method
+	$javascript->registerFile ('init.js');
+
+	// Register automatic instantiation code
+	$javascript->registerFile ('instantiate.js', array (
+		'include' => !isset ($_GET['nodefault'])
+	));
+
+	// JavaScript build process output
+	$output = $javascript->build (
+		$setup->minifiesJavascript,
+		$setup->minifyLevel
+	);
+
+	// Display JavaScript build process output
+	echo $output, PHP_EOL;
+
+	// Display statistics
+	echo $statistics->executionEnd ();
 
 } catch (\Exception $error) {
 	$misc = new Misc ('javascript');
-	$misc->displayError ($error->getMessage ());
+	$message = $error->getMessage ();
+	$misc->displayError ($message);
 }

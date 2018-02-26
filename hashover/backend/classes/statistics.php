@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,21 +17,12 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 class Statistics
 {
 	public $mode;
 	public $executionStart;
 	public $executionEnd;
+	public $executionMicroTime;
 	public $executionTime;
 	public $scriptMemory;
 	public $systemMemory;
@@ -55,40 +46,42 @@ class Statistics
 		$this->executionEnd = microtime (true);
 
 		// Difference between start time and end time in seconds
-		$this->executionTime = $this->executionEnd - $this->executionStart;
+		$this->executionMicroTime = $this->executionEnd - $this->executionStart;
 
 		// Unit to divided memory bytes by (1,024² for mibibytes)
 		$division_unit = pow (1024, 2);
 
 		// Memory the script consumed divided by division unit
-		$this->scriptMemory = round (memory_get_peak_usage () / $division_unit, 2);
+		$script_memory = round (memory_get_peak_usage () / $division_unit, 2);
+		$this->scriptMemory = $script_memory . ' MiB';
 
 		// Memory the system consumed divided by division unit
-		$this->systemMemory = round (memory_get_peak_usage (true) / $division_unit, 2);
+		$system_memory = round (memory_get_peak_usage (true) / $division_unit, 2);
+		$this->systemMemory = $system_memory . ' MiB';
 
 		// Display execution time in millisecond(s)
-		if ($this->executionTime < 1) {
-			$execution_stat = round ($this->executionTime * 1000, 5) . ' ms';
+		if ($this->executionMicroTime < 1) {
+			$this->executionTime = round ($this->executionMicroTime * 1000, 5) . ' ms';
 		} else {
 			// Display execution time in seconds
-			$execution_stat = round ($this->executionTime, 5) . ' Second';
+			$this->executionTime = round ($this->executionMicroTime, 5) . ' Second';
 
 			// Add plural to any execution time other than one
-			if ($this->executionTime !== 1) {
-				$execution_stat .= 's';
+			if ($this->executionMicroTime !== 1) {
+				$this->executionTime .= 's';
 			}
 		}
 
 		// Statistics inner-comment
 		$statistics  = PHP_EOL . PHP_EOL;
 		$statistics .= "\t" . 'HashOver Statistics' . PHP_EOL . PHP_EOL;
-		$statistics .= "\t" . 'Execution Time     : ' . $execution_stat . PHP_EOL;
-		$statistics .= "\t" . 'Script Memory Peak : ' . $this->scriptMemory . ' MiB' . PHP_EOL;
-		$statistics .= "\t" . 'System Memory Peak : ' . $this->systemMemory . ' MiB';
+		$statistics .= "\t" . 'Execution Time     : ' . $this->executionTime . PHP_EOL;
+		$statistics .= "\t" . 'Script Memory Peak : ' . $this->scriptMemory . PHP_EOL;
+		$statistics .= "\t" . 'System Memory Peak : ' . $this->systemMemory;
 		$statistics .= PHP_EOL . PHP_EOL;
 
 		// Return statistics as JavaScript comment
-		if ($this->mode === 'javascript') {
+		if ($this->mode !== 'php') {
 			return PHP_EOL . '/*' . $statistics . '*/';
 		}
 

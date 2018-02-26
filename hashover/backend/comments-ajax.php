@@ -1,0 +1,207 @@
+<?php namespace HashOver;
+
+// Copyright (C) 2018 Jacob Barkdull
+// This file is part of HashOver.
+//
+// HashOver is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// HashOver is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
+
+
+// Check if request is for JSONP
+if (isset ($_GET['jsonp'])) {
+	// If so, setup HashOver for JavaScript
+	require ('javascript-setup.php');
+} else {
+	// If not, setup HashOver for JSON
+	require ('json-setup.php');
+}
+
+try {
+	// Instantiate HashOver class
+	$hashover = new \HashOver ('json');
+	$hashover->setup->setPageURL ('request');
+	$hashover->setup->setPageTitle ('request');
+	$hashover->setup->setThreadName ('request');
+	$hashover->initiate ();
+	$hashover->parsePrimary ();
+	$hashover->parsePopular ();
+	$hashover->finalize ();
+
+	// Page, setup, and comment data array
+	$data = array ();
+
+	// Check if we're preparing HashOver
+	if ($hashover->setup->getRequest ('prepare') !== false) {
+		// Set/update default page metadata
+		$hashover->defaultMetadata ();
+
+		// Add locales to data
+		$data['locale'] = array (
+			'cancel'		=> $hashover->locale->text['cancel'],
+			'date-time'		=> $hashover->locale->text['date-time'],
+			'dislike-comment'	=> $hashover->locale->text['dislike-comment'],
+			'disliked-comment'	=> $hashover->locale->text['disliked-comment'],
+			'disliked'		=> $hashover->locale->text['disliked'],
+			'dislike'		=> $hashover->locale->text['dislike'],
+			'external-image-tip'	=> $hashover->locale->text['external-image-tip'],
+			'field-needed'		=> $hashover->locale->text['field-needed'],
+			'like-comment'		=> $hashover->locale->text['like-comment'],
+			'liked-comment'		=> $hashover->locale->text['liked-comment'],
+			'liked'			=> $hashover->locale->text['liked'],
+			'like'			=> $hashover->locale->text['like'],
+			'today'			=> $hashover->locale->text['date-today'],
+			'unlike'		=> $hashover->locale->text['unlike'],
+			'commenter-tip'		=> $hashover->locale->text['commenter-tip'],
+			'subscribed-tip'	=> $hashover->locale->text['subscribed-tip'],
+			'unsubscribed-tip'	=> $hashover->locale->text['unsubscribed-tip'],
+			'replies'		=> $hashover->locale->text['replies'],
+			'reply'			=> $hashover->locale->text['reply'],
+			'no-email-warning'	=> $hashover->locale->text['no-email-warning'],
+			'invalid-email'		=> $hashover->locale->text['invalid-email'],
+			'reply-needed'		=> $hashover->locale->text['reply-needed'],
+			'comment-needed'	=> $hashover->locale->text['comment-needed'],
+			'delete-comment'	=> $hashover->locale->text['delete-comment'],
+			'loading'		=> $hashover->locale->text['loading'],
+			'click-to-close'	=> $hashover->locale->text['click-to-close'],
+			'email'			=> $hashover->locale->text['email'],
+			'name'			=> $hashover->locale->text['name'],
+			'password'		=> $hashover->locale->text['password'],
+			'website'		=> $hashover->locale->text['website'],
+			'day-names'		=> $hashover->locale->text['date-day-names'],
+			'month-names'		=> $hashover->locale->text['date-month-names']
+		);
+
+		// Add setup information to data
+		$data['setup'] = array (
+			'server-eol'		=> PHP_EOL,
+			'collapse-limit'	=> $hashover->setup->collapseLimit,
+			'default-name'		=> $hashover->setup->defaultName,
+			'user-is-logged-in'	=> $hashover->login->userIsLoggedIn,
+			'user-is-admin'		=> $hashover->login->userIsAdmin,
+			'http-root'		=> $hashover->setup->httpRoot,
+			'http-backend'		=> $hashover->setup->httpBackend,
+			'allows-dislikes'	=> $hashover->setup->allowsDislikes,
+			'allows-likes'		=> $hashover->setup->allowsLikes,
+			'time-format'		=> $hashover->setup->timeFormat,
+			'image-extensions'	=> $hashover->setup->imageTypes,
+			'image-placeholder'	=> $hashover->setup->httpImages . '/place-holder.' . $hashover->setup->imageFormat,
+			'stream-mode'		=> ($hashover->setup->replyMode === 'stream'),
+			'stream-depth'		=> $hashover->setup->streamDepth,
+			'theme-css'		=> $hashover->setup->httpRoot . '/themes/' . $hashover->setup->theme . '/style.css',
+			'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
+			'collapses-comments'	=> $hashover->setup->collapsesComments,
+			'uses-user-timezone'	=> $hashover->setup->usesUserTimezone,
+			'uses-short-dates'	=> $hashover->setup->usesShortDates,
+			'allows-images'		=> $hashover->setup->allowsImages,
+			'uses-markdown'		=> $hashover->setup->usesMarkdown,
+			'uses-cancel-buttons'	=> $hashover->setup->usesCancelButtons,
+			'uses-auto-login'	=> $hashover->setup->usesAutoLogin,
+			'uses-ajax'		=> $hashover->setup->usesAjax,
+			'allows-login'		=> $hashover->setup->allowsLogin,
+			'field-options'		=> $hashover->setup->fieldOptions
+		);
+
+		// Add UI HTML to data
+		$data['ui'] = array (
+			'user-avatar'		=> $hashover->ui->userAvatar (),
+			'name-link'		=> $hashover->ui->nameElement ('a'),
+			'name-span'		=> $hashover->ui->nameElement ('span'),
+			'parent-link'		=> $hashover->ui->parentThreadLink (),
+			'edit-link'		=> $hashover->ui->formLink ('{{href}}', 'edit'),
+			'reply-link'		=> $hashover->ui->formLink ('{{href}}', 'reply'),
+			'like-link'		=> $hashover->ui->likeLink ('like'),
+			'dislike-link'		=> $hashover->ui->likeLink ('dislike'),
+			'like-count'		=> $hashover->ui->likeCount ('likes'),
+			'dislike-count'		=> $hashover->ui->likeCount ('dislikes'),
+			'name-wrapper'		=> $hashover->ui->nameWrapper (),
+			'date-link'		=> $hashover->ui->dateLink (),
+			'comment-wrapper'	=> $hashover->ui->commentWrapper (),
+			'theme'			=> $hashover->templater->parseTheme (),
+			'reply-form'		=> $hashover->ui->replyForm (),
+			'edit-form'		=> $hashover->ui->editForm ()
+		);
+	}
+
+	// HashOver instance information
+	$data['instance'] = array (
+		'primary-count'		=> $hashover->thread->primaryCount - 1,
+		'total-count'		=> $hashover->thread->totalCount - 1,
+		'page-url'		=> $hashover->setup->pageURL,
+		'page-title'		=> $hashover->setup->pageTitle,
+		'thread-name'		=> $hashover->setup->threadName,
+		'file-path'		=> $hashover->setup->filePath,
+		'initial-html'		=> $hashover->ui->initialHTML (false),
+		'comments'		=> $hashover->comments
+	);
+
+	// Count according to `$showsReplyCount` setting
+	$show_number_comments = $hashover->getCommentCount ('show-number-comments');
+
+	// Add locales for UI uncollapse button
+	if ($hashover->setup->collapsesInterface !== false) {
+		$data['instance']['show-number-comments'] = $show_number_comments;
+		$data['instance']['post-comment-on'] = $hashover->ui->postCommentOn;
+	}
+
+	// Text for "Show X Other Comment(s)" link
+	if ($hashover->setup->collapsesComments !== false) {
+		// Check if at least 1 comment is to be shown
+		if ($hashover->setup->collapseLimit >= 1) {
+			// If so, use the "Show X Other Comments" locale
+			$more_link_locale = $hashover->locale->text['show-other-comments'];
+
+			// Shorter variables
+			$total_count = $hashover->thread->totalCount;
+			$collapse_limit = $hashover->setup->collapseLimit;
+
+			// Get number of comments after collapse limit
+			$other_count = ($total_count - 1) - $collapse_limit;
+
+			// Subtract deleted comment counts
+			if ($hashover->setup->countIncludesDeleted === false) {
+				$other_count -= $hashover->thread->collapsedDeletedCount;
+			}
+
+			// Decide if count is pluralized
+			$more_link_plural = ($other_count !== 1) ? 1 : 0;
+			$more_link_text = $more_link_locale[$more_link_plural];
+
+			// And inject the count into the locale string
+			$more_link_text = sprintf ($more_link_text, $other_count);
+		} else {
+			// If not, show count according to `$showsReplyCount` setting
+			$more_link_text = $show_number_comments;
+		}
+
+		// Add "Show X Other Comment(s)" link to instance
+		$data['instance']['more-link-text'] = $more_link_text;
+	}
+
+	// Generate statistics
+	$hashover->statistics->executionEnd ();
+
+	// HashOver statistics
+	$data['statistics'] = array (
+		'execution-time'	=> $hashover->statistics->executionTime,
+		'script-memory'		=> $hashover->statistics->scriptMemory,
+		'system-memory'		=> $hashover->statistics->systemMemory
+	);
+
+	// Return JSON or JSONP function call
+	echo $hashover->misc->jsonData ($data);
+
+} catch (\Exception $error) {
+	$misc = new Misc ('json');
+	$message = $error->getMessage ();
+	$misc->displayError ($message);
+}

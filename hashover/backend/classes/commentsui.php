@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,16 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 class CommentsUI extends FormUI
 {
 	public function __construct (Setup $setup, array $counts)
@@ -35,7 +25,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates a wrapper element for each comment
-	public function commentWrapper ($permalink = '%s')
+	public function commentWrapper ($permalink = '{{permalink}}')
 	{
 		$comment_wrapper = new HTMLTag ('div', array (
 			'id' => $permalink,
@@ -43,8 +33,8 @@ class CommentsUI extends FormUI
 		), false);
 
 		if ($this->mode !== 'php') {
-			$comment_wrapper->appendAttribute ('class', '%s', false);
-			$comment_wrapper->innerHTML ('%s');
+			$comment_wrapper->appendAttribute ('class', '{{class}}', false);
+			$comment_wrapper->innerHTML ('{{html}}');
 
 			return $comment_wrapper->asHTML ();
 		}
@@ -53,18 +43,18 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates wrapper element to name element
-	public function nameWrapper ($name_class = '%s', $name_link = '%s')
+	public function nameWrapper ($class = '{{class}}', $link = '{{link}}')
 	{
 		$name_wrapper = new HTMLTag ('span', array (
-			'class' => 'hashover-comment-name ' . $name_class,
-			'innerHTML' => $name_link
+			'class' => 'hashover-comment-name ' . $class,
+			'innerHTML' => $link
 		), false);
 
 		return $name_wrapper->asHTML ();
 	}
 
 	// Creates name hyperlink/span element
-	public function nameElement ($element, $href = '%s', $permalink = '%s', $name = '%s')
+	public function nameElement ($element, $permalink = '{{permalink}}', $name = '{{name}}', $href = '{{href}}')
 	{
 		// Decide what kind of element to create
 		switch ($element) {
@@ -97,10 +87,10 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates "Top of Thread" hyperlink element
-	public function threadLink ($parent = '%s', $permalink = '%s', $name = '%s')
+	public function parentThreadLink ($parent = '{{parent}}', $permalink = '{{permalink}}', $name = '{{name}}')
 	{
 		// Get locale string
-		$thread_locale = $this->locale->get ('thread');
+		$thread_locale = $this->locale->text['thread'];
 
 		// Inject OP's name into the locale
 		$inner_html = sprintf ($thread_locale, $name);
@@ -110,7 +100,7 @@ class CommentsUI extends FormUI
 			'href' => '#' . $parent,
 			'id' => 'hashover-thread-link-' . $permalink,
 			'class' => 'hashover-thread-link',
-			'title' => $this->locale->get ('thread-tip'),
+			'title' => $this->locale->text['thread-tip'],
 			'innerHTML' => $inner_html
 		), false);
 
@@ -132,7 +122,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates date/permalink hyperlink element
-	public function dateLink ($permalink = '%s', $date = '%s')
+	public function dateLink ($permalink = '{{permalink}}', $date = '{{date}}')
 	{
 		// Create hyperlink element
 		$date_link = $this->queryLink ($this->setup->filePath);
@@ -149,7 +139,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates element to hold a count of likes/dislikes each comment has
-	public function likeCount ($type, $permalink = '%s', $text = '%s')
+	public function likeCount ($type, $permalink = '{{permalink}}', $text = '{{text}}')
 	{
 		// CSS class
 		$class = 'hashover-' . $type;
@@ -165,7 +155,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates "Like"/"Dislike" hyperlink element
-	public function likeLink ($type, $permalink = '%s', $class = '%s', $title = '%s', $text = '%s')
+	public function likeLink ($type, $permalink = '{{permalink}}', $class = '{{class}}', $title = '{{title}}', $text = '{{text}}')
 	{
 		// Create hyperlink element
 		$link = new HTMLTag ('a', array (
@@ -180,17 +170,17 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates a form control hyperlink element
-	public function formLink ($type, $permalink = '%s', $class = '%s', $title = '%s')
+	public function formLink ($href, $type, $permalink = '{{permalink}}', $class = '{{class}}', $title = '{{title}}')
 	{
 		$form = 'hashover-' . $type;
-		$link = $this->queryLink ('', array ($form . '=' . $permalink));
+		$link = $this->queryLink ($href, array ($form . '=' . $permalink));
 		$title_locale = ($type === 'reply') ? 'reply-to-comment' : 'edit-your-comment';
 
 		// Create more attributes
 		$link->createAttributes (array (
 			'id' => $form. '-link-' . $permalink,
 			'class' => 'hashover-comment-' . $type,
-			'title' => $this->locale->get ($title_locale)
+			'title' => $this->locale->text[$title_locale]
 		));
 
 		// Append href attribute
@@ -205,7 +195,7 @@ class CommentsUI extends FormUI
 		}
 
 		// Add link text
-		$link->innerHTML ($this->locale->get ($type));
+		$link->innerHTML ($this->locale->text[$type]);
 
 		return $link->asHTML ();
 	}
@@ -214,7 +204,7 @@ class CommentsUI extends FormUI
 	public function cancelLink ($permalink, $for, $class = '')
 	{
 		$cancel_link = $this->queryLink ($this->setup->filePath);
-		$cancel_locale = $this->locale->get ('cancel');
+		$cancel_locale = $this->locale->text['cancel'];
 
 		// Append href attribute
 		$cancel_link->appendAttribute ('href', '#' . $permalink, false);
@@ -236,7 +226,7 @@ class CommentsUI extends FormUI
 		return $cancel_link->asHTML ();
 	}
 
-	public function userAvatar ($src = '%s', $href = '%s', $text = '%s')
+	public function userAvatar ($src = '{{src}}', $href = '{{href}}', $text = '{{text}}')
 	{
 		// If avatars set to images
 		if ($this->setup->iconMode !== 'none') {
@@ -248,7 +238,7 @@ class CommentsUI extends FormUI
 			if ($this->setup->iconMode !== 'count') {
 				// Create avatar image element
 				$comments_avatar = new HTMLTag ('div', array (
-					'style' => $this->getAvatarBackground ($src)
+					'style' => 'background-image: url(\'' . $src . '\');'
 				), false);
 			} else {
 				// Avatars set to count
@@ -265,13 +255,15 @@ class CommentsUI extends FormUI
 
 			return $avatar_wrapper->asHTML ();
 		}
+
+		return '';
 	}
 
 	public function cancelButton ($type, $permalink)
 	{
 		$cancel_button = $this->queryLink ($this->setup->filePath);
 		$class = 'hashover-' . $type . '-cancel';
-		$cancel_locale = $this->locale->get ('cancel');
+		$cancel_locale = $this->locale->text['cancel'];
 
 		// Add ID attribute with JavaScript variable single quote break out
 		if (!empty ($permalink)) {
@@ -279,7 +271,7 @@ class CommentsUI extends FormUI
 		}
 
 		// Append href attribute
-		$cancel_button->appendAttribute ('href', '#' . $permalink, false);
+		$cancel_button->appendAttribute ('href', '#hashover-' . $permalink, false);
 
 		// Create more attributes
 		$cancel_button->createAttributes (array (
@@ -323,7 +315,7 @@ class CommentsUI extends FormUI
 			$reply_comment_label = new HTMLTag ('label', array (
 				'for' => 'hashover-reply-comment-' . $permalink,
 				'class' => 'hashover-comment-label',
-				'innerHTML' => $this->locale->get ('reply-to-comment')
+				'innerHTML' => $this->locale->text['reply-to-comment']
 			), false);
 
 			// Add comment label to form element
@@ -331,7 +323,7 @@ class CommentsUI extends FormUI
 		}
 
 		// Reply form locale
-		$reply_form_placeholder = $this->locale->get ('reply-form');
+		$reply_form_placeholder = $this->locale->text['reply-form'];
 
 		// Create reply textarea element and add it to form element
 		$this->commentForm ($reply_form, 'reply', $reply_form_placeholder, '', $permalink);
@@ -369,8 +361,8 @@ class CommentsUI extends FormUI
 		}
 
 		// Create and add accepted HTML revealer hyperlink
-		if ($this->mode === 'javascript') {
-			$reply_form_links_wrapper->appendChild ($this->acceptedHTML ('reply', $permalink));
+		if ($this->mode !== 'php') {
+			$reply_form_links_wrapper->appendChild ($this->acceptedFormatting ('reply', $permalink));
 		}
 
 		// Add reply form links wrapper to reply form footer element
@@ -397,7 +389,7 @@ class CommentsUI extends FormUI
 		}
 
 		// Post reply locale
-		$post_reply = $this->locale->get ('post-reply');
+		$post_reply = $this->locale->text['post-reply'];
 
 		// Continue with other attributes
 		$reply_post_button->createAttributes (array (
@@ -423,16 +415,20 @@ class CommentsUI extends FormUI
 	public function editForm ($permalink = '{{permalink}}', $file = '{{file}}', $name = '{{name}}', $website = '{{website}}', $body = '{{body}}', $status = '', $subscribed = true)
 	{
 		// "Edit Comment" locale string
-		$edit_comment = $this->locale->get ('edit-comment');
+		$edit_comment = $this->locale->text['edit-comment'];
 
 		// "Save Edit" locale string
-		$save_edit = $this->locale->get ('save-edit');
+		$save_edit = $this->locale->text['save-edit'];
 
 		// "Cancel" locale string
-		$cancel_edit = $this->locale->get ('cancel');
+		$cancel_edit = $this->locale->text['cancel'];
 
 		// "Delete" locale string
-		$delete_comment = $this->locale->get ('delete');
+		if ($this->login->userIsAdmin === true) {
+			$delete_comment = $this->locale->text['permanently-delete'];
+		} else {
+			$delete_comment = $this->locale->text['delete'];
+		}
 
 		// Create wrapper element
 		$edit_form = new HTMLTag ('div');
@@ -447,7 +443,7 @@ class CommentsUI extends FormUI
 			// Create status dropdown wrapper element
 			$edit_status_wrapper = new HTMLTag ('span', array (
 				'class' => 'hashover-edit-status',
-				'innerHTML' => $this->locale->get ('status')
+				'innerHTML' => $this->locale->text['status']
 			), false);
 
 			// Create select wrapper element
@@ -457,9 +453,9 @@ class CommentsUI extends FormUI
 
 			// Status dropdown menu options
 			$status_options = array (
-				'approved' => $this->locale->get ('status-approved'),
-				'pending' => $this->locale->get ('status-pending'),
-				'deleted' => $this->locale->get ('status-deleted')
+				'approved' => $this->locale->text['status-approved'],
+				'pending' => $this->locale->text['status-pending'],
+				'deleted' => $this->locale->text['status-deleted']
 			);
 
 			// Create status dropdown menu element
@@ -507,7 +503,7 @@ class CommentsUI extends FormUI
 			$edit_comment_label = new HTMLTag ('label', array (
 				'for' => 'hashover-edit-comment-' . $permalink,
 				'class' => 'hashover-comment-label',
-				'innerHTML' => $this->locale->get ('edit-your-comment')
+				'innerHTML' => $this->locale->text['edit-your-comment']
 			), false);
 
 			// Add comment label to form element
@@ -515,7 +511,7 @@ class CommentsUI extends FormUI
 		}
 
 		// Comment form placeholder text
-		$edit_placeholder = $this->locale->get ('comment-form');
+		$edit_placeholder = $this->locale->text['comment-form'];
 
 		// Create edit textarea element and add it to form element
 		$this->commentForm ($edit_form, 'edit', $edit_placeholder, $body, $permalink);
@@ -549,8 +545,8 @@ class CommentsUI extends FormUI
 		}
 
 		// Create and add accepted HTML revealer hyperlink
-		if ($this->mode === 'javascript') {
-			$edit_form_links_wrapper->appendChild ($this->acceptedHTML ('edit', $permalink));
+		if ($this->mode !== 'php') {
+			$edit_form_links_wrapper->appendChild ($this->acceptedFormatting ('edit', $permalink));
 		}
 
 		// Add edit form links wrapper to edit form footer element
@@ -615,5 +611,17 @@ class CommentsUI extends FormUI
 		$edit_form->appendChild ($edit_form_footer);
 
 		return $edit_form->innerHTML;
+	}
+
+	// Creates thread hyperlink element
+	public function threadLink ($url = '{{url}}', $title = '{{title}}')
+	{
+		// Create hyperlink element
+		$thread_link = new HTMLTag ('a', array (
+			'href' => $url,
+			'innerHTML' => $title
+		), false);
+
+		return $thread_link->asHTML ();
 	}
 }

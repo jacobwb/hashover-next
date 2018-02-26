@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,16 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 class SpamCheck
 {
 	public $blocklist;
@@ -36,7 +26,7 @@ class SpamCheck
 	public function __construct (Setup $setup)
 	{
 		// JSON IP address blocklist file
-		$this->blocklist = $setup->getAbsolutePath ('blocklist.json');
+		$this->blocklist = $setup->getAbsolutePath ('config/blocklist.json');
 
 		// CSV spam database file
 		$this->database = $setup->getAbsolutePath ('spam-database.csv');

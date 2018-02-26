@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // I, Jacob Barkdull, hereby release this work into the public domain.
@@ -15,14 +15,6 @@
 // entity the right to use this work for any purpose, without any
 // conditions, unless such conditions are required by law.
 
-
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
 
 // French text for forms, buttons, links, and tooltips
 $locale = array (
@@ -68,6 +60,7 @@ $locale = array (
 	'comment-deleted'	=> 'Commentaire supprimé !',
 	'post-reply'		=> 'Publier cette réponse',
 	'delete'		=> 'Supprimer',
+	'permanently-delete'	=> 'Supprimer Définitivement',
 	'subscribe'		=> 'Avertissez-moi des réponses',
 	'subscribe-tip'		=> 'Souscrire aux notifications par e-mail',
 	'edit-comment'		=> 'Éditer ce commentaire',

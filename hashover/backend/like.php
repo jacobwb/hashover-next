@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -26,21 +26,19 @@
 //	visitor isn't the comment's original poster.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
+// Check if request is for JSONP
+if (isset ($_GET['jsonp'])) {
+	// If so, setup HashOver for JavaScript
+	require ('javascript-setup.php');
+} else {
+	// If not, setup HashOver for JSON
+	require ('json-setup.php');
 }
 
-// Setup HashOver for JSON
-require ('json-setup.php');
-
 // Sets cookie indicating what comment was liked
-function set_like (&$hashover, $like_cookie, $set, &$likes)
+function set_like (&$hashover, $like_hash, $set, &$likes)
 {
-	$hashover->cookies->set ($like_cookie, $set, mktime (0, 0, 0, 11, 26, 3468));
+	$hashover->cookies->set ($like_hash, $set, mktime (0, 0, 0, 11, 26, 3468));
 	$likes = $likes + 1;
 }
 
@@ -53,34 +51,37 @@ function like_decrease (&$likes)
 }
 
 // Likes or dislikes a comment
-function liker ($action, $like_cookie, &$hashover, &$comment)
+function liker ($action, $like_hash, &$hashover, &$comment)
 {
 	// Get the comment array key based on given action
 	$key = ($action === 'like') ? 'likes' : 'dislikes';
 	$set = ($action === 'like') ? 'liked' : 'disliked';
 
+	// Get like cookie
+	$like_cookie = $hashover->cookies->getValue ($like_hash);
+
 	// Check that a like/dislike cookie is not already set
-	if (empty ($_COOKIE[$like_cookie])) {
+	if ($like_cookie === null) {
 		// If so, set the cookie and increase the like/dislike count
-		set_like ($hashover, $like_cookie, $set, $comment[$key]);
+		set_like ($hashover, $like_hash, $set, $comment[$key]);
 	} else {
 		// If not, we're unliking/un-disliking the comment
 		$opposite_key = ($action === 'like') ? 'dislikes' : 'likes';
 		$opposite_set = ($action === 'like') ? 'disliked' : 'liked';
 
 		// Check if the user has liked the comment
-		if ($_COOKIE[$like_cookie] === $set) {
+		if ($like_cookie === $set) {
 			// If so, expire the like cookie
-			$hashover->cookies->expireCookie ($like_cookie);
+			$hashover->cookies->expireCookie ($like_hash);
 
 			// And decrease the like count
 			like_decrease ($comment[$key]);
 		}
 
 		// Check if the user has disliked the comment
-		if ($_COOKIE[$like_cookie] === $opposite_set) {
+		if ($like_cookie === $opposite_set) {
 			// If so, expire the dislike cookie
-			set_like ($hashover, $like_cookie, $set, $comment[$key]);
+			set_like ($hashover, $like_hash, $set, $comment[$key]);
 
 			// And decrease the dislike count
 			like_decrease ($comment[$opposite_key]);
@@ -88,91 +89,88 @@ function liker ($action, $like_cookie, &$hashover, &$comment)
 	}
 }
 
-function get_json_response ()
+function get_json_response ($hashover, $key, $action)
 {
-	// Get required POST data
-	$url = !empty ($_POST['url']) ? $_POST['url'] : null;
-	$key = !empty ($_POST['comment']) ? $_POST['comment'] : null;
-	$action = !empty ($_POST['action']) ? $_POST['action'] : null;
+	// JSON data
+	$data = array ();
+
+	// Store references to some long variables
+	$storageMode =& $hashover->thread->data->storageMode;
+	$thread = $hashover->setup->threadName;
+
+	// Sanitize file path
+	$file = str_replace ('../', '', $key);
+
+	// Read comment
+	$comment = $hashover->thread->data->read ($file, $thread);
+
+	// Return error message if failed to read comment
+	if ($comment === false) {
+		return array ('error' => 'Failed to read file: "' . $file . '"');
+	}
+
+	// Check if liker isn't poster via login ID comparision
+	if ($hashover->login->userIsLoggedIn and !empty ($comment['login_id'])) {
+		if ($hashover->cookies->getValue ('login') === $comment['login_id']) {
+			// Return error message if liker posted the comment
+			return array ('message' => 'Practice altruism!');
+		}
+	}
+
+	// Name of the cookie used to indicate liked comments
+	$like_hash = md5 ($hashover->setup->domain . $thread . '/' . $key);
+
+	// Action: like or dislike
+	$action = ($action !== 'dislike') ? 'like' : 'dislike';
+
+	// Like or dislike the comment
+	liker ($action, $like_hash, $hashover, $comment);
+
+	// Attempt to save file with updated like count
+	if ($hashover->thread->data->save ($file, $comment, true, $thread)) {
+		// If successful, add number of likes to JSON
+		if (isset ($comment['likes'])) {
+			$data['likes'] = $comment['likes'];
+		}
+
+		// And add dislikes to JSON as well
+		if (isset ($comment['dislikes'])) {
+			$data['dislikes'] = $comment['dislikes'];
+		}
+	} else {
+		// If failed, add error message to JSON
+		$data['error'] = 'Failed to save comment file!';
+	}
+
+	return $data;
+}
+
+try {
+	// Instanciate HashOver class
+	$hashover = new \HashOver ('json');
+
+	// Get required POST/GET data
+	$url = $hashover->setup->getRequest ('url', null);
+	$key = $hashover->setup->getRequest ('comment', null);
+	$action = $hashover->setup->getRequest ('action', null);
 
 	// Return error if we're missing necessary post data
 	if (($url and $key and $action) === null) {
 		return array ('error' => 'No action.');
 	}
 
-	try {
-		// Instanciate HashOver class
-		$hashover = new \HashOver ('api');
-		$hashover->setup->setPageURL ($url);
-		$hashover->initiate ();
+	// Continue HashOver setup
+	$hashover->setup->setPageURL ($url);
+	$hashover->initiate ();
 
-		// JSON data
-		$json = array ();
+	// Display JSON response
+	$data = get_json_response ($hashover, $key, $action);
 
-		// Store references to some long variables
-		$storageMode =& $hashover->readComments->data->storageMode;
-		$thread = $hashover->setup->threadDirectory;
+	// Return JSON or JSONP function call
+	echo $hashover->misc->jsonData ($data);
 
-		// Sanitize file path
-		$file = str_replace ('../', '', $key);
-
-		// Return error message if file doesn't exist
-		if ($storageMode === 'flat-file') {
-			$file = $thread . '/' . $file;
-			$file = '../pages/' . $file . '.' . $hashover->setup->dataFormat;
-
-			if (!file_exists ($file)) {
-				return array ('error' => 'File: "' . $file . '" non-existent!');
-			}
-		}
-
-		// Read comment
-		$comment = $hashover->readComments->data->read ($file, true);
-
-		// Return error message if failed to read comment
-		if ($comment === false) {
-			return array ('error' => 'Failed to read file: "' . $file . '"');
-		}
-
-		// Check if liker isn't poster via login ID comparision
-		if ($hashover->login->userIsLoggedIn and !empty ($comment['login_id'])) {
-			if ($_COOKIE['hashover-login'] === $comment['login_id']) {
-				// Return error message if liker posted the comment
-				return array ('message' => 'Practice altruism!');
-			}
-		}
-
-		// Name of the cookie used to indicate liked comments
-		$like_cookie = md5 ($hashover->setup->domain . $thread . '/' . $key);
-
-		// Action: like or dislike
-		$action = ($action !== 'dislike') ? 'like' : 'dislike';
-
-		// Like or dislike the comment
-		liker ($action, $like_cookie, $hashover, $comment);
-
-		// Attempt to save file with updated like count
-		if ($hashover->readComments->data->save ($comment, $file, true, true)) {
-			// If successful, add number of likes to JSON
-			if (isset ($comment['likes'])) {
-				$json['likes'] = $comment['likes'];
-			}
-
-			// And add dislikes to JSON as well
-			if (isset ($comment['dislikes'])) {
-				$json['dislikes'] = $comment['dislikes'];
-			}
-		} else {
-			// If failed, add error message to JSON
-			$json['error'] = 'Failed to save comment file!';
-		}
-	} catch (\Exception $error) {
-		$json['error'] = $error->getMessage ();
-	}
-
-	return $json;
+} catch (\Exception $error) {
+	$misc = new Misc ('json');
+	$message = $error->getMessage ();
+	$misc->displayError ($message);
 }
-
-// Display JSON
-$json = get_json_response ();
-echo json_encode ($json);

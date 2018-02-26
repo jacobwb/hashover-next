@@ -1,0 +1,23 @@
+body {
+	background-image: url('../../../images/white-noise.png');
+}
+
+#login {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	padding: 15px;
+	margin: -110px 0px 0px -150px;
+	width: 300px;
+	border: 2px solid #CCCCCC;
+	background-color: #FFFFFF;
+	overflow: hidden;
+}
+
+#login input {
+	width: 100%;
+}
+
+#login.red {
+	border-color: #FF0000;
+}

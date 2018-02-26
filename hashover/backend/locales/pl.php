@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // I, Jacob Barkdull, hereby release this work into the public domain.
@@ -8,14 +8,6 @@
 // entity the right to use this work for any purpose, without any
 // conditions, unless such conditions are required by law.
 
-
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
 
 // Polish text for forms, buttons, links, and tooltips
 $locale = array (
@@ -60,7 +52,8 @@ $locale = array (
 	'post-fail'		=> 'Komentarz nie wysłany! Nie masz wystarczających uprawnień.',
 	'comment-deleted'	=> 'Komentarz usunięty!',
 	'post-reply'		=> 'Wyślij odpowiedź',
-	'delete'		=> 'Skasuj',
+	'delete'		=> 'Usunąć',
+	'permanently-delete'	=> 'Trwale Usunąć',
 	'subscribe'		=> 'Subskrybuj',
 	'subscribe-tip'		=> 'Subskrybuj aby otrzymywać powiadomienia E-mailem',
 	'edit-comment'		=> 'Edytuj komentarz',

@@ -1,0 +1,118 @@
+a, a:link {
+	display: inline-block;
+	border-bottom: 0.1em solid transparent;
+	margin-bottom: -0.1em;
+}
+
+a:hover {
+	border-bottom-color: #266394;
+}
+
+input, textarea {
+	padding: 3px 5px 3px 5px;
+	border: 1px solid #909090;
+	background-color: #FCFCFC;
+}
+
+input, textarea, .select-wrapper {
+	margin: 0px 0px 5px 0px;
+	vertical-align: middle;
+}
+
+input:hover, textarea:hover {
+	border-color: #41A7FA;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="button"]:focus,
+input[type="submit"]:focus,
+textarea:focus {
+	-o-box-shadow: 0px 0px 2px rgba(0, 191, 255, 0.5);
+	-moz-box-shadow: 0px 0px 2px rgba(0, 191, 255, 0.5);
+	-webkit-box-shadow: 0px 0px 2px rgba(0, 191, 255, 0.5);
+	box-shadow: 0px 0px 2px rgba(0, 191, 255, 0.5);
+}
+
+input[type="text"]:focus {
+	border-color: #004799;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="button"]:focus,
+textarea:focus {
+	border-color: #3B96E0;
+}
+
+input[type="button"] {
+	background-color: #F5F5F5;
+}
+
+input[type="button"]:hover {
+	background-color: #F0F0F0;
+}
+
+input[type="submit"] {
+	color: #FFFFFF;
+	border: 1px solid #326BAC;
+	background-color: #41A7FA;
+}
+
+input[type="submit"]:hover {
+	text-decoration: none;
+	border: 1px solid #004799;
+	background-color: #3B96E0;
+}
+
+input[type="submit"],
+input[type="button"] {
+	padding: 5px 10px 5px 10px;
+	margin: 0px;
+	cursor: pointer;
+}
+
+input[type="checkbox"] {
+	margin-top: -3px;
+}
+
+.select-wrapper {
+	display: inline-block;
+	position: relative;
+	overflow: hidden;
+	border: 1px solid #AAAAAA;
+	cursor: pointer;
+}
+
+.select-wrapper:before {
+	content: "\25BC";
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	display: inline-block;
+	height: 100%;
+	width: 31px;
+	padding: 6px 0px 6px 0px;
+	margin: 0px;
+	line-height: 12px;
+	text-align: center;
+	pointer-events: none;
+	background-color: #F0F0F0;
+	border-left: 1px solid #AAAAAA;
+	font-family: monospace;
+	font-size: 14px;
+}
+
+.select-wrapper:hover,
+.select-wrapper:hover:before {
+	border-color: #41A7FA;
+}
+
+.select-wrapper select {
+	border: none;
+	background-color: #FCFCFC;
+	padding: 1px 20px 1px 1px;
+	cursor: pointer;
+}

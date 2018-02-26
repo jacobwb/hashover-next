@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,18 +17,8 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 // Functions for reading and writing XML files
-class ParseXML extends ReadFiles
+class ParseXML extends CommentFiles
 {
 	public function __construct (Setup $setup)
 	{
@@ -47,11 +37,10 @@ class ParseXML extends ReadFiles
 		return $this->loadFiles ('xml', $files, $auto);
 	}
 
-	public function read ($file, $fullpath = false)
+	public function read ($file, $thread = 'auto')
 	{
-		if ($fullpath === false) {
-			$file = $this->setup->dir . '/' . $file . '.xml';
-		}
+		// Get comment file path
+		$file = $this->getCommentPath ($file, 'xml', $thread);
 
 		// Read XML comment file
 		$data = @file_get_contents ($file);
@@ -64,7 +53,7 @@ class ParseXML extends ReadFiles
 			// Check for XML parse error
 			if ($xml !== false) {
 				// Remove first two levels of indentation from comment
-				$xml->body = preg_replace ('/^\t{0,2}/m', '', trim ($xml->body, "\r\n\t"));
+				$xml->body = preg_replace ('/^\t{0,2}/mS', '', trim ($xml->body, "\r\n\t"));
 
 				return (array) $xml;
 			}
@@ -73,11 +62,10 @@ class ParseXML extends ReadFiles
 		return false;
 	}
 
-	public function save (array $contents, $file, $editing = false, $fullpath = false)
+	public function save ($file, array $contents, $editing = false, $thread = 'auto')
 	{
-		if ($fullpath === false) {
-			$file = $this->setup->dir . '/' . $file . '.xml';
-		}
+		// Get comment file path
+		$file = $this->getCommentPath ($file, 'xml', $thread);
 
 		// Return false on attempts to override an existing file
 		if (file_exists ($file) and $editing === false) {
@@ -97,17 +85,17 @@ class ParseXML extends ReadFiles
 			$element = $dom->createElement ($key);
 
 			if ($key === 'body') {
-				$newValue = '';
+				$new_value = '';
 
 				foreach (explode (PHP_EOL, trim ($value, PHP_EOL)) as $line) {
 					if (!empty ($line)) {
-						$newValue .= "\t\t";
+						$new_value .= "\t\t";
 					}
 
-					$newValue .= $line . "\n";
+					$new_value .= $line . "\n";
 				}
 
-				$value = "\n" . $newValue . "\t";
+				$value = "\n" . $new_value . "\t";
 			}
 
 			$text_node = $dom->createTextNode ($value);
@@ -125,7 +113,7 @@ class ParseXML extends ReadFiles
 		$tabbed_dom = $this->osLineEndings ($tabbed_dom);
 
 		// Attempt to write file
-		if (file_put_contents ($file, $tabbed_dom, LOCK_EX)) {
+		if (@file_put_contents ($file, $tabbed_dom, LOCK_EX)) {
 			@chmod ($file, 0600);
 			return true;
 		}
@@ -133,11 +121,11 @@ class ParseXML extends ReadFiles
 		return false;
 	}
 
-	public function delete ($file, $hardUnlink = false)
+	public function delete ($file, $hard_unlink = false)
 	{
 		// Actually delete the comment file
-		if ($hardUnlink === true) {
-			return unlink ($this->setup->dir . '/' . $file . '.xml');
+		if ($hard_unlink === true) {
+			return unlink ($this->getCommentPath ($file, 'xml'));
 		}
 
 		// Read comment file
@@ -149,7 +137,7 @@ class ParseXML extends ReadFiles
 			$xml['status'] = 'deleted';
 
 			// Attempt to save file
-			if ($this->save ($xml, $file, true)) {
+			if ($this->save ($file, $xml, true)) {
 				return true;
 			}
 		}

@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,20 +17,10 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 // Read and count comments
 class ParseSQL extends Database
 {
-	protected $defaultQuery = array (
+	protected $insert = array (
 		'id' => null,
 		'body' => null,
 		'status' => null,
@@ -48,6 +38,21 @@ class ParseSQL extends Database
 		'dislikes' => null
 	);
 
+	protected $update = array (
+		'id' => null,
+		'body' => null,
+		'status' => null,
+		'name' => null,
+		'password' => null,
+		'email' => null,
+		'encryption' => null,
+		'email_hash' => null,
+		'notifications' => null,
+		'website' => null,
+		'likes' => null,
+		'dislikes' => null
+	);
+
 	public function __construct (Setup $setup)
 	{
 		parent::__construct ($setup);
@@ -55,12 +60,19 @@ class ParseSQL extends Database
 		// Throw exception if the SQL extension isn't loaded
 		switch ($setup->databaseType) {
 			case 'sqlite': {
-				$setup->extensionsLoaded (array ('pdo_sqlite', 'sqlite3'));
+				$setup->extensionsLoaded (array (
+					'pdo_sqlite',
+					'sqlite3'
+				));
+
 				break;
 			}
 
 			case 'mysql': {
-				$setup->extensionsLoaded (array ('pdo_mysql'));
+				$setup->extensionsLoaded (array (
+					'pdo_mysql'
+				));
+
 				break;
 			}
 		}
@@ -68,16 +80,16 @@ class ParseSQL extends Database
 
 	public function query (array $files = array (), $auto = true)
 	{
-		$this->storageMode = 'sqlite';
-		$results = $this->database->query ('SELECT `id` FROM `' . $this->setup->threadDirectory . '`');
+		$statement = 'SELECT `id` FROM `' . $this->setup->threadName . '`';
+		$results = $this->database->query ($statement);
 
 		if ($results !== false) {
-			$results->execute ();
-			$fetchAll = $results->fetchAll (PDO::FETCH_NUM);
+			$fetch_all = $results->fetchAll (\PDO::FETCH_NUM);
 			$return_array = array ();
 
-			for ($i = 0, $il = count ($fetchAll); $i < $il; $i++) {
-				$return_array[($fetchAll[$i][0])] =(string) $fetchAll[$i][0];
+			for ($i = 0, $il = count ($fetch_all); $i < $il; $i++) {
+				$key = $fetch_all[$i][0];
+				$return_array[$key] = (string)($key);
 			}
 
 			return $return_array;
@@ -86,68 +98,73 @@ class ParseSQL extends Database
 		return false;
 	}
 
-	public function read ($id)
+	public function read ($id, $thread = 'auto')
 	{
-		$result = $this->database->query ('SELECT'
-			. ' `body`,'
-			. ' `status`,'
-			. ' `date`,'
-			. ' `name`,'
-			. ' `password`,'
-			. ' `login_id`,'
-			. ' `email`,'
-			. ' `encryption`,'
-			. ' `email_hash`,'
-			. ' `notifications`,'
-			. ' `website`,'
-			. ' `ipaddr`,'
-			. ' `likes`,'
-			. ' `dislikes`'
-			. ' FROM `' . $this->setup->threadDirectory . '`'
-			. ' WHERE id=\'' . $id . '\''
-		);
+		$thread = $this->getCommentThread ($thread);
+
+		$columns = implode (', ', array (
+			'`body`',
+			'`status`',
+			'`date`',
+			'`name`',
+			'`password`',
+			'`login_id`',
+			'`email`',
+			'`encryption`',
+			'`email_hash`',
+			'`notifications`',
+			'`website`',
+			'`ipaddr`',
+			'`likes`',
+			'`dislikes`'
+		));
+
+		$statement  = 'SELECT ' . $columns . ' ';
+		$statement .= 'FROM `' . $thread . '` ';
+		$statement .= 'WHERE id=\'' . $id . '\'';
+
+		$result = $this->database->query ($statement);
 
 		if ($result !== false) {
-			return (array) $result->fetch (PDO::FETCH_ASSOC);
+			return (array) $result->fetch (\PDO::FETCH_ASSOC);
 		}
 
 		return false;
 	}
 
-	public function save ($contents, $id, $editing = false)
+	protected function prepareQuery ($id, array $contents, array $defaults)
 	{
-		if ($editing === true) {
-			return $this->write ('update', array (
-				'id' => $id,
-				'body' => $contents['body'],
-				'name' => $contents['name'],
-				'password' => $contents['password'],
-				'email' => $contents['email'],
-				'encryption' => $contents['encryption'],
-				'email_hash' => $contents['email_hash'],
-				'notifications' => $contents['notifications'],
-				'website' => $contents['website'],
-				'likes' => $contents['likes'],
-				'dislikes' => $contents['dislikes']
-			));
+		$query = array_merge ($defaults, array ('id' => $id));
+
+		foreach ($contents as $key => $value) {
+			if (array_key_exists ($key, $defaults)) {
+				$query[$key] = $value;
+			}
 		}
 
-		return $this->write ('insert',
-			array_merge (
-				$this->defaultQuery,
-				$contents,
-				array ('id' => $id)
-			)
-		);
+		return $query;
 	}
 
-	public function delete ($id)
+	public function save ($id, array $contents, $editing = false, $thread = 'auto')
 	{
-		return $this->write ('delete',
-			array (
-				'id' => $id,
-				'status' => 'deleted'
-			)
-		);
+		$thread = $this->getCommentThread ($thread);
+		$action = ($editing === true) ? 'update' : 'insert';
+		$query = $this->prepareQuery ($id, $contents, $this->$action);
+		$status = $this->write ($action, $thread, $query);
+
+		return $status;
+	}
+
+	public function delete ($id, $delete = false)
+	{
+		$query = array ('id' => $id);
+
+		if ($delete !== true) {
+			$query['status'] = 'deleted';
+		}
+
+		$status = $this->write ('delete', 'auto', $query, $delete);
+
+		return $status;
 	}
 }

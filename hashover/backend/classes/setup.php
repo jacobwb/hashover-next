@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,16 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 class Setup extends Settings
 {
 	public $usage;
@@ -35,18 +25,20 @@ class Setup extends Settings
 	public $pageURL;
 	public $pageTitle;
 	public $filePath;
+	public $threadName;
+	public $commentsDirectory;
+	public $pagesDirectory;
 	public $threadDirectory;
-	public $dir;
 	public $URLQueryList = array ();
 	public $URLQueries;
-	public $executingScript = false;
 
 	// Required extensions to check for
 	public $extensions = array (
 		'date',
 		'dom',
+		'json',
 		'mbstring',
-		'mcrypt',
+		'openssl',
 		'pcre',
 		'PDO',
 		'SimpleXML'
@@ -104,6 +96,12 @@ class Setup extends Settings
 		// Check for required extensions
 		$this->extensionsLoaded ($this->extensions);
 
+		// Comments directory path
+		$this->commentsDirectory = $this->getAbsolutePath ('comments');
+
+		// Comment threads directory path
+		$this->pagesDirectory = $this->commentsDirectory . '/threads';
+
 		// Throw exception if for Blowfish hashing support isn't detected
 		if ((defined ('CRYPT_BLOWFISH') and CRYPT_BLOWFISH) === false) {
 			throw new \Exception ('Failed to find CRYPT_BLOWFISH. Blowfish hashing support is required.');
@@ -111,36 +109,32 @@ class Setup extends Settings
 
 		// Throw exception if notification email is set to the default
 		if ($this->notificationEmail === 'example@example.com') {
-			throw new \Exception ('You must use a UNIQUE notification e-mail in ' . __FILE__);
+			throw new \Exception (sprintf (
+				'You must use a UNIQUE notification e-mail in %s',
+				$this->httpBackend . '/classes/settings.php'
+			));
 		}
 
 		// Throw exception if encryption key is set to the default
 		if ($this->encryptionKey === '8CharKey') {
-			throw new \Exception ('You must use a UNIQUE encryption key in ' . __FILE__);
+			throw new \Exception (sprintf (
+				'You must use a UNIQUE encryption key in %s',
+				$this->httpBackend . '/classes/settings.php'
+			));
 		}
 
 		// Throw exception if administrative password is set to the default
 		if ($this->adminPassword === 'password') {
-			throw new \Exception ('You must use a UNIQUE admin password in ' . __FILE__);
+			throw new \Exception (sprintf (
+				'You must use a UNIQUE admin password in %s',
+				$this->httpBackend . '/classes/settings.php'
+			));
 		}
 
 		// Throw exception if the script wasn't requested by this server
-		if ($this->usage['mode'] === 'javascript' and $this->refererCheck () === false) {
-			throw new \Exception ('External use not allowed.');
-		}
-
-		// Check if we are placing HashOver at a specific script's position
-		if (isset ($_GET['hashover-script'])) {
-			// If so, make the script query XSS safe
-			$hashover_script = $this->misc->makeXSSsafe ($_GET['hashover-script']);
-
-			// Check if the script query contains a numeric value
-			if (is_numeric ($hashover_script)) {
-				// If so, set it as the executing script
-				$this->executingScript = (int)($hashover_script);
-			} else {
-				// If not, throw an exception
-				throw new \Exception ('Script query must have a numeric value.');
+		if ($this->usage['mode'] !== 'php') {
+			if ($this->refererCheck () === false) {
+				throw new \Exception ('External use not allowed.');
 			}
 		}
 
@@ -167,67 +161,11 @@ class Setup extends Settings
 		}
 	}
 
-	protected function getDomainWithPort ($url = '')
+	public function getRequest ($key, $default = false)
 	{
-		// Parse URL
-		$url = parse_url ($url);
-
-		if ($url === false or empty ($url['host'])) {
-			throw new \Exception ('Failed to obtain domain name.');
-			return false;
-		}
-
-		// If URL has a port, return domain with port
-		if (!empty ($url['port'])) {
-			return $url['host'] . ':' . $url['port'];
-		}
-
-		// Otherwise return domain without port
-		return $url['host'];
-	}
-
-	protected function refererCheck ()
-	{
-		// No referer set
-		if (empty ($_SERVER['HTTP_REFERER'])) {
-			return false;
-		}
-
-		// Get HTTP referer domain with port
-		$domain = $this->getDomainWithPort ($_SERVER['HTTP_REFERER']);
-
-		// Check if the script was requested by this server
-		if ($domain === $this->domain) {
-			return true;
-		}
-
-		// Check if the script was requested from an allowed domain
-		foreach ($this->allowedDomains as $allowed_domain) {
-			$sub_regex = '/^' . preg_quote ('\*\.') . '/';
-			$safe_domain = preg_quote ($allowed_domain);
-			$domain_regex = preg_replace ($sub_regex, '(?:.*?\.)*', $safe_domain);
-			$domain_regex = '/^' . $domain_regex . '$/i';
-
-			if (preg_match ($domain_regex, $domain)) {
-				// Setup remote access
-				$this->remoteAccess = true;
-				$this->httpRoot = $this->absolutePath . $this->httpRoot;
-				$this->allowsLikes = false;
-				$this->allowsDislikes = false;
-				$this->usesAJAX = false;
-				$this->syncSettings ();
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	protected function getRequest ($key)
-	{
+		// Return default value if POST and GET are empty
 		if (empty ($_GET[$key]) and empty ($_POST[$key])) {
-			return false;
+			return $default;
 		}
 
 		// Attempt to obtain GET data
@@ -246,6 +184,71 @@ class Setup extends Settings
 		}
 
 		return $request;
+	}
+
+	protected function getDomainWithPort ($url = '')
+	{
+		// Parse URL
+		$url = parse_url ($url);
+
+		if ($url === false or empty ($url['host'])) {
+			throw new \Exception ('Failed to obtain domain name.');
+		}
+
+		// If URL has a port, return domain with port
+		if (!empty ($url['port'])) {
+			return $url['host'] . ':' . $url['port'];
+		}
+
+		// Otherwise return domain without port
+		return $url['host'];
+	}
+
+	protected function setupRemoteAccess ()
+	{
+		$this->remoteAccess = true;
+		$this->httpRoot = $this->absolutePath . $this->httpRoot;
+		$this->syncSettings ();
+	}
+
+	protected function refererCheck ()
+	{
+		// No referer set
+		if (empty ($_SERVER['HTTP_REFERER'])) {
+			return true;
+		}
+
+		// Get HTTP referer domain with port
+		$domain = $this->getDomainWithPort ($_SERVER['HTTP_REFERER']);
+
+		// Check if the script was requested by this server
+		if ($domain === $this->domain) {
+			return true;
+		}
+
+		// Run through allowed domains
+		foreach ($this->allowedDomains as $allowed_domain) {
+			$sub_regex = '/^' . preg_quote ('\*\.') . '/S';
+			$safe_domain = preg_quote ($allowed_domain);
+			$domain_regex = preg_replace ($sub_regex, '(?:.*?\.)*', $safe_domain);
+			$domain_regex = '/^' . $domain_regex . '$/iS';
+
+			// Check if the script was requested from an allowed domain
+			if (preg_match ($domain_regex, $domain)) {
+				// If so, setup remote access
+				$this->setupRemoteAccess ();
+				return true;
+			}
+		}
+
+		// Check if the usage context is an API
+		if ($this->usage['context'] === 'api') {
+			// If so, setup remote access
+			$this->setupRemoteAccess ();
+			return true;
+		}
+
+		return false;
 	}
 
 	protected function getPageURL ()
@@ -267,28 +270,57 @@ class Setup extends Settings
 		throw new \Exception ('Failed to obtain page URL.');
 	}
 
-	public function setThreadDirectory ($directory_name = '')
+	protected function sanitizeData ($data = '')
 	{
+		// Strip HTML tags from data
+		$data = strip_tags (html_entity_decode ($data, false, 'UTF-8'));
+
+		// Encode HTML characters in data
+		$data = htmlspecialchars ($data, false, 'UTF-8', false);
+
+		return $data;
+	}
+
+	protected function requestData ($data = '', $default = false)
+	{
+		// Attempt to obtain data via GET or POST
+		$request = $this->getRequest ($data, $default);
+
+		// Return on success
+		if ($request !== $default) {
+			$request = $this->sanitizeData ($request);
+		}
+
+		return $request;
+	}
+
+	public function setThreadName ($name = '')
+	{
+		// Requesting the title if told to
+		if ($name === 'request') {
+			$name = $this->requestData ('thread', $this->threadName);
+		}
+
 		// Replace reserved characters with dashes
-		$directory_name = str_replace ($this->reservedCharacters, '-', $directory_name);
+		$name = str_replace ($this->reservedCharacters, '-', $name);
 
 		// Remove multiple dashes
-		if (mb_strpos ($directory_name, '--') !== false) {
-			$directory_name = preg_replace ('/-{2,}/', '-', $directory_name);
+		if (mb_strpos ($name, '--') !== false) {
+			$name = preg_replace ('/-{2,}/', '-', $name);
 		}
 
 		// Remove leading and trailing dashes
-		$directory_name = trim ($directory_name, '-');
+		$name = trim ($name, '-');
 
 		// Final comment directory name
-		$this->threadDirectory = $directory_name;
-		$this->dir = $this->getAbsolutePath ('pages/' . $directory_name);
+		$this->threadDirectory = $this->pagesDirectory . '/' . $name;
+		$this->threadName = $name;
 	}
 
 	protected function getIgnoredQueries ()
 	{
 		// Ignored URL queries list file
-		$ignored_queries = $this->getAbsolutePath ('ignored-queries.json');
+		$ignored_queries = $this->getAbsolutePath ('config/ignored-queries.json');
 
 		// Queries to be ignored
 		$queries = $this->ignoredQueries;
@@ -316,111 +348,88 @@ class Setup extends Settings
 		// Set page URL
 		$this->pageURL = $url;
 
-		try {
-			// Request page URL by default
-			if (empty ($url) or $url === 'request') {
-				$this->pageURL = $this->getPageURL ();
-			}
+		// Request page URL by default
+		if (empty ($url) or $url === 'request') {
+			$this->pageURL = $this->getPageURL ();
+		}
 
-			// Strip HTML tags from page URL
-			$this->pageURL = strip_tags (html_entity_decode ($this->pageURL, false, 'UTF-8'));
+		// Strip HTML tags from page URL
+		$this->pageURL = strip_tags (html_entity_decode ($this->pageURL, false, 'UTF-8'));
 
-			// Turn page URL into array
-			$url_parts = parse_url ($this->pageURL);
+		// Turn page URL into array
+		$url_parts = parse_url ($this->pageURL);
 
-			// Set initial path
-			if (empty ($url_parts['path']) or $url_parts['path'] === '/') {
-				$this->threadDirectory = 'index';
-				$this->filePath = '/';
-			} else {
-				// Remove starting slash
-				$this->threadDirectory = mb_substr ($url_parts['path'], 1);
+		// Set initial path
+		if (empty ($url_parts['path']) or $url_parts['path'] === '/') {
+			$this->threadName = 'index';
+			$this->filePath = '/';
+		} else {
+			// Remove starting slash
+			$this->threadName = mb_substr ($url_parts['path'], 1);
 
-				// Set file path
-				$this->filePath = $url_parts['path'];
-			}
+			// Set file path
+			$this->filePath = $url_parts['path'];
+		}
 
-			// Remove unwanted URL queries
-			if (!empty ($url_parts['query'])) {
-				$url_queries = explode ('&', $url_parts['query']);
-				$ignored_queries = $this->getIgnoredQueries ();
+		// Remove unwanted URL queries
+		if (!empty ($url_parts['query'])) {
+			$url_queries = explode ('&', $url_parts['query']);
+			$ignored_queries = $this->getIgnoredQueries ();
 
-				for ($q = 0, $ql = count ($url_queries); $q < $ql; $q++) {
-					if (!in_array ($url_queries[$q], $ignored_queries, true)) {
-						$equals = explode ('=', $url_queries[$q]);
+			for ($q = 0, $ql = count ($url_queries); $q < $ql; $q++) {
+				if (!in_array ($url_queries[$q], $ignored_queries, true)) {
+					$equals = explode ('=', $url_queries[$q]);
 
-						if (!in_array ($equals[0], $ignored_queries, true)) {
-							$this->URLQueryList[] = $url_queries[$q];
-						}
+					if (!in_array ($equals[0], $ignored_queries, true)) {
+						$this->URLQueryList[] = $url_queries[$q];
 					}
 				}
-
-				$this->URLQueries = implode ('&', $this->URLQueryList);
-				$this->threadDirectory .= '-' . $this->URLQueries;
 			}
 
-			// Encode HTML characters in page URL
-			$this->pageURL = htmlspecialchars ($this->pageURL, false, 'UTF-8', false);
-
-			// Final URL
-			if (!empty ($url_parts['scheme']) and !empty ($url_parts['host'])) {
-				$this->pageURL  = $url_parts['scheme'] . '://';
-				$this->pageURL .= $url_parts['host'];
-			} else {
-				throw new \Exception ('URL needs a hostname and scheme.');
-				return;
-			}
-
-			// Add optional port to URL
-			if (!empty ($url_parts['port'])) {
-				$this->pageURL .= ':' . $url_parts['port'];
-			}
-
-			// Add file path
-			$this->pageURL .= $this->filePath;
-
-			// Add option queries
-			if (!empty ($this->URLQueries)) {
-				$this->pageURL .= '?' . $this->URLQueries;
-			}
-
-			// Set thread directory name to page URL
-			$this->setThreadDirectory ($this->threadDirectory);
-
-		} catch (\Exception $error) {
-			throw new \Exception ($error->getMessage ());
-		}
-	}
-
-	protected function getPageTitle ()
-	{
-		// Attempt to obtain title via GET or POST
-		$request = $this->getRequest ('title');
-
-		// Return on success
-		if ($request !== false) {
-			return $request;
+			$this->URLQueries = implode ('&', $this->URLQueryList);
+			$this->threadName .= '-' . $this->URLQueries;
 		}
 
-		// Return empty string by default
-		return '';
+		// Encode HTML characters in page URL
+		$this->pageURL = htmlspecialchars ($this->pageURL, false, 'UTF-8', false);
+
+		// Final URL
+		if (!empty ($url_parts['scheme']) and !empty ($url_parts['host'])) {
+			$this->pageURL  = $url_parts['scheme'] . '://';
+			$this->pageURL .= $url_parts['host'];
+		} else {
+			throw new \Exception ('URL needs a hostname and scheme.');
+		}
+
+		// Add optional port to URL
+		if (!empty ($url_parts['port'])) {
+			$this->pageURL .= ':' . $url_parts['port'];
+		}
+
+		// Add file path
+		$this->pageURL .= $this->filePath;
+
+		// Add option queries
+		if (!empty ($this->URLQueries)) {
+			$this->pageURL .= '?' . $this->URLQueries;
+		}
+
+		// Set thread directory name to page URL
+		$this->setThreadName ($this->threadName);
 	}
 
 	public function setPageTitle ($title = '')
 	{
-		// Set page title
-		$this->pageTitle = $title;
-
-		// Request page title by default
+		// Requesting the title if told to
 		if ($title === 'request') {
-			$this->pageTitle = $this->getPageTitle ();
+			$title = $this->requestData ('title', '');
 		}
 
-		// Strip HTML tags from page title
-		$this->pageTitle = strip_tags (html_entity_decode ($this->pageTitle, false, 'UTF-8'));
+		// Sanitize page title
+		$title = $this->sanitizeData ($title);
 
-		// Encode HTML characters in page title
-		$this->pageTitle = htmlspecialchars ($this->pageTitle, false, 'UTF-8', false);
+		// Set page title
+		$this->pageTitle = $title;
 	}
 
 	// Check if user name and password again admin name and password

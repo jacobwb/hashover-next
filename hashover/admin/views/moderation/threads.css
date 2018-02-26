@@ -1,0 +1,27 @@
+.special a,
+.special a:link {
+	display: inline-block;
+	border-bottom: 0.1em solid transparent;
+	margin-bottom: -0.1em;
+}
+
+.special a:hover {
+	border-bottom-color: #266394;
+}
+
+#loading {
+	display: block ! important;
+	position: absolute;
+	top: 50%;
+	left: 0px;
+	width: 100%;
+	margin-top: -15px;
+}
+
+#loading img {
+	vertical-align: top;
+}
+
+.hashover > div {
+	display: none;
+}

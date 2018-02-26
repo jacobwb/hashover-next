@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2017 Jacob Barkdull
+// Copyright (C) 2017-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,14 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
-
 // Tell browser output is JSON
 header ('Content-Type: application/json');
 
@@ -37,9 +29,11 @@ spl_autoload_register (function ($uri) {
 	$uri = str_replace ('\\', '/', strtolower ($uri));
 	$class_name = basename ($uri);
 
-	if (!@include ('./' . $class_name . '.php')) {
+	// Check if class file cound be included
+	if (!@include ('classes/' . $class_name . '.php')) {
+		// If not, return JSON code to display an error
 		echo json_encode (array (
-			'error' => $class_name . '.php" file could not be included!'
+			'error' => '"' . $class_name . '.php" file could not be included!'
 		));
 
 		exit;

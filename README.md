@@ -27,15 +27,15 @@ Feature                          | Module name(s)          | Debian/Ubuntu packa
 Date and Time                    | date                    | *part of PHP core*
 Document Object Model            | dom                     | *part of PHP core*
 Regular Expressions              | pcre                    | *part of PHP core*
-XML data storage format support  | xml, libxml, SimpleXML  | php-xml
+User information encryption      | openssl                 | *part of PHP core*
 Multi-byte character support     | mbstring                | php-mbstring
-User information encryption      | mcrypt                  | php-mcrypt
+XML data storage format support  | xml, libxml, SimpleXML  | php-xml
+JSON data storage format support | json                    | php-json
 
 **The following modules are optional**
 
 Feature                          | Module name(s)          | Debian/Ubuntu package name(s)
 -------------------------------- | ----------------------- | -----------------------------
-JSON data storage format support | json                    | php-json
 PHP Data Objects                 | PDO                     | php-sqlite3, php-mysql
 SQLite file format support       | pdo_sqlite, sqlite3     | php-sqlite3
 
@@ -60,7 +60,7 @@ php.exe -m
 
 Important differences from version 1.0
 ---
-- `hashover.php` is no longer used in JavaScript tags, the file `/hashover/hashover.js` is used instead.
+- `hashover.php` is no longer used in JavaScript tags, the file `/hashover/comments.php` is used instead.
 
   So change:
 
@@ -71,7 +71,7 @@ Important differences from version 1.0
   To:
 
   ```html
-  <script type="text/javascript" src="/hashover/hashover.js"></script>
+  <script type="text/javascript" src="/hashover/comments.php"></script>
   ```
 
 - HashOver 2.0 is object oriented, many things have changed places and been renamed. For normal users, about the only thing that is important to know is that the `secrets.php` file was merged with the `settings.php` file.

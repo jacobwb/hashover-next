@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,18 +17,8 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 // Functions for reading and writing JSON files
-class ParseJSON extends ReadFiles
+class ParseJSON extends CommentFiles
 {
 	public function __construct (Setup $setup)
 	{
@@ -44,54 +34,29 @@ class ParseJSON extends ReadFiles
 		return $this->loadFiles ('json', $files, $auto);
 	}
 
-	public function read ($file, $fullpath = false)
+	public function read ($file, $thread = 'auto')
 	{
-		if ($fullpath === false) {
-			$file = $this->setup->dir . '/' . $file . '.json';
-		}
+		// Get comment file path
+		$file = $this->getCommentPath ($file, 'json', $thread);
 
-		// Read JSON comment file
-		$data = @file_get_contents ($file);
+		// Read and parse JSON comment file
+		$json = $this->readJSON ($file);
 
-		// Parse JSON comment file
-		$json = @json_decode ($data, true);
-
-		// Check for JSON parse error
-		if ($json !== null) {
-			return $json;
-		}
-
-		return false;
+		return $json;
 	}
 
-	public function save (array $contents, $file, $editing = false, $fullpath = false)
+	public function save ($file, array $contents, $editing = false, $thread = 'auto')
 	{
-		if ($fullpath === false) {
-			$file = $this->setup->dir . '/' . $file . '.json';
-		}
+		// Get comment file path
+		$file = $this->getCommentPath ($file, 'json', $thread);
 
 		// Return false on attempts to override an existing file
 		if (file_exists ($file) and $editing === false) {
 			return false;
 		}
 
-		// Check if we have pretty print support
-		if (defined ('JSON_PRETTY_PRINT')) {
-			// If so, encode comment to JSON with pretty print
-			$json = json_encode ($contents, JSON_PRETTY_PRINT);
-
-			// And convert spaces indentation to tabs
-			$json = str_replace ('    ', "\t", $json);
-		} else {
-			// If not, encode comment to JSON normally
-			$json = json_encode ($contents);
-		}
-
-		// Convert line endings to OS specific style
-		$json = $this->osLineEndings ($json);
-
 		// Save the JSON data to the comment file
-		if (file_put_contents ($file, $json)) {
+		if ($this->saveJSON ($file, $contents)) {
 			@chmod ($file, 0600);
 			return true;
 		}
@@ -99,11 +64,11 @@ class ParseJSON extends ReadFiles
 		return false;
 	}
 
-	public function delete ($file, $hardUnlink = false)
+	public function delete ($file, $hard_unlink = false)
 	{
 		// Actually delete the comment file
-		if ($hardUnlink === true) {
-			return unlink ($this->setup->dir . '/' . $file . '.json');
+		if ($hard_unlink === true) {
+			return unlink ($this->getCommentPath ($file, 'json'));
 		}
 
 		// Read comment file
@@ -115,7 +80,7 @@ class ParseJSON extends ReadFiles
 			$json['status'] = 'deleted';
 
 			// Attempt to save file
-			if ($this->save ($json, $file, true)) {
+			if ($this->save ($file, $json, true)) {
 				return true;
 			}
 		}

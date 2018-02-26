@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,22 +17,12 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 // Database! Database! Just living in the database! Wow! Wow!
 class Database
 {
-	public $database;
 	public $setup;
 	public $storageMode;
+	public $database;
 
 	public function __construct (Setup $setup)
 	{
@@ -41,12 +31,14 @@ class Database
 
 		try {
 			if ($setup->databaseType === 'sqlite') {
-				$sqlite_file = $setup->getAbsolutePath ('pages/' . $setup->databaseName . '.sqlite');
+				$sqlite_file = $setup->commentsDirectory . '/' . $setup->databaseName . '.sqlite';
 				$this->database = new \PDO ('sqlite:' . $sqlite_file);
 			} else {
-				$sql_connection = 'host=' . $setup->databaseHost . ';'
-				                . 'dbname=' . $setup->databaseName . ';'
-				                . 'charset=' . $setup->databaseCharset;
+				$sql_connection = implode (';', array (
+					'host=' . $setup->databaseHost,
+					'dbname=' . $setup->databaseName,
+					'charset=' . $setup->databaseCharset
+				));
 
 				$this->database = new \PDO (
 					$setup->databaseType . ':' . $sql_connection,
@@ -59,127 +51,345 @@ class Database
 		}
 	}
 
-	public function write ($action, array $array)
+	public function getCommentThread ($thread)
 	{
+		return ($thread !== 'auto') ? $thread : $this->setup->threadName;
+	}
+
+	// Gets the appropriate metadata table name
+	protected function getMetaTable ($name, $thread, $global)
+	{
+		// Check if we're getting metadata for a specific thread
+		if ($global !== true) {
+			// If so, use the thread's table
+			if ($thread === 'auto') {
+				$table = $this->setup->threadName . '/metadata';
+			} else {
+				$table = $thread . '/metadata';
+			}
+		} else {
+			// If not, use the global metadata table
+			$table = 'hashover-metadata';
+		}
+
+		// Final table name
+		$table .= '/' . $name;
+
+		return $table;
+	}
+
+	// Read and return specific metadata from JSON file
+	public function readMeta ($name, $thread = 'auto', $global = false)
+	{
+		// Metadata table
+		$metadata_table = $this->getMetaTable ($name, $thread, $global);
+
+		// Query statement array
+		$statement = 'SELECT * FROM `' . $metadata_table . '`';
+
+		// Query statement
+		$results = $this->database->query ($statement);
+
+		// Return threads if successful
+		if ($results !== false) {
+			$fetch_all = $results->fetchAll (\PDO::FETCH_ASSOC);
+
+			if (isset ($fetch_all[0]['items'])) {
+				$columns = array ();
+
+				foreach ($fetch_all as $column) {
+					foreach ($column as $key => $value) {
+						$columns[] = $value;
+					}
+				}
+
+				return $columns;
+			}
+
+			return $fetch_all[0];
+		}
+
+		return false;
+	}
+
+	// Create table creation statement from array
+	protected function creationStatement (array $columns)
+	{
+		$statement = array ();
+
+		// Check if the array is associative
+		if (array_keys ($columns) !== range (0, count ($columns) - 1)) {
+			// If so, create a statement using specific columns
+			foreach ($columns as $name => $value) {
+				$type = is_numeric ($value) ? 'INTEGER' : 'TEXT';
+				$statement[] = sprintf ('`%s` %s', $name, $type);
+			}
+		} else {
+			// If not, create statement using generic "items" column
+			$statement[] = '`items` TEXT';
+		}
+
+		return $statement;
+	}
+
+	// Prepare and execute an SQL statement
+	protected function executeStatement ($statement, $data = null)
+	{
+		try {
+			// Prepare statement
+			$prepare = $this->database->prepare ($statement);
+
+			// Attempt to execute statement
+			if ($prepare !== false) {
+				return $prepare->execute ($data);
+			}
+
+			return $prepare;
+
+		} catch (\PDOException $error) {
+			throw new \Exception ($error->getMessage ());
+		}
+	}
+
+	// Create comment table if it doesn't exist
+	protected function createTable ($name, array $columns)
+	{
+		// Statement for creating initial comment thread table
+		$statement  = 'CREATE TABLE IF NOT EXISTS `' . $name . '` ';
+		$statement .= '(' . implode (', ', $columns) . ')';
+
+		// Execute statement
+		$created = $this->executeStatement ($statement);
+
+		// Throw exception on failure
+		if ($created === false) {
+			throw new \Exception (sprintf (
+				'Failed to create table "%s"',
+				$this->setup->threadName
+			));
+		}
+
+		return true;
+	}
+
+	// Create table query statement from array
+	protected function queryStatement (array $columns)
+	{
+		$statement = array ();
+
+		foreach ($columns as $name => $value) {
+			$statement[] = ':' . $name;
+		}
+
+		return $statement;
+	}
+
+	// Delete all rows from a given table
+	protected function deleteAllRows ($table)
+	{
+		// Deletion statement
+		$statement = 'DELETE FROM `' . $table . '`';
+
+		// Execute statement
+		$deleted = $this->executeStatement ($statement);
+
+		// Throw exception on failure
+		if ($deleted === false) {
+			throw new \Exception ('Failed to delete existing metadata!');
+		}
+	}
+
+	// Save metadata to specific metadata JSON file
+	public function saveMeta ($name, array $data, $thread = 'auto', $global = false)
+	{
+		// Metadata table
+		$metadata_table = $this->getMetaTable ($name, $thread, $global);
+
+		// Create metadata table creation statement
+		$creation_statement = $this->creationStatement ($data);
+
+		// Attempt to create metadata table
+		$this->createTable ($metadata_table, $creation_statement);
+
+		// Delete existing data from database
+		$this->deleteAllRows ($metadata_table);
+
+		// Check if the array is associative
+		if (array_keys ($data) !== range (0, count ($data) - 1)) {
+			// If so, create metadata columns insertion statement array
+			$columns = $this->queryStatement ($data);
+
+			// Insert data into specific columns
+			$save  = 'INSERT INTO `' . $metadata_table . '` ';
+			$save .= 'VALUES (' . implode (', ', $columns) . ')';
+
+			// Execute statement
+			$saved = $this->executeStatement ($save, $data);
+		} else {
+			// If not, insert each item individually
+			$save  = 'INSERT INTO `' . $metadata_table . '` ';
+			$save .= 'VALUES (:items)';
+
+			// Insert each item individually
+			for ($i = 0, $il = count ($data); $i < $il; $i++) {
+				// Execute statement
+				$saved = $this->executeStatement ($save, array (
+					'items' => $data[$i]
+				));
+
+				// Stop on any failures
+				if ($saved === false) {
+					break;
+				}
+			}
+		}
+
+		// Throw exception on failure
+		if ($saved === false) {
+			throw new \Exception ('Failed to save metadata!');
+		}
+	}
+
+	public function write ($action, $thread, array $array, $alt = false)
+	{
+		$thread = $this->getCommentThread ($thread);
+
 		switch ($action) {
 			// Action for posting a comment
 			case 'insert': {
-				$query = 'INSERT INTO `' . $this->setup->threadDirectory . '` VALUES '
-				       . '(:id,'
-				       . ' :body,'
-				       . ' :status,'
-				       . ' :date,'
-				       . ' :name,'
-				       . ' :password,'
-				       . ' :login_id,'
-				       . ' :email,'
-				       . ' :encryption,'
-				       . ' :email_hash,'
-				       . ' :notifications,'
-				       . ' :website,'
-				       . ' :ipaddr,'
-				       . ' :likes,'
-				       . ' :dislikes)';
+				$columns = implode (', ', array (
+					':id',
+					':body',
+					':status',
+					':date',
+					':name',
+					':password',
+					':login_id',
+					':email',
+					':encryption',
+					':email_hash',
+					':notifications',
+					':website',
+					':ipaddr',
+					':likes',
+					':dislikes'
+				));
+
+				$query  = 'INSERT INTO `' . $thread . '` ';
+				$query .= 'VALUES (' . $columns . ')';
 
 				break;
 			}
 
 			// Action for editing a comment
 			case 'update': {
-				$query = 'UPDATE `' . $this->setup->threadDirectory . '` '
-				       . 'SET'
-				       . ' body=:body,'
-				       . ' name=:name,'
-				       . ' password=:password,'
-				       . ' email=:email,'
-				       . ' encryption=:encryption,'
-				       . ' email_hash=:email_hash,'
-				       . ' notifications=:notifications,'
-				       . ' website=:website,'
-				       . ' likes=:likes,'
-				       . ' dislikes=:dislikes'
-				       . ' WHERE id=:id';
+				$columns = implode (', ', array (
+					'body=:body',
+					'status=:status',
+					'name=:name',
+					'password=:password',
+					'email=:email',
+					'encryption=:encryption',
+					'email_hash=:email_hash',
+					'notifications=:notifications',
+					'website=:website',
+					'likes=:likes',
+					'dislikes=:dislikes'
+				));
+
+				$query  = 'UPDATE `' . $thread . '` ';
+				$query .= 'SET ' . $columns . ' ';
+				$query .= 'WHERE id=:id';
 
 				break;
 			}
 
 			// Action for deleting a comment
 			case 'delete': {
-				if ($this->setup->userDeletionsUnlink === true) {
-					$query = 'DELETE FROM `' . $this->setup->threadDirectory . '` WHERE id=:id';
+				// Check if we're actually deleting the comment
+				if ($alt === true) {
+					// If so, use delete statement
+					$query  = 'DELETE FROM `' . $thread . '` ';
+					$query .= 'WHERE id=:id';
 				} else {
-					$query = 'UPDATE `' . $this->setup->threadDirectory . '` ';
-					$query .= 'SET status=:status WHERE id=:id';
+					// If not, use status update statement
+					$query  = 'UPDATE `' . $thread . '` ';
+					$query .= 'SET status=:status ';
+					$query .= 'WHERE id=:id';
 				}
 
 				break;
 			}
 		}
 
-		try {
-			// Prepare statement
-			$prepare = $this->database->prepare ($query);
-			$status = $prepare;
+		// Execute statement
+		$queried = $this->executeStatement ($query, $array);
 
-			// Execute statement
-			if ($prepare !== false) {
-				$status = $prepare->execute ($array);
-			}
-
-			// Return false exception on failure
-			if ($status === false) {
-				return false;
-			}
-
-		} catch (\PDOException $error) {
-			throw new \Exception ($error->getMessage ());
-			return false;
+		// Throw exception on failure
+		if ($queried === false) {
+			throw new \Exception ('Failed to write to database!');
 		}
 
 		return true;
 	}
 
+	// Create comment thread if it doesn't exist
 	public function checkThread ()
 	{
-		// Statement for creating initial comment tread table
-		$create = 'CREATE TABLE IF NOT EXISTS `' . $this->setup->threadDirectory . '` '
-		        . '(`id` TEXT,'
-		        . ' `body` TEXT,'
-		        . ' `status` TEXT,'
-		        . ' `date` TEXT,'
-		        . ' `name` TEXT,'
-		        . ' `password` TEXT,'
-		        . ' `login_id` TEXT,'
-		        . ' `email` TEXT,'
-		        . ' `encryption` TEXT,'
-		        . ' `email_hash` TEXT,'
-		        . ' `notifications` TEXT,'
-		        . ' `website` TEXT,'
-		        . ' `ipaddr` TEXT,'
-		        . ' `likes` INTEGER,'
-		        . ' `dislikes` INTEGER)';
+		$thread = $this->setup->threadName;
 
-		try {
-			// Prepare statement
-			$prepare = $this->database->prepare ($create);
-			$status = $prepare;
+		return $this->createTable ($thread, array (
+			'`id` TEXT',
+			'`body` TEXT',
+			'`status` TEXT',
+			'`date` TEXT',
+			'`name` TEXT',
+			'`password` TEXT',
+			'`login_id` TEXT',
+			'`email` TEXT',
+			'`encryption` TEXT',
+			'`email_hash` TEXT',
+			'`notifications` TEXT',
+			'`website` TEXT',
+			'`ipaddr` TEXT',
+			'`likes` INTEGER',
+			'`dislikes` INTEGER'
+		));
+	}
 
-			// Attempt to execute statement
-			if ($prepare !== false) {
-				$status = $prepare->execute ();
-			}
+	// Queries a list of comment threads
+	public function queryThreads ()
+	{
+		// Database name
+		$name = $this->setup->databaseName;
 
-			// Throw exception on failure
-			if ($status === false) {
-				throw new \Exception ('Failed to create comment thread table "' . $this->setup->threadDirectory . '"');
-				return false;
-			}
-
-		} catch (\PDOException $error) {
-			throw new \Exception ($error->getMessage ());
-			return false;
+		// Check if database type if SQLite
+		if ($this->setup->databaseType === 'sqlite') {
+			// If so, use SQLite statement
+			$statement  = 'SELECT * FROM sqlite_master ';
+			$statement .= 'WHERE type=\'table\'';
+		} else {
+			// If not, use MySQL statement
+			$statement  = 'SELECT * FROM INFORMATION_SCHEMA.TABLES ';
+			$statement .= 'WHERE TABLE_TYPE=\'BASE TABLE\' ';
+			$statement .= 'AND TABLE_SCHEMA=\'' . $name . '\'';
 		}
 
-		return true;
+		// Query statement
+		$results = $this->database->query ($statement);
+
+		// Return threads if successful
+		if ($results !== false) {
+			$fetch_all = $results->fetchAll (\PDO::FETCH_ASSOC);
+			$threads = array ();
+
+			foreach ($fetch_all as $table) {
+				$threads[] = $table['name'];
+			}
+
+			return $threads;
+		}
+
+		return false;
 	}
 }

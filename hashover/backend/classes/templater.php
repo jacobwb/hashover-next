@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,21 +17,10 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 class Templater
 {
 	public $mode;
 	public $setup;
-	public $theme;
 	public $template;
 
 	protected $curlyRegex = '/\{([a-z]+):([a-z_-]+)\}/i';
@@ -42,22 +31,17 @@ class Templater
 	{
 		$this->mode = $mode;
 		$this->setup = $setup;
-		$relative_path = 'themes/' . $this->setup->theme . '/layout.html';
-		$theme = $this->setup->getAbsolutePath ($relative_path);
+	}
 
-		// Use default theme if theme in settings doesn't exist
-		if (!file_exists ($theme)) {
-			$relative_path = 'themes/default/layout.html';
-			$theme = $this->setup->getAbsolutePath ($relative_path);
-		}
-
+	public function loadFile ($file)
+	{
 		// Attempt to read template HTML file
-		$theme_html = @file_get_contents ($theme);
+		$theme_html = @file_get_contents ($file);
 
 		// Check if template file read successfully
 		if ($theme_html !== false) {
-			// If so, load and escape HTML template
-			$this->theme = addcslashes (trim ($theme_html), "\\'");
+			// If so, return trimmed HTML template
+			return trim ($theme_html);
 		} else {
 			// If not, throw exception
 			throw new \Exception ('Failed to load template file.');
@@ -115,12 +99,27 @@ class Templater
 		}
 	}
 
-	public function parseTemplate (array $template = array ())
+	public function parseTemplate ($file, array $template = array ())
 	{
 		$this->template = $template;
-		$template = preg_replace_callback ($this->curlyRegex, 'self::parser', $this->theme);
+		$data = $this->loadFile ($file);
+		$template = preg_replace_callback ($this->curlyRegex, 'self::parser', $data);
 		$template = str_replace ($this->newlineSearch, $this->newlineReplace, $template);
 
 		return $template;
+	}
+
+	public function parseTheme (array $template = array ())
+	{
+		$relative_path = 'themes/' . $this->setup->theme . '/layout.html';
+		$theme = $this->setup->getAbsolutePath ($relative_path);
+
+		// Use default theme if theme in settings doesn't exist
+		if (!file_exists ($theme)) {
+			$relative_path = 'themes/default/layout.html';
+			$theme = $this->setup->getAbsolutePath ($relative_path);
+		}
+
+		return $this->parseTemplate ($theme, $template);
 	}
 }

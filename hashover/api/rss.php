@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -16,23 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
 
 // Tell browser this is XML/RSS
 header ('Content-Type: application/xml; charset=utf-8');
 
-// Change to the scripts directory
-chdir ('../scripts/');
+// Change to the HashOver directory
+chdir (realpath ('../'));
 
 // Do some standard HashOver setup work
-require ('nocache-headers.php');
-require ('standard-setup.php');
+require ('backend/nocache-headers.php');
+require ('backend/standard-setup.php');
 
 // Autoload class files
 spl_autoload_register (function ($uri) {
@@ -40,7 +33,7 @@ spl_autoload_register (function ($uri) {
 	$class_name = basename ($uri);
 	$error = '"' . $class_name . '.php" file could not be included!';
 
-	if (!@include ('./' . $class_name . '.php')) {
+	if (!@include ('backend/classes/' . $class_name . '.php')) {
 		echo '<?xml version="1.0" encoding="UTF-8"?>', PHP_EOL;
 		echo '<error>', $error, '</error>';
 		exit;
@@ -49,6 +42,31 @@ spl_autoload_register (function ($uri) {
 
 function create_rss (&$hashover)
 {
+	// Shorter variable name
+	$thread = $hashover->setup->threadName;
+
+	// Attempt to read page information metadata
+	$metadata = $hashover->thread->data->readMeta ('page-info', $thread);
+
+	// Check if metadata read successfully
+	if ($metadata !== false) {
+		// If so, set page URL blank if it's missing from the metadata
+		if (!isset ($metadata['url'])) {
+			$metadata['url'] = '';
+		}
+
+		// And set page title to "Untitled" if it's missing from the metadata
+		if (!isset ($metadata['title'])) {
+			$metadata['title'] = $hashover->locale->text['untitled'];
+		}
+	} else {
+		// If not, set default metadata information
+		$metadata = array (
+			'url' => '',
+			'title' => $hashover->locale->text['untitled']
+		);
+	}
+
 	// Create new DOM document.
 	$xml = new \DOMDocument ('1.0', 'UTF-8');
 	$xml->preserveWhiteSpace = false;
@@ -62,7 +80,7 @@ function create_rss (&$hashover)
 	$rss->setAttribute ('xmlns:atom', 'http://www.w3.org/2005/Atom');
 
 	// Display error if the API is disabled
-	if ($hashover->setup->APIStatus ('rss') === 'disabled') {
+	if ($hashover->setup->apiStatus ('rss') === 'disabled') {
 		$title = $xml->createElement ('title');
 		$title_value = $xml->createTextNode ('HashOver: RSS API is not enabled.');
 		$title->appendChild ($title_value);
@@ -83,16 +101,9 @@ function create_rss (&$hashover)
 	// Create channel element
 	$channel = $xml->createElement ('channel');
 
-	// Get page title from metadata
-	if (!empty ($hashover->setup->metadata['title'])) {
-		$title_metadata = $hashover->setup->metadata['title'];
-	} else {
-		$title_metadata = $hashover->locale->text['untitled'];
-	}
-
 	// Create channel title element
 	$title = $xml->createElement ('title');
-	$title_value = $xml->createTextNode (html_entity_decode ($title_metadata, ENT_COMPAT, 'UTF-8'));
+	$title_value = $xml->createTextNode (html_entity_decode ($metadata['title'], ENT_COMPAT, 'UTF-8'));
 	$title->appendChild ($title_value);
 
 	// Add channel title to channel element
@@ -100,7 +111,7 @@ function create_rss (&$hashover)
 
 	// Create channel link element
 	$link = $xml->createElement ('link');
-	$link_value = $xml->createTextNode (html_entity_decode ($hashover->setup->metadata['url'], ENT_COMPAT, 'UTF-8'));
+	$link_value = $xml->createTextNode (html_entity_decode ($metadata['url'], ENT_COMPAT, 'UTF-8'));
 	$link->appendChild ($link_value);
 
 	// Add channel link to channel element
@@ -108,9 +119,9 @@ function create_rss (&$hashover)
 
 	// Create channel description element
 	$description = $xml->createElement ('description');
-	$count_plural = ($hashover->readComments->totalCount !== 1);
+	$count_plural = ($hashover->thread->totalCount !== 1);
 	$showing_comments_locale = $hashover->locale->text['showing-comments'][$count_plural];
-	$count_locale = sprintf ($showing_comments_locale, $hashover->readComments->totalCount - 1);
+	$count_locale = sprintf ($showing_comments_locale, $hashover->thread->totalCount - 1);
 	$description_value = $xml->createTextNode ($count_locale);
 	$description->appendChild ($description_value);
 
@@ -119,7 +130,7 @@ function create_rss (&$hashover)
 
 	// Create channel atom link element
 	$atom_link = $xml->createElement ('atom:link');
-	$atom_link->setAttribute ('href', 'http://' . $hashover->setup->domain . $_SERVER['PHP_SELF'] . '?url=' . $hashover->setup->metadata['url']);
+	$atom_link->setAttribute ('href', 'http://' . $hashover->setup->domain . $_SERVER['PHP_SELF'] . '?url=' . $metadata['url']);
 	$atom_link->setAttribute ('rel', 'self');
 
 	// Add channel atom link to channel element
@@ -145,7 +156,7 @@ function create_rss (&$hashover)
 	$rss->appendChild ($channel);
 
 	// Parse comments
-	function parse_comments (&$comment, &$rss, &$xml, &$hashover)
+	function parse_comments (&$metadata, &$comment, &$rss, &$xml, &$hashover)
 	{
 		// Skip deleted/unmoderated comments
 		if (isset ($comment['notice'])) {
@@ -159,13 +170,13 @@ function create_rss (&$hashover)
 		$comment['body'] = html_entity_decode ($comment['body'], ENT_COMPAT, 'UTF-8');
 
 		// Remove [img] tags
-		$comment['body'] = preg_replace ('/\[(img|\/img)\]/i', '', $comment['body']);
+		$comment['body'] = preg_replace ('/\[(img|\/img)\]/iS', '', $comment['body']);
 
 		// Parse comment as markdown
 		$comment['body'] = $hashover->markdown->parseMarkdown ($comment['body']);
 
 		// Convert <code> tags to <pre> tags
-		$comment['body'] = preg_replace ('/(<|<\/)code>/i', '\\1pre>', $comment['body']);
+		$comment['body'] = preg_replace ('/(<|<\/)code>/iS', '\\1pre>', $comment['body']);
 
 		// Get name from comment or use configured default
 		$name = !empty ($comment['name']) ? $comment['name'] : $hashover->setup->defaultName;
@@ -200,7 +211,7 @@ function create_rss (&$hashover)
 		$item->appendChild ($item_name);
 
 		// Add HTML anchor tag to URLs (hyperlinks)
-		$comment['body'] = preg_replace ('/((ftp|http|https):\/\/[a-z0-9-@:%_\+.~#?&\/=]+) {0,}/i', '<a href="\\1" target="_blank">\\1</a>', $comment['body']);
+		$comment['body'] = preg_replace ('/((ftp|http|https):\/\/[a-z0-9-@:%_\+.~#?&\/=]+) {0,}/iS', '<a href="\\1" target="_blank">\\1</a>', $comment['body']);
 
 		// Replace newlines with break tags
 		$comment['body'] = str_replace (PHP_EOL, '<br>', $comment['body']);
@@ -253,7 +264,7 @@ function create_rss (&$hashover)
 		$item->appendChild ($item_pubDate);
 
 		// URL to comment for item guide and link elements
-		$item_permalink_url = $hashover->setup->metadata['url'] . '#' . $comment['permalink'];
+		$item_permalink_url = $metadata['url'] . '#' . $comment['permalink'];
 
 		// Create item guide element
 		$item_guid = $xml->createElement ('guid');
@@ -277,14 +288,14 @@ function create_rss (&$hashover)
 		// Recursively parse replies
 		if (!empty ($comment['replies'])) {
 			foreach ($comment['replies'] as $reply) {
-				parse_comments ($reply, $rss, $xml, $hashover);
+				parse_comments ($metadata, $reply, $rss, $xml, $hashover);
 			}
 		}
 	}
 
 	// Add item element to main RSS element
 	foreach ($hashover->comments['primary'] as $comment) {
-		parse_comments ($comment, $rss, $xml, $hashover);
+		parse_comments ($metadata, $comment, $rss, $xml, $hashover);
 	}
 
 	// Add main RSS element to XML
@@ -301,7 +312,7 @@ function create_rss (&$hashover)
 
 try {
 	// Instantiate HashOver class
-	$hashover = new \HashOver ('rss', 'api');
+	$hashover = new \HashOver ('php', 'api');
 	$hashover->setup->setPageURL ('request');
 	$hashover->setup->collapsesComments = false;
 	$hashover->initiate ();

@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2015-2016 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -16,16 +16,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
 
 class Login extends PostData
 {
@@ -57,7 +47,7 @@ class Login extends PostData
 		$this->loginMethod = new $login_class ($setup, $this->cookies, $this->locale);
 
 		// Error message to display to the user
-		$this->fieldNeeded = $this->locale->get ('field-needed');
+		$this->fieldNeeded = $this->locale->text['field-needed'];
 
 		// Check if user is logged in
 		$this->getLogin ();
@@ -71,36 +61,30 @@ class Login extends PostData
 			$this->loginMethod->name = $this->postData['name'];
 		}
 
+		// Attempt to get name
+		$name = $this->setup->getRequest ('name');
+
+		// Attempt to get password
+		$password = $this->setup->getRequest ('password', null);
+
 		// Set password
-		if (!empty ($_POST['password'])) {
-			$this->loginMethod->password = $this->encryption->createHash ($_POST['password']);
+		if ($password !== null) {
+			$this->loginMethod->password = $this->encryption->createHash ($password);
 		} else {
 			$this->loginMethod->password = '';
 		}
 
-		// Attempt to get login hash
-		$login_hash = $this->cookies->getValue ('hashover-login');
-
 		// Check that login hash cookie is not set
-		if ($login_hash === null) {
-			// If so, attempt to get name
-			$name = !empty ($_POST['name']) ? $_POST['name'] : null;;
-
-			// Attempt to get password
-			$password = !empty ($_POST['password']) ? $_POST['password'] : null;
-
-			// Generate a random password
+		if ($this->cookies->getValue ('login') === null) {
+			// If so, generate a random password
 			$random_password = bin2hex (openssl_random_pseudo_bytes (16));
 
-			// Use user password or random password
+			// And use user password or random password
 			$password = $password ? $password : $random_password;
-
-			// And generate a RIPEMD-160 hash to indicate user login
-			$this->loginMethod->loginHash = hash ('ripemd160', $name . $password);
-		} else {
-			// If not, use existing hash
-			$this->loginMethod->loginHash = $login_hash;
 		}
+
+		// Generate a RIPEMD-160 hash to indicate user login
+		$this->loginMethod->loginHash = hash ('ripemd160', $name . $password);
 
 		// Set e-mail address
 		if (isset ($this->postData['email'])) {
@@ -169,10 +153,8 @@ class Login extends PostData
 				}
 
 				throw new \Exception (sprintf (
-					$this->fieldNeeded, $this->locale->get ($field)
+					$this->fieldNeeded, $this->locale->text[$field]
 				));
-
-				return false;
 			}
 		}
 

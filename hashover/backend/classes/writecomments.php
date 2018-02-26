@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,29 +17,18 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 class WriteComments extends PostData
 {
 	protected $setup;
 	protected $encryption;
 	protected $mode;
-	protected $readComments;
-	protected $formatData;
+	protected $thread;
 	protected $locale;
 	protected $cookies;
 	protected $login;
 	protected $misc;
 	protected $spamCheck;
-	protected $metalevels;
+	protected $metadata;
 	protected $headers;
 	protected $userHeaders;
 	protected $kickbackURL;
@@ -135,47 +124,48 @@ class WriteComments extends PostData
 	);
 
 	// Possible comment status options
-	protected $statusOptions = array (
+	protected $statuses = array (
 		'approved',
 		'pending',
 		'deleted'
 	);
 
-	public function __construct (Setup $setup, ReadComments $read_comments)
+	public function __construct (Setup $setup, Thread $thread)
 	{
 		parent::__construct ();
 
 		$this->setup = $setup;
 		$this->encryption = $setup->encryption;
 		$this->mode = $setup->usage['mode'];
-		$this->readComments = $read_comments;
-		$this->formatData = $this->readComments->data;
+		$this->thread = $thread;
 		$this->locale = new Locale ($setup);
 		$this->cookies = new Cookies ($setup);
 		$this->login = new Login ($setup);
 		$this->misc = new Misc ($this->mode);
 		$this->spamCheck = new SpamCheck ($setup);
-
-		$this->metalevels = array (
-			$setup->dir,
-			$setup->getAbsolutePath ('pages')
-		);
+		$this->metadata = new Metadata ($setup, $thread);
 
 		// Default email headers
 		$this->setHeaders ($setup->noreplyEmail);
 
-		// Check if posting from remote domain
-		if ($this->remoteAccess === true) {
-			// If so, use absolute path
-			$this->kickbackURL = $setup->pageURL;
+		// Check if we have an HTTP referer
+		if (!empty ($_SERVER['HTTP_REFERER'])) {
+			// If so, use it as the kickback URL
+			$this->kickbackURL = $_SERVER['HTTP_REFERER'];
 		} else {
-			// If not, use relative path
-			$this->kickbackURL = $setup->filePath;
-		}
+			// Check if posting from remote domain
+			if ($this->remoteAccess === true) {
+				// If so, use absolute path
+				$this->kickbackURL = $setup->pageURL;
+			} else {
+				// If not, use relative path
+				$this->kickbackURL = $setup->filePath;
+			}
 
-		// Add URL queries to kickback URL
-		if (!empty ($setup->URLQueries)) {
-			$this->kickbackURL .= '?' . $setup->URLQueries;
+			// Add URL queries to kickback URL
+			if (!empty ($setup->URLQueries)) {
+				$this->kickbackURL .= '?' . $setup->URLQueries;
+			}
 		}
 	}
 
@@ -205,7 +195,7 @@ class WriteComments extends PostData
 		// Return error as JSON if request is AJAX
 		if ($this->viaAJAX === true) {
 			if (!empty ($text)) {
-				echo json_encode (array (
+				echo $this->misc->jsonData (array (
 					'message' => $text,
 					'type' => $message_type
 				));
@@ -226,11 +216,16 @@ class WriteComments extends PostData
 	// Confirm that attempted actions are to existing comments
 	protected function verifyFile ($file)
 	{
-		if (!empty ($_POST[$file])) {
-			$comment_file =(string) $_POST[$file];
+		// Attempt to get file
+		$comment_file = $this->setup->getRequest ($file);
+
+		// Check if file is set
+		if ($comment_file !== false) {
+			// Cast file to string
+			$comment_file =(string) ($comment_file);
 
 			// Return true if POST file is in comment list
-			if (in_array ($comment_file, $this->readComments->commentList, true)) {
+			if (in_array ($comment_file, $this->thread->commentList, true)) {
 				return $comment_file;
 			}
 
@@ -242,25 +237,21 @@ class WriteComments extends PostData
 
 		// Throw exception as error message
 		throw new \Exception ($this->locale->text['comment-needed']);
-
-		return false;
 	}
 
 	protected function checkForSpam ()
 	{
 		// Check trap fields
 		foreach ($this->trapFields as $name) {
-			if (!empty ($_POST[$name])) {
+			if ($this->setup->getRequest ($name)) {
 				// Block for filing trap fields
 				throw new \Exception ('You are blocked!');
-				return false;
 			}
 		}
 
 		// Check user's IP address against local blocklist
 		if ($this->spamCheck->checkList () === true) {
 			throw new \Exception ('You are blocked!');
-			return false;
 		}
 
 		// Whether to check for spam in current mode
@@ -270,13 +261,11 @@ class WriteComments extends PostData
 			// Check user's IP address against local or remote database
 			if ($this->spamCheck->{$this->setup->spamDatabase}() === true) {
 				throw new \Exception ('You are blocked!');
-				return false;
 			}
 
 			// Throw any error message as exception
 			if (!empty ($this->spamCheck->error)) {
 				throw new \Exception ($this->spamCheck->error);
-				return false;
 			}
 		}
 
@@ -290,14 +279,20 @@ class WriteComments extends PostData
 			// Log the user in
 			$this->login->setLogin ();
 
-			// Kick visitor back
+			// Kick visitor back if told to
 			if ($kickback !== false) {
 				$this->kickback ($this->locale->text['logged-in']);
 			}
 
 		} catch (\Exception $error) {
-			throw new \Exception ($error->getMessage ());
-			return false;
+			// Kick visitor back with exception if told to
+			if ($kickback !== false) {
+				$this->kickback ($error->getMessage (), true);
+				return true;
+			}
+
+			// Otherwise, throw exception as-is
+			throw $error;
 		}
 
 		return true;
@@ -315,103 +310,6 @@ class WriteComments extends PostData
 		return true;
 	}
 
-	protected function addLatestComment ($file)
-	{
-		if ($this->formatData->storageMode !== 'flat-file') {
-			return false;
-		}
-
-		foreach ($this->metalevels as $level => $metafile) {
-			$metafile .= '/.metadata';
-			$metadata = array ();
-			$data = array ('latest' => array ());
-
-			if ($level === 0) {
-				$metadata['title'] = $this->setup->pageTitle;
-				$metadata['url'] = $this->setup->pageURL;
-				$metadata['status'] = 'open';
-			}
-
-			if (!file_exists ($metafile) or !is_writable ($metafile)) {
-				continue;
-			}
-
-			$contents = @file_get_contents ($metafile);
-			$data = @json_decode ($contents, true);
-
-			if ($contents === false or $data === null) {
-				continue;
-			}
-
-			if (!isset ($data['status']) or !is_string ($data['status'])) {
-				$data['status'] = 'open';
-			}
-
-			if (!isset ($data['latest']) or !is_array ($data['latest'])) {
-				$data['latest'] = array ();
-			}
-
-			if ($level === 0) {
-				$metadata['status'] = $data['status'];
-				array_unshift ($data['latest'], (string) $file);
-			} else {
-				$comment_directory = basename ($this->metalevels[0]);
-				array_unshift ($data['latest'], $comment_directory . '/' . $file);
-			}
-
-			$latest_count = count ($data['latest']);
-
-			if ($latest_count >= 10) {
-				if ($latest_count >= $this->setup->latestMax) {
-					$max = max (10, $this->setup->latestMax);
-					$data['latest'] = array_slice ($data['latest'], 0, $max);
-				}
-			}
-
-			$metadata['latest'] = $data['latest'];
-
-			// Save metadata
-			$this->formatData->saveMetadata ($metadata, $metafile);
-		}
-	}
-
-	protected function removeFromLatest ($file)
-	{
-		if ($this->formatData->storageMode !== 'flat-file') {
-			return false;
-		}
-
-		foreach ($this->metalevels as $level => $metafile) {
-			$metafile .= '/.metadata';
-
-			if (!file_exists ($metafile) or !is_writable ($metafile)) {
-				continue;
-			}
-
-			$contents = @file_get_contents ($metafile);
-			$metadata = @json_decode ($contents, true);
-
-			if ($contents === false or $metadata === null) {
-				continue;
-			}
-
-			$file = basename ($file);
-			$latest = array ();
-
-			for ($key = 0, $length = count ($metadata['latest']); $key < $length; $key++) {
-				$comment_directory = basename ($this->metalevels[0]);
-				$comment = ($level === 0) ? $file : $comment_directory . '/' . $file;
-
-				if ($metadata['latest'][$key] !== $comment) {
-					$latest[] = $metadata['latest'][$key];
-				}
-			}
-
-			$metadata['latest'] = $latest;
-			$this->formatData->saveMetadata ($metadata, $metafile);
-		}
-	}
-
 	// User comment authentication
 	protected function commentAuthentication ()
 	{
@@ -425,7 +323,7 @@ class WriteComments extends PostData
 			'user-owned' => false,
 
 			// Read original comment
-			'comment' => $this->formatData->read ($file)
+			'comment' => $this->thread->data->read ($file)
 		);
 
 		// Return authorization data if we fail to get comment
@@ -462,9 +360,13 @@ class WriteComments extends PostData
 
 			// Check if user is authorized
 			if ($auth['authorized'] === true) {
+				$user_deletions_unlink = ($this->setup->userDeletionsUnlink === true);
+				$user_is_admin = ($this->login->userIsAdmin === true);
+				$unlink_comment = ($user_deletions_unlink or $user_is_admin);
+
 				// If so, delete the comment file
-				if ($this->formatData->delete ($this->file, $this->setup->userDeletionsUnlink)) {
-					$this->removeFromLatest ($this->file);
+				if ($this->thread->data->delete ($this->file, $unlink_comment)) {
+					$this->metadata->removeFromLatest ($this->file);
 
 					// And kick visitor back with comment deletion message
 					$this->kickback ($this->locale->text['comment-deleted']);
@@ -505,7 +407,7 @@ class WriteComments extends PostData
 
 				// Remove closing tags for unopened tags
 				while ($close_tags > $open_tags) {
-					$html = preg_replace ('/<\/' . $tags[$tc] . '>/i', '', $html, 1);
+					$html = preg_replace ('/<\/' . $tags[$tc] . '>/iS', '', $html, 1);
 					$close_tags--;
 				}
 			}
@@ -532,43 +434,43 @@ class WriteComments extends PostData
 	// Setup and test for necessary comment data
 	protected function setupCommentData ($editing = false)
 	{
+		// Default status
+		$new_status = 'approved';
+
 		// Check if setup is for a comment edit
 		if ($editing === true) {
 			// If so, mimic normal user login
 			$this->login->prepareCredentials ();
 			$this->login->updateCredentials ();
-
-			// Default status
-			$isModerated = $this->setup->usesModeration;
-			$default_service = ($isModerated === true) ? 'pending' : 'approved';
-
-			// Check for status in POST data
-			if (!empty ($this->postData['status'])) {
-				// If found, use it
-				$status = $this->postData['status'];
-			} else {
-				// If it's missing use default
-				$status = $default_service;
-			}
-
-			// Check if user is admin
-			if ($this->login->userIsAdmin === true) {
-				// If so, check if status is allowed
-				if (in_array ($this->postData['status'], $this->statusOptions, true)) {
-					// If so, use it
-					$this->commentData['status'] = $this->postData['status'];
-				} else {
-					// If not, use default
-					$this->commentData['status'] = $default_service;
-				}
-			} else {
-				// If not, store default status
-				$this->commentData['status'] = $default_service;
-			}
 		} else {
 			// If not, setup initial login information
 			if ($this->login->userIsLoggedIn !== true) {
 				$this->login->setCredentials ();
+			}
+		}
+
+		// Check if user is admin
+		if ($this->login->userIsAdmin === true) {
+			// If so, check if status is set in POST data is set
+			if (!empty ($this->postData['status'])) {
+				// If so, check if status is allowed
+				if (in_array ($this->postData['status'], $this->statuses, true)) {
+					// If so, use it
+					$this->commentData['status'] = $this->postData['status'];
+				}
+			}
+		} else {
+			// Check if setup is for a comment edit
+			if ($editing === true) {
+				// If so, set status to "pending" if moderation of user edits is enabled
+				if (($this->setup->usesModeration and $this->setup->pendsUserEdits) === true) {
+					$this->commentData['status'] = 'pending';
+				}
+			} else {
+				// If not, set status to "pending" if moderation is enabled
+				if ($this->setup->usesModeration === true) {
+					$this->commentData['status'] = 'pending';
+				}
 			}
 		}
 
@@ -586,14 +488,10 @@ class WriteComments extends PostData
 			if (!empty ($this->replyTo)) {
 				// Throw exception about reply requirement
 				throw new \Exception ($this->locale->text['reply-needed']);
-
-				return false;
 			}
 
 			// Throw exception about comment requirement
 			throw new \Exception ($this->locale->text['comment-needed']);
-
-			return false;
 		}
 
 		// Escape disallowed characters in login information
@@ -680,7 +578,7 @@ class WriteComments extends PostData
 				$this->commentData['email_hash'] = md5 (mb_strtolower ($this->email));
 
 				// Set e-mail subscription if one is given
-				$this->commentData['notifications'] = !empty ($_POST['subscribe']) ? 'yes' : 'no';
+				$this->commentData['notifications'] = $this->setup->getRequest ('subscribe') ? 'yes' : 'no';
 			}
 		}
 
@@ -692,7 +590,7 @@ class WriteComments extends PostData
 		}
 
 		// Store user IP address if setup to and one is given
-		if ($this->setup->storesIPAddress === true) {
+		if ($this->setup->storesIpAddress === true) {
 			if (!empty ($_SERVER['REMOTE_ADDR'])) {
 				$this->commentData['ipaddr'] = $this->misc->makeXSSsafe ($_SERVER['REMOTE_ADDR']);
 			}
@@ -709,20 +607,21 @@ class WriteComments extends PostData
 
 			// Check if user is authorized
 			if ($auth['authorized'] === true) {
-				// Check if user is admin
-				if ($this->login->userIsAdmin === true) {
-					// If so, set status for update
-					$update_fields[] = 'status';
-				} else {
-					// If not, login normal user with edited credentials
+				// Login normal user with edited credentials
+				if ($this->login->userIsAdmin === false) {
 					$this->login (false);
 				}
+
+				// Set initial fields for update
+				$update_fields = $this->editableFields;
 
 				// Setup necessary comment data
 				$this->setupCommentData (true);
 
-				// Set initial fields for update
-				$update_fields = $this->editableFields;
+				// Add status to editable fields if a new status is set
+				if (!empty ($this->commentData['status'])) {
+					$update_fields[] = 'status';
+				}
 
 				// Only set protected fields for update if passwords match
 				if ($auth['user-owned'] === true) {
@@ -739,7 +638,7 @@ class WriteComments extends PostData
 				}
 
 				// Attempt to write edited comment
-				if ($this->formatData->save ($auth['comment'], $this->file, true)) {
+				if ($this->thread->data->save ($this->file, $auth['comment'], true)) {
 					// If successful, check if request is via AJAX
 					if ($this->viaAJAX === true) {
 						// If so, return the comment data
@@ -750,7 +649,7 @@ class WriteComments extends PostData
 					}
 
 					// Otherwise kick visitor back to posted comment
-					$this->kickback ('', false, 'c' . str_replace ('-', 'r', $this->file));
+					$this->kickback ('', false, 'hashover-c' . str_replace ('-', 'r', $this->file));
 
 					return true;
 				}
@@ -806,11 +705,11 @@ class WriteComments extends PostData
 	protected function writeComment ($comment_file)
 	{
 		// Write comment to file
-		if ($this->formatData->save ($this->commentData, $comment_file)) {
-			$this->addLatestComment ($comment_file);
+		if ($this->thread->data->save ($comment_file, $this->commentData)) {
+			$this->metadata->addLatestComment ($comment_file);
 
 			// Send notification e-mails
-			$permalink = 'c' . str_replace ('-', 'r', $comment_file);
+			$permalink = 'hashover-c' . str_replace ('-', 'r', $comment_file);
 			$from_line = !empty ($this->name) ? $this->name : $this->setup->defaultName;
 			$mail_comment = html_entity_decode (strip_tags ($this->commentData['body']), ENT_COMPAT, 'UTF-8');
 			$mail_comment = $this->indentedWordwrap ($mail_comment);
@@ -818,7 +717,7 @@ class WriteComments extends PostData
 
 			// Notify commenter of reply
 			if (!empty ($this->replyTo)) {
-				$reply_comment = $this->formatData->read ($this->replyTo);
+				$reply_comment = $this->thread->data->read ($this->replyTo);
 				$reply_body = html_entity_decode (strip_tags ($reply_comment['body']), ENT_COMPAT, 'UTF-8');
 				$reply_body = $this->indentedWordwrap ($reply_body);
 				$reply_name = !empty ($reply_comment['name']) ? $reply_comment['name'] : $this->setup->defaultName;
@@ -871,14 +770,16 @@ class WriteComments extends PostData
 			}
 
 			// Set/update user login cookie
-			if ($this->setup->usesAutoLogin !== false) {
+			if ($this->setup->usesAutoLogin !== false
+			    and $this->login->userIsLoggedIn !== true)
+			{
 				$this->login (false);
 			}
 
 			// Return the comment data on success via AJAX
 			if ($this->viaAJAX === true) {
 				// Increase comment count(s)
-				$this->readComments->countComment ($comment_file);
+				$this->thread->countComment ($comment_file);
 
 				return array (
 					'file' => $comment_file,
@@ -909,16 +810,16 @@ class WriteComments extends PostData
 				$this->verifyFile ('reply-to');
 
 				// Rename file for reply
-				$comment_file = $this->replyTo . '-' . $this->readComments->threadCount[$this->replyTo];
+				$comment_file = $this->replyTo . '-' . $this->thread->threadCount[$this->replyTo];
 			} else {
-				$comment_file = $this->readComments->primaryCount;
+				$comment_file = $this->thread->primaryCount;
 			}
 
 			// Check if comment is SPAM
 			$this->checkForSpam ();
 
 			// Check if comment thread exists
-			$this->formatData->checkThread ();
+			$this->thread->data->checkThread ();
 
 			// Write the comment file
 			return $this->writeComment ($comment_file);

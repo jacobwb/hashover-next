@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,16 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 class HTMLTag
 {
 	protected $tag;
@@ -35,7 +25,7 @@ class HTMLTag
 	protected $attributes = array ();
 	protected $children = array ();
 
-	public function __construct ($tag = '', array $attributes = array (), $pretty = true, $singleton = false, $spaced = true)
+	public function __construct ($tag = '', $attributes = '', $pretty = true, $singleton = false, $spaced = true)
 	{
 		if (!is_string ($tag) or !$this->isWord ($tag)) {
 			$this->throwError ('Tag must have a single word String value.');
@@ -53,9 +43,25 @@ class HTMLTag
 		}
 
 		$this->tag = !empty ($tag) ? $tag : 'span';
-		$this->createAttributes ($attributes, $spaced);
 		$this->usesPrettyPrint = $pretty;
 		$this->isSingleton = $singleton;
+
+		switch (gettype ($attributes)) {
+			case 'object': {
+				$this->appendChild ($attributes);
+				break;
+			}
+
+			case 'array': {
+				$this->createAttributes ($attributes, $spaced);
+				break;
+			}
+
+			default: {
+				$this->innerHTML ($attributes);
+				break;
+			}
+		}
 	}
 
 	public function __get ($name)
@@ -73,7 +79,7 @@ class HTMLTag
 			return false;
 		}
 
-		if (!preg_match ('/[a-z0-9:-_.]+/i', $string)) {
+		if (!preg_match ('/[a-z0-9:-_.]+/iS', $string)) {
 			return false;
 		}
 
@@ -88,7 +94,7 @@ class HTMLTag
 		throw new \Exception ('Error on line ' . $line . ': ' . $error);
 	}
 
-	protected function getInnerHTML ()
+	public function getInnerHTML ($indention = '')
 	{
 		$inner_html = array ();
 
@@ -101,7 +107,7 @@ class HTMLTag
 			$inner_html[] = $child;
 		}
 
-		return implode (PHP_EOL, $inner_html);
+		return implode (PHP_EOL . $indention, $inner_html);
 	}
 
 	public function createAttribute ($name = '', $value = '', $spaced = true)
@@ -240,7 +246,7 @@ class HTMLTag
 		return true;
 	}
 
-	public function asHTML ()
+	public function asHTML ($indention = '')
 	{
 		$attributes = '';
 
@@ -265,6 +271,10 @@ class HTMLTag
 			}
 
 			$tag .= '</' . $this->tag . '>';
+		}
+
+		if (!empty ($indention)) {
+			return str_replace (PHP_EOL, PHP_EOL . $indention, $tag);
 		}
 
 		return $tag;

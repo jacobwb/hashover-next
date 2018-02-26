@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -16,16 +16,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
 
 class Misc
 {
@@ -58,17 +48,44 @@ class Misc
 		$this->mode = $mode;
 	}
 
+	// Return JSON or JSONP function call
+	public function jsonData ($data, $self_error = false)
+	{
+		// Encode JSON data
+		$json = json_encode ($data);
+
+		// Check if request is for JSONP
+		if (isset ($_GET['jsonp'])) {
+			// If so, make JSONP index XSS safe
+			$index = $this->makeXSSsafe ($_GET['jsonp']);
+
+			// Check if the JSONP index contains a numeric value
+			if (is_numeric ($index) or $self_error === true) {
+				// Cast index to positive integer
+				$index = ($self_error === true) ? 0 : (int)(abs ($index));
+
+				// If so, construct JSONP function call
+				return sprintf (
+					'HashOverConstructor.jsonp[%d] (%s);',
+					$index, $json
+				);
+			}
+
+			// Otherwise return an error
+			return $this->jsonData (array (
+				'message' => 'JSONP index must have a numeric value.',
+				'type' => 'error'
+			), true);
+		}
+
+		return $json;
+	}
+
 	// Make a string XSS-safe
 	public function makeXSSsafe ($string)
 	{
 		// Return cookie value without harmful characters
 		return str_replace ($this->searchXSS, $this->replaceXSS, $string);
-	}
-
-	// JavaScript-specific escaping
-	public function jsEscape ($string, $characters = "\\'")
-	{
-		return addcslashes ($string, $characters);
 	}
 
 	// Returns error in HTML paragraph
@@ -97,7 +114,7 @@ class Misc
 
 			// JSON to indicate error
 			case 'json': {
-				$data[] = json_encode (array (
+				$data[] = $this->jsonData (array (
 					'message' => $error,
 					'type' => 'error'
 				));
@@ -107,7 +124,7 @@ class Misc
 
 			// Default just return the error message
 			default: {
-				$data[] = 'HashOver: ' . $error;
+				$data[] = '<p><b>HashOver</b>: ' . $error . '</p>';
 				break;
 			}
 		}

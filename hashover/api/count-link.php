@@ -1,7 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
-// Generates a comment count hyperlink pointing to a specific page.
+// Copyright (C) 2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -18,72 +17,88 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
-
-// Change to the scripts directory
-chdir ('../scripts/');
+// Change to the HashOver directory
+chdir (realpath ('../'));
 
 // Setup HashOver for JavaScript
-require ('javascript-setup.php');
+require ('backend/javascript-setup.php');
 
 try {
-	// Instantiate HashOver class
-	$hashover = new \HashOver ('javascript', 'api');
-	$hashover->setup->setPageURL ('request');
-	$hashover->initiate ();
+	// Instantiate general setup class
+	$setup = new Setup (array (
+		'mode' => 'javascript',
+		'context' => 'api'
+	));
 
-	// Executing script number
-	$hashover_script = $hashover->setup->executingScript;
-
-	// Link URL
-	$link_url = addcslashes ($hashover->setup->pageURL, "\\'");
-
-	// Check if there is more than one comment
-	if ($hashover->readComments->totalCount > 1) {
-		// If so, set comment count as link text
-		$link_text = $hashover->commentCount;
-	} else {
-		// If not, set "Post Comment" locale string as link text
-		$link_text = $hashover->locale->get ('post-button');
+	// Throw exception if the "Latest Comments" API is disabled
+	if ($setup->apiStatus ('count-link') === 'disabled') {
+		throw new \Exception ('This API is not enabled.');
 	}
 
+	// Instantiate HashOver statistics class
+	$statistics = new Statistics ('javascript');
+
+	// Start execution timer
+	$statistics->executionStart ();
+
+	// Instantiate JavaScript build class
+	$javascript = new JavaScriptBuild ('api/frontends/count-link');
+
+	// Register initial constructor
+	$javascript->registerFile ('constructor.js');
+
+	// Register comment count AJAX request getter method
+	$javascript->registerFile ('getcommentcount.js');
+
+	// Change to standard frontend directory
+	$javascript->changeDirectory ('frontend');
+
+	// Register HashOver script tag getter method
+	$javascript->registerFile ('getscript.js');
+
+	// Register backend path setter
+	$javascript->registerFile ('backendpath.js');
+
+	// Register page URL getter method
+	$javascript->registerFile ('geturl.js');
+
+	// Register page title getter method
+	$javascript->registerFile ('gettitle.js');
+
+	// Register backend queries getter method
+	$javascript->registerFile ('getbackendqueries.js');
+
+	// Register element creation methods
+	$javascript->registerFile ('elements.js');
+
+	// Register AJAX-related methods
+	$javascript->registerFile ('ajax.js');
+
+	// Change back to count link frontend directory
+	$javascript->changeDirectory ('api/frontends/count-link');
+
+	// Register initialization
+	$javascript->registerFile ('processlinks.js');
+
+	// Register automatic instantiation code
+	$javascript->registerFile ('instantiate.js', array (
+		'include' => !isset ($_GET['nodefault'])
+	));
+
+	// JavaScript build process output
+	$output = $javascript->build (
+		$setup->minifiesJavascript,
+		$setup->minifyLevel
+	);
+
+	// Display JavaScript build process output
+	echo $output, PHP_EOL;
+
+	// Display statistics
+	echo $statistics->executionEnd ();
+
 } catch (\Exception $error) {
-	$hashover_script = null;
-	$link_url = null;
-	$link_text = 'Error!';
+	$misc = new Misc ('javascript');
+	$message = $error->getMessage ();
+	$misc->displayError ($message);
 }
-
-?>
-// Copyright (C) 2010-2017 Jacob Barkdull
-// This file is part of HashOver.
-//
-// I, Jacob Barkdull, hereby release this work into the public domain.
-// This applies worldwide. If this is not legally possible, I grant any
-// entity the right to use this work for any purpose, without any
-// conditions, unless such conditions are required by law.
-
-
-// Setup count link
-var countLink = document.createElement ('a');
-    countLink.href = '<?php echo $link_url; ?>#comments';
-    countLink.textContent = '<?php echo $link_text; ?>';
-
-<?php if (!empty ($hashover_script)): ?>
-// Get count link element
-var hashoverScript = 'hashover-script-<?php echo $hashover_script; ?>';
-var thisScript = document.getElementById (hashoverScript);
-
-// Display count link
-if (thisScript !== null) {
-	thisScript.parentNode.insertBefore (countLink, thisScript);
-}
-<?php else: ?>
-// Display count link
-document.write (countLink.outerHTML);
-<?php endif; ?>

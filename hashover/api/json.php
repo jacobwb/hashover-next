@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2010-2017 Jacob Barkdull
+// Copyright (C) 2010-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,26 +17,18 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
-
-// Change to the scripts directory
-chdir ('../scripts/');
+// Change to the HashOver directory
+chdir (realpath ('../'));
 
 // Setup HashOver for JSON
-require ('json-setup.php');
+require ('backend/json-setup.php');
 
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json', 'api');
 
 	// Display error if the API is disabled
-	if (empty ($_POST['ajax']) and $hashover->setup->APIStatus ('json') === 'disabled') {
+	if ($hashover->setup->apiStatus ('json') === 'disabled') {
 		throw new \Exception ('<b>HashOver</b>: This API is not enabled.');
 	}
 
@@ -45,26 +37,40 @@ try {
 	$hashover->setup->collapsesComments = false;
 	$hashover->initiate ();
 
+	// Comments and statistics response array
+	$data = array ();
+
 	// Setup where to start reading comments
-	$start = !empty ($_POST['start']) ? $_POST['start'] : 0;
+	$start = $hashover->setup->getRequest ('start', 0);
 
 	// Check for comments
-	if ($hashover->readComments->totalCount > 1) {
-		// Parse primary comments
-		// TODO: Use starting point
-		$hashover->parsePrimary (0);
+	if ($hashover->thread->totalCount > 1) {
+		// Parse comments; TODO: Use starting point
+		$hashover->parsePrimary ();
+		$hashover->parsePopular ();
 
 		// Display as JSON data
-		$data = $hashover->comments;
+		$data['comments'] = $hashover->comments;
 	} else {
 		// Return no comments message
 		$data = array ('No comments.');
 	}
 
-	// Return JSON data
-	echo json_encode ($data);
+	// Generate statistics
+	$hashover->statistics->executionEnd ();
+
+	// HashOver statistics
+	$data['statistics'] = array (
+		'execution-time' => $hashover->statistics->executionTime,
+		'script-memory' => $hashover->statistics->scriptMemory,
+		'system-memory' => $hashover->statistics->systemMemory
+	);
+
+	// Return JSON or JSONP function call
+	echo $hashover->misc->jsonData ($data);
 
 } catch (\Exception $error) {
 	$misc = new Misc ('json');
-	$misc->displayError ($error->getMessage ());
+	$message = $error->getMessage ();
+	$misc->displayError ($message);
 }

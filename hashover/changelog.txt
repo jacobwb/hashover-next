@@ -1,3 +1,182 @@
+Changes by Jacob Barkdull 2017-00-00
+--------------------------------------------------------------------------------
+* MIGRATION INFORMATION
+
+	- The `pages` directory is now `comments/threads`, this change will
+	  cause existing comments to not appear until you move the directories
+	  under `pages` into the new `comments/threads` directory.
+
+	- All JSON config files have been moved to the new `config` directory,
+	  you will need to move the files `hashover/blocklist.json` and
+	  `hashover/ignored-queries.json` into the new `config` directory. If
+	  these files do not exist, you don't need to do anything as these
+	  config files are completely optional.
+
+	- The previously removed `secrets.php` file has returned. The required
+	  setup information, namely the notification e-mail address, encryption
+	  key, and the admin username and password are now stored in this
+	  `secrets.php` file located at `/hashover/backend/classes/secrets.php`.
+
+	  You will need to move the values of the public properties
+	  `$notificationEmail`, `$encryptionKey`, `$adminName`, and
+	  `$adminPassword` in the `settings.php` file into the new `secrets.php`
+	  file, and remove these properties from `settings.php` or replace the
+	  `settings.php` file entirely, as its source code is publicly viewable,
+	  whereas the source code of `secrets.php` is not.
+
+	- The file `hashover.js` has been removed, as it is no longer necessary,
+	  and replaced by the new `comments.php` file.
+
+	  This means you will need to update your JavaScript tag...
+
+	  From:
+
+	  <script type="text/javascript" src="/hashover/hashover.js"></script>
+
+	  To:
+
+	  <script type="text/javascript" src="/hashover/comments.php"></script>
+
+
+* Removed dependancy on Mcrypt
+
+	- Mcrypt is considered "abandonware" and has been deprecated in PHP 7.
+	  OpenSSL is now used in its place. There should be no compatibility
+	  issues, but please report any if you find any.
+
+
+* All new administrative control page
+
+	- Comments may now be posted, moderated, edited, and deleted from the
+	  new administrative control page. This allows you to disable the
+	  "Password" field while retaining a way of moderating comments.
+
+	  This feature should be considered beta software, it will be improved.
+	  It has not yet been localized, it is only available in English.
+
+	  Anyone interested in having the admin page available in another
+	  language should feel free to translate the text and add the
+	  necessary strings to the respective locale file, I have already
+	  made the necessary preparations to facilitate your contribution.
+
+	  The admin control page is located at:
+
+	      /hashover/admin/
+
+	  For example:
+
+	      http://example.com/hashover/admin/
+
+	  You will be prompted for a login, use the username and password
+	  stored in "backend/classes/secrets.php" file's public `$adminName`
+	  and `$adminPassword` properties.
+
+	  Feedback and suggestions are welcome.
+
+
+* Improved metadata
+
+	- Any kind of metadata can now be collected. The process has been
+	  simplified, for flat-file data formats metadata is stored as
+	  individual JSON files, for SQL(ite) databases metadata is stored as
+	  individual tables in the database. In both cases the metadata naming
+	  schemes is as follows: <thread-name>/metadata/<metadata-name>, there
+	  is also the global metadata, which is at "comments/metadata" and the
+	  table "hashover-metadata" respectively.
+
+	  This change breaks backwards compatibility, new metadata will have to
+	  be generated. This can be done by simply viewing each page on your
+	  website that uses HashOver comments, or you can wait for your
+	  visitors to do that for you. The Googlebot web crawler may also cause
+	  metadata to be created eventually as well.
+
+
+* Beginning of more proper frontend/backend structure
+
+	- The `HashOver` constructor function and its methods have been split
+	  into multiple individual files in the new "frontend" directory.
+
+	- The "scripts" directory has been renamed to "backend".
+	- All PHP class files have been moved into "backend/classes".
+
+	- In the future more files may be moved into "backend" and the new
+	  "frontend" directory as well. Files under consideration for location
+	  change are: the "images" and "themes" directories. I am open to
+	  suggestions about the overall file/project structure.
+
+
+* JavaScript mode
+
+	- Major code refactoring.
+
+	- All PHP code has been removed from the JavaScript. Instead an
+	  AJAX request is sent to retrieve the necessary backend data.
+
+	- JSONP has now been implemented, enabling AJAX for allowed remote
+	  domain connections, as well as enabling likes and dislikes.
+
+	- The "api/json.php" file is no longer used to show more comments, the
+	  new "backend/load-comments.php" is now used instead.
+
+	- Preliminary work toward allowing multiple HashOver instances on a
+	  single page. Specifically, multiple instances is now possible,
+	  however, element IDs still conflict with each other.
+
+	- Elements are now expected to be prefixed with "hashover-", as to
+	  impose a pseudo-namespacing for HashOver specific elements.
+
+
+* Minor theming change
+
+	- The main HashOver element now recieves a "hashover" class, and
+	  in the default theme styling HashOver is pseudo-namespaced based
+	  on this class instead of the "hashover" element ID.
+
+	  Custom themes should not break, but in the future there will be
+	  problems with themes based around the "hashover" element ID when
+	  using multiple instances of HashOver. For this reason, themes
+	  should move to using the "hashover" class instead.
+
+	- Added a new "borderless" version of the default theme.
+
+
+* hashover/scripts/cookies.php
+
+	- All cookie names are now prefixed with "hashover-", to impose a
+	  pseudo-namespace for HashOver specific cookies.
+
+
+* hashover/scripts/locale.php
+
+	- Removed now unnecessary `get` and `set` methods.
+
+
+* hashover/scripts/misc.php
+
+	- Removed now unnecessary `jsEscape` method.
+
+
+* Fixed: "setup.php" being displayed instead of "settings.php" in errors about
+  required unique notification e-mail, encryption key, and admin password. My
+  apologies for the confusion.
+
+* Improved latest comments API.
+* Improved comment count link API.
+* Improved SQL(ite) support.
+* JavaScript/JSON is now the assumed default mode.
+* PHP regular expressions now use the "study" flag.
+* The "Latest Comments" API frontend no longer uses its own stylesheet.
+* Removed the public `$executingScript` property from the `HashOver` class.
+* The `ReadComments` class has been renamed to `Thread`.
+* The `JSMinifier` class has been renamed to `JavaScriptMinifier`.
+* The `ReadFiles` class has been renamed to `CommentFiles`.
+* Added centralized source code viewer for all AGPL licensed PHP files.
+* Removed code to display source code from every PHP file.
+* Made some small improvements to the icons images.
+* Markdown can now be disabled.
+* Small bug fixes.
+
+
 Changes by Jacob Barkdull 2017-05-12
 --------------------------------------------------------------------------------
 * hashover/scripts/javascript-mode.php

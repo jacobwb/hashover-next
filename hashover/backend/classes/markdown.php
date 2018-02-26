@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -17,21 +17,11 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	} else {
-		exit ('<b>HashOver</b>: This is a class file.');
-	}
-}
-
 class Markdown
 {
-	public    $blockCodeRegex = '/```([\s\S]+?)```/';
-	protected $paragraphRegex = '/(?:\r\n|\r|\n){2}/';
-	public    $inlineCodeRegex = '/(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/i';
+	public    $blockCodeRegex = '/```([\s\S]+?)```/S';
+	protected $paragraphRegex = '/(?:\r\n|\r|\n){2}/S';
+	public    $inlineCodeRegex = '/(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/iS';
 
 	// Array for inline code and code block markers
 	protected $codeMarkers = array (
@@ -41,11 +31,11 @@ class Markdown
 
 	// Markdown patterns to search for
 	public $search = array (
-		'/\*\*([^ *])([\s\S]+?)([^ *])\*\*/',
-		'/\*([^ *])([\s\S]+?)([^ *])\*/',
-		'/(^|\W)_([^_]+?[\s\S]+?)_(\W|$)/',
-		'/__([^ _])([\s\S]+?)([^ _])__/',
-		'/~~([^ ~])([\s\S]+?)([^ ~])~~/'
+		'/\*\*([^ *])([\s\S]+?)([^ *])\*\*/S',
+		'/\*([^ *])([\s\S]+?)([^ *])\*/S',
+		'/(^|\W)_([^_]+?[\s\S]+?)_(\W|$)/S',
+		'/__([^ _])([\s\S]+?)([^ _])__/S',
+		'/~~([^ ~])([\s\S]+?)([^ ~])~~/S'
 	);
 
 	// HTML replacements for markdown patterns
@@ -122,14 +112,14 @@ class Markdown
 			$paragraphs[$i] = preg_replace ($this->search, $this->replace, $paragraphs[$i]);
 
 			// Replace markers with original markdown code
-			$paragraphs[$i] = preg_replace_callback ('/CODE_INLINE\[([0-9]+)\]/', 'self::inlineCodeReturn', $paragraphs[$i]);
+			$paragraphs[$i] = preg_replace_callback ('/CODE_INLINE\[([0-9]+)\]/S', 'self::inlineCodeReturn', $paragraphs[$i]);
 		}
 
 		// Join paragraphs
 		$string = implode (PHP_EOL . PHP_EOL, $paragraphs);
 
 		// Replace code block markers with original markdown code
-		$string = preg_replace_callback ('/CODE_BLOCK\[([0-9]+)\]/', 'self::blockCodeReturn', $string);
+		$string = preg_replace_callback ('/CODE_BLOCK\[([0-9]+)\]/S', 'self::blockCodeReturn', $string);
 
 		return $string;
 	}
