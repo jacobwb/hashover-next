@@ -131,7 +131,7 @@ class JavaScriptBuild
 				$minifier = new JavaScriptMinifier ();
 
 				// Minify JavaScript build result
-				$minified = $this->minify ($javascript, $minify_level);
+				$minified = $minifier->minify ($javascript, $minify_level);
 
 				// Set minified result as JavaScript output
 				$javascript = $minified;
