@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // I, Jacob Barkdull, hereby release this work into the public domain.
@@ -9,15 +9,7 @@
 // conditions, unless such conditions are required by law.
 
 
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
-
-// English text for forms, buttons, links, and tooltips
+// Korean text for forms, buttons, links, and tooltips
 $locale = array (
 	'comment-form'		=> '댓글을 적으세요...',
 	'reply-form'		=> '답글을 적으세요...',
@@ -61,6 +53,7 @@ $locale = array (
 	'comment-deleted'	=> '댓글이 삭제되었습니다!',
 	'post-reply'		=> '답글 달기',
 	'delete'		=> '삭제',
+	'permanently-delete'	=> '영구적으로 삭제',
 	'subscribe'		=> '답글을 나에게 알려주세요',
 	'subscribe-tip'		=> '전자메일 알림을 설정합니다.',
 	'edit-comment'		=> '댓글 수정',

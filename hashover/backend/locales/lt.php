@@ -1,21 +1,12 @@
 <?php
 
-// Copyright (C) 2015-2017 Jacob Barkdull
+// Copyright (C) 2015-2018 Jacob Barkdull
 // This file is part of HashOver.
 //
 // I, Jacob Barkdull, hereby release this work into the public domain.
 // This applies worldwide. If this is not legally possible, I grant any
 // entity the right to use this work for any purpose, without any
 // conditions, unless such conditions are required by law.
-
-
-// Display source code
-if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
-	if (isset ($_GET['source'])) {
-		header ('Content-type: text/plain; charset=UTF-8');
-		exit (file_get_contents (basename (__FILE__)));
-	}
-}
 
 // Lithuanian text for forms, buttons, links, and tooltips
 // Translated by vKaotik
@@ -26,6 +17,8 @@ if (basename ($_SERVER['PHP_SELF']) === basename (__FILE__)) {
 // Išvertė vKaotik
 // Išversta sistemai HashOver.
 // 2017-05-19
+
+
 $locale = array (
 	'comment-form'		=> 'Palikti atsiliepimą...',
 	'reply-form'		=> 'Atsakyti į komentarą..',
@@ -69,6 +62,7 @@ $locale = array (
 	'comment-deleted'	=> 'Komentaras ištrintas!',
 	'post-reply'		=> 'Rašyti atsakymą',
 	'delete'		=> 'Ištrinti',
+	'permanently-delete'	=> 'Ištrinti visam laikui',
 	'subscribe'		=> 'Siųsti naujienas paštu',
 	'subscribe-tip'		=> 'Užsiprenumeruoti naujienas paštu',
 	'edit-comment'		=> 'Redaguoti',
