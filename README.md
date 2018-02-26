@@ -76,6 +76,16 @@ Important differences from version 1.0
 
 - HashOver 2.0 is object oriented, many things have changed places and been renamed. For normal users, about the only thing that is important to know is that the `secrets.php` file was merged with the `settings.php` file.
 
+Important recent changes to version 2.0
+---
+- The `pages` directory is now `comments/threads`, this change will cause existing comments to not appear until you move the directories under `pages` into the new `comments/threads` directory.
+
+- All JSON config files have been moved to the new `config` directory, you will need to move the files `hashover/blocklist.json` and `hashover/ignored-queries.json` into the new `config` directory. If these files do not exist, you don't need to do anything as these config files are completely optional.
+
+- The previously removed `secrets.php` file has returned. The required setup information, namely the notification e-mail address, encryption key, and the admin username and password are now stored in this `secrets.php` file located at `/hashover/backend/classes/secrets.php`.
+ 
+  You will need to move the values of the public properties `$notificationEmail`, `$encryptionKey`, `$adminName`, and `$adminPassword` in the `settings.php` file into the new `secrets.php` file, and remove these properties from `settings.php` or replace the `settings.php` file entirely, as its source code is publicly viewable, whereas the source code of `secrets.php` is not.
+
 
 Focus of this release
 ---
