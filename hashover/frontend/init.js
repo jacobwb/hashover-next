@@ -8,7 +8,81 @@ HashOver.prototype.init = function ()
 	var URLParts		= window.location.href.split ('#');
 	var URLHref		= URLParts[0];
 	var URLHash		= URLParts[1] || '';
-	var formEvents		= ['onclick', 'onsubmit'];
+	var mainElement		= this.getMainElement ();
+	var postButton		= this.elements.get ('post-button');
+	var formEvents		= [ 'onclick', 'onsubmit' ];
+	var formElement		= this.elements.get ('form');
+
+	// Scrolls to a specified element
+	function scrollToElement (id)
+	{
+		hashover.elements.exists (id, function (element) {
+			element.scrollIntoView ({ behavior: 'smooth' });
+		}, false);
+	}
+
+	// Callback for scrolling a comment into view on page load
+	function scrollCommentIntoView ()
+	{
+		// Check if the comments are collapsed
+		if (hashover.setup['collapses-comments'] !== false) {
+			// Check if comment exists on the page
+			var linkedHidden = hashover.elements.exists (URLHash, function (comment) {
+				// Check if the comment is visable
+				if (hashover.classes.contains (comment, 'hashover-hidden') === false) {
+					// If so, scroll to the comment
+					scrollToElement (URLHash);
+					return true;
+				}
+
+				return false;
+			}, false);
+
+			// Check if the linked comment is hidden
+			if (linkedHidden === false) {
+				// If not, show more comments
+				hashover.showMoreComments (hashover.instance['more-link'], function () {
+					// Then scroll to comment
+					scrollToElement (URLHash);
+				});
+			}
+		} else {
+			// If not, scroll to comment normally
+			scrollToElement (URLHash);
+		}
+	}
+
+	// Callback for scrolling a comment into view on page load
+	function prepareScroll ()
+	{
+		// Scroll the main HashOver element into view
+		if (URLHash.match (/comments|hashover/)) {
+			scrollToElement (URLHash);
+		}
+
+		// Check if we're scrolling to a comment
+		if (URLHash.match (/hashover-c[0-9]+r*/)) {
+			// If so, check if the user interface is collapsed
+			if (hashover.setup['collapses-interface'] !== false) {
+				// If so, scroll to it after uncollapsing the interface
+				hashover.uncollapseInterface (scrollCommentIntoView);
+			} else {
+				// If not, scroll to the comment directly
+				scrollCommentIntoView ();
+			}
+		}
+
+		// Open the message element if there's a message
+		if (hashover.elements.get ('message').textContent !== '') {
+			hashover.messages.show ();
+		}
+	}
+
+	// Page load event handler
+	function onLoad ()
+	{
+		setTimeout (prepareScroll, 500);
+	}
 
 	// Append theme CSS if enabled
 	this.optionalMethod ('appendCSS');
@@ -22,9 +96,6 @@ HashOver.prototype.init = function ()
 		// Append RSS feed if enabled
 		this.optionalMethod ('appendRSS');
 	}
-
-	// Get the main HashOver element
-	var mainElement = this.getMainElement ();
 
 	// Add initial HTML to page
 	if ('insertAdjacentHTML' in mainElement) {
@@ -45,9 +116,6 @@ HashOver.prototype.init = function ()
 	// Get sort div element
 	this.instance['sort-section'] = this.elements.get ('sort-section');
 
-	// Get primary form element
-	var formElement = this.elements.get ('form');
-
 	// Display most popular comments
 	this.elements.exists ('top-comments', function (topComments) {
 		if (hashover.instance.comments.popular[0] !== undefined) {
@@ -66,9 +134,6 @@ HashOver.prototype.init = function ()
 
 	// Attach click event to formatting revealer hyperlink
 	this.formattingOnclick ('main');
-
-	// Attach event listeners to "Post Comment" button
-	var postButton = this.elements.get ('post-button');
 
 	// Set onclick and onsubmit event handlers
 	this.elements.duplicateProperties (postButton, formEvents, function () {
@@ -109,14 +174,6 @@ HashOver.prototype.init = function ()
 			}
 		};
 	});
-
-	// Scrolls to a specified element
-	var scrollToElement = function (id)
-	{
-		hashover.elements.exists (id, function (element) {
-			element.scrollIntoView ({ behavior: 'smooth' });
-		}, false);
-	};
 
 	// Display reply or edit form when the proper URL queries are set
 	if (URLHref.match (/hashover-(reply|edit)=/)) {
@@ -169,61 +226,15 @@ HashOver.prototype.init = function ()
 		]));
 	}
 
-	// Callback for scrolling a comment into view on page load
-	var scroller = function ()
-	{
-		setTimeout (function () {
-			// Workaround for stupid Chrome bug
-			if (URLHash.match (/comments|hashover/)) {
-				scrollToElement (URLHash);
-			}
-
-			// Jump to linked comment
-			if (URLHash.match (/hashover-c[0-9]+r*/)) {
-				// Check if the comments are collapsed
-				if (hashover.setup['collapses-comments'] !== false) {
-					// Check if comment exists on the page
-					var linkedHidden = hashover.elements.exists (URLHash, function (comment) {
-						// Check if the comment is visable
-						if (hashover.classes.contains (comment, 'hashover-hidden') === false) {
-							// If so, scroll to the comment
-							scrollToElement (URLHash);
-							return true;
-						}
-
-						return false;
-					}, false);
-
-					// Check if the linked comment is hidden
-					if (linkedHidden === false) {
-						// If not, show more comments
-						hashover.showMoreComments (hashover.instance['more-link'], function () {
-							// Then scroll to comment
-							scrollToElement (URLHash);
-						});
-					}
-				} else {
-					// If not, scroll to comment normally
-					scrollToElement (URLHash);
-				}
-			}
-
-			// Open the message element if there's a message
-			if (hashover.elements.get ('message').textContent !== '') {
-				hashover.messages.show ();
-			}
-		}, 500);
-	};
-
 	// Page onload compatibility wrapper
 	if (window.addEventListener) {
 		// Rest of the world
-		window.addEventListener ('load', scroller, false);
+		window.addEventListener ('load', onLoad, false);
 	} else {
 		// IE ~8
-		window.attachEvent ('onload', scroller);
+		window.attachEvent ('onload', onLoad);
 	}
 
-	// Execute scroller manually
-	scroller ();
+	// Execute page load event handler manually
+	onLoad ();
 };

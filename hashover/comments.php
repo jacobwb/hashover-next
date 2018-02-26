@@ -223,7 +223,11 @@ try {
 
 	// Register uncollapse interface method
 	$javascript->registerFile ('uncollapseinterfacelink.js', array (
-		'include' => $setup->collapsesInterface
+		'include' => $setup->collapsesInterface,
+
+		'dependencies' => array (
+			'uncollapseinterface.js'
+		)
 	));
 
 	// Register uncollapse comments method

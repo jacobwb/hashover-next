@@ -99,6 +99,7 @@ try {
 			'stream-depth'		=> $hashover->setup->streamDepth,
 			'theme-css'		=> $hashover->setup->httpRoot . '/themes/' . $hashover->setup->theme . '/style.css',
 			'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
+			'collapses-interface'	=> $hashover->setup->collapsesInterface,
 			'collapses-comments'	=> $hashover->setup->collapsesComments,
 			'uses-user-timezone'	=> $hashover->setup->usesUserTimezone,
 			'uses-short-dates'	=> $hashover->setup->usesShortDates,

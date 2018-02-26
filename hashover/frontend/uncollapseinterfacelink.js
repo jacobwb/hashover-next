@@ -6,44 +6,19 @@ HashOver.prototype.uncollapseInterfaceLink = function ()
 	var uncollapseText = this.instance[uncollapseLocale];
 
 	// Create hyperlink to uncollapse the comment interface
-	var uncollapseInterfaceLink = this.elements.create ('a', {
-		href: '#',
+	var uncollapseLink = this.elements.create ('a', {
+		id: 'hashover-uncollapse-interface-link',
 		className: 'hashover-more-link',
+		href: '#',
 		title: uncollapseText,
 		textContent: uncollapseText,
 
 		onclick: function () {
-			// Add class to hide the uncollapse interface hyperlink
-			hashover.classes.add (this, 'hashover-hide-more-link');
-
-			// Element to unhide
-			var uncollapseIDs = ['form-section', 'comments-section', 'end-links'];
-
-			setTimeout (function () {
-				// Remove the uncollapse interface hyperlink from page
-				if (hashover.instance['main-element'].contains (uncollapseInterfaceLink) === true) {
-					hashover.instance['main-element'].removeChild (uncollapseInterfaceLink);
-				}
-
-				// Show hidden form elements
-				for (var i = 0, il = uncollapseIDs.length; i < il; i++) {
-					hashover.elements.exists (uncollapseIDs[i], function (element) {
-						element.style.display = '';
-					});
-				}
-
-				// Show popular comments section
-				if (hashover.setup['collapse-limit'] > 0) {
-					hashover.elements.exists ('popular-section', function (popularSection) {
-						popularSection.style.display = '';
-					});
-				}
-			}, 350);
-
+			hashover.uncollapseInterface ();
 			return false;
 		}
 	});
 
 	// Add uncollapse hyperlink to HashOver div
-	hashover.instance['main-element'].appendChild (uncollapseInterfaceLink);
+	hashover.instance['main-element'].appendChild (uncollapseLink);
 };
