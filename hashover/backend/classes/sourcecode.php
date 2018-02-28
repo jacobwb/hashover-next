@@ -263,11 +263,22 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
+			'path' => 'backend/locales/fa.php'
+		),
+		array (
+			'type' => 'Script',
 			'path' => 'backend/locales/fr.php'
 		),
 		array (
 			'type' => 'Script',
 			'path' => 'backend/locales/jp.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'backend/locales/ko.php'
+		),array (
+			'type' => 'Script',
+			'path' => 'backend/locales/lt.php'
 		),
 		array (
 			'type' => 'Script',
