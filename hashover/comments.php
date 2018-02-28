@@ -40,7 +40,7 @@ try {
 	$javascript->registerFile ('constructor.js');
 
 	// Register HashOver script tag getter method
-	$javascript->registerFile ('getscript.js');
+	$javascript->registerFile ('script.js');
 
 	// Register backend path setter
 	$javascript->registerFile ('backendpath.js');

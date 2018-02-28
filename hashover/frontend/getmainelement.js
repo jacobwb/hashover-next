@@ -8,10 +8,10 @@ HashOverConstructor.prototype.getMainElement = function (id)
 
 	// Check if the HashOver element exists
 	if (element === null) {
-		// Get HashOver script tag
-		var script = HashOverConstructor.getScript ();
+		// If not, get HashOver script tag
+		var script = HashOverConstructor.script;
 
-		// If not, create div tag for HashOver comments to appear in
+		// Create div tag for HashOver comments to appear in
 		element = this.elements.create ('div', { id: id });
 
 		// Place the main HashOver element on the page

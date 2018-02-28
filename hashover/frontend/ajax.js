@@ -24,11 +24,8 @@ HashOverConstructor.prototype.ajax = function (method, path, data, callback, asy
 	// Create origin regular expression
 	var originRegex = new RegExp ('^' + origin + '/', 'i');
 
-	// Get the current script tag
-	var script = HashOverConstructor.getScript ();
-
 	// Check if script is being remotely accessed
-	if (originRegex.test (script.src) === false) {
+	if (originRegex.test (HashOverConstructor.script.src) === false) {
 		// If so, use JSONP
 		HashOverConstructor.jsonp.push (callback);
 
@@ -59,7 +56,7 @@ HashOverConstructor.prototype.ajax = function (method, path, data, callback, asy
 			var json = JSON.parse (this.responseText);
 
 			// Execute callback
-			callback.apply (this, [json]);
+			callback.apply (this, [ json ]);
 		};
 
 		// Send request
