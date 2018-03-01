@@ -41,11 +41,11 @@ $data_files = new DataFiles ($hashover->setup);
 
 // Exit if the user isn't logged in as admin
 if ($hashover->login->userIsAdmin !== true) {
-	$uri_parts = explode ('?', $_SERVER['REQUEST_URI']);
-	$uri = $uri_parts[0];
+	$uri = $_SERVER['REQUEST_URI'];
+	$uri_parts = explode ('?', $uri);
 
-	if (basename ($uri) !== 'login') {
-		header ('Location: ../login/?redirect=' . $uri);
+	if (basename ($uri_parts[0]) !== 'login') {
+		header ('Location: ../login/?redirect=' . urlencode ($uri));
 		exit;
 	}
 }

@@ -214,7 +214,7 @@ class CommentParser
 		$last_date++;
 
 		if ($this->setup->iconMode !== 'none') {
-			$output['avatar'] = $this->setup->httpImages . '/' . $type . '-icon.' . $this->setup->imageFormat;
+			$output['avatar'] = $this->setup->getImagePath ($type . '-icon');
 		}
 
 		$output['permalink'] = 'c' . str_replace ('-', 'r', $key);

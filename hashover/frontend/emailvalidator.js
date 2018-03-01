@@ -18,8 +18,6 @@ HashOver.prototype.emailValidator = function (form, subscribe, type, permalink, 
 			return false;
 		}
 	} else {
-		var message;
-
 		// If not, check if the e-mail is valid
 		if (this.regex.email.test (form.email.value) === false) {
 			// Return true if user unchecked the subscribe checkbox
@@ -28,7 +26,10 @@ HashOver.prototype.emailValidator = function (form, subscribe, type, permalink, 
 				return true;
 			}
 
-			message = this.locale['invalid-email'];
+			// Get message from locales
+			var message = this.locale['invalid-email'];
+
+			// Show the message and focus the e-mail input
 			this.messages.show (message, type, permalink, true, isReply, isEdit);
 			form.email.focus ();
 

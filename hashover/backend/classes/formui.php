@@ -216,7 +216,7 @@ class FormUI
 			} else {
 				// Logged out
 				// Image source is local default image
-				$avatar_src = $this->setup->httpImages . '/first-comment.' . $this->setup->imageFormat;
+				$avatar_src = $this->setup->getImagePath ('first-comment');
 			}
 
 			// Create avatar image element
@@ -543,7 +543,7 @@ class FormUI
 			'id' => 'hashover-form',
 			'class' => 'hashover-balloon',
 			'name' => 'hashover-form',
-			'action' => $this->setup->httpBackend . '/form-actions.php',
+			'action' => $this->setup->getBackendPath ('form-actions.php'),
 			'method' => 'post'
 		));
 
@@ -1025,7 +1025,7 @@ class FormUI
 			{
 				// Create RSS feed link
 				$rss_link = new HTMLTag ('a', array (), false);
-				$rss_link->createAttribute ('href', $this->setup->httpRoot . '/api/rss.php');
+				$rss_link->createAttribute ('href', $this->setup->getHttpPath ('api/rss.php'));
 				$rss_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
 
 				// RSS Feed hyperlink text
@@ -1048,7 +1048,7 @@ class FormUI
 
 		// Create link to HashOver source code (fixme! can be done better)
 		$source_link = new HTMLTag ('a', array (
-			'href' => $this->setup->httpBackend . '/source-viewer.php',
+			'href' => $this->setup->getBackendPath ('source-viewer.php'),
 			'id' => 'hashover-source-link',
 			'rel' => 'hashover-source',
 			'target' => '_blank',
@@ -1062,7 +1062,7 @@ class FormUI
 		if ($this->mode !== 'php') {
 			// Create link to HashOver JavaScript source code
 			$javascript_link = new HTMLTag ('a', array (
-				'href' => $this->setup->httpRoot . '/comments.php',
+				'href' => $this->setup->getHttpPath ('comments.php'),
 				'id' => 'hashover-javascript-link',
 				'rel' => 'hashover-javascript',
 				'target' => '_blank',

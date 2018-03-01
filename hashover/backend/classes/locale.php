@@ -105,7 +105,7 @@ class Locale
 		}
 	}
 
-	// Prepares locale by modifing them in various ways
+	// Prepares locale by modifying them in various ways
 	public function prepareLocale ()
 	{
 		foreach ($this->text as $key => $value) {

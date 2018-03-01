@@ -1,12 +1,7 @@
 // For appending new comments to the thread on page (appendcomments.js)
 HashOver.prototype.appendComments = function (comments)
 {
-	var isReply;
-	var element;
-	var parent;
-	var html;
-	var comment;
-
+	// Run through each comment
 	for (var i = 0, il = comments.length; i < il; i++) {
 		// Skip existing comments
 		if (this.permalinks.getComment (comments[i].permalink, this.instance.comments.primary) !== null) {
@@ -19,7 +14,7 @@ HashOver.prototype.appendComments = function (comments)
 		}
 
 		// Check if comment is a reply
-		isReply = (comments[i].permalink.indexOf ('r') > -1);
+		var isReply = (comments[i].permalink.indexOf ('r') > -1);
 
 		// Add comment to comments array
 		this.addComments (comments[i], isReply, i);
@@ -27,15 +22,15 @@ HashOver.prototype.appendComments = function (comments)
 		// Check that comment is not a reply
 		if (isReply !== true) {
 			// If so, append to primary comments
-			element = this.instance['more-section'];
+			var element = this.instance['more-section'];
 		} else {
 			// If not, append to its parent's element
-			parent = this.permalinks.getParent (comments[i].permalink, true);
-			element = this.elements.get (parent, true) || this.instance['more-section'];
+			var parent = this.permalinks.getParent (comments[i].permalink, true);
+			var element = this.elements.get (parent, true) || this.instance['more-section'];
 		}
 
 		// Parse comment
-		html = this.comments.parse (comments[i], null, true);
+		var html = this.comments.parse (comments[i], null, true);
 
 		// Check if we can insert HTML adjacently
 		if ('insertAdjacentHTML' in element) {
@@ -43,7 +38,7 @@ HashOver.prototype.appendComments = function (comments)
 			element.insertAdjacentHTML ('beforeend', html);
 		} else {
 			// If not, convert HTML to NodeList
-			comment = this.HTMLToNodeList (html);
+			var comment = this.HTMLToNodeList (html);
 
 			// And append the first node
 			element.appendChild (comment[0]);

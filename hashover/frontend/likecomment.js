@@ -19,9 +19,6 @@ HashOver.prototype.likeComment = function (action, permalink)
 
 	// When loaded update like count
 	this.ajax ('POST', likePath, queries, function (likeResponse) {
-		var likeResponse;
-		var likesKey, likes = 0;
-
 		// If a message is returned display it to the user
 		if (likeResponse.message !== undefined) {
 			alert (likeResponse.message);
@@ -35,8 +32,8 @@ HashOver.prototype.likeComment = function (action, permalink)
 		}
 
 		// Get number of likes
-		likesKey = (action !== 'dislike') ? 'likes' : 'dislikes';
-		likes = likeResponse[likesKey] || 0;
+		var likesKey = (action !== 'dislike') ? 'likes' : 'dislikes';
+		var likes = likeResponse[likesKey] || 0;
 
 		// Change "Like" button title and class
 		if (hashover.classes.contains (actionLink, 'hashover-' + action) === true) {

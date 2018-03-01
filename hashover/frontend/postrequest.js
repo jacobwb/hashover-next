@@ -13,23 +13,23 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 	// AJAX response handler
 	function commentHandler (json)
 	{
-		var scrollToElement;
-
 		// Check if JSON includes a comment
 		if (json.comment !== undefined) {
 			// If so, execute callback function
-			callback.apply (hashover, [json, permalink, destination, isReply]);
+			callback.apply (hashover, [ json, permalink, destination, isReply ]);
 
 			// Execute callback function if one was provided
 			if (close !== null) {
 				close ();
 			}
 
+			// Get the comment element by its permalink
+			var scrollToElement = hashover.elements.get (json.comment.permalink, true);
+
 			// Scroll comment into view
-			scrollToElement = hashover.elements.get (json.comment.permalink, true);
 			scrollToElement.scrollIntoView ({ behavior: 'smooth' });
 
-			// Clear form
+			// And clear the comment form
 			form.comment.value = '';
 		} else {
 			// If not, display the message return instead

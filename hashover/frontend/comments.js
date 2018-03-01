@@ -44,7 +44,6 @@ HashOverConstructor.prototype.comments = {
 		var nameClass = 'hashover-name-plain';
 		var template = { permalink: commentKey };
 		var isReply = (parent !== null);
-		var parentPermalink;
 		var commentDate = comment.date;
 		var codeTagCount = 0;
 		var codeTags = [];
@@ -66,7 +65,10 @@ HashOverConstructor.prototype.comments = {
 
 		// Get parent comment via permalink
 		if (isReply === false && commentKey.indexOf ('r') > -1) {
-			parentPermalink = hashover.permalinks.getParent (commentKey);
+			// Get the parent comment permalink
+			var parentPermalink = hashover.permalinks.getParent (commentKey);
+
+			// Get the parent comment by its permalink
 			parent = hashover.permalinks.getComment (parentPermalink, hashover.instance.comments.primary);
 			isReply = (parent !== null);
 		}
@@ -281,7 +283,7 @@ HashOverConstructor.prototype.comments = {
 			body = body.replace (hashover.regex.imageTags, function (fullURL, url) {
 				// Check if embedded images are enabled
 				if (hashover.setup['allows-images'] !== false) {
-					return hashover.optionalMethod ('embedImage', [url], 'comments');
+					return hashover.optionalMethod ('embedImage', [ url ], 'comments');
 				}
 
 				// Convert image URL into an anchor tag

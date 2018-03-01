@@ -35,7 +35,7 @@ HashOver.prototype.addComments = function (comment, isReply, index)
 		}
 
 		// If not, create reply array
-		parent.replies = [comment];
+		parent.replies = [ comment ];
 	}
 
 	// Otherwise, add to primary comments

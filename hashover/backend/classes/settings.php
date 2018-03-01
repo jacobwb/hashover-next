@@ -107,6 +107,7 @@ class Settings extends Secrets
 
 	// External domains allowed to remotely load HashOver scripts
 	public $allowedDomains = array (
+		'127.0.0.1:8000'
 		// '*.example.com',
 		// '*.example.org',
 		// '*.example.net'
@@ -135,6 +136,9 @@ class Settings extends Secrets
 
 	public function __construct ()
 	{
+		// Theme path
+		$this->themePath = 'themes/' . $this->theme;
+
 		// Set server timezone
 		date_default_timezone_set ($this->serverTimezone);
 
@@ -187,9 +191,45 @@ class Settings extends Secrets
 		return false;
 	}
 
+	// Returns a server-side absolute file path
 	public function getAbsolutePath ($file)
 	{
 		return realpath ($this->rootDirectory . '/' . trim ($file, '/'));
+	}
+
+	// Returns a client-side path for a file within the HashOver root
+	public function getHttpPath ($file)
+	{
+		return $this->httpRoot . '/' . trim ($file, '/');
+	}
+
+	// Returns a client-side path for a file within the backend directory
+	public function getBackendPath ($file)
+	{
+		return $this->httpBackend . '/' . $file;
+	}
+
+	// Returns a client-side path for a file within the images directory
+	public function getImagePath ($filename)
+	{
+		return $this->httpImages . '/' . $filename . '.' . $this->imageFormat;
+	}
+
+	// Returns a client-side path for a file within the configured theme
+	public function getThemePath ($file)
+	{
+		// Path to the requested file in the configured theme
+		$theme_file = $this->themePath . '/' . $file;
+
+		// Use the same file from the default theme if it doesn't exist
+		if (!file_exists ($this->getAbsolutePath ($theme_file))) {
+			$theme_file = 'themes/default/' . $file;
+		}
+
+		// Convert the theme file path to one appropriate for HTTP use
+		$http_theme = $this->getHttpPath ($theme_file);
+
+		return $http_theme;
 	}
 
 	public function jsonSettings ()
@@ -233,6 +273,9 @@ class Settings extends Secrets
 	// Synchronizes specific settings after remote changes
 	public function syncSettings ()
 	{
+		// Theme path
+		$this->themePath = 'themes/' . $this->theme;
+
 		// Disable likes and dislikes if cookies are disabled
 		if ($this->setsCookies === false) {
 			$this->allowsLikes = false;

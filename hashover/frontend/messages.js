@@ -5,16 +5,17 @@ HashOver.prototype.messages = {
 	// Gets a computed element style by property
 	computeStyle: function (element, proterty, type)
 	{
-		var computedStyle;
+		// Check for modern browser support (Mozilla Firefox, Google Chrome)
+		if (window.getComputedStyle !== undefined) {
+			// If found, get the computed styles for the element
+			var computedStyle = window.getComputedStyle (element, null);
 
-		// IE, other
-		if (window.getComputedStyle === undefined) {
-			computedStyle = element.currentStyle[proterty];
+			// And get the specific property
+			computedStyle = computedStyle.getPropertyValue (proterty);
+		} else {
+			// Otherwise, assume we're in IE
+			var computedStyle = element.currentStyle[proterty];
 		}
-
-		// Mozilla Firefox, Google Chrome
-		computedStyle = window.getComputedStyle (element, null);
-		computedStyle = computedStyle.getPropertyValue (proterty);
 
 		// Cast value to specified type
 		switch (type) {
@@ -126,26 +127,23 @@ HashOver.prototype.messages = {
 		isReply = isReply || false;
 		isEdit = isEdit || false;
 
-		var container;
-		var message;
-
 		// Reference to this object
 		var messages = this;
 
 		// Decide which message element to use
 		if (isEdit === true) {
 			// An edit form message
-			container = this.parent.elements.get ('edit-message-container-' + permalink, true);
-			message = this.parent.elements.get ('edit-message-' + permalink, true);
+			var container = this.parent.elements.get ('edit-message-container-' + permalink, true);
+			var message = this.parent.elements.get ('edit-message-' + permalink, true);
 		} else {
 			if (isReply !== true) {
 				// The primary comment form message
-				container = this.parent.elements.get ('message-container', true);
-				message = this.parent.elements.get ('message', true);
+				var container = this.parent.elements.get ('message-container', true);
+				var message = this.parent.elements.get ('message', true);
 			} else {
 				// Of a reply form message
-				container = this.parent.elements.get ('reply-message-container-' + permalink, true);
-				message = this.parent.elements.get ('reply-message-' + permalink, true);
+				var container = this.parent.elements.get ('reply-message-container-' + permalink, true);
+				var message = this.parent.elements.get ('reply-message-' + permalink, true);
 			}
 		}
 

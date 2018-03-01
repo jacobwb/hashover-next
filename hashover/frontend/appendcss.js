@@ -1,6 +1,8 @@
 // Appends HashOver theme CSS to page head (appendcss.js)
-HashOverConstructor.prototype.appendCSS = function ()
+HashOverConstructor.prototype.appendCSS = function (id)
 {
+	id = id || 'hashover';
+
 	// Get the page head
 	var head = document.head || document.getElementsByTagName ('head')[0];
 
@@ -24,19 +26,24 @@ HashOverConstructor.prototype.appendCSS = function ()
 		type: 'text/css'
 	});
 
+	// Load and error event listener
+	function onLoadError ()
+	{
+		// Show the HashOver main element
+		mainElement.style.display = '';
+	}
+
 	// Check if browser supports CSS load event
 	if (css.onload !== undefined) {
 		// If so, get the main HashOver element
-		var mainElement = this.getMainElement ();
+		var mainElement = this.getMainElement (id);
 
 		// Hide the HashOver main element
 		mainElement.style.display = 'none';
 
-		// Add CSS load event listener
-		css.addEventListener ('load', function () {
-			// Show the HashOver main element
-			mainElement.style.display = '';
-		}, false);
+		// Add CSS load and error event listeners
+		css.addEventListener ('load', onLoadError, false);
+		css.addEventListener ('error', onLoadError, false);
 	}
 
 	// Append comment stylesheet link element to page head

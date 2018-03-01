@@ -28,9 +28,7 @@ HashOverConstructor.prototype.permalinks = {
 	// Find a comment by its permalink
 	getComment: function (permalink, comments)
 	{
-		var comment;
-
-		// Loop through all comments
+		// Run through all comments
 		for (var i = 0, il = comments.length; i < il; i++) {
 			// Return comment if its permalink matches
 			if (comments[i].permalink === permalink) {
@@ -39,7 +37,7 @@ HashOverConstructor.prototype.permalinks = {
 
 			// Recursively check replies when present
 			if (comments[i].replies !== undefined) {
-				comment = this.getComment (permalink, comments[i].replies);
+				var comment = this.getComment (permalink, comments[i].replies);
 
 				if (comment !== null) {
 					return comment;

@@ -94,10 +94,10 @@ try {
 			'allows-likes'		=> $hashover->setup->allowsLikes,
 			'time-format'		=> $hashover->setup->timeFormat,
 			'image-extensions'	=> $hashover->setup->imageTypes,
-			'image-placeholder'	=> $hashover->setup->httpImages . '/place-holder.' . $hashover->setup->imageFormat,
+			'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
 			'stream-mode'		=> ($hashover->setup->replyMode === 'stream'),
 			'stream-depth'		=> $hashover->setup->streamDepth,
-			'theme-css'		=> $hashover->setup->httpRoot . '/themes/' . $hashover->setup->theme . '/style.css',
+			'theme-css'		=> $hashover->setup->getThemePath ('comments.css'),
 			'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
 			'collapses-interface'	=> $hashover->setup->collapsesInterface,
 			'collapses-comments'	=> $hashover->setup->collapsesComments,
@@ -127,7 +127,7 @@ try {
 			'name-wrapper'		=> $hashover->ui->nameWrapper (),
 			'date-link'		=> $hashover->ui->dateLink (),
 			'comment-wrapper'	=> $hashover->ui->commentWrapper (),
-			'theme'			=> $hashover->templater->parseTheme (),
+			'theme'			=> $hashover->templater->parseTheme ('comments.html'),
 			'reply-form'		=> $hashover->ui->replyForm (),
 			'edit-form'		=> $hashover->ui->editForm ()
 		);

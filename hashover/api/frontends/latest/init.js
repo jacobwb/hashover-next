@@ -5,7 +5,7 @@ HashOverLatest.prototype.init = function ()
 	var comments = this.instance.comments.primary;
 
 	// Append theme CSS if enabled
-	this.optionalMethod ('appendCSS');
+	this.optionalMethod ('appendCSS', [ 'hashover-widget' ]);
 
 	// Add main HashOver element to this HashOver instance
 	this.instance['main-element'] = this.getMainElement ('hashover-widget');

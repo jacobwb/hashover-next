@@ -531,14 +531,18 @@ try {
 		$table->appendChild ($tr);
 	}
 
+	// Template data
+	$template = array (
+		'title'		=> $title,
+		'logout'	=> $logout->asHTML ("\t\t\t"),
+		'sub-title'	=> 'Change various settings',
+		'settings'	=> $table->asHTML ("\t\t\t"),
+		'save-button'	=> 'Save Settings'
+	);
+
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('settings.html', array (
-		'title' => $title,
-		'logout' => $logout->asHTML ("\t\t\t"),
-		'sub-title' => 'Change various settings',
-		'settings' => $table->asHTML ("\t\t\t"),
-		'save-button' => 'Save Settings'
-	));
+	echo $hashover->templater->parseTemplate ('settings.html', $template);
+
 } catch (\Exception $error) {
 	$misc = new Misc ('php');
 	$message = $error->getMessage ();

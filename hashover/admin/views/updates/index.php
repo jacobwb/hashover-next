@@ -21,12 +21,16 @@ try {
 	// View setup
 	require (realpath ('../view-setup.php'));
 
+	// Template data
+	$template = array (
+		'title'		=> 'Check for Updates',
+		'logout'	=> $logout->asHTML ("\t\t\t"),
+		'sub-title'	=> 'Coming soon'
+	);
+
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('updates.html', array (
-		'title' => 'Check for Updates',
-		'logout' => $logout->asHTML ("\t\t\t"),
-		'sub-title' => 'Coming soon'
-	));
+	echo $hashover->templater->parseTemplate ('updates.html', $template);
+
 } catch (\Exception $error) {
 	$misc = new Misc ('php');
 	$message = $error->getMessage ();

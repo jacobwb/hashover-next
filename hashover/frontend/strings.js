@@ -68,7 +68,7 @@ HashOverConstructor.prototype.strings = {
 				if (indexes[name] !== undefined) {
 					indexes[name].push (i);
 				} else {
-					indexes[name] = [i];
+					indexes[name] = [ i ];
 				}
 			}
 		}

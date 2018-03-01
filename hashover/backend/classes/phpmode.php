@@ -72,7 +72,7 @@ class PHPMode
 				'id' => 'hashover-reply-' . $permalink,
 				'class' => 'hashover-reply-form',
 				'method' => 'post',
-				'action' => $this->setup->httpBackend . '/form-actions.php'
+				'action' => $this->setup->getBackendPath ('form-actions.php')
 			));
 
 			$form->innerHTML ($this->ui->replyForm ($permalink, $file));
@@ -103,7 +103,7 @@ class PHPMode
 				'id' => 'hashover-edit-' . $permalink,
 				'class' => 'hashover-edit-form',
 				'method' => 'post',
-				'action' => $this->setup->httpBackend . '/form-actions.php'
+				'action' => $this->setup->getBackendPath ('form-actions.php')
 			), false);
 
 			$edit_form = $this->ui->editForm ($permalink, $file, $name, $website, $body, $status, $subscribed);
@@ -422,8 +422,11 @@ class PHPMode
 			$template['name'] = $this->ui->nameWrapper ($name_class, $comment['title']);
 		}
 
+		// Parse theme layout HTML template
+		$theme_html = $this->templater->parseTheme ('comments.html', $template);
+
 		// Comment HTML template
-		$comment_wrapper->innerHTML ($this->templater->parseTheme ($template));
+		$comment_wrapper->innerHTML ($theme_html);
 
 		// Recursively parse replies
 		if (!empty ($comment['replies'])) {

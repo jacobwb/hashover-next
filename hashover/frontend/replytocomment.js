@@ -44,7 +44,7 @@ HashOver.prototype.replyToComment = function (permalink)
 	this.formattingOnclick ('reply', permalink);
 
 	// Set onclick and onsubmit event handlers
-	this.elements.duplicateProperties (postReply, ['onclick', 'onsubmit'], function () {
+	this.elements.duplicateProperties (postReply, [ 'onclick', 'onsubmit' ], function () {
 		return hashover.postComment (destination, form, this, hashover.AJAXPost, 'reply', permalink, link.onclick, true, false);
 	});
 

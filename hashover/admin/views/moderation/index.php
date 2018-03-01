@@ -70,13 +70,17 @@ try {
 		$table->appendChild ($tr);
 	}
 
+	// Template data
+	$template = array (
+		'title'		=> 'Moderation',
+		'logout'	=> $logout->asHTML ("\t\t\t"),
+		'sub-title'	=> 'Post, edit, approve, and delete comments',
+		'threads'	=> $table->asHTML ("\t\t")
+	);
+
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('moderation.html', array (
-		'title' => 'Moderation',
-		'logout' => $logout->asHTML ("\t\t\t"),
-		'sub-title' => 'Post, edit, approve, and delete comments',
-		'threads' => $table->asHTML ("\t\t")
-	));
+	echo $hashover->templater->parseTemplate ('moderation.html', $template);
+
 } catch (\Exception $error) {
 	$misc = new Misc ('php');
 	$message = $error->getMessage ();

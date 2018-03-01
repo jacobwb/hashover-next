@@ -23,9 +23,14 @@
 			<h1 class="underlined">{hashover:title}</h1>
 
 			<form method="post">
-				<div><input type="text" name="name" placeholder="User Name"></div>
-				<div><input type="password" name="password" placeholder="Password"></div>
-				<p><input type="submit" value="{hashover:login}"></p>
+				<div><input type="text" name="name" placeholder="{hashover:name}"></div>
+				<div><input type="password" name="password" placeholder="{hashover:password}"></div>
+				<div><input type="text" name="email" placeholder="{hashover:email}"></div>
+				<div><input type="text" name="website" placeholder="{hashover:website}"></div>
+
+				<p>
+					<input type="submit" value="{hashover:login}">
+				</p>
 			</form>
 		</div>
 	</body>

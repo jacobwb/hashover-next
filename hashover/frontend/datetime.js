@@ -25,7 +25,6 @@ HashOverConstructor.prototype.dateTime = {
 		var offsetPositivity = (offsetHours > 0) ? '-' : '+';
 		var seconds = date.getSeconds ();
 		var year = date.getFullYear ();
-		var dateConstant;
 
 		var characters = {
 			a: ampm,
@@ -52,7 +51,10 @@ HashOverConstructor.prototype.dateTime = {
 			Y: year
 		};
 
-		dateConstant = format.replace (this.dashesRegex, '_');
+		// Convert dashes to underscores
+		var dateConstant = format.replace (this.dashesRegex, '_');
+
+		// Convert constant to uppercase
 		dateConstant = dateConstant.toUpperCase ();
 
 		switch (dateConstant) {

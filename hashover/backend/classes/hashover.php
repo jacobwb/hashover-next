@@ -156,7 +156,7 @@ class HashOver
 
 		// Do nothing if we're on localhost
 		if (in_array ($_SERVER['REMOTE_ADDR'], $addresses, true)) {
-			return;
+			//return;
 		}
 
 		// Attempt to save default page metadata
@@ -216,7 +216,7 @@ class HashOver
 		if ($this->thread->totalCount <= 1) {
 			$this->comments['primary'][] = array (
 				'title' => $this->locale->text['be-first-name'],
-				'avatar' => $this->setup->httpImages . '/first-comment.' . $this->setup->imageFormat,
+				'avatar' => $this->setup->getImagePath ('first-comment'),
 				'permalink' => 'c1',
 				'notice' => $this->locale->text['be-first-note'],
 				'notice-class' => 'hashover-first'

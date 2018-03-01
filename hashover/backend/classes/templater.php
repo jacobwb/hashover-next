@@ -109,17 +109,20 @@ class Templater
 		return $template;
 	}
 
-	public function parseTheme (array $template = array ())
+	public function parseTheme ($file, array $template = array ())
 	{
-		$relative_path = 'themes/' . $this->setup->theme . '/layout.html';
+		$relative_path = $this->setup->themePath . '/' . $file;
 		$theme = $this->setup->getAbsolutePath ($relative_path);
 
 		// Use default theme if theme in settings doesn't exist
 		if (!file_exists ($theme)) {
-			$relative_path = 'themes/default/layout.html';
+			$relative_path = 'themes/default/' . $file;
 			$theme = $this->setup->getAbsolutePath ($relative_path);
 		}
 
-		return $this->parseTemplate ($theme, $template);
+		// Parse the theme HTML as template
+		$theme_html = $this->parseTemplate ($theme, $template);
+
+		return $theme_html;
 	}
 }

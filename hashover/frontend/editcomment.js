@@ -50,7 +50,7 @@ HashOver.prototype.editComment = function (comment)
 
 	// Set status dropdown menu option to comment status
 	this.elements.exists ('edit-status-' + permalink, function (status) {
-		var statuses = ['approved', 'pending', 'deleted'];
+		var statuses = [ 'approved', 'pending', 'deleted' ];
 
 		if (comment.status !== undefined) {
 			status.selectedIndex = statuses.indexOf (comment.status);
@@ -88,7 +88,7 @@ HashOver.prototype.editComment = function (comment)
 	this.formattingOnclick ('edit', permalink);
 
 	// Set onclick and onsubmit event handlers
-	this.elements.duplicateProperties (saveEdit, ['onclick', 'onsubmit'], function () {
+	this.elements.duplicateProperties (saveEdit, [ 'onclick', 'onsubmit' ], function () {
 		return hashover.postComment (destination, form, this, hashover.AJAXEdit, 'edit', permalink, link.onclick, false, true);
 	});
 

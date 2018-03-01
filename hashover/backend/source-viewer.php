@@ -57,7 +57,7 @@ try {
 
 		// Run through HashOver files array
 		foreach ($source_code->files as $file) {
-			$path = $hashover->setup->httpRoot . '/' . $file['path'];
+			$path = $hashover->setup->getHttpPath ($file['path']);
 			$name = !empty ($file['name']) ? $file['name'] : basename ($path);
 			$href = '?file=' . $file['path'];
 

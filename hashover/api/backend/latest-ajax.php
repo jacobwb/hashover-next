@@ -69,20 +69,14 @@ try {
 		'user-is-logged-in'	=> $hashover->login->userIsLoggedIn,
 		'time-format'		=> $hashover->setup->timeFormat,
 		'image-extensions'	=> $hashover->setup->imageTypes,
-		'image-placeholder'	=> $hashover->setup->httpImages . '/place-holder.' . $hashover->setup->imageFormat,
-		'theme-css'		=> $hashover->setup->httpRoot . '/themes/' . $hashover->setup->theme . '/style.css',
+		'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
+		'theme-css'		=> $hashover->setup->getThemePath ('comments.css'),
 		'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
 		'uses-user-timezone'	=> $hashover->setup->usesUserTimezone,
 		'uses-short-dates'	=> $hashover->setup->usesShortDates,
 		'allows-images'		=> $hashover->setup->allowsImages,
 		'uses-markdown'		=> $hashover->setup->usesMarkdown
 	);
-
-	// Parse latest comments HTML template file
-	$theme = $hashover->setup->theme;
-	$relative_path = 'themes/' . $theme . '/widget-layout.html';
-	$html_path = $hashover->setup->getAbsolutePath ($relative_path);
-	$theme_html = $hashover->templater->parseTemplate ($html_path);
 
 	// Add UI HTML to data
 	$data['ui'] = array (
@@ -96,7 +90,7 @@ try {
 		'name-wrapper'		=> $hashover->ui->nameWrapper (),
 		'date-link'		=> $hashover->ui->dateLink (),
 		'comment-wrapper'	=> $hashover->ui->commentWrapper (),
-		'theme'			=> $theme_html
+		'theme'			=> $hashover->templater->parseTheme ('latest.html')
 	);
 
 	// Attempt to get comment thread from GET/POST data

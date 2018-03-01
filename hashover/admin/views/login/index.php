@@ -55,16 +55,28 @@ try {
 		$hashover->login->clearLogin ();
 
 		// And redirect user to main admin page
-		redirect ($hashover->setup->httpRoot . '/admin/');
+		redirect ($hashover->setup->getHttpPath ('admin'));
 	}
 
+	// Optional fields locale
+	$optional = mb_strtolower ($hashover->locale->text['optional']);
+	$optional = ' (' .$optional  . ')';
+
+	// Template data
+	$template = array (
+		'title'		=> $hashover->locale->text['login'],
+		'logout'	=> $logout->asHTML ("\t\t\t"),
+		'sub-title'	=> 'You must be logged as admin',
+		'name'		=> $hashover->locale->text['name'],
+		'password'	=> $hashover->locale->text['password'],
+		'email'		=> $hashover->locale->text['email'] . $optional,
+		'website'	=> $hashover->locale->text['website'] . $optional,
+		'login'		=> $hashover->locale->text['login']
+	);
+
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('login.html', array (
-		'title' => 'Login',
-		'logout' => $logout->asHTML ("\t\t\t"),
-		'sub-title' => 'You must be logged as admin',
-		'login' => 'Login'
-	));
+	echo $hashover->templater->parseTemplate ('login.html', $template);
+
 } catch (\Exception $error) {
 	$misc = new Misc ('php');
 	$message = $error->getMessage ();

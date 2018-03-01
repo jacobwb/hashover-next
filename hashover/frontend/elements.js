@@ -30,8 +30,6 @@ HashOverConstructor.prototype.elements = {
 		element = element || document.createElement ('span');
 		properties = properties || {};
 
-		var value;
-
 		// Add each property to element
 		for (var property in properties) {
 			if (properties.hasOwnProperty (property) === false) {
@@ -39,7 +37,7 @@ HashOverConstructor.prototype.elements = {
 			}
 
 			// Property value
-			value = properties[property];
+			var value = properties[property];
 
 			// If the property is an object add each item to existing property
 			if (!!value && value.constructor === Object) {

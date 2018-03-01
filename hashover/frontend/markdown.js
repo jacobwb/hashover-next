@@ -34,13 +34,12 @@ HashOverConstructor.prototype.markdown = {
 	{
 		var markName = 'CODE_' + display.toUpperCase ();
 		var markCount = this.codeMarkers[display].count++;
-		var codeMarker;
 
 		if (display !== 'block') {
-			codeMarker = first + markName + '[' + markCount + ']' + third;
+			var codeMarker = first + markName + '[' + markCount + ']' + third;
 			this.codeMarkers[display].marks[markCount] = this.parent.EOLTrim (second);
 		} else {
-			codeMarker = markName + '[' + markCount + ']';
+			var codeMarker = markName + '[' + markCount + ']';
 			this.codeMarkers[display].marks[markCount] = this.parent.EOLTrim (first);
 		}
 

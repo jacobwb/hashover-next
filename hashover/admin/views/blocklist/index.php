@@ -83,15 +83,19 @@ try {
 		$inputs->appendChild ($input);
 	}
 
+	// Template data
+	$template = array (
+		'title'		=> $title,
+		'logout'	=> $logout->asHTML ("\t\t\t"),
+		'sub-title'	=> 'Block specific IP addresses',
+		'inputs'	=> $inputs->getInnerHTML ("\t\t\t\t"),
+		'new-button'	=> '+ New Address',
+		'save-button'	=> 'Save Blocklist'
+	);
+
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('blocklist.html', array (
-		'title' => $title,
-		'logout' => $logout->asHTML ("\t\t\t"),
-		'sub-title' => 'Block specific IP addresses',
-		'inputs' => $inputs->getInnerHTML ("\t\t\t\t"),
-		'new-button' => '+ New Address',
-		'save-button' => 'Save Blocklist'
-	));
+	echo $hashover->templater->parseTemplate ('blocklist.html', $template);
+
 } catch (\Exception $error) {
 	$misc = new Misc ('php');
 	$message = $error->getMessage ();

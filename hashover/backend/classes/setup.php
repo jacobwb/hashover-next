@@ -111,7 +111,7 @@ class Setup extends Settings
 		if ($this->notificationEmail === 'example@example.com') {
 			throw new \Exception (sprintf (
 				'You must use a UNIQUE notification e-mail in %s',
-				$this->httpBackend . '/classes/settings.php'
+				$this->getBackendPath ('classes/settings.php')
 			));
 		}
 
@@ -119,7 +119,7 @@ class Setup extends Settings
 		if ($this->encryptionKey === '8CharKey') {
 			throw new \Exception (sprintf (
 				'You must use a UNIQUE encryption key in %s',
-				$this->httpBackend . '/classes/settings.php'
+				$this->getBackendPath ('classes/settings.php')
 			));
 		}
 
@@ -127,7 +127,7 @@ class Setup extends Settings
 		if ($this->adminPassword === 'password') {
 			throw new \Exception (sprintf (
 				'You must use a UNIQUE admin password in %s',
-				$this->httpBackend . '/classes/settings.php'
+				$this->getBackendPath ('classes/settings.php')
 			));
 		}
 

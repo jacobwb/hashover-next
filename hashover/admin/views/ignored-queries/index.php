@@ -112,15 +112,19 @@ try {
 		$inputs->appendChild ($input);
 	}
 
+	// Template data
+	$template = array (
+		'title'		=> $title,
+		'logout'	=> $logout->asHTML ("\t\t\t"),
+		'sub-title'	=> 'Filter which URL queries should be ignored',
+		'inputs'	=> $inputs->getInnerHTML ("\t\t\t\t"),
+		'new-button'	=> '+ New Query Pair',
+		'save-button'	=> 'Save Queries'
+	);
+
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('ignored-queries.html', array (
-		'title' => $title,
-		'logout' => $logout->asHTML ("\t\t\t"),
-		'sub-title' => 'Filter which URL queries should be ignored',
-		'inputs' => $inputs->getInnerHTML ("\t\t\t\t"),
-		'new-button' => '+ New Query Pair',
-		'save-button' => 'Save Queries'
-	));
+	echo $hashover->templater->parseTemplate ('ignored-queries.html', $template);
+
 } catch (\Exception $error) {
 	$misc = new Misc ('php');
 	$message = $error->getMessage ();
