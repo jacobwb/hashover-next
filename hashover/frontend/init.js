@@ -4,14 +4,20 @@ HashOver.prototype.init = function ()
 	// Store start time
 	this.execStart = Date.now ();
 
-	var hashover		= this;
-	var URLParts		= window.location.href.split ('#');
-	var URLHref		= URLParts[0];
-	var URLHash		= URLParts[1] || '';
-	var mainElement		= this.getMainElement ();
-	var postButton		= this.elements.get ('post-button');
-	var formEvents		= [ 'onclick', 'onsubmit' ];
-	var formElement		= this.elements.get ('form');
+	// Reference to this object
+	var hashover = this;
+
+	// Get the main HashOver element
+	var mainElement = this.getMainElement ();
+
+	// Form events that get the same listeners
+	var formEvents = [ 'onclick', 'onsubmit' ];
+
+	// Current page URL without the hash
+	var pageURL = window.location.href.split ('#')[0];
+
+	// Current page URL hash
+	var pageHash = window.location.hash.substr (1);
 
 	// Scrolls to a specified element
 	function scrollToElement (id)
@@ -27,11 +33,11 @@ HashOver.prototype.init = function ()
 		// Check if the comments are collapsed
 		if (hashover.setup['collapses-comments'] !== false) {
 			// Check if comment exists on the page
-			var linkedHidden = hashover.elements.exists (URLHash, function (comment) {
+			var linkedHidden = hashover.elements.exists (pageHash, function (comment) {
 				// Check if the comment is visable
 				if (hashover.classes.contains (comment, 'hashover-hidden') === false) {
 					// If so, scroll to the comment
-					scrollToElement (URLHash);
+					scrollToElement (pageHash);
 					return true;
 				}
 
@@ -43,12 +49,12 @@ HashOver.prototype.init = function ()
 				// If not, show more comments
 				hashover.showMoreComments (hashover.instance['more-link'], function () {
 					// Then scroll to comment
-					scrollToElement (URLHash);
+					scrollToElement (pageHash);
 				});
 			}
 		} else {
 			// If not, scroll to comment normally
-			scrollToElement (URLHash);
+			scrollToElement (pageHash);
 		}
 	}
 
@@ -56,12 +62,12 @@ HashOver.prototype.init = function ()
 	function prepareScroll ()
 	{
 		// Scroll the main HashOver element into view
-		if (URLHash.match (/comments|hashover/)) {
-			scrollToElement (URLHash);
+		if (pageHash.match (/comments|hashover/)) {
+			scrollToElement (pageHash);
 		}
 
 		// Check if we're scrolling to a comment
-		if (URLHash.match (/hashover-c[0-9]+r*/)) {
+		if (pageHash.match (/hashover-c[0-9]+r*/)) {
 			// If so, check if the user interface is collapsed
 			if (hashover.setup['collapses-interface'] !== false) {
 				// If so, scroll to it after uncollapsing the interface
@@ -135,6 +141,10 @@ HashOver.prototype.init = function ()
 	// Attach click event to formatting revealer hyperlink
 	this.formattingOnclick ('main');
 
+	// Get some various form elements
+	var postButton = this.elements.get ('post-button');
+	var formElement = this.elements.get ('form');
+
 	// Set onclick and onsubmit event handlers
 	this.elements.duplicateProperties (postButton, formEvents, function () {
 		return hashover.postComment (hashover.instance['sort-section'], formElement, postButton, hashover.AJAXPost);
@@ -176,22 +186,22 @@ HashOver.prototype.init = function ()
 	});
 
 	// Display reply or edit form when the proper URL queries are set
-	if (URLHref.match (/hashover-(reply|edit)=/)) {
-		var permalink = URLHref.replace (/.*?hashover-(edit|reply)=(c[0-9r\-pop]+).*?/, '$2');
+	if (pageURL.match (/hashover-(reply|edit)=/)) {
+		var permalink = pageURL.replace (/.*?hashover-(edit|reply)=(c[0-9r\-pop]+).*?/, '$2');
 
-		if (!URLHref.match ('hashover-edit=')) {
+		if (!pageURL.match ('hashover-edit=')) {
 			// Check if the comments are collapsed
 			if (hashover.setup['collapses-comments'] !== false) {
 				// If so, show more comments
 				this.showMoreComments (this.instance['more-link'], function () {
 					// Then display and scroll to reply form
 					hashover.replyToComment (permalink);
-					scrollToElement (URLHash);
+					scrollToElement (pageHash);
 				});
 			} else {
 				// If not, display and scroll to reply form
 				this.replyToComment (permalink);
-				scrollToElement (URLHash);
+				scrollToElement (pageHash);
 			}
 		} else {
 			var isPop = permalink.match ('-pop');
@@ -203,12 +213,12 @@ HashOver.prototype.init = function ()
 				this.showMoreComments (this.instance['more-link'], function () {
 					// Then display and scroll to edit form
 					hashover.editComment (hashover.permalinks.getComment (permalink, comments));
-					scrollToElement (URLHash);
+					scrollToElement (pageHash);
 				});
 			} else {
 				// If not, display and scroll to edit form
 				this.editComment (this.permalinks.getComment (permalink, comments));
-				scrollToElement (URLHash);
+				scrollToElement (pageHash);
 			}
 		}
 	}
