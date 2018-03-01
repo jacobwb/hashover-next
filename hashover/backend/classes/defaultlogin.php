@@ -23,6 +23,7 @@ class DefaultLogin
 	public $encryption;
 	public $cookies;
 	public $locale;
+	public $enabled = true;
 	public $name;
 	public $password;
 	public $loginHash;
@@ -36,8 +37,9 @@ class DefaultLogin
 		$this->cookies = $cookies;
 		$this->locale = $locale;
 
-		// Disable login is cookies are disabled
+		// Disable login if cookies are disabled
 		if ($setup->setsCookies === false) {
+			$this->enabled = false;
 			$setup->allowsLogin = false;
 			$setup->syncSettings ();
 		}

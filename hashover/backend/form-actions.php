@@ -62,10 +62,7 @@ try {
 
 		switch ($action) {
 			case 'login': {
-				if ($hashover->setup->allowsLogin !== false) {
-					$write_comments->login ();
-				}
-
+				$write_comments->login ();
 				break;
 			}
 

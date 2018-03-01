@@ -277,7 +277,9 @@ class WriteComments extends PostData
 	{
 		try {
 			// Log the user in
-			$this->login->setLogin ();
+			if ($this->setup->allowsLogin !== false) {
+				$this->login->setLogin ();
+			}
 
 			// Kick visitor back if told to
 			if ($kickback !== false) {

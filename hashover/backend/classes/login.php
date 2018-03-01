@@ -171,7 +171,7 @@ class Login extends PostData
 		$this->validateFields ();
 
 		// Execute login method's setLogin
-		if ($this->setup->allowsLogin !== false) {
+		if ($this->loginMethod->enabled === true) {
 			$this->loginMethod->setLogin ();
 		}
 	}
