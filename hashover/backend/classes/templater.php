@@ -111,18 +111,13 @@ class Templater
 
 	public function parseTheme ($file, array $template = array ())
 	{
-		$relative_path = $this->setup->themePath . '/' . $file;
-		$theme = $this->setup->getAbsolutePath ($relative_path);
-
-		// Use default theme if theme in settings doesn't exist
-		if (!file_exists ($theme)) {
-			$relative_path = 'themes/default/' . $file;
-			$theme = $this->setup->getAbsolutePath ($relative_path);
-		}
+		// Get the file path for the configured theme
+		$path = $this->setup->getThemePath ($file, false);
+		$path = $this->setup->getAbsolutePath ($path);
 
 		// Parse the theme HTML as template
-		$theme_html = $this->parseTemplate ($theme, $template);
+		$theme = $this->parseTemplate ($path, $template);
 
-		return $theme_html;
+		return $theme;
 	}
 }

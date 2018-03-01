@@ -206,17 +206,20 @@ class Settings extends Secrets
 	// Returns a client-side path for a file within the backend directory
 	public function getBackendPath ($file)
 	{
-		return $this->httpBackend . '/' . $file;
+		return $this->httpBackend . '/' . trim ($file, '/');
 	}
 
 	// Returns a client-side path for a file within the images directory
 	public function getImagePath ($filename)
 	{
-		return $this->httpImages . '/' . $filename . '.' . $this->imageFormat;
+		$path  = $this->httpImages . '/' . trim ($filename, '/');
+		$path .= '.' . $this->imageFormat;
+
+		return $path;
 	}
 
 	// Returns a client-side path for a file within the configured theme
-	public function getThemePath ($file)
+	public function getThemePath ($file, $http = true)
 	{
 		// Path to the requested file in the configured theme
 		$theme_file = $this->themePath . '/' . $file;
@@ -226,10 +229,12 @@ class Settings extends Secrets
 			$theme_file = 'themes/default/' . $file;
 		}
 
-		// Convert the theme file path to one appropriate for HTTP use
-		$http_theme = $this->getHttpPath ($theme_file);
+		// Convert the theme file path for HTTP use if told to
+		if ($http !== false) {
+			$theme_file = $this->getHttpPath ($theme_file);
+		}
 
-		return $http_theme;
+		return $theme_file;
 	}
 
 	public function jsonSettings ()
