@@ -47,5 +47,5 @@
 	"gravatar-default": "custom",
 	"minifies-javascript": false,
 	"minify-level": 4,
-	"allow-local-metadata": true
+	"allow-local-metadata": false
 }
