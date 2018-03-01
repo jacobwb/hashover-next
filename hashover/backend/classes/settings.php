@@ -96,6 +96,7 @@ class Settings extends Secrets
 	public $latestMax		= 10;				// Maximum number of comments to save as latest comments
 	public $latestTrimWidth		= 100;				// Number of characters to trim latest comments to, 0 for no trim
 	public $userDeletionsUnlink	= false;			// Whether user deleted files are actually unlinked from the filesystem
+	public $allowLocalMetadata	= false;			// Whether default metadata should be collected while running on a local server
 
 	// Types of images allowed to be embedded in comments
 	public $imageTypes = array (

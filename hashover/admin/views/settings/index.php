@@ -350,6 +350,11 @@ function settings_array (Setup $setup)
 				3 => 'Medium (removes newlines + Low)',
 				4 => 'High (removes extra bits + Medium)'
 			)
+		),
+		'allow-local-metadata' => array (
+			'description' => 'Allow page metadata to be updated from localhost',
+			'type' => 'checkbox',
+			'value' => $setup->allowLocalMetadata
 		)
 	);
 }

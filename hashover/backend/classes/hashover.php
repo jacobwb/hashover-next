@@ -151,12 +151,15 @@ class HashOver
 	// Save various metadata about the page
 	public function defaultMetadata ()
 	{
-		// Localhost equivalent addresses
+		// "localhost" equivalent addresses
 		$addresses = array ('127.0.0.1', '::1', 'localhost');
 
-		// Do nothing if we're on localhost
-		if (in_array ($_SERVER['REMOTE_ADDR'], $addresses, true)) {
-			//return;
+		// Check if local metadata is disabled
+		if ($this->setup->allowLocalMetadata !== true) {
+			// If so, do nothing if we're on localhost
+			if (in_array ($_SERVER['REMOTE_ADDR'], $addresses, true)) {
+				return;
+			}
 		}
 
 		// Attempt to save default page metadata
