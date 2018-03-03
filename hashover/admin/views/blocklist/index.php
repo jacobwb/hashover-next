@@ -27,10 +27,6 @@ try {
 	// Blocklist JSON file location
 	$blocklist_file = $hashover->setup->getAbsolutePath ('config/blocklist.json');
 
-	// Submission indicators
-	$title = 'IP Address Blocklist';
-	$submitted = false;
-
 	// Check if the form has been submitted
 	if (!empty ($_POST['addresses']) and is_array ($_POST['addresses'])) {
 		// If so, run through submitted addresses
@@ -43,21 +39,23 @@ try {
 
 		// Save the JSON data to the blocklist file
 		if ($data_files->saveJSON ($blocklist_file, $blocklist)) {
-			// Set submission indicators
-			$title = 'Blocklist Saved!';
-			$submitted = true;
+			// Redirect with success indicator
+			header ('Location: index.php?status=success');
 		} else {
-			// Set submission indicators
-			$title = 'Failed to Save Blocklist!';
+			// Redirect with failure indicator
+			header ('Location: index.php?status=failure');
 		}
-	} else {
-		// Load and parse blocklist file
-		$json = $data_files->readJSON ($blocklist_file);
 
-		// Check for JSON parse error
-		if (is_array ($json)) {
-			$blocklist = $json;
-		}
+		// Exit after redirect
+		exit;
+	}
+
+	// Otherwise, load and parse blocklist file
+	$json = $data_files->readJSON ($blocklist_file);
+
+	// Check for JSON parse error
+	if (is_array ($json)) {
+		$blocklist = $json;
 	}
 
 	// IP Address inputs
@@ -81,6 +79,24 @@ try {
 
 		// Add input to inputs container
 		$inputs->appendChild ($input);
+	}
+
+	// Page title based on the status indicator
+	switch (!empty ($_GET['status']) ? $_GET['status'] : 'default') {
+		case 'success': {
+			$title = 'IP Address Blocklist - Saved!';
+			break;
+		}
+
+		case 'failure': {
+			$title = 'IP Address Blocklist - Failure!';
+			break;
+		}
+
+		default: {
+			$title = 'IP Address Blocklist';
+			break;
+		}
 	}
 
 	// Template data

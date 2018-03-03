@@ -58,7 +58,7 @@ $logout = new HTMLTag ('span', array (
 		new HTMLTag ('a', array (
 			'href' => '../login/?logout=true',
 			'target' => '_parent',
-			'innerHTML' => 'Logout'
+			'innerHTML' => $hashover->locale->text['logout']
 		))
 	)
 ));

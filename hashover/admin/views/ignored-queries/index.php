@@ -27,10 +27,6 @@ try {
 	// Ignored URL queries JSON file location
 	$ignored_queries_file = $hashover->setup->getAbsolutePath ('config/ignored-queries.json');
 
-	// Submission indicators
-	$title = 'Ignored URL Queries';
-	$submitted = false;
-
 	// Check if the form has been submitted
 	if (!empty ($_POST['names']) and is_array ($_POST['names'])
 	    and !empty ($_POST['values']) and is_array ($_POST['values']))
@@ -55,21 +51,23 @@ try {
 
 		// Save the JSON data to the URL Query Pairs file
 		if ($data_files->saveJSON ($ignored_queries_file, $ignored_queries)) {
-			// Set submission indicators
-			$title = 'Queries Saved!';
-			$submitted = true;
+			// Redirect with success indicator
+			header ('Location: index.php?status=success');
 		} else {
-			// Set submission indicators
-			$title = 'Failed to Save URL Query Filters!';
+			// Redirect with failure indicator
+			header ('Location: index.php?status=failure');
 		}
-	} else {
-		// Load and parse URL Query Pairs file
-		$json = $data_files->readJSON ($ignored_queries_file);
 
-		// Check for JSON parse error
-		if (is_array ($json)) {
-			$ignored_queries = $json;
-		}
+		// Exit after redirect
+		exit;
+	}
+
+	// Otherwise, load and parse URL Query Pairs file
+	$json = $data_files->readJSON ($ignored_queries_file);
+
+	// Check for JSON parse error
+	if (is_array ($json)) {
+		$ignored_queries = $json;
 	}
 
 	// URL Query Pair inputs
@@ -110,6 +108,24 @@ try {
 
 		// Add input to inputs container
 		$inputs->appendChild ($input);
+	}
+
+	// Page title based on the status indicator
+	switch (!empty ($_GET['status']) ? $_GET['status'] : 'default') {
+		case 'success': {
+			$title = 'Ignored URL Queries - Saved!';
+			break;
+		}
+
+		case 'failure': {
+			$title = 'Ignored URL Queries - Failure!';
+			break;
+		}
+
+		default: {
+			$title = 'Ignored URL Queries';
+			break;
+		}
 	}
 
 	// Template data

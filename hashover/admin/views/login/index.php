@@ -58,10 +58,6 @@ try {
 		redirect ($hashover->setup->getHttpPath ('admin'));
 	}
 
-	// Optional fields locale
-	$optional = mb_strtolower ($hashover->locale->text['optional']);
-	$optional = ' (' .$optional  . ')';
-
 	// Template data
 	$template = array (
 		'title'		=> $hashover->locale->text['login'],
@@ -69,8 +65,8 @@ try {
 		'sub-title'	=> 'You must be logged as admin',
 		'name'		=> $hashover->locale->text['name'],
 		'password'	=> $hashover->locale->text['password'],
-		'email'		=> $hashover->locale->text['email'] . $optional,
-		'website'	=> $hashover->locale->text['website'] . $optional,
+		'email'		=> $hashover->locale->optionalize ('email'),
+		'website'	=> $hashover->locale->optionalize ('website'),
 		'login'		=> $hashover->locale->text['login']
 	);
 

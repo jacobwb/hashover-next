@@ -18,6 +18,10 @@ body {
 	width: 100%;
 }
 
+input[name="name"], input[name="password"] {
+	font-weight: bold;
+}
+
 #login.red {
 	border-color: #FF0000;
 }

@@ -363,10 +363,6 @@ try {
 	// View setup
 	require (realpath ('../view-setup.php'));
 
-	// Submission indicators
-	$title = 'Settings';
-	$submitted = false;
-
 	// Check if the form has been submitted
 	if (isset ($_POST['save'])) {
 		// Array for settings JSON data
@@ -406,16 +402,18 @@ try {
 			// Sync settings with settings JSON file
 			$hashover->setup->JSONSettings ();
 
-			// Set submission indicators
-			$title = 'Settings Saved!';
-			$submitted = true;
+			// Redirect with success indicator
+			header ('Location: index.php?status=success');
 		} else {
-			// Set submission indicators
-			$title = 'Failed to Settings!';
+			// Redirect with failure indicator
+			header ('Location: index.php?status=failure');
 		}
+
+		// Exit after redirect
+		exit;
 	}
 
-	// Create settings table
+	// Otherwise, create settings table
 	$table = new HTMLTag ('table', array (
 		'id' => 'settings',
 		'class' => 'p-spaced',
@@ -534,6 +532,24 @@ try {
 
 		// Add row to settings table
 		$table->appendChild ($tr);
+	}
+
+	// Page title based on the status indicator
+	switch (!empty ($_GET['status']) ? $_GET['status'] : 'default') {
+		case 'success': {
+			$title = 'Settings - Saved!';
+			break;
+		}
+
+		case 'failure': {
+			$title = 'Settings - Failure!';
+			break;
+		}
+
+		default: {
+			$title = 'Settings';
+			break;
+		}
 	}
 
 	// Template data
