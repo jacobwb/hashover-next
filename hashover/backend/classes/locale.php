@@ -105,33 +105,56 @@ class Locale
 		}
 	}
 
+	// Injects optionality into a given locale string
+	public function optionality ($locale, $choice = 'optional')
+	{
+		// Optionality locale key (default to optional)
+		$key = ($choice === 'required') ? 'required' : 'optional';
+
+		// Optionality locale string
+		$optionality = mb_strtolower ($this->text[$key]);
+
+		// Inject optionality into locale string
+		$new_locale = sprintf ($locale, $optionality);
+
+		return $new_locale;
+	}
+
+	// Adds optionality to any given locale string
+	public function optionalize ($key, $choice = 'optional')
+	{
+		return $this->optionality ($this->text[$key] . ' (%s)', $choice);
+	}
+
 	// Prepares locale by modifying them in various ways
 	public function prepareLocale ()
 	{
+		// Add optionality to form field title locales
+		foreach ($this->setup->fieldOptions as $field => $option) {
+			// Title locale key
+			$tooltip_key = $field . '-tip';
+
+			// Title locale string
+			$tooltip_locale = $this->text[$tooltip_key];
+
+			// Inject optionality into title locale
+			$optionality = $this->optionality ($tooltip_locale, $option);
+
+			// Update the locale
+			$this->text[$tooltip_key] = $optionality;
+		}
+
+		// Run through each locale string
 		foreach ($this->text as $key => $value) {
 			switch ($key) {
-				// Add optionality to form field title locales
-				case 'name-tip':
-				case 'password-tip':
-				case 'email-tip':
-				case 'website-tip': {
-					$field = str_replace ('-tip', '', $key);
-					$option = $this->setup->fieldOptions[$field];
-					$option = ($option === 'required') ? 'required' : 'optional';
-					$option_locale = mb_strtolower ($this->text[$option]);
-
-					$field_tip = sprintf ($this->text[$key], $option_locale);
-					$this->text[$key] = $field_tip;
-					break;
-				}
-
 				// Inject date and time formats into date-time locale
 				case 'date-time': {
-					$date_format = $this->setup->dateFormat;
-					$time_format = $this->setup->timeFormat;
+					$this->text[$key] = sprintf (
+						$value,
+						$this->setup->dateFormat,
+						$this->setup->timeFormat
+					);
 
-					$date_time = sprintf ($value, $date_format, $time_format);
-					$this->text[$key] = $date_time;
 					break;
 				}
 			}
