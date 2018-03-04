@@ -46,6 +46,10 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
+			'path' => 'admin/views/moderation/threads.php'
+		),
+		array (
+			'type' => 'Script',
 			'path' => 'admin/views/settings/index.php'
 		),
 		array (
@@ -326,6 +330,10 @@ class SourceCode
 		array (
 			'type' => 'Script',
 			'path' => 'backend/nocache-headers.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'backend/php-setup.php'
 		),
 		array (
 			'type' => 'Script',
