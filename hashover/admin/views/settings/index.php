@@ -18,7 +18,7 @@
 
 
 // Generates an array of various settings information
-function settings_array (Setup $setup)
+function ui_array (Setup $setup)
 {
 	// Theme names
 	$themes = array ();
@@ -363,13 +363,22 @@ try {
 	// View setup
 	require (realpath ('../view-setup.php'));
 
+	// Get array of UI elements to create
+	$ui = ui_array ($hashover->setup);
+
 	// Check if the form has been submitted
 	if (isset ($_POST['save'])) {
-		// Array for settings JSON data
-		$settings = array ();
+		// Settings JSON file path
+		$settings_file = $hashover->setup->getAbsolutePath ('config/settings.json');
+
+		// Read JSON settings file
+		$json = $data_files->readJSON ($settings_file);
+
+		// Existing JSON settings or an empty array
+		$settings = ($json !== false) ? $json : array ();
 
 		// Run through configurable settings
-		foreach (settings_array ($hashover->setup) as $name => $setting) {
+		foreach ($ui as $name => $setting) {
 			// Use specified type or optional cast
 			$type = !empty ($setting['cast']) ? 'cast' : 'type';
 
@@ -394,14 +403,8 @@ try {
 			}
 		}
 
-		// Settings JSON file path
-		$settings_file = $hashover->setup->getAbsolutePath ('config/settings.json');
-
-		// Save the JSON data to the settings JSON file
+		// Save the settings to the JSON settings file
 		if ($data_files->saveJSON ($settings_file, $settings)) {
-			// Sync settings with settings JSON file
-			$hashover->setup->JSONSettings ();
-
 			// Redirect with success indicator
 			header ('Location: index.php?status=success');
 		} else {
@@ -422,7 +425,7 @@ try {
 	));
 
 	// Create settings table
-	foreach (settings_array ($hashover->setup) as $name => $setting) {
+	foreach ($ui as $name => $setting) {
 		// Create table row
 		$tr = new HTMLTag ('tr');
 
