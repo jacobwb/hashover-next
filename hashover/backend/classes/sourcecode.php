@@ -202,11 +202,6 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
-			'name' => 'RegexExtractor',
-			'path' => 'backend/classes/regexextractor.php'
-		),
-		array (
-			'type' => 'Class',
 			'name' => 'Settings',
 			'path' => 'backend/classes/settings.php'
 		),
