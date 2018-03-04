@@ -432,16 +432,9 @@ class Setup extends Settings
 		$this->pageTitle = $title;
 	}
 
-	// Check if user name and password again admin name and password
+	// Strict verification of an admin login
 	public function verifyAdmin ($name, $password)
 	{
-		// Check if user is logged in as admin
-		if ($name === $this->adminName) {
-			if ($this->encryption->verifyHash ($this->adminPassword, $password) === true) {
-				return true;
-			}
-		}
-
-		return false;
+		return $this->encryption->verifyHash ($this->adminPassword, $password);
 	}
 }

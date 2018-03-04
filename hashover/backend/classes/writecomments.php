@@ -334,9 +334,7 @@ class WriteComments extends PostData
 		}
 
 		// Check if we have both required passwords
-		if (!empty ($this->postData['password'])
-		    and !empty ($auth['comment']['password']))
-		{
+		if (!empty ($this->postData['password']) and !empty ($auth['comment']['password'])) {
 			// If so, get the user input password
 			$user_password = $this->encodeHTML ($this->postData['password']);
 
@@ -439,16 +437,24 @@ class WriteComments extends PostData
 		// Default status
 		$new_status = 'approved';
 
-		// Check if setup is for a comment edit
-		if ($editing === true) {
-			// If so, mimic normal user login
-			$this->login->prepareCredentials ();
-			$this->login->updateCredentials ();
-		} else {
-			// If not, setup initial login information
-			if ($this->login->userIsLoggedIn !== true) {
-				$this->login->setCredentials ();
+		// Check if required fields have values
+		$this->login->validateFields ();
+
+		// Post fails when comment is empty
+		if (empty ($this->postData['comment'])) {
+			// Set cookies to indicate failure
+			if ($this->viaAJAX !== true) {
+				$this->cookies->setFailedOn ('comment', $this->replyTo);
 			}
+
+			// Set reply cookie
+			if (!empty ($this->replyTo)) {
+				// Throw exception about reply requirement
+				throw new \Exception ($this->locale->text['reply-needed']);
+			}
+
+			// Throw exception about comment requirement
+			throw new \Exception ($this->locale->text['comment-needed']);
 		}
 
 		// Check if user is admin
@@ -476,24 +482,16 @@ class WriteComments extends PostData
 			}
 		}
 
-		// Check if required fields have values
-		$this->login->validateFields ();
-
-		// Post fails when comment is empty
-		if (empty ($this->postData['comment'])) {
-			// Set cookies to indicate failure
-			if ($this->viaAJAX !== true) {
-				$this->cookies->setFailedOn ('comment', $this->replyTo);
+		// Check if setup is for a comment edit
+		if ($editing === true) {
+			// If so, mimic normal user login
+			$this->login->prepareCredentials ();
+			$this->login->updateCredentials ();
+		} else {
+			// If not, setup initial login information
+			if ($this->login->userIsLoggedIn !== true) {
+				$this->login->setCredentials ();
 			}
-
-			// Set reply cookie
-			if (!empty ($this->replyTo)) {
-				// Throw exception about reply requirement
-				throw new \Exception ($this->locale->text['reply-needed']);
-			}
-
-			// Throw exception about comment requirement
-			throw new \Exception ($this->locale->text['comment-needed']);
 		}
 
 		// Escape disallowed characters in login information
