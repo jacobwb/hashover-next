@@ -149,6 +149,12 @@ class Setup extends Settings
 				$this->imageFormat = 'svg';
 			}
 		}
+
+		// Check if this is a request from the moderation panel
+		if ($this->usage['context'] === 'moderation') {
+			// If so, always load CSS
+			$this->appendsCss = true;
+		}
 	}
 
 	public function extensionsLoaded (array $extensions)
