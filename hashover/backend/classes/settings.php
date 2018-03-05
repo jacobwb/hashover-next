@@ -151,6 +151,13 @@ class Settings extends Secrets
 
 		// Get HTTP parent directory
 		$document_root = realpath ($_SERVER['DOCUMENT_ROOT']);
+
+		if (mb_substr ($root_directory, 0, mb_strlen ($document_root)) != $document_root) {
+			throw new \Exception (sprintf (
+				'PHP root directory (%s) does not start with the HTTP document root (%s)!',
+				$root_directory, $document_root
+			));
+		}
 		$http_directory = mb_substr ($root_directory, mb_strlen ($document_root));
 
 		// Replace backslashes with forward slashes on Windows
