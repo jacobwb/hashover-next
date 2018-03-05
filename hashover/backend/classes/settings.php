@@ -137,6 +137,8 @@ class Settings extends Secrets
 
 	public function __construct ()
 	{
+		parent::__construct();
+
 		// Theme path
 		$this->themePath = 'themes/' . $this->theme;
 
@@ -192,10 +194,13 @@ class Settings extends Secrets
 		return false;
 	}
 
-	// Returns a server-side absolute file path
+	// Given a path relative to the HashOver root directory,
+	// returns the server-side absolute file path
 	public function getAbsolutePath ($file)
 	{
-		return realpath ($this->rootDirectory . '/' . trim ($file, '/'));
+		// NB: Not using realpath() here to allow working with paths not
+		// pointing to existing files, and to avoid unnecessary symlink resolution.
+		return $this->rootDirectory . '/' . trim ($file, '/');
 	}
 
 	// Returns a client-side path for a file within the HashOver root

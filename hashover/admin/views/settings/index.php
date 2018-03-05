@@ -411,7 +411,7 @@ try {
 			$submitted = true;
 		} else {
 			// Set submission indicators
-			$title = 'Failed to Settings!';
+			$title = 'Failed to save Settings!';
 		}
 	}
 
