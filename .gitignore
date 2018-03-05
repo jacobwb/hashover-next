@@ -1,2 +1,5 @@
 /hashover/comments/
 /hashover/config/secrets.ini
+/hashover/config/blocklist.json
+/hashover/config/ignored-queries.json
+/hashover/config/settings.json
