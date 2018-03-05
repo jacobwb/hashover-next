@@ -23,6 +23,10 @@ class Secrets
 	// Login password to gain admin rights (case-sensitive)
 	protected $adminPassword = 'passwd';
 
+	// HTTP root directory. This is usually auto-detected correctly,
+	// so it does not need to be set in most circumstances.
+	protected $httpRootDirectory = NULL;
+
 	protected function getSecretConfigPath() {
 		return dirname(dirname(__DIR__)) . '/config/secrets.ini';
 	}
@@ -41,5 +45,7 @@ class Secrets
 		$this->encryptionKey = $arr['encryption-key'];
 		$this->adminName = $arr['admin-name'];
 		$this->adminPassword = $arr['admin-password'];
+		if (isset($arr['http-root-directory']))
+			$this->httpRootDirectory = $arr['http-root-directory'];
 	}
 }

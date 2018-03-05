@@ -154,15 +154,16 @@ class Settings extends Secrets
 		// Get HTTP parent directory
 		$document_root = realpath ($_SERVER['DOCUMENT_ROOT']);
 
-		if (defined('HASHOVER_HTTP_DIRECTORY')) {
-			$http_directory = HASHOVER_HTTP_DIRECTORY;
+		if ($this->httpRootDirectory !== NULL) {
+			$http_directory = $this->httpRootDirectory;
 		} else {
 			if (mb_substr ($root_directory, 0, mb_strlen ($document_root)) != $document_root) {
 				throw new \Exception (sprintf (
 					'PHP root directory (%s) does not start with the HTTP document root (%s)! ' .
-					'Please define HASHOVER_HTTP_DIRECTORY pointing to the HTTP URL ' .
+					'Please set http-root-directory in %s pointing to the HTTP URL ' .
 					'of the root HashOver directory (e.g. "/hashover").',
-					$root_directory, $document_root
+					$root_directory, $document_root,
+					$this->getSecretConfigPath()
 				));
 			}
 			$http_directory = mb_substr ($root_directory, mb_strlen ($document_root));
