@@ -146,9 +146,10 @@ class CommentParser
 				$output['user-owned'] = true;
 
 				// Check if the comment is editable
-				if (!empty ($comment['password'])) {
-					$output['editable'] = true;
-				}
+				if ($this->setup->autoPasswords)
+					$output['editable'] = $output['user-owned'];
+				else
+					$output['editable'] = !empty ($comment['password']);
 			}
 		}
 
