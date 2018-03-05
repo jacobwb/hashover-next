@@ -137,6 +137,8 @@ class Settings extends Secrets
 
 	public function __construct ()
 	{
+		parent::__construct();
+
 		// Theme path
 		$this->themePath = 'themes/' . $this->theme;
 
