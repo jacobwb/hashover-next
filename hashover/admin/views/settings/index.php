@@ -95,6 +95,54 @@ function settings_array (Setup $setup)
 			'type' => 'checkbox',
 			'value' => $setup->allowsImages
 		),
+		'field-options/name' => array (
+			'description' => 'Name field',
+			'type' => 'select',
+			'value' => $setup->fieldOptions['name'],
+			'cast' => 'bool',
+
+			'options' => array(
+				false => 'Disabled',
+				true => 'Optional',
+				'required' => 'Required',
+			)
+		),
+		'field-options/password' => array (
+			'description' => 'Password field',
+			'type' => 'select',
+			'value' => $setup->fieldOptions['password'],
+			'cast' => 'bool',
+
+			'options' => array(
+				false => 'Disabled',
+				true => 'Optional',
+				'required' => 'Required',
+			)
+		),
+		'field-options/email' => array (
+			'description' => 'Email field',
+			'type' => 'select',
+			'value' => $setup->fieldOptions['email'],
+			'cast' => 'bool',
+
+			'options' => array(
+				false => 'Disabled',
+				true => 'Optional',
+				'required' => 'Required',
+			)
+		),
+		'field-options/website' => array (
+			'description' => 'Website field',
+			'type' => 'select',
+			'value' => $setup->fieldOptions['website'],
+			'cast' => 'bool',
+
+			'options' => array(
+				false => 'Disabled',
+				true => 'Optional',
+				'required' => 'Required',
+			)
+		),
 		'allows-login' => array (
 			'description' => 'Allow users to login',
 			'type' => 'checkbox',
@@ -380,21 +428,37 @@ try {
 			switch ($setting[$type]) {
 				// Set value to boolean based on POST data
 				case 'checkbox': {
-					$settings[$name] = isset ($_POST[$name]);
+					$value = isset ($_POST[$name]);
 					break;
 				}
 
 				// Cast number values to integers
 				case 'number': {
-					$settings[$name] = (int)($_POST[$name]);
+					$value = (int)($_POST[$name]);
+					break;
+				}
+
+				// Convert string booleans to real booleans
+				case 'bool': {
+					switch ($_POST[$name]) {
+						case 'false': $value = false; break;
+						case 'true' : $value = true ; break;
+						default: $value = $_POST[$name];
+					}
 					break;
 				}
 
 				// All other values are strings
 				default: {
-					$settings[$name] = (string)($_POST[$name]);
+					$value = (string)($_POST[$name]);
 					break;
 				}
+			}
+			if (strpos($name, '/') === false)
+				$settings[$name] = $value;
+			else {
+				$path = explode('/', $name);
+				$settings[$path[0]][$path[1]] = $value;
 			}
 		}
 
@@ -504,9 +568,19 @@ try {
 				));
 
 				foreach ($setting['options'] as $value => $text) {
+					$strvalue = (string)$value;
+
+					// Booleans can't be PHP array keys.
+					if (!empty ($setting['cast'])
+						&& $setting['cast'] === 'bool'
+						&& gettype($value) == 'integer') {
+						$value = (boolean)$value;
+						$strvalue = $value ? 'true' : 'false';
+					}
+
 					// Create setting option
 					$option = new HTMLTag ('option', array (
-						'value' => $value,
+						'value' => $strvalue,
 						'innerHTML' => $text
 					), false);
 
