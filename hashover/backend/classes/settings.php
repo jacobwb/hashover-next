@@ -134,6 +134,7 @@ class Settings extends Secrets
 	public $httpImages;
 	public $cookieExpiration;
 	public $domain;
+	public $autoPasswords;
 
 	public function __construct ()
 	{
@@ -307,8 +308,20 @@ class Settings extends Secrets
 			$this->allowsLogin = false;
 		}
 
+		// Automatic passwords are enabled iff:
+		// - The password field is disabled
+		// - Normal login is disabled
+		// - Automatic login is enabled
+		// As there is no way to log in "normally", a random
+		// password will be generated nd the user will be
+		// logged in, allowing them to redact their comments
+		// as long as the cookie lasts.
+		$this->autoPasswords = $this->fieldOptions['password'] === false
+				     && $this->allowsLogin === false
+				     && $this->usesAutoLogin === true;
+
 		// Disable autologin if login is disabled
-		if ($this->allowsLogin === false) {
+		if ($this->allowsLogin === false && $this->autoPasswords === false) {
 			$this->usesAutoLogin = false;
 		}
 

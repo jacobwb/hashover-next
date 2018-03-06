@@ -277,7 +277,8 @@ class WriteComments extends PostData
 	{
 		try {
 			// Log the user in
-			if ($this->setup->allowsLogin !== false) {
+			if ($this->setup->allowsLogin !== false
+				|| $this->setup->autoPasswords !== false) {
 				$this->login->setLogin ();
 			}
 
@@ -333,18 +334,25 @@ class WriteComments extends PostData
 			return $auth;
 		}
 
-		// Check if we have both required passwords
-		if (!empty ($this->postData['password'])
-		    and !empty ($auth['comment']['password']))
-		{
-			// If so, get the user input password
-			$user_password = $this->encodeHTML ($this->postData['password']);
+		// In auto-password mode, just verify the login-id
+		if ($this->setup->autoPasswords) {
+			$auth['user-owned'] = !empty($this->login->loginHash)
+					    && !empty($auth['comment']['login_id'])
+					    && $this->login->loginHash == $auth['comment']['login_id'];
+		} else {
+			// Check if we have both required passwords
+			if (!empty ($this->postData['password'])
+			    and !empty ($auth['comment']['password']))
+			{
+				// If so, get the user input password
+				$user_password = $this->encodeHTML ($this->postData['password']);
 
-			// Get the comment password
-			$comment_password = $auth['comment']['password'];
+				// Get the comment password
+				$comment_password = $auth['comment']['password'];
 
-			// Attempt to compare the two passwords
-			$auth['user-owned'] = $this->encryption->verifyHash ($user_password, $comment_password);
+				// Attempt to compare the two passwords
+				$auth['user-owned'] = $this->encryption->verifyHash ($user_password, $comment_password);
+			}
 		}
 
 		// Set general authorization state

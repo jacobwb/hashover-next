@@ -83,8 +83,16 @@ class Login extends PostData
 			$password = $password ? $password : $random_password;
 		}
 
-		// Generate a RIPEMD-160 hash to indicate user login
-		$this->loginMethod->loginHash = hash ('ripemd160', $name . $password);
+		// Don't reset the login cookie in auto-passwords mode, as
+		// that will effectively log the user out
+		if ($this->setup->autoPasswords !== false
+			&& !empty($this->loginMethod->loginHash)
+			&& $this->cookies->getValue ('login') !== null) {
+			$this->loginMethod->loginHash = $this->cookies->getValue ('login');
+		} else {
+			// Generate a RIPEMD-160 hash to indicate user login
+			$this->loginMethod->loginHash = hash ('ripemd160', $name . $password);
+		}
 
 		// Set e-mail address
 		if (isset ($this->postData['email'])) {
