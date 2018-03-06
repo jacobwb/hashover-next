@@ -298,6 +298,10 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
+			'path' => 'backend/locales/ru.php'
+		),
+		array (
+			'type' => 'Script',
 			'path' => 'backend/locales/tr.php'
 		),
 		array (

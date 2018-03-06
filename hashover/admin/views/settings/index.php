@@ -54,6 +54,7 @@ function settings_array (Setup $setup)
 				'pl' => 'Polish',
 				'pt-br' => 'Brazilian Portuguese',
 				'ro' => 'Romanian',
+				'ru' => 'Russian',
 				'tr' => 'Turkish',
 				'zh-cn' => 'Simplified Chinese'
 			)
