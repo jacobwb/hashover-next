@@ -677,7 +677,6 @@ Copyright (C) 2014-2018 Jacob Barkdull
 #hashover .hashover-comment code {
 	width: 100%;
 	max-height: 200px;
-	display: inline-block;
 	overflow: auto;
 	border: 1px solid #C1C1C1;
 	background-color: #F5F5F5;
@@ -686,8 +685,7 @@ Copyright (C) 2014-2018 Jacob Barkdull
 	margin: 0px;
 }
 
-#hashover code.hashover-inline {
-	display: inline;
+#hashover code {
 	padding: 1px 4px;
 	border-radius: 0px;
 	font-size: 12px;

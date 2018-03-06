@@ -79,13 +79,13 @@ class Markdown
 	// Returns the original inline markdown code with HTML replacement
 	protected function inlineCodeReturn ($grp)
 	{
-		return '<code class="hashover-inline">' . $this->codeMarkers['inline']['marks'][($grp[1])] . '</code>';
+		return '<code>' . $this->codeMarkers['inline']['marks'][($grp[1])] . '</code>';
 	}
 
 	// Returns the original markdown code block with HTML replacement
 	protected function blockCodeReturn ($grp)
 	{
-		return '<code>' . $this->codeMarkers['block']['marks'][($grp[1])] . '</code>';
+		return '<pre>' . $this->codeMarkers['block']['marks'][($grp[1])] . '</pre>';
 	}
 
 	// Parses a string as markdown
