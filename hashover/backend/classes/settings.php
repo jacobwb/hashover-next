@@ -140,9 +140,6 @@ class Settings extends Secrets
 		// Theme path
 		$this->themePath = 'themes/' . $this->theme;
 
-		// Set server timezone
-		date_default_timezone_set ($this->serverTimezone);
-
 		// Set encoding
 		mb_internal_encoding ('UTF-8');
 
@@ -279,6 +276,9 @@ class Settings extends Secrets
 	// Synchronizes specific settings after remote changes
 	public function syncSettings ()
 	{
+		// Set server timezone
+		date_default_timezone_set ($this->serverTimezone);
+
 		// Theme path
 		$this->themePath = 'themes/' . $this->theme;
 
