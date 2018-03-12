@@ -145,6 +145,9 @@ class WriteComments extends PostData
 		$this->spamCheck = new SpamCheck ($setup);
 		$this->metadata = new Metadata ($setup, $thread);
 
+		// Setup initial login data
+		$this->setupLogin ();
+
 		// Default email headers
 		$this->setHeaders ($setup->noreplyEmail);
 
@@ -312,11 +315,24 @@ class WriteComments extends PostData
 		return true;
 	}
 
+	// Setup necessary login data
+	protected function setupLogin ()
+	{
+		$this->name = $this->encodeHTML ($this->login->name);
+		$this->password = $this->encodeHTML ($this->login->password);
+		$this->loginHash = $this->encodeHTML ($this->login->loginHash);
+		$this->email = $this->encodeHTML ($this->login->email);
+		$this->website = $this->encodeHTML ($this->login->website);
+	}
+
 	// User comment authentication
 	protected function commentAuthentication ()
 	{
 		// Verify file exists
 		$file = $this->verifyFile ('file');
+
+		// Read original comment
+		$comment = $this->thread->data->read ($file);
 
 		// Authentication data
 		$auth = array (
@@ -324,29 +340,34 @@ class WriteComments extends PostData
 			'authorized' => false,
 			'user-owned' => false,
 
-			// Read original comment
-			'comment' => $this->thread->data->read ($file)
+			// Original comment
+			'comment' => $comment
 		);
 
 		// Return authorization data if we fail to get comment
-		if ($auth['comment'] === false) {
+		if ($comment === false) {
 			return $auth;
 		}
 
 		// Check if we have both required passwords
-		if (!empty ($this->postData['password']) and !empty ($auth['comment']['password'])) {
+		if (!empty ($this->postData['password']) and !empty ($comment['password'])) {
 			// If so, get the user input password
 			$user_password = $this->encodeHTML ($this->postData['password']);
 
 			// Get the comment password
-			$comment_password = $auth['comment']['password'];
+			$comment_password = $comment['password'];
 
 			// Attempt to compare the two passwords
-			$auth['user-owned'] = $this->encryption->verifyHash ($user_password, $comment_password);
+			if ($this->encryption->verifyHash ($user_password, $comment_password) === true) {
+				$auth['user-owned'] = true;
+				$auth['authorized'] = true;
+			}
 		}
 
-		// Set general authorization state
-		$auth['authorized'] = ($auth['user-owned'] or $this->login->userIsAdmin);
+		// Admin is always authorized after strict verification
+		if ($this->setup->verifyAdmin ($this->password) === true) {
+			$auth['authorized'] = true;
+		}
 
 		return $auth;
 	}
@@ -360,12 +381,16 @@ class WriteComments extends PostData
 
 			// Check if user is authorized
 			if ($auth['authorized'] === true) {
+				// Strict verification of an admin login
+				$user_is_admin = $this->setup->verifyAdmin ($this->password);
+
+				// Unlink comment file indicator
 				$user_deletions_unlink = ($this->setup->userDeletionsUnlink === true);
-				$user_is_admin = ($this->login->userIsAdmin === true);
 				$unlink_comment = ($user_deletions_unlink or $user_is_admin);
 
 				// If so, delete the comment file
 				if ($this->thread->data->delete ($this->file, $unlink_comment)) {
+					// Remove comment from latest comments metadata
 					$this->metadata->removeFromLatest ($this->file);
 
 					// And kick visitor back with comment deletion message
@@ -457,8 +482,8 @@ class WriteComments extends PostData
 			throw new \Exception ($this->locale->text['comment-needed']);
 		}
 
-		// Check if user is admin
-		if ($this->login->userIsAdmin === true) {
+		// Strictly verify if the user is logged in as admin
+		if ($this->setup->verifyAdmin ($this->password) === true) {
 			// If so, check if status is set in POST data is set
 			if (!empty ($this->postData['status'])) {
 				// If so, check if status is allowed
@@ -494,12 +519,8 @@ class WriteComments extends PostData
 			}
 		}
 
-		// Escape disallowed characters in login information
-		$this->name = $this->encodeHTML ($this->login->name);
-		$this->password = $this->encodeHTML ($this->login->password);
-		$this->loginHash = $this->encodeHTML ($this->login->loginHash);
-		$this->email = $this->encodeHTML ($this->login->email);
-		$this->website = $this->encodeHTML ($this->login->website);
+		// Setup login data
+		$this->setupLogin ();
 
 		// Set mail headers to user's e-mail address
 		if (!empty ($this->email)) {
@@ -706,6 +727,7 @@ class WriteComments extends PostData
 	{
 		// Write comment to file
 		if ($this->thread->data->save ($comment_file, $this->commentData)) {
+			// Add comment to latest comments metadata
 			$this->metadata->addLatestComment ($comment_file);
 
 			// Send notification e-mails

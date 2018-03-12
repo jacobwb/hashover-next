@@ -34,6 +34,9 @@ function redirect ($url = '')
 			header ('Location: ../moderation/');
 		}
 	}
+
+	// Exit after redirect
+	exit;
 }
 
 try {

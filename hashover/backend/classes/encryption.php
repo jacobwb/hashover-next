@@ -76,13 +76,16 @@ class Encryption
 	public function verifyHash ($string, $compare)
 	{
 		// Split string by dollar sign
-		$salt = explode ('$', $compare);
+		$parts = explode ('$', $compare);
+
+		// Hash salt
+		$salt = !empty ($parts[3]) ? $parts[3] : '';
 
 		// Encryption string as Blowfish hash
-		$hash = crypt ($string, $this->prefix . $this->cost . $salt[3] . '$$');
+		$hash = crypt ($string, $this->prefix . $this->cost . $salt . '$$');
 
 		// Returns true if both match
-		return ($hash === $compare) ? true : false;
+		return ($hash === $compare);
 	}
 
 	// Generates a random encryption key

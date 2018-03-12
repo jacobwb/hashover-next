@@ -404,7 +404,9 @@ try {
 		}
 
 		// Save the settings to the JSON settings file
-		if ($data_files->saveJSON ($settings_file, $settings)) {
+		if ($hashover->setup->verifyAdmin ($hashover->login->password)
+		    and $data_files->saveJSON ($settings_file, $settings))
+		{
 			// Redirect with success indicator
 			header ('Location: index.php?status=success');
 		} else {

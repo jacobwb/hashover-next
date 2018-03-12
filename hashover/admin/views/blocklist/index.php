@@ -38,7 +38,9 @@ try {
 		}
 
 		// Save the JSON data to the blocklist file
-		if ($data_files->saveJSON ($blocklist_file, $blocklist)) {
+		if ($hashover->setup->verifyAdmin ($hashover->login->password)
+		    and $data_files->saveJSON ($blocklist_file, $blocklist))
+		{
 			// Redirect with success indicator
 			header ('Location: index.php?status=success');
 		} else {

@@ -432,8 +432,14 @@ class Setup extends Settings
 		$this->pageTitle = $title;
 	}
 
+	// Weak verification of an admin login
+	public function adminLogin ($hash)
+	{
+		return ($hash === hash ('ripemd160', $this->adminName . $this->adminPassword));
+	}
+
 	// Strict verification of an admin login
-	public function verifyAdmin ($name, $password)
+	public function verifyAdmin ($password)
 	{
 		return $this->encryption->verifyHash ($this->adminPassword, $password);
 	}
