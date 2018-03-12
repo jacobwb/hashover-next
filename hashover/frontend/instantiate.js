@@ -1,2 +1,4 @@
-// Instantiate HashOver (instantiate.js)
-window.hashover = new HashOver ();
+// Instantiate after the DOM is parsed
+HashOver.onReady (function () {
+	window.hashover = new HashOver ();
+});

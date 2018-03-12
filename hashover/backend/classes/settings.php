@@ -195,7 +195,7 @@ class Settings extends Secrets
 	// Returns a server-side absolute file path
 	public function getAbsolutePath ($file)
 	{
-		return realpath ($this->rootDirectory . '/' . trim ($file, '/'));
+		return $this->rootDirectory . '/' . trim ($file, '/');
 	}
 
 	// Returns a client-side path for a file within the HashOver root

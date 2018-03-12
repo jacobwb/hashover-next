@@ -188,7 +188,7 @@ class Login extends PostData
 			$this->userIsLoggedIn = true;
 
 			// Check if user is logged in as admin
-			if ($this->setup->adminLogin ($this->loginHash)) {
+			if ($this->setup->adminLogin ($this->loginHash) === true) {
 				$this->userIsAdmin = true;
 			}
 		}

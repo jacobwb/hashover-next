@@ -48,6 +48,15 @@ try {
 		// If so, attempt to log them in
 		$hashover->login->setLogin ();
 
+		// Check if the user is not admin
+		if ($hashover->setup->adminLogin ($hashover->login->loginHash) === false) {
+			// If so, logout
+			$hashover->login->clearLogin ();
+
+			// Sleep 5 seconds
+			sleep (5);
+		}
+
 		// And redirect user to desired view
 		redirect ();
 	}

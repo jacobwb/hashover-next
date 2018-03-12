@@ -1,8 +1,11 @@
 // HashOver latest comments UI initialization process (init.js)
 HashOverLatest.prototype.init = function ()
 {
-	var html = '';
+	// Shorthand
 	var comments = this.instance.comments.primary;
+
+	// Initial comments HTML
+	var html = '';
 
 	// Append theme CSS if enabled
 	this.optionalMethod ('appendCSS', [ 'hashover-widget' ]);

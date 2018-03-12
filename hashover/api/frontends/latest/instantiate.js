@@ -1,2 +1,4 @@
-// Instantiate HashOver latest comments (instantiate.js)
-window.hashoverLatest = new HashOverLatest ();
+// Instantiate after the DOM is parsed
+HashOverLatest.onReady (function () {
+	window.hashoverLatest = new HashOverLatest ();
+});
