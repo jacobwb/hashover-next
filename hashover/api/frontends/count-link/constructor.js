@@ -23,7 +23,21 @@
 "use strict";
 
 // Count link API frontend constructor (constructor.js)
-function HashOverCountLink () {};
+function HashOverCountLink ()
+{
+	// Get count link class elements
+	var countLinks = document.getElementsByClassName ('hashover-count-link');
+
+	// Run through the count links
+	for (var i = 0, il = countLinks.length; i < il; i++) {
+		var link = countLinks[i];
+
+		// Instantiate new count link object
+		this.getCommentCount (link, {
+			url: link.href
+		});
+	}
+};
 
 // Constructor to add HashOver methods to
 var HashOverConstructor = HashOverCountLink;

@@ -32,8 +32,6 @@ if (isset ($_GET['jsonp'])) {
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json', 'api');
-	$hashover->setup->setPageURL ('request');
-	$hashover->setup->setPageTitle ('request');
 	$hashover->setup->setThreadName ('request');
 	$hashover->initiate ();
 	$hashover->finalize ();

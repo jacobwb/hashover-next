@@ -28,8 +28,12 @@ function HashOverLatest (options)
 	// Reference to this HashOver object
 	var hashover = this;
 
-	// Get backend queries
-	var queries = HashOverConstructor.getBackendQueries (options);
+	// Backend queries
+	if (options && options.thread !== undefined) {
+		var queries = ['thread=' + encodeURIComponent (options.thread)];
+	} else {
+		var queries = [];
+	}
 
 	// Backend request path
 	var requestPath = HashOverConstructor.backendPath + '/latest-ajax.php';

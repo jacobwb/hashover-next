@@ -56,15 +56,6 @@ try {
 	// Register backend path setter
 	$javascript->registerFile ('backendpath.js');
 
-	// Register page URL getter method
-	$javascript->registerFile ('geturl.js');
-
-	// Register page title getter method
-	$javascript->registerFile ('gettitle.js');
-
-	// Register backend queries getter method
-	$javascript->registerFile ('getbackendqueries.js');
-
 	// Register HashOver ready state detection method
 	$javascript->registerFile ('onready.js');
 
