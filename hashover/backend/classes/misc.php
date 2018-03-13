@@ -54,31 +54,31 @@ class Misc
 		// Encode JSON data
 		$json = json_encode ($data);
 
-		// Check if request is for JSONP
-		if (isset ($_GET['jsonp'])) {
-			// If so, make JSONP index XSS safe
-			$index = $this->makeXSSsafe ($_GET['jsonp']);
-
-			// Check if the JSONP index contains a numeric value
-			if (is_numeric ($index) or $self_error === true) {
-				// Cast index to positive integer
-				$index = ($self_error === true) ? 0 : (int)(abs ($index));
-
-				// If so, construct JSONP function call
-				return sprintf (
-					'HashOverConstructor.jsonp[%d] (%s);',
-					$index, $json
-				);
-			}
-
-			// Otherwise return an error
-			return $this->jsonData (array (
-				'message' => 'JSONP index must have a numeric value.',
-				'type' => 'error'
-			), true);
+		// Return JSON as-is if the request isn't for JSONP
+		if (!isset ($_GET['jsonp']) or !isset ($_GET['jsonp_object'])) {
+			return $json;
 		}
 
-		return $json;
+		// Otherwise, make JSONP callback index XSS safe
+		$index = $this->makeXSSsafe ($_GET['jsonp']);
+
+		// Check if the JSONP index contains a numeric value
+		if (is_numeric ($index) or $self_error === true) {
+			// If so, cast index to positive integer
+			$index = ($self_error === true) ? 0 : (int)(abs ($index));
+
+			// Construct JSONP function call
+			$jsonp = sprintf ('HashOverConstructor.jsonp[%d] (%s);', $index, $json);
+
+			// And return the JSONP script
+			return $jsonp;
+		}
+
+		// Otherwise, return an error
+		return $this->jsonData (array (
+			'message' => 'JSONP index must have a numeric value.',
+			'type' => 'error'
+		), true);
 	}
 
 	// Make a string XSS-safe

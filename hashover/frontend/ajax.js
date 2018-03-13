@@ -1,10 +1,7 @@
-// Storage for JSONP callbacks (ajax.js)
-HashOverConstructor.jsonp = [];
-
-// Push error handler function into JSONP callbacks array (ajax.js)
-HashOverConstructor.jsonp.push (function (json) {
-	alert (json.message);
-});
+// Array of JSONP callbacks, starting with default error handler (ajax.js)
+HashOverConstructor.jsonp = [
+	function (json) { alert (json.message); }
+];
 
 // Send HTTP requests using either XMLHttpRequest or JSONP (ajax.js)
 HashOverConstructor.prototype.ajax = function (method, path, data, callback, async)
@@ -26,10 +23,10 @@ HashOverConstructor.prototype.ajax = function (method, path, data, callback, asy
 
 	// Check if script is being remotely accessed
 	if (originRegex.test (this.constructor.script.src) === false) {
-		// If so, use JSONP
+		// If so, push callback into JSONP array
 		this.constructor.jsonp.push (callback);
 
-		// Add JSONP indicator to request path
+		// Add JSONP callback index to request data
 		data.push ('jsonp=' + (this.constructor.jsonp.length - 1));
 
 		// Create request script
@@ -38,10 +35,10 @@ HashOverConstructor.prototype.ajax = function (method, path, data, callback, asy
 			async: async
 		});
 
-		// Append request script to page
+		// And append request script to page
 		document.body.appendChild (request);
 	} else {
-		// Create request
+		// If not, create AJAX request
 		var request = new XMLHttpRequest ();
 
 		// Set callback as ready state change handler
@@ -59,7 +56,7 @@ HashOverConstructor.prototype.ajax = function (method, path, data, callback, asy
 			callback.apply (this, [ json ]);
 		};
 
-		// Send request
+		// And send request
 		request.open (method, path, async);
 		request.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
 		request.send (data.join ('&'));
