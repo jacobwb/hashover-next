@@ -43,6 +43,13 @@ class Misc
 		'&#92;'
 	);
 
+	// Allowed JavaScript constructors
+	protected $objects = array (
+		'HashOver',
+		'HashOverCountLink',
+		'HashOverLatest'
+	);
+
 	public function __construct ($mode)
 	{
 		$this->mode = $mode;
@@ -62,13 +69,20 @@ class Misc
 		// Otherwise, make JSONP callback index XSS safe
 		$index = $this->makeXSSsafe ($_GET['jsonp']);
 
+		// Make JSONP object constructor name XSS safe
+		$object = $this->makeXSSsafe ($_GET['jsonp_object']);
+
+		// Check if constructor is allowed, if not use default
+		$allowed_object = in_array ($object, $this->objects, true);
+		$object = $allowed_object ? $object : 'HashOver';
+
 		// Check if the JSONP index contains a numeric value
 		if (is_numeric ($index) or $self_error === true) {
 			// If so, cast index to positive integer
 			$index = ($self_error === true) ? 0 : (int)(abs ($index));
 
 			// Construct JSONP function call
-			$jsonp = sprintf ('HashOverConstructor.jsonp[%d] (%s);', $index, $json);
+			$jsonp = sprintf ('%s.jsonp[%d] (%s);', $object, $index, $json);
 
 			// And return the JSONP script
 			return $jsonp;

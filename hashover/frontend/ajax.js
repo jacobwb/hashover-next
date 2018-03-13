@@ -6,10 +6,12 @@ HashOverConstructor.jsonp = [
 // Send HTTP requests using either XMLHttpRequest or JSONP (ajax.js)
 HashOverConstructor.prototype.ajax = function (method, path, data, callback, async)
 {
-	// Workaround for IE 11
+	// Check if the browser supports location origin
 	if (window.location.origin) {
+		// If so, use it as-is
 		var origin = window.location.origin;
 	} else {
+		// If not, construct origin manually
 		var protocol = window.location.protocol;
 		var hostname = window.location.hostname;
 		var port = window.location.port;
@@ -23,11 +25,16 @@ HashOverConstructor.prototype.ajax = function (method, path, data, callback, asy
 
 	// Check if script is being remotely accessed
 	if (originRegex.test (this.constructor.script.src) === false) {
-		// If so, push callback into JSONP array
+		// If so, get constructor name
+		var source = this.constructor.toString ();
+		var constructor = source.match (/function (\w+)/)[1];
+
+		// Push callback into JSONP array
 		this.constructor.jsonp.push (callback);
 
-		// Add JSONP callback index to request data
+		// Add JSONP callback index and constructor to request data
 		data.push ('jsonp=' + (this.constructor.jsonp.length - 1));
+		data.push ('jsonp_object=' + constructor || 'HashOver');
 
 		// Create request script
 		var request = this.elements.create ('script', {
