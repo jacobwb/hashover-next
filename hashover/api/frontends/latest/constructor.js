@@ -36,24 +36,24 @@ function HashOverLatest (options)
 	}
 
 	// Backend request path
-	var requestPath = HashOverConstructor.backendPath + '/latest-ajax.php';
+	var requestPath = HashOverLatest.backendPath + '/latest-ajax.php';
 
 	// Handle backend request
 	this.ajax ('POST', requestPath, queries, function (json) {
 		// Handle error messages
 		if (json.message !== undefined) {
-			hashover.displayError (json);
+			hashover.displayError (json, 'hashover-widget');
 			return;
 		}
 
 		// Locales from HashOver backend
-		HashOverConstructor.prototype.locale = json.locale;
+		HashOverLatest.prototype.locale = json.locale;
 
 		// Setup information from HashOver back-end
-		HashOverConstructor.prototype.setup = json.setup;
+		HashOverLatest.prototype.setup = json.setup;
 
 		// UI HTML from HashOver back-end
-		HashOverConstructor.prototype.ui = json.ui;
+		HashOverLatest.prototype.ui = json.ui;
 
 		// Thread information from HashOver back-end
 		hashover.instance = json.instance;

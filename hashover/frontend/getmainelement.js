@@ -9,7 +9,7 @@ HashOverConstructor.prototype.getMainElement = function (id)
 	// Check if the HashOver element exists
 	if (element === null) {
 		// If not, get HashOver script tag
-		var script = HashOverConstructor.script;
+		var script = this.constructor.script;
 
 		// Create div tag for HashOver comments to appear in
 		element = this.elements.create ('div', { id: id });
@@ -22,7 +22,7 @@ HashOverConstructor.prototype.getMainElement = function (id)
 	this.classes.add (element, 'hashover');
 
 	// Check if HashOver is prepared
-	if (HashOverConstructor.prepared === true) {
+	if (this.constructor.prepared === true) {
 		// If so, add class for differentiating desktop and mobile styling
 		this.classes.add (element, 'hashover-' + this.setup['device-type']);
 

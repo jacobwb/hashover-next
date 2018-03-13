@@ -25,12 +25,12 @@ HashOverConstructor.prototype.ajax = function (method, path, data, callback, asy
 	var originRegex = new RegExp ('^' + origin + '/', 'i');
 
 	// Check if script is being remotely accessed
-	if (originRegex.test (HashOverConstructor.script.src) === false) {
+	if (originRegex.test (this.constructor.script.src) === false) {
 		// If so, use JSONP
-		HashOverConstructor.jsonp.push (callback);
+		this.constructor.jsonp.push (callback);
 
 		// Add JSONP indicator to request path
-		data.push ('jsonp=' + (HashOverConstructor.jsonp.length - 1));
+		data.push ('jsonp=' + (this.constructor.jsonp.length - 1));
 
 		// Create request script
 		var request = this.elements.create ('script', {
