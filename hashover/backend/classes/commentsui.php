@@ -110,9 +110,9 @@ class CommentsUI extends FormUI
 	// Creates hyperlink with URL queries to link reference
 	protected function queryLink ($href = '', array $queries = array ())
 	{
-		// Create hyperlink with relative local path
+		// Create hyperlink with relative local or absolute remote path
 		$link = new HTMLTag ('a', array (
-			'href' => $href
+			'href' => !empty ($href) ? $href : $this->setup->filePath
 		), false);
 
 		// Merge given URL queries with existing page URL queries
@@ -127,10 +127,10 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates date/permalink hyperlink element
-	public function dateLink ($permalink = '{{permalink}}', $date = '{{date}}')
+	public function dateLink ($href = '{{href}}', $permalink = '{{permalink}}', $date = '{{date}}')
 	{
 		// Create hyperlink element
-		$date_link = $this->queryLink ($this->setup->filePath);
+		$date_link = $this->queryLink ($href);
 
 		// Append more attributes
 		$date_link->appendAttributes (array (

@@ -323,7 +323,7 @@ class PHPMode
 			}
 
 			// Add date permalink hyperlink to template
-			$template['date'] = $this->ui->dateLink ($permalink, $comment['date']);
+			$template['date'] = $this->ui->dateLink ('', $permalink, $comment['date']);
 
 			// Add "Reply" hyperlink to template
 			if (!empty ($_GET['hashover-reply']) and $_GET['hashover-reply'] === $comment_key) {

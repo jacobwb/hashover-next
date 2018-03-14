@@ -251,6 +251,7 @@ HashOverConstructor.prototype.comments = {
 
 			// Add date from comment as permalink hyperlink to template
 			template.date = hashover.strings.parseTemplate (hashover.ui['date-link'], {
+				href: comment.url || hashover.instance['file-path'],
 				permalink: permalink,
 				date: commentDate
 			});
