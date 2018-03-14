@@ -110,10 +110,15 @@ class CommentsUI extends FormUI
 	// Creates hyperlink with URL queries to link reference
 	protected function queryLink ($href = '', array $queries = array ())
 	{
-		$link = new HTMLTag ('a', array ('href' => $href), false);
+		// Create hyperlink with relative local path
+		$link = new HTMLTag ('a', array (
+			'href' => $href
+		), false);
+
+		// Merge given URL queries with existing page URL queries
 		$queries = array_merge ($this->setup->URLQueryList, $queries);
 
-		// Add URL queries to link reference
+		// Add URL queries to link path
 		if (!empty ($queries)) {
 			$link->appendAttribute ('href', '?' . implode ('&', $queries), false);
 		}
