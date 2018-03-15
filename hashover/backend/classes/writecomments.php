@@ -96,12 +96,18 @@ class WriteComments extends PostData
 	// HTML tags to automatically close
 	protected $closeTags = array (
 		'b',
+		'big',
 		'blockquote',
+		'em',
 		'i',
 		'li',
 		'ol',
 		'pre',
 		's',
+		'small',
+		'strong',
+		'sub',
+		'sup',
 		'u',
 		'ul'
 	);
