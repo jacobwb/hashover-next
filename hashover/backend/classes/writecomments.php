@@ -96,14 +96,14 @@ class WriteComments extends PostData
 	// HTML tags to automatically close
 	protected $closeTags = array (
 		'b',
-		'i',
-		'u',
-		's',
-		'li',
-		'pre',
 		'blockquote',
-		'ul',
-		'ol'
+		'i',
+		'li',
+		'ol',
+		'pre',
+		's',
+		'u',
+		'ul'
 	);
 
 	// Unprotected fields to update when editing a comment
