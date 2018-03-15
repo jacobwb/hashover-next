@@ -36,7 +36,7 @@ HashOver.prototype.comments.addRatings = function (comment, template, action, co
 		});
 	}
 
-	// Check if the comment has been liked/disliked
+	// Check if the comment has been likes/dislikes
 	if (comment[action + 's'] !== undefined) {
 		// Add likes/dislikes to HTML template
 		template[action + 's'] = comment[action + 's'];

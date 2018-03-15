@@ -108,9 +108,6 @@ try {
 		)
 	));
 
-	// Register control event handler attacher method
-	$javascript->registerFile ('addcontrols.js');
-
 	// Register classList polyfill methods
 	$javascript->registerFile ('classes.js');
 
@@ -121,6 +118,14 @@ try {
 
 	// Change back to latest frontend directory
 	$javascript->changeDirectory ('api/frontends/latest');
+
+	// Register Like/Dislike methods
+	$javascript->registerFile ('addratings.js', array (
+		'include' => ($setup->allowsLikes or $setup->allowsDislikes)
+	));
+
+	// Register control event handler attacher method
+	$javascript->registerFile ('addcontrols.js');
 
 	// Register initialization method
 	$javascript->registerFile ('init.js');
