@@ -147,9 +147,31 @@ try {
 
 		// Trim comment body to configurable length
 		if ($hashover->setup->latestTrimWidth > 0) {
-			$body = $comment['body'];
-			$body = mb_strimwidth ($body, 0, $hashover->setup->latestTrimWidth, '...');
-			$comment['body'] = rtrim ($body);
+			// Instantiate WriteComments
+			//
+			// TODO: Split WriteComments into multiple classes so we
+			// can instantiate only the functionality that we need
+			//
+			$write_comments = new WriteComments (
+				$hashover->setup,
+				$hashover->thread
+			);
+
+			// Shorthands
+			$trim_length = $hashover->setup->latestTrimWidth;
+			$close_tags = $write_comments->closeTags;
+
+			// Add <code> to list of tags to close
+			$write_comments->closeTags[] = 'code';
+
+			// Trim the comment to configurable length
+			$body = rtrim (mb_strimwidth ($comment['body'], 0, $trim_length, '...'));
+
+			// Close any tags that may have had they endings trimmed off
+			$body = $write_comments->tagCloser ($close_tags, $body);
+
+			// Update the comment
+			$comment['body'] = $body;
 		}
 
 		// Add comment to response array

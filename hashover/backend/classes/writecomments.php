@@ -94,7 +94,7 @@ class WriteComments extends PostData
 	);
 
 	// HTML tags to automatically close
-	protected $closeTags = array (
+	public $closeTags = array (
 		'b',
 		'big',
 		'blockquote',
@@ -421,7 +421,7 @@ class WriteComments extends PostData
 	}
 
 	// Closes all allowed HTML tags
-	protected function tagCloser ($tags, $html)
+	public function tagCloser ($tags, $html)
 	{
 		for ($tc = 0, $tcl = count ($tags); $tc < $tcl; $tc++) {
 			// Count opening and closing tags
