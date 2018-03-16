@@ -72,9 +72,9 @@ try {
 
 	// Template data
 	$template = array (
-		'title'		=> 'Moderation',
+		'title'		=> $hashover->locale->text['moderation'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
-		'sub-title'	=> 'Post, edit, approve, and delete comments',
+		'sub-title'	=> $hashover->locale->text['moderation-sub'],
 		'threads'	=> $table->asHTML ("\t\t")
 	);
 

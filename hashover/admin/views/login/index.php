@@ -74,7 +74,7 @@ try {
 	$template = array (
 		'title'		=> $hashover->locale->text['login'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
-		'sub-title'	=> 'You must be logged as admin',
+		'sub-title'	=> $hashover->locale->text['admin-required'],
 		'name'		=> $hashover->locale->text['name'],
 		'password'	=> $hashover->locale->text['password'],
 		'email'		=> $hashover->locale->optionalize ('email'),

@@ -70,45 +70,28 @@ try {
 
 		// Create input tag
 		$input = new HTMLTag ('input', array (
+			'class' => 'addresses',
 			'type' => 'text',
 			'name' => 'addresses[]',
 			'value' => $address,
 			'size' => '15',
 			'maxlength' => '15',
 			'placeholder' => '127.0.0.1',
-			'title' => 'IP Address or blank to remove'
+			'title' => $hashover->locale->text['blocklist-ip-tip']
 		), false, true);
 
 		// Add input to inputs container
 		$inputs->appendChild ($input);
 	}
 
-	// Page title based on the status indicator
-	switch (!empty ($_GET['status']) ? $_GET['status'] : 'default') {
-		case 'success': {
-			$title = 'IP Address Blocklist - Saved!';
-			break;
-		}
-
-		case 'failure': {
-			$title = 'IP Address Blocklist - Failure!';
-			break;
-		}
-
-		default: {
-			$title = 'IP Address Blocklist';
-			break;
-		}
-	}
-
 	// Template data
 	$template = array (
-		'title'		=> $title,
+		'title'		=> $hashover->locale->text['blocklist-title'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
-		'sub-title'	=> 'Block specific IP addresses',
+		'sub-title'	=> $hashover->locale->text['blocklist-sub'],
+		'message'	=> $form_message,
 		'inputs'	=> $inputs->getInnerHTML ("\t\t\t\t"),
-		'new-button'	=> '+ New Address',
-		'save-button'	=> 'Save Blocklist'
+		'save-button'	=> $hashover->locale->text['save']
 	);
 
 	// Load and parse HTML template

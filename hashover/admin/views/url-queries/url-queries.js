@@ -1,3 +1,4 @@
+// Wait for the page HTML to be parsed
 document.addEventListener ('DOMContentLoaded', function () {
 	// Get the "New Query Pair" and "Save" buttons
 	var newButton = document.getElementById ('new-button');
@@ -8,23 +9,17 @@ document.addEventListener ('DOMContentLoaded', function () {
 	{
 		// Create inputs and indentation
 		var div = document.createElement ('div');
-		var nameInput = document.createElement ('input');
-		var valueInput = document.createElement ('input');
+		var names = document.getElementsByClassName ('name');
+		var values = document.getElementsByClassName ('value');
 		var indentation = document.createTextNode ('\n\t\t\t\t\t');
 
-		// Add query name input attributes
-		nameInput.type = 'text';
-		nameInput.name = 'names[]';
-		nameInput.size = '15';
-		nameInput.placeholder = 'Name';
-		nameInput.title = 'Query name or blank to remove';
+		// Clone the first name and value fields
+		var nameInput = names[0].cloneNode (true);
+		var valueInput = values[0].cloneNode (true);
 
-		// Add query value input attributes
-		valueInput.type = 'text';
-		valueInput.name = 'values[]';
-		valueInput.size = '25';
-		valueInput.placeholder = 'Value';
-		valueInput.title = 'Query value or blank for any value';
+		// Remove their values
+		nameInput.value = '';
+		valueInput.value = '';
 
 		// Append indentation and input to URL Query Pair list
 		div.appendChild (nameInput);
@@ -37,5 +32,5 @@ document.addEventListener ('DOMContentLoaded', function () {
 	saveButton.onclick = function ()
 	{
 		this.disabled = true;
-	}
+	};
 }, false);

@@ -89,21 +89,23 @@ try {
 		$input = new HTMLTag ('div', array (
 			'children' => array (
 				new HTMLTag ('input', array (
+					'class' => 'name',
 					'type' => 'text',
 					'name' => 'names[]',
 					'value' => $query_name,
 					'size' => '15',
-					'placeholder' => 'Name',
-					'title' => 'Query name or blank to remove'
+					'placeholder' => $hashover->locale->text['name'],
+					'title' => $hashover->locale->text['url-queries-name-tip']
 				), false, true),
 
 				new HTMLTag ('input', array (
+					'class' => 'value',
 					'type' => 'text',
 					'name' => 'values[]',
 					'value' => $query_value,
 					'size' => '25',
-					'placeholder' => 'Value',
-					'title' => 'Query value or blank for any value'
+					'placeholder' => $hashover->locale->text['value'],
+					'title' => $hashover->locale->text['url-queries-value-tip']
 				), false, true)
 			)
 		));
@@ -112,36 +114,18 @@ try {
 		$inputs->appendChild ($input);
 	}
 
-	// Page title based on the status indicator
-	switch (!empty ($_GET['status']) ? $_GET['status'] : 'default') {
-		case 'success': {
-			$title = 'Ignored URL Queries - Saved!';
-			break;
-		}
-
-		case 'failure': {
-			$title = 'Ignored URL Queries - Failure!';
-			break;
-		}
-
-		default: {
-			$title = 'Ignored URL Queries';
-			break;
-		}
-	}
-
 	// Template data
 	$template = array (
-		'title'		=> $title,
+		'title'		=> $hashover->locale->text['url-queries-title'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
-		'sub-title'	=> 'Filter which URL queries should be ignored',
+		'sub-title'	=> $hashover->locale->text['url-queries-sub'],
+		'message'	=> $form_message,
 		'inputs'	=> $inputs->getInnerHTML ("\t\t\t\t"),
-		'new-button'	=> '+ New Query Pair',
-		'save-button'	=> 'Save Queries'
+		'save-button'	=> $hashover->locale->text['save']
 	);
 
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('ignored-queries.html', $template);
+	echo $hashover->templater->parseTemplate ('url-queries.html', $template);
 
 } catch (\Exception $error) {
 	$misc = new Misc ('php');

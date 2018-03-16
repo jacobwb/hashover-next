@@ -147,7 +147,7 @@ class Locale
 		// Run through each locale string
 		foreach ($this->text as $key => $value) {
 			switch ($key) {
-				// Inject date and time formats into date-time locale
+				// Inject date and time formats into date and time locale
 				case 'date-time': {
 					$this->text[$key] = sprintf (
 						$value,
@@ -159,5 +159,19 @@ class Locale
 				}
 			}
 		}
+	}
+
+	// Return file permissions locale with directory and PHP user
+	public function permissionsInfo ($file)
+	{
+		// PHP user, or www-data
+		$php_user = isset ($_SERVER['USER']) ? $_SERVER['USER'] : '';
+		$php_user = !empty ($php_user) ? $php_user : 'www-data';
+
+		return sprintf (
+			$this->text['permissions-info'],
+			$this->setup->getHttpPath ($file),
+			$php_user
+		);
 	}
 }

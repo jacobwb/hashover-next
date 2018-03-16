@@ -34,7 +34,7 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/ignored-queries/index.php'
+			'path' => 'admin/views/url-queries/index.php'
 		),
 		array (
 			'type' => 'Script',

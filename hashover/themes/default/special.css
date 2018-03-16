@@ -1,3 +1,7 @@
+body * {
+	line-height: 1.25em;
+}
+
 a, a:link {
 	display: inline-block;
 	border-bottom: 0.1em solid transparent;
@@ -48,6 +52,7 @@ textarea:focus {
 }
 
 input[type="button"] {
+	padding: 5px 10px 5px 10px;
 	background-color: #F5F5F5;
 }
 
@@ -56,6 +61,7 @@ input[type="button"]:hover {
 }
 
 input[type="submit"] {
+	padding: 5px 15px 5px 15px;
 	color: #FFFFFF;
 	border: 1px solid #326BAC;
 	background-color: #41A7FA;
@@ -69,7 +75,6 @@ input[type="submit"]:hover {
 
 input[type="submit"],
 input[type="button"] {
-	padding: 5px 10px 5px 10px;
 	margin: 0px;
 	cursor: pointer;
 }
@@ -115,4 +120,29 @@ input[type="checkbox"] {
 	background-color: #FCFCFC;
 	padding: 1px 20px 1px 1px;
 	cursor: pointer;
+}
+
+#message {
+	position: relative;
+	font-weight: bold;
+	background-color: #FFFFFF;
+	margin-top: -21px;
+	z-index: 1;
+
+	-moz-transition: color 500ms linear 0ms, background 500ms linear 500ms;
+	-webkit-transition: color 500ms linear 0ms, background 500ms linear 500ms;
+	transition: color 500ms linear 0ms, background 500ms linear 500ms;
+}
+
+#message.success {
+	color: #00AA00;
+}
+
+#message.error {
+	color: #CC0000;
+}
+
+#message.hide {
+	background-color: transparent;
+	color: transparent;
 }

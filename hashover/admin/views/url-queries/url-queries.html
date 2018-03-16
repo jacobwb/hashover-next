@@ -8,7 +8,7 @@
 		<link type="text/css" href="../../../themes/default/special.css" rel="stylesheet">
 
 		<script type="text/javascript" src="../shared/update-elements.js"></script>
-		<script type="text/javascript" src="ignored-queries.js"></script>
+		<script type="text/javascript" src="url-queries.js"></script>
 
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 		<meta http-equiv="Content-Language" content="EN">
@@ -25,7 +25,10 @@
 			{hashover:logout}
 		</h1>
 
-		<p class="muted-text">{hashover:sub-title}</p>
+		<div class="p-spaced muted-text">
+			{hashover:sub-title}
+			{hashover:message}
+		</div>
 
 		<form method="post">
 			<div id="queries-list" class="p-spaced">
@@ -34,7 +37,7 @@
 
 			<p>
 				<input id="save-button" type="submit" value="{hashover:save-button}">
-				<input id="new-button" type="button" value="{hashover:new-button}">
+				<input id="new-button" type="button" value="+">
 			</p>
 		</form>
 	</body>

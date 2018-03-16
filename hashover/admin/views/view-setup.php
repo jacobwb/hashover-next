@@ -62,3 +62,46 @@ $logout = new HTMLTag ('span', array (
 		))
 	)
 ));
+
+// Check if the form has been submitted
+if (!empty ($_GET['status'])) {
+	// Check if the form submission was successful
+	if ($_GET['status'] === 'success') {
+		// If so, create message element for success message
+		$message = new HTMLTag ('div', array (
+			'id' => 'message',
+			'class' => 'success',
+
+			'children' => array (
+				new HTMLTag ('p', array (
+					'innerHTML' => $hashover->locale->text['successful-save']
+				), false)
+			)
+		));
+	} else {
+		// If so, create message element for error message
+		$message = new HTMLTag ('div', array (
+			'id' => 'message',
+			'class' => 'error',
+
+			'children' => array (
+				// Main error message
+				new HTMLTag ('p', array (
+					'innerHTML' => $hashover->locale->text['failed-to-save']
+				), false),
+
+				// File permissions explanation
+				new HTMLTag ('p', array (
+					'innerHTML' => $hashover->locale->permissionsInfo ('config')
+				), false)
+			)
+		));
+	}
+
+	// Set message as HTML
+	$form_message = $message->asHTML ("\t\t");
+
+} else {
+	// If not, set the message as an empty string
+	$form_message = '';
+}

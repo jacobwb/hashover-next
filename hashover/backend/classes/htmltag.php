@@ -100,7 +100,7 @@ class HTMLTag
 
 		foreach ($this->children as $child) {
 			if (is_object ($child)) {
-				$inner_html[] = $child->asHTML ();
+				$inner_html[] = $child->asHTML ($indention);
 				continue;
 			}
 

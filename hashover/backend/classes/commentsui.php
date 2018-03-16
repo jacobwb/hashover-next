@@ -423,7 +423,7 @@ class CommentsUI extends FormUI
 		$edit_comment = $this->locale->text['edit-comment'];
 
 		// "Save Edit" locale string
-		$save_edit = $this->locale->text['save-edit'];
+		$save_edit = $this->locale->text['save'];
 
 		// "Cancel" locale string
 		$cancel_edit = $this->locale->text['cancel'];

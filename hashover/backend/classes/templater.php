@@ -105,6 +105,7 @@ class Templater
 		$data = $this->loadFile ($file);
 		$template = preg_replace_callback ($this->curlyRegex, 'self::parser', $data);
 		$template = str_replace ($this->newlineSearch, $this->newlineReplace, $template);
+		$template = preg_replace ('/^[\s\n]+$/m', '', $template);
 
 		return $template;
 	}

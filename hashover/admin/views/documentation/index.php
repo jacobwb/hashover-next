@@ -23,9 +23,9 @@ try {
 
 	// Template data
 	$template = array (
-		'title'		=> 'Documentation',
+		'title'		=> $hashover->locale->text['documentation'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
-		'sub-title'	=> 'Coming soon'
+		'sub-title'	=> $hashover->locale->text['coming-soon']
 	);
 
 	// Load and parse HTML template

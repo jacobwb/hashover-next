@@ -23,7 +23,7 @@ try {
 
 	// Load and parse HTML template
 	echo $hashover->templater->parseTemplate ('threads.html', array (
-		'title' => 'Back',
+		'title' => $hashover->locale->text['back'],
 		'logout' => $logout->asHTML ("\t\t\t")
 	));
 } catch (\Exception $error) {

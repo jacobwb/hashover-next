@@ -1,5 +1,5 @@
-window.onload = function ()
-{
+// Wait for the page HTML to be parsed
+document.addEventListener ('DOMContentLoaded', function () {
 	// Get login dialog
 	var login = document.getElementById ('login');
 
@@ -7,4 +7,4 @@ window.onload = function ()
 	setTimeout (function () {
 		login.className = login.className.replace (/red ?/, '');
 	}, 1000);
-};
+}, false);

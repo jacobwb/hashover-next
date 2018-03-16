@@ -1,3 +1,4 @@
+// Wait for the page HTML to be parsed
 document.addEventListener ('DOMContentLoaded', function () {
 	// Get view links
 	var viewLinks = document.getElementsByClassName ('view-link');

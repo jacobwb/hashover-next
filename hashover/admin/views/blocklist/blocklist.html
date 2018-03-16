@@ -25,7 +25,10 @@
 			{hashover:logout}
 		</h1>
 
-		<p class="muted-text">{hashover:sub-title}</p>
+		<div class="p-spaced muted-text">
+			{hashover:sub-title}
+			{hashover:message}
+		</div>
 
 		<form method="post">
 			<p id="ip-list">
@@ -34,7 +37,7 @@
 
 			<p>
 				<input id="save-button" type="submit" value="{hashover:save-button}">
-				<input id="new-button" type="button" value="{hashover:new-button}">
+				<input id="new-button" type="button" value="+">
 			</p>
 		</form>
 	</body>

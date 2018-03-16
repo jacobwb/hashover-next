@@ -1,13 +1,12 @@
-// Remove "Saved" from page title
-setTimeout (function () {
-	var title = document.getElementById ('title');
-	var regex = / - Saved!/i;
+// Wait for the page HTML to be parsed
+document.addEventListener ('DOMContentLoaded', function () {
+	// Get message element
+	var message = document.getElementById ('message');
 
-	if (regex.test (title.textContent) === true) {
-		title.textContent = title.textContent.replace (regex, '');
+	// Hide message after 5 seconds
+	if (message !== null) {
+		setTimeout (function () {
+			message.className = message.className.replace ('success', 'hide');
+		}, 1000 * 5);
 	}
-
-	if (regex.test (document.title) === true) {
-		document.title = document.title.replace (regex, '');
-	}
-}, 1000 * 5);
+}, false);
