@@ -70,7 +70,7 @@ try {
 		'time-format'		=> $hashover->setup->timeFormat,
 		'image-extensions'	=> $hashover->setup->imageTypes,
 		'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
-		'theme-css'		=> $hashover->setup->getThemePath ('comments.css'),
+		'theme-css'		=> $hashover->setup->getThemePath ('latest.css'),
 		'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
 		'uses-user-timezone'	=> $hashover->setup->usesUserTimezone,
 		'uses-short-dates'	=> $hashover->setup->usesShortDates,
