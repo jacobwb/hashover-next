@@ -254,6 +254,10 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
+			'path' => 'backend/locales/el.php'
+		),
+		array (
+			'type' => 'Script',
 			'path' => 'backend/locales/en.php'
 		),
 		array (

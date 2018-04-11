@@ -42,6 +42,7 @@ function ui_array (Setup $setup)
 				'auto' => 'auto',
 				'en' => 'English',
 				'da' => 'Danish',
+				'el' => 'Greek',
 				'de' => 'German',
 				'es' => 'Spanish',
 				'fa' => 'Persian',
