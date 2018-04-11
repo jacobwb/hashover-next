@@ -115,7 +115,7 @@ $locale = array (
 	'rss-feed'		=> 'RSS订阅',
 	'source-code'		=> '源代码',
 
-	'source-code-sub'	=> 'HashOver服务器端源代码查看器',
+	'source-code-sub'	=> 'HashOver服務器端源代碼查看器',
 	'type'			=> '类型',
 	'path'			=> '路径',
 	'view-as'		=> '查看为',

@@ -115,7 +115,7 @@ $locale = array (
 	'rss-feed'		=> 'RSS Feed',
 	'source-code'		=> 'Source Code',
 
-	'source-code-sub'	=> 'HashOver server-side source sode viewer',
+	'source-code-sub'	=> 'HashOver server-side source code viewer',
 	'type'			=> 'Type',
 	'path'			=> 'Path',
 	'view-as'		=> 'View As',

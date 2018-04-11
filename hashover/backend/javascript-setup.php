@@ -30,7 +30,7 @@ spl_autoload_register (function ($uri) {
 	$class_name = basename ($uri);
 	$error = '"' . $class_name . '.php" file could not be included!';
 
-	// Check if class file cound be included
+	// Check if class file could be included
 	if (!@include ('classes/' . $class_name . '.php')) {
 		// If not, construct JavaScript code to display an error
 		$js_error  = 'var hashover = document.getElementById (\'hashover\') || document.body;' . PHP_EOL;

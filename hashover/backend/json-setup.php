@@ -29,7 +29,7 @@ spl_autoload_register (function ($uri) {
 	$uri = str_replace ('\\', '/', strtolower ($uri));
 	$class_name = basename ($uri);
 
-	// Check if class file cound be included
+	// Check if class file could be included
 	if (!@include ('classes/' . $class_name . '.php')) {
 		// If not, return JSON code to display an error
 		echo json_encode (array (
