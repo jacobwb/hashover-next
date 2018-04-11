@@ -456,6 +456,22 @@ class WriteComments extends PostData
 		return 'URL[' . $link_number . ']';
 	}
 
+	// Escape all HTML tags excluding allowed tags
+	public function htmlSelectiveEscape ($code)
+	{
+		// Escape all HTML tags
+		$code = str_ireplace ($this->dataSearch, $this->dataReplace, $code);
+
+		// Unescape allowed HTML tags
+		foreach ($this->htmlTagSearch as $tag) {
+			$escaped_tags = array ('&lt;' . $tag . '&gt;', '&lt;/' . $tag . '&gt;');
+			$text_tags = array ('<' . $tag . '>', '</' . $tag . '>');
+			$code = str_ireplace ($escaped_tags, $text_tags, $code);
+		}
+
+		return $code;
+	}
+
 	// Escapes HTML inside of <code> tags and markdown code blocks
 	protected function codeEscaper ($groups)
 	{
@@ -539,15 +555,8 @@ class WriteComments extends PostData
 		// Extract URLs from comment
 		$clean_code = preg_replace_callback ('/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+)/i', 'self::urlExtractor', $clean_code);
 
-		// Escape HTML tags
-		$clean_code = str_ireplace ($this->dataSearch, $this->dataReplace, $clean_code);
-
-		// Unescape allowed HTML tags
-		foreach ($this->htmlTagSearch as $tag) {
-			$escaped_tags = array ('&lt;' . $tag . '&gt;', '&lt;/' . $tag . '&gt;');
-			$text_tags = array ('<' . $tag . '>', '</' . $tag . '>');
-			$clean_code = str_ireplace ($escaped_tags, $text_tags, $clean_code);
-		}
+		// Escape all HTML tags excluding allowed tags
+		$clean_code = $this->htmlSelectiveEscape ($clean_code);
 
 		// Collapse multiple newlines to three maximum
 		$clean_code = preg_replace ('/' . PHP_EOL . '{3,}/', str_repeat (PHP_EOL, 3), $clean_code);

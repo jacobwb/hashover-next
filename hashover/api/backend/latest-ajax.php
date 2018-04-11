@@ -167,8 +167,11 @@ try {
 			// Trim the comment to configurable length
 			$body = rtrim (mb_strimwidth ($comment['body'], 0, $trim_length, '...'));
 
-			// Close any tags that may have had they endings trimmed off
+			// Close any tags that may have had their endings trimmed off
 			$body = $write_comments->tagCloser ($close_tags, $body);
+
+			// Escape any HTML tags that may have been trimmed in half
+			$body = $write_comments->htmlSelectiveEscape ($body);
 
 			// Update the comment
 			$comment['body'] = $body;
