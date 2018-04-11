@@ -48,6 +48,8 @@ body {
 #logo,
 #navigation a {
 	padding: 15px;
+	margin: 0px;
+	border: none;
 }
 
 #navigation a,
@@ -55,12 +57,6 @@ body {
 	border: none;
 	border-right: 4px solid transparent;
 	color: #222222;
-}
-
-#navigation a:hover {
-	color: #266394 ! important;
-	border-color: #3485C7 ! important;
-	background-color: #EEEEEE ! important;
 }
 
 #navigation a.active {
@@ -72,6 +68,13 @@ body {
 
 #navigation:hover a.active {
 	background-color: transparent;
+}
+
+#navigation a:hover,
+#navigation a.active:hover {
+	color: #266394;
+	border-color: #3485C7;
+	background-color: #EEEEEE;
 }
 
 div#logo,

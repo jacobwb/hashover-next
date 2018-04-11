@@ -24,7 +24,7 @@ input, textarea, .select-wrapper {
 }
 
 input:hover, textarea:hover {
-	border-color: #41A7FA;
+	border-color: #000000;
 }
 
 input[type="text"]:focus,
@@ -112,7 +112,7 @@ input[type="checkbox"] {
 
 .select-wrapper:hover,
 .select-wrapper:hover:before {
-	border-color: #41A7FA;
+	border-color: #000000;
 }
 
 .select-wrapper select {
@@ -126,7 +126,7 @@ input[type="checkbox"] {
 	position: relative;
 	font-weight: bold;
 	background-color: #FFFFFF;
-	margin-top: -21px;
+	margin-top: -1.25em;
 	z-index: 1;
 
 	-moz-transition: color 500ms linear 0ms, background 500ms linear 500ms;

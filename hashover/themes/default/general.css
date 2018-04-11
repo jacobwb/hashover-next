@@ -26,7 +26,7 @@ a, a:link {
 	color: #3485C7;
 }
 
-a, a:link, input, textarea, .select-wrapper, .animate-all {
+input:focus, textarea:focus, .animate-all {
 	-moz-transition: all 150ms linear 0s;
 	-webkit-transition: all 150ms linear 0s;
 	-o-transition: all 150ms linear 0s;

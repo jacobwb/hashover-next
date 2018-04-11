@@ -280,13 +280,12 @@ Copyright (C) 2016-2018 Jacob Barkdull
 	outline: -webkit-focus-ring-color none;
 }
 
-.hashover form input,
-.hashover form textarea,
-.hashover .hashover-submit,
-.hashover .hashover-inputs input,
-.hashover .hashover-comment label,
-.hashover .hashover-select-wrapper,
-.hashover .hashover-select-wrapper:before {
+.hashover form input:focus,
+.hashover form textarea:focus,
+.hashover .hashover-submit:focus,
+.hashover .hashover-inputs input:focus,
+.hashover .hashover-comment label:focus,
+.hashover .hashover-select-wrapper:focus {
 	-o-transition: border 150ms linear 0ms, background-color 150ms linear 0ms, box-shadow 150ms linear 0ms;
 	-webkit-transition: border 150ms linear 0ms, background-color 150ms linear 0ms, box-shadow 150ms linear 0ms;
 	-moz-transition: border 150ms linear 0ms, background-color 150ms linear 0ms, box-shadow 150ms linear 0ms;
@@ -335,9 +334,8 @@ Copyright (C) 2016-2018 Jacob Barkdull
 	text-decoration: none;
 }
 
+.hashover input:focus,
 .hashover textarea:focus,
-.hashover input[type="text"]:focus,
-.hashover input[type="password"]:focus,
 .hashover .hashover-submit:focus {
 	border-color: #0055FF ! important;
 
@@ -378,7 +376,7 @@ Copyright (C) 2016-2018 Jacob Barkdull
 .hashover .hashover-reply-post:focus,
 .hashover .hashover-edit-post:focus {
 	background-color: #6698FF ! important;
-	border-color: #222222 ! important;
+	border-color: #000088 ! important;
 }
 
 .hashover .hashover-edit-delete {
@@ -395,7 +393,7 @@ Copyright (C) 2016-2018 Jacob Barkdull
 }
 
 .hashover .hashover-edit-delete:focus {
-	border-color: #222222 ! important;
+	border-color: #880000 ! important;
 	background-color: #FF5959 ! important;
 
 	-o-box-shadow: 0px 0px 2px #FFEFBF ! important;
@@ -946,11 +944,6 @@ Copyright (C) 2016-2018 Jacob Barkdull
 	background-attachment: scroll;
 	opacity: 0.50;
 	filter: alpha(opacity=50);
-
-	-o-transition: opacity 150ms linear 0ms;
-	-webkit-transition: opacity 150ms linear 0ms;
-	-moz-transition: opacity 150ms linear 0ms;
-	transition: opacity 150ms linear 0ms;
 }
 
 .hashover .hashover-formatting:hover,
@@ -1094,7 +1087,7 @@ Copyright (C) 2016-2018 Jacob Barkdull
 	filter: alpha(opacity=0);
 }
 
-.hashover .hashover-more-link,
+.hashover .hashover-more-link.hashover-hide-more-link,
 .hashover .hashover-message.hashover-message-animated,
 .hashover .hashover-message.hashover-message-animated > *,
 .hashover .hashover-formatting-message.hashover-message-animated,
