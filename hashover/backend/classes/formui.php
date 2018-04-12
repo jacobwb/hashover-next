@@ -717,7 +717,9 @@ class FormUI
 		// Add checkbox label element to main form buttons wrapper element
 		if ($this->setup->fieldOptions['email'] !== false) {
 			if ($this->login->userIsLoggedIn === false or !empty ($this->login->email)) {
-				$main_form_links_wrapper->appendChild ($this->subscribeLabel ());
+				$subscribed = ($this->setup->subscribesUser === true);
+				$subscribe_label = $this->subscribeLabel ('', 'main', $subscribed);
+				$main_form_links_wrapper->appendChild ($subscribe_label);
 			}
 		}
 

@@ -193,6 +193,7 @@ $locale = array (
 	'setting-sets-cookies'			=> '启用Cookie',
 	'setting-secure-cookies'		=> '使用安全的HTTPS专用Cookie',
 	'setting-stores-ip-address'		=> '启用存储用户IP地址',
+	'setting-subscribes-user'		=> '订阅用户默认通过电子邮件通知',
 	'setting-allows-user-replies'		=> '将用户电子邮件设置为“答复通知”中的“回复”',
 	'setting-noreply-email'			=> '未给出电子邮件时使用的电子邮件地址',
 	'setting-spam-batabase'			=> 'SPAM数据库位置',

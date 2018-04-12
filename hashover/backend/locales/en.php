@@ -193,6 +193,7 @@ $locale = array (
 	'setting-sets-cookies'			=> 'Enable cookies',
 	'setting-secure-cookies'		=> 'Use secure HTTPS-only cookies',
 	'setting-stores-ip-address'		=> 'Enable storage of user IP addresses',
+	'setting-subscribes-user'		=> 'Subscribe the user to e-mail notifications by default',
 	'setting-allows-user-replies'		=> 'Set user e-mail as "Reply-To" in reply notifications',
 	'setting-noreply-email'			=> 'E-mail address used when no e-mail is given',
 	'setting-spam-batabase'			=> 'SPAM database location',

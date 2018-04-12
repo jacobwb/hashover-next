@@ -193,6 +193,7 @@ $locale = array (
 	'setting-sets-cookies'			=> 'Çerezleri etkinleştir',
 	'setting-secure-cookies'		=> 'Güvenli HTTPS sadece çerezleri kullan',
 	'setting-stores-ip-address'		=> 'Kullanıcı IP adreslerinin saklanmasını etkinleştir',
+	'setting-subscribes-user'		=> 'Varsayılan olarak bildirimleri e-postaya göndermek için kullanıcıya abone olun',
 	'setting-allows-user-replies'		=> 'Kullanıcı e-postasını cevap bildirimlerinde "Cevapla" olarak ayarla',
 	'setting-noreply-email'			=> 'E-posta verilmediğinde kullanılan e-posta adresi',
 	'setting-spam-batabase'			=> 'SPAM veritabanı konumu',

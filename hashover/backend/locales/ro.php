@@ -193,6 +193,7 @@ $locale = array (
 	'setting-sets-cookies'			=> 'Activați cookie-urile',
 	'setting-secure-cookies'		=> 'Utilizați cookie-urile securizate HTTPS',
 	'setting-stores-ip-address'		=> 'Activați stocarea adreselor IP utilizator',
+	'setting-subscribes-user'		=> 'Abonează-l pe utilizator să trimită notificări prin e-mail în mod implicit',
 	'setting-allows-user-replies'		=> 'Setați e-mail-ul utilizator ca "Răspundeți-vă" în notificările de răspuns',
 	'setting-noreply-email'			=> 'Adresa de e-mail utilizată atunci când nu este dat un e-mail',
 	'setting-spam-batabase'			=> 'Locația bazei de date SPAM',

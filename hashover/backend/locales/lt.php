@@ -202,6 +202,7 @@ $locale = array (
 	'setting-sets-cookies'			=> 'Įgalinti slapukus',
 	'setting-secure-cookies'		=> 'Naudoti saugius HTTPS slapukus',
 	'setting-stores-ip-address'		=> 'Įgalinti naudotojo IP adresų saugojimą',
+	'setting-subscribes-user'		=> 'Pagal numatytuosius nustatymus prenumeruojamas naudotojas el. Paštu',
 	'setting-allows-user-replies'		=> 'Nustatykite naudotojo el. Laišką kaip "Atsakymą į" atsakymų pranešimuose',
 	'setting-noreply-email'			=> 'El. Pašto adresas naudojamas, kai nėra el. Pašto',
 	'setting-spam-batabase'			=> 'SPAM duomenų bazės vieta',

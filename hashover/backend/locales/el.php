@@ -193,6 +193,7 @@ $locale = array (
 	'setting-sets-cookies'			=> 'Ενεργοποίηση cookies',
 	'setting-secure-cookies'		=> 'Χρήση ασφαλών HTTPS-only cookies',
 	'setting-stores-ip-address'		=> 'Ενεργοποίηση αποθήκευσης των IP διευθύνσεων χρηστών',
+	'setting-subscribes-user'		=> 'Οι χρήστες εγγράφονται στα μηνύματα ηλεκτρονικού ταχυδρομείου ειδοποιήσεων από προεπιλογή',
 	'setting-allows-user-replies'		=> 'Όρισε το e-mail του χρήστη ως "Reply-To" σε ειδοποιήσεις απαντήσεων',
 	'setting-noreply-email'			=> 'Διεύθυνση e-mail που θα χρησιμοποιείται όταν δεν παρέχεται e-mail',
 	'setting-spam-batabase'			=> 'Τοποθεσία βάσης δεδομένων SPAM',

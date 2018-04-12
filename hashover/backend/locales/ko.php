@@ -193,6 +193,7 @@ $locale = array (
 	'setting-sets-cookies'			=> '쿠키 사용',
 	'setting-secure-cookies'		=> '보안 HTTPS 전용 쿠키 사용',
 	'setting-stores-ip-address'		=> '사용자 IP 주소 저장 사용',
+	'setting-subscribes-user'		=> '기본적으로 전자 메일 알림을 구독합니다',
 	'setting-allows-user-replies'		=> '답장 알림에서 사용자 전자 메일을 "답장"으로 설정하십시오.',
 	'setting-noreply-email'			=> '이메일이 없을 때 사용되는 이메일 주소',
 	'setting-spam-batabase'			=> '스팸 데이터베이스 위치',

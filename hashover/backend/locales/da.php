@@ -193,6 +193,7 @@ $locale = array (
 	'setting-sets-cookies'			=> 'Aktiver cookies',
 	'setting-secure-cookies'		=> 'Brug kun HTTPS-kun cookies',
 	'setting-stores-ip-address'		=> 'Aktiver opbevaring af brugerens IP-adresser',
+	'setting-subscribes-user'		=> 'Abonner brugeren til at e-mail-meddelelser som standard',
 	'setting-allows-user-replies'		=> 'Angiv brugerens e-mail som "Svar til" i svarmeddelelser',
 	'setting-noreply-email'			=> 'E-mail-adresse, der bruges, når der ikke gives e-mail',
 	'setting-spam-batabase'			=> 'SPAM database placering',

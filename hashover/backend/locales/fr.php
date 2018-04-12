@@ -200,6 +200,7 @@ $locale = array (
 	'setting-sets-cookies'			=> 'Activer les cookies',
 	'setting-secure-cookies'		=> 'Utiliser des cookies HTTPS-only sécurisés',
 	'setting-stores-ip-address'		=> 'Activer le stockage des adresses IP des utilisateurs',
+	'setting-subscribes-user'		=> 'Abonnez l\'utilisateur aux notifications par courrier électronique par défaut',
 	'setting-allows-user-replies'		=> 'Définir l\'adresse e-mail de l\'utilisateur comme "Répondre à" dans les notifications de réponse',
 	'setting-noreply-email'			=> 'Adresse e-mail utilisée si aucun e-mail n\'est donné',
 	'setting-spam-batabase'			=> 'Emplacement de la base de données SPAM',

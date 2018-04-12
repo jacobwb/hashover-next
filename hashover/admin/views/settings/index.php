@@ -245,6 +245,10 @@ function ui_array (Setup $setup)
 			'type' => 'checkbox',
 			'value' => $setup->storesIpAddress
 		),
+		'subscribes-user' => array (
+			'type' => 'checkbox',
+			'value' => $setup->subscribesUser
+		),
 		'allows-user-replies' => array (
 			'type' => 'checkbox',
 			'value' => $setup->allowsUserReplies

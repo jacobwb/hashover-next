@@ -84,6 +84,7 @@ class Settings extends Secrets
 	public $setsCookies		= true;				// Whether cookies are enabled
 	public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 	public $storesIpAddress		= false;			// Whether to store users' IP addresses
+	public $subscribesUser		= true;				// Whether to subscribe the user to e-mail notifications by default
 	public $allowsUserReplies	= false;			// Whether given e-mails are sent as reply-to address to users
 	public $noreplyEmail		= 'noreply@example.com';	// E-mail used when no e-mail is given
 	public $spamDatabase		= 'remote';			// Whether to use a remote or local spam database

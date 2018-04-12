@@ -193,6 +193,7 @@ $locale = array (
 	'setting-sets-cookies'			=> 'فعال کردن کوکی ها',
 	'setting-secure-cookies'		=> 'استفاده از کوکیهای امن HTTPS تنها',
 	'setting-stores-ip-address'		=> 'ذخیره سازی آدرس های IP کاربر را فعال کنید',
+	'setting-subscribes-user'		=> 'به طور پیشفرض کاربر را به ایمیل اعلان مشترک کنید',
 	'setting-allows-user-replies'		=> 'ایمیل کاربر را به عنوان "پاسخ به" در پیام های پاسخ تنظیم کنید',
 	'setting-noreply-email'			=> 'آدرس ایمیل مورد استفاده زمانی که هیچ ایمیل داده نمی شود',
 	'setting-spam-batabase'			=> 'محل پایگاه داده اشخاص',

@@ -193,6 +193,7 @@ $locale = array (
 	'setting-sets-cookies'			=> 'Habilitar cookies',
 	'setting-secure-cookies'		=> 'Usar cookies seguras HTTPS-only',
 	'setting-stores-ip-address'		=> 'Habilitar el almacenamiento de direcciones IP de usuario',
+	'setting-subscribes-user'		=> 'Suscribir al usuario a notificaciones por correo electrónico de forma predeterminada',
 	'setting-allows-user-replies'		=> 'Establecer el correo electrónico del usuario como "Responder a" en las notificaciones de respuesta',
 	'setting-noreply-email'			=> 'Dirección de correo electrónico utilizada cuando no se proporciona un correo electrónico',
 	'setting-spam-batabase'			=> 'Ubicación de la base de datos SPAM',
