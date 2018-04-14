@@ -78,7 +78,7 @@ class SpamCheck
 	public function getStopForumSpamJSON ()
 	{
 		// Stop Forum Spam API URL
-		$url = 'http://www.stopforumspam.com/api?ip=' . $_SERVER['REMOTE_ADDR'] . '&f=json';
+		$url = 'https://www.stopforumspam.com/api?ip=' . $_SERVER['REMOTE_ADDR'] . '&f=json';
 
 		// Check if we have cURL
 		if (function_exists ('curl_init')) {

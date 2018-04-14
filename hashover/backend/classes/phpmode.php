@@ -231,7 +231,7 @@ class PHPMode
 				if ($name_length > 1 and $name_length <= 30) {
 					// Set website to Twitter profile if a specific website wasn't given
 					if (empty ($comment['website'])) {
-						$comment['website'] = 'http://twitter.com/' . $name;
+						$comment['website'] = 'https://twitter.com/' . $name;
 					}
 				}
 			}

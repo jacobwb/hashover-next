@@ -587,7 +587,7 @@ class FormUI
 
 				if ($name_length > 1 and $name_length <= 30) {
 					if (empty ($user_website)) {
-						$user_website = 'http://twitter.com/' . $user_name;
+						$user_website = 'https://twitter.com/' . $user_name;
 					}
 				}
 			}
