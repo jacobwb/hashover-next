@@ -24,7 +24,7 @@ try {
 	// Instantiate general setup class
 	$setup = new Setup (array (
 		'mode' => 'javascript',
-		'context' => 'normal'
+		'context' => isset ($_GET['nodefault']) ? 'moderation' : 'normal'
 	));
 
 	// Instantiate HashOver statistics class
