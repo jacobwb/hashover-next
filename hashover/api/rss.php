@@ -303,7 +303,7 @@ function create_rss (&$hashover)
 
 	// Return RSS XML
 	echo preg_replace_callback ('/^(\s+)/m', function ($spaces) {
-		return str_repeat ("\t", strlen ($spaces[1]) / 2);
+		return str_repeat ("\t", mb_strlen ($spaces[1]) / 2);
 	}, $xml->saveXML ());
 
 	// Return statistics

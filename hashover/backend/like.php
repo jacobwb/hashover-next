@@ -155,7 +155,7 @@ try {
 	$action = $hashover->setup->getRequest ('action', null);
 
 	// Return error if we're missing necessary post data
-	if (($url and $key and $action) === null) {
+	if ($url === null or $key === null or $action === null) {
 		return array ('error' => 'No action.');
 	}
 

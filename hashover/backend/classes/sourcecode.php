@@ -372,7 +372,6 @@ class SourceCode
 	// Sets content type header based on user request
 	protected function setContentType ($file, $type)
 	{
-
 		// Switch between return types
 		switch ($type) {
 			// Display as plain text
@@ -456,6 +455,8 @@ class SourceCode
 		if ($this->isHashOverFile ($file) === true) {
 			// If so, load PHP file
 			$source = @file_get_contents ('../' . $file);
+
+			// File name
 			$name = basename ($file);
 
 			// Check if file read successfully

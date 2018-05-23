@@ -42,6 +42,18 @@ class DataFiles
 		return false;
 	}
 
+	// Convert a string to OS-specific line endings
+	public function osLineEndings ($string)
+	{
+		// Different line ending styles
+		$eol_styles = array ("\r\n", "\r", "\n");
+
+		// Actual consersion
+		$string = str_replace ($eol_styles, PHP_EOL, $string);
+
+		return $string;
+	}
+
 	public function saveJSON ($file, array $contents = array ())
 	{
 		// Check if we have pretty print support
@@ -160,17 +172,5 @@ class DataFiles
 		}
 
 		return true;
-	}
-
-	// Convert a string to OS-specific line endings
-	public function osLineEndings ($string)
-	{
-		// Different line ending styles
-		$eol_styles = array ("\r\n", "\r", "\n");
-
-		// Actual consersion
-		$string = str_replace ($eol_styles, PHP_EOL, $string);
-
-		return $string;
 	}
 }

@@ -90,8 +90,9 @@ class Database
 		// Query statement
 		$results = $this->database->query ($statement);
 
-		// Return threads if successful
+		// Check if the query was successful
 		if ($results !== false) {
+			// If so, attempt to get all metadata
 			$fetch_all = $results->fetchAll (\PDO::FETCH_ASSOC);
 
 			if (isset ($fetch_all[0]['items'])) {

@@ -21,9 +21,9 @@ HashOverConstructor.prototype.getMainElement = function (id)
 	// Add main HashOver class
 	this.classes.add (element, 'hashover');
 
-	// Check if HashOver is prepared
+	// Check if backend is ready
 	if (this.constructor.prepared === true) {
-		// If so, add class for differentiating desktop and mobile styling
+		// If so, add class indictating desktop or mobile styling
 		this.classes.add (element, 'hashover-' + this.setup['device-type']);
 
 		// And add class to indicate user login status

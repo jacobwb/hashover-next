@@ -132,10 +132,13 @@ try {
 		// Attempt to read comment
 		$raw = $hashover->thread->data->read ($key, $thread);
 
-		// Skip failed or unapproved comments or missing metadata
-		if ((!empty ($raw['status']) and $raw['status'] !== 'approved')
-		    or ($raw and $page_info) === false)
-		{
+		// Skip if we're missing metadata
+		if ($page_info === false or $raw === false) {
+			continue;
+		}
+
+		// Skip failed or unapproved comments
+		if (!empty ($raw['status']) and $raw['status'] !== 'approved') {
 			continue;
 		}
 

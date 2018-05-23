@@ -29,20 +29,20 @@ HashOver.instantiator = function (options)
 
 		// Set the backend information
 		if (HashOver.prepared !== true) {
-			// Locales from HashOver backend
+			// Locales from backend
 			HashOver.prototype.locale = json.locale;
 
-			// Setup information from HashOver back-end
+			// Setup information from backend
 			HashOver.prototype.setup = json.setup;
 
-			// UI HTML from HashOver back-end
+			// UI HTML from backend
 			HashOver.prototype.ui = json.ui;
 
-			// Mark HashOver as prepared
+			// Mark backend as ready
 			HashOver.prepared = true;
 		}
 
-		// Thread information from HashOver back-end
+		// Thread information from backend
 		hashover.instance = json.instance;
 
 		// Backend execution time and memory usage statistics

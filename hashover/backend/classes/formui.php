@@ -447,7 +447,7 @@ class FormUI
 			'class' => 'hashover'
 		), false);
 
-		// Add class for differentiating desktop and mobile styling
+		// Add class indictating desktop and mobile styling
 		if ($this->setup->isMobile === true) {
 			$hashover_element->appendAttribute ('class', 'hashover-mobile');
 		} else {

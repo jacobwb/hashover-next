@@ -46,6 +46,7 @@ class Avatars
 
 		// If set to custom, direct 404s to local avatar image
 		if ($setup->gravatarDefault === 'custom') {
+			// The fallback image uses the PNG image
 			$fallback = $avatar . '.png';
 
 			// Check if HashOver is being remotely accessed

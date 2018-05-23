@@ -60,8 +60,11 @@ try {
 		// Append thread hyperlink to cell
 		$td->appendChild ($thread_link);
 
+		// Thread URL line
+		$url = new HTMLTag ('p', new HTMLTag ('small', $data['url']));
+
 		// Append page URL to row
-		$td->appendChild (new HTMLTag ('p', new HTMLTag ('small', $data['url'])));
+		$td->appendChild ($url);
 
 		// Append cell to row
 		$tr->appendChild ($td);

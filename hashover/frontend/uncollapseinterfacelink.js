@@ -2,7 +2,9 @@
 HashOver.prototype.uncollapseInterfaceLink = function ()
 {
 	// Decide button text
-	var uncollapseLocale = (this.instance['total-count'] >= 1) ? 'show-number-comments' : 'post-comment-on';
+	var show = 'show-number-comments';
+	var post = 'post-comment-on';
+	var uncollapseLocale = (this.instance['total-count'] >= 1) ? show : post;
 	var uncollapseText = this.instance[uncollapseLocale];
 
 	// Create hyperlink to uncollapse the comment interface

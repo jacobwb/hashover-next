@@ -1,6 +1,5 @@
 // Get the current HashOver script tag (script.js)
-HashOverConstructor.script = (function ()
-{
+HashOverConstructor.script = (function () {
 	// Get various scripts
 	var loaderScript = document.getElementById ('hashover-loader');
 	var scripts = document.getElementsByTagName ('script');

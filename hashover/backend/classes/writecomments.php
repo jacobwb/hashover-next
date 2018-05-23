@@ -231,7 +231,7 @@ class WriteComments extends PostData
 		// Check if file is set
 		if ($comment_file !== false) {
 			// Cast file to string
-			$comment_file =(string) ($comment_file);
+			$comment_file = (string)($comment_file);
 
 			// Return true if POST file is in comment list
 			if (in_array ($comment_file, $this->thread->commentList, true)) {

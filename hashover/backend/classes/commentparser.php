@@ -129,13 +129,13 @@ class CommentParser
 
 		// Add number of likes to output
 		if (!empty ($comment['likes'])) {
-			$output['likes'] =(int) $comment['likes'];
+			$output['likes'] = (int)($comment['likes']);
 		}
 
 		// If enabled, add number of dislikes to output
 		if ($this->setup->allowsDislikes === true) {
 			if (!empty ($comment['dislikes'])) {
-				$output['dislikes'] =(int) $comment['dislikes'];
+				$output['dislikes'] = (int)($comment['dislikes']);
 			}
 		}
 
@@ -182,7 +182,7 @@ class CommentParser
 		}
 
 		// Add comment date to output
-		$output['date'] =(string) $comment_date;
+		$output['date'] = (string)($comment_date);
 
 		if (!empty ($comment['status'])) {
 			$status = $comment['status'];
@@ -190,7 +190,7 @@ class CommentParser
 			// Check if comment has a status other than approved
 			if ($status !== 'approved') {
 				// If so, add comment status to output
-				$output['status'] =(string) $status;
+				$output['status'] = (string)($status);
 
 				// And add status text to output
 				$output['status-text'] = mb_strtolower ($this->locale->text[$status . '-name']);
@@ -198,10 +198,10 @@ class CommentParser
 		}
 
 		// Add comment date as Unix timestamp to output
-		$output['sort-date'] =(int) $micro_date;
+		$output['sort-date'] = (int)($micro_date);
 
 		// Add comment body to output
-		$output['body'] =(string) $comment['body'];
+		$output['body'] = (string)($comment['body']);
 
 		return $output;
 	}
@@ -220,7 +220,7 @@ class CommentParser
 		$output['permalink'] = 'c' . str_replace ('-', 'r', $key);
 		$output['notice'] = $this->locale->text[$type . '-note'];
 		$output['notice-class'] = 'hashover-' . $type;
-		$output['sort-date'] =(int) $last_date;
+		$output['sort-date'] = (int)($last_date);
 
 		return $output;
 	}

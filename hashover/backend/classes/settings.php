@@ -192,52 +192,6 @@ class Settings extends Secrets
 		return false;
 	}
 
-	// Returns a server-side absolute file path
-	public function getAbsolutePath ($file)
-	{
-		return $this->rootDirectory . '/' . trim ($file, '/');
-	}
-
-	// Returns a client-side path for a file within the HashOver root
-	public function getHttpPath ($file)
-	{
-		return $this->httpRoot . '/' . trim ($file, '/');
-	}
-
-	// Returns a client-side path for a file within the backend directory
-	public function getBackendPath ($file)
-	{
-		return $this->httpBackend . '/' . trim ($file, '/');
-	}
-
-	// Returns a client-side path for a file within the images directory
-	public function getImagePath ($filename)
-	{
-		$path  = $this->httpImages . '/' . trim ($filename, '/');
-		$path .= '.' . $this->imageFormat;
-
-		return $path;
-	}
-
-	// Returns a client-side path for a file within the configured theme
-	public function getThemePath ($file, $http = true)
-	{
-		// Path to the requested file in the configured theme
-		$theme_file = $this->themePath . '/' . $file;
-
-		// Use the same file from the default theme if it doesn't exist
-		if (!file_exists ($this->getAbsolutePath ($theme_file))) {
-			$theme_file = 'themes/default/' . $file;
-		}
-
-		// Convert the theme file path for HTTP use if told to
-		if ($http !== false) {
-			$theme_file = $this->getHttpPath ($theme_file);
-		}
-
-		return $theme_file;
-	}
-
 	public function jsonSettings ()
 	{
 		// JSON settings file path
@@ -317,6 +271,52 @@ class Settings extends Secrets
 
 		// Image directory for HTTP
 		$this->httpImages = $this->httpRoot . '/images';
+	}
+
+	// Returns a server-side absolute file path
+	public function getAbsolutePath ($file)
+	{
+		return $this->rootDirectory . '/' . trim ($file, '/');
+	}
+
+	// Returns a client-side path for a file within the HashOver root
+	public function getHttpPath ($file)
+	{
+		return $this->httpRoot . '/' . trim ($file, '/');
+	}
+
+	// Returns a client-side path for a file within the backend directory
+	public function getBackendPath ($file)
+	{
+		return $this->httpBackend . '/' . trim ($file, '/');
+	}
+
+	// Returns a client-side path for a file within the images directory
+	public function getImagePath ($filename)
+	{
+		$path  = $this->httpImages . '/' . trim ($filename, '/');
+		$path .= '.' . $this->imageFormat;
+
+		return $path;
+	}
+
+	// Returns a client-side path for a file within the configured theme
+	public function getThemePath ($file, $http = true)
+	{
+		// Path to the requested file in the configured theme
+		$theme_file = $this->themePath . '/' . $file;
+
+		// Use the same file from the default theme if it doesn't exist
+		if (!file_exists ($this->getAbsolutePath ($theme_file))) {
+			$theme_file = 'themes/default/' . $file;
+		}
+
+		// Convert the theme file path for HTTP use if told to
+		if ($http !== false) {
+			$theme_file = $this->getHttpPath ($theme_file);
+		}
+
+		return $theme_file;
 	}
 
 	// Check if a given API format is enabled

@@ -55,7 +55,7 @@ class CommentFiles extends DataFiles
 
 			foreach ($files as $file) {
 				$key = basename ($file, '.' . $extension);
-				$comments[$key] =(string) $key;
+				$comments[$key] = (string)($key);
 			}
 
 			return $comments;
