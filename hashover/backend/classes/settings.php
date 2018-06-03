@@ -50,7 +50,7 @@ class Settings extends Secrets
 	public $usesMarkdown		= true;				// Whether comments will be parsed for Markdown
 
 	// Date and Time settings
-	public $serverTimezone		= 'America/Los_Angeles';	// Server timezone
+	public $serverTimezone		= 'UTC';			// Server timezone
 	public $usesUserTimezone	= true;				// Whether comment dates should use the user's timezone (JavaScript-mode)
 	public $usesShortDates		= true;				// Whether comment dates are shortened, for example "X days ago"
 	public $timeFormat		= 'g:ia';			// Time format, use 'H:i' for 24-hour format (see: http://php.net/manual/en/function.date.php)
@@ -137,11 +137,11 @@ class Settings extends Secrets
 
 	public function __construct ()
 	{
+		// Use current server timezone as default timezone
+		$this->serverTimezone = date_default_timezone_get();
+
 		// Theme path
 		$this->themePath = 'themes/' . $this->theme;
-
-		// Set server timezone
-		date_default_timezone_set ($this->serverTimezone);
 
 		// Set encoding
 		mb_internal_encoding ('UTF-8');
@@ -279,6 +279,9 @@ class Settings extends Secrets
 	// Synchronizes specific settings after remote changes
 	public function syncSettings ()
 	{
+		// Set server timezone
+		date_default_timezone_set ($this->serverTimezone);
+
 		// Theme path
 		$this->themePath = 'themes/' . $this->theme;
 
