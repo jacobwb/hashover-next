@@ -7,22 +7,6 @@
 // This applies worldwide. If this is not legally possible, I grant any
 // entity the right to use this work for any purpose, without any
 // conditions, unless such conditions are required by law.
-//
-//--------------------
-//
-// IMPORTANT NOTICE:
-//
-// To retain your settings and maintain proper functionality, when
-// downloading or otherwise upgrading to a new version of HashOver it
-// is important that you preserve this file, unless directed otherwise.
-//
-// It is also important to choose UNIQUE values for the encryption key,
-// admin name, and admin password, as not doing so puts HashOver at
-// risk of being hijacked. Allowing someone to delete comments and/or
-// edit existing comments to post spam, impersonate you or your
-// visitors in order to push some sort of agenda/propaganda, to defame
-// you or your visitors, or to imply endorsement of some product(s),
-// service(s), and/or political ideology.
 
 
 class Secrets
@@ -38,4 +22,30 @@ class Secrets
 
 	// Login password to gain admin rights (case-sensitive)
 	protected $adminPassword = 'passwd';
+
+	// HTTP root directory. This is usually auto-detected correctly,
+	// so it does not need to be set in most circumstances.
+	protected $httpRootDirectory = NULL;
+
+	protected function getSecretConfigPath() {
+		return dirname(dirname(__DIR__)) . '/config/secrets.ini';
+	}
+
+	function __construct() {
+		$config_file_name = $this->getSecretConfigPath();
+		if (!file_exists($config_file_name)) {
+			throw new \Exception (sprintf (
+				'Please create the file %s (using secrets.ini.sample as a template)',
+				$config_file_name
+			));
+		}
+
+		$arr = parse_ini_file($config_file_name);
+		$this->notificationEmail = $arr['notification-email'];
+		$this->encryptionKey = $arr['encryption-key'];
+		$this->adminName = $arr['admin-name'];
+		$this->adminPassword = $arr['admin-password'];
+		if (isset($arr['http-root-directory']))
+			$this->httpRootDirectory = $arr['http-root-directory'];
+	}
 }
