@@ -74,8 +74,6 @@ Important differences from version 1.0
   <script type="text/javascript" src="/hashover/comments.php"></script>
   ```
 
-- HashOver 2.0 is object oriented, many things have changed places and been renamed. For normal users, about the only thing that is important to know is that the `secrets.php` file was merged with the `settings.php` file.
-
 Important recent changes to version 2.0
 ---
 - The `pages` directory is now `comments/threads`, this change will cause existing comments to not appear until you move the directories under `pages` into the new `comments/threads` directory.

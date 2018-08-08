@@ -1,6 +1,7 @@
 // Displays edit form (editcomment.js)
 HashOver.prototype.editComment = function (comment)
 {
+	// Do nothing if the comment isn't editable
 	if (comment['editable'] !== true) {
 		return false;
 	}
@@ -11,9 +12,6 @@ HashOver.prototype.editComment = function (comment)
 	// Get permalink from comment JSON object
 	var permalink = comment.permalink;
 
-	// Get edit link element
-	var link = this.elements.get ('edit-link-' + permalink, true);
-
 	// Get file
 	var file = this.permalinks.getFile (permalink);
 
@@ -23,6 +21,12 @@ HashOver.prototype.editComment = function (comment)
 
 	// Get and clean comment body
 	var body = comment.body.replace (this.regex.links, '$1');
+
+	// Get edit form placeholder
+	var placeholder = this.elements.get ('placeholder-edit-form-' + permalink, true);
+
+	// Get edit link element
+	var link = this.elements.get ('edit-link-' + permalink, true);
 
 	// Create edit form element
 	var form = this.elements.create ('form', {
@@ -44,9 +48,8 @@ HashOver.prototype.editComment = function (comment)
 	// Prevent input submission
 	this.preventSubmit (form);
 
-	// Add edit form to page
-	var editForm = this.elements.get ('placeholder-edit-form-' + permalink, true);
-	    editForm.appendChild (form);
+	// Add edit form to placeholder
+	placeholder.appendChild (form);
 
 	// Set status dropdown menu option to comment status
 	this.elements.exists ('edit-status-' + permalink, function (status) {
@@ -76,7 +79,7 @@ HashOver.prototype.editComment = function (comment)
 	};
 
 	// Change "Edit" link to "Cancel" link
-	this.cancelSwitcher ('edit', link, editForm, permalink);
+	this.cancelSwitcher ('edit', link, placeholder, permalink);
 
 	// Attach event listeners to "Save Edit" button
 	var saveEdit = this.elements.get ('edit-post-' + permalink, true);

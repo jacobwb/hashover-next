@@ -70,14 +70,6 @@ class Setup extends Settings
 		'hashover-edit'
 	);
 
-	// Default metadata
-	public $metadata = array (
-		'title' => '',
-		'url' => '',
-		'status' => 'open',
-		'latest' => array ()
-	);
-
 	public function __construct (array $usage)
 	{
 		parent::__construct ();
@@ -296,7 +288,7 @@ class Setup extends Settings
 
 	public function setThreadName ($name = '')
 	{
-		// Requesting the title if told to
+		// Request the thread if told to
 		if ($name === 'request') {
 			$name = $this->requestData ('thread', $this->threadName);
 		}

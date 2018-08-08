@@ -1,4 +1,75 @@
-Changes by Jacob Barkdull 2017-00-00
+Changes by Jacob Barkdull 2017-04-11
+--------------------------------------------------------------------------------
+* "Notify me of replies" checkbox default state is now configurable.
+* Escape HTML tags that get trimmed in half in the latest comments API.
+* Added new CSS file for latest comments API.
+* Added Greek locale by @Soulhub
+* Small CSS changes; removed most transitions.
+* Changed and added CSS Copyright notices.
+* Vertically flipped the paint brush icon.
+* Other minor improvements.
+
+
+Changes by Jacob Barkdull 2017-03-15
+--------------------------------------------------------------------------------
+* Fixed big, em, small, strong, sub, and sup tags are now automatically closed.
+* Automatically close tags that may have had their endings trimmed off.
+* Localized all admin views.
+
+
+Changes by Jacob Barkdull 2017-03-14
+--------------------------------------------------------------------------------
+* Date is now an absolute path in API and remote contexts.
+* Limited event handlers in the latest comments API.
+
+
+Changes by Jacob Barkdull 2017-03-13
+--------------------------------------------------------------------------------
+* Fixed JSONP shared code conflicts.
+
+
+Changes by Jacob Barkdull 2017-03-12
+--------------------------------------------------------------------------------
+* Fixed shared frontend code conflicts
+
+  When either an API was used on the same page as HashOver, or when two
+  API were used on the same page together, the two or more scripts
+  would conflict with each other because the shared prototype methods
+  were being added to the constructor from the previous script.
+
+
+Changes by Jacob Barkdull 2017-03-11
+--------------------------------------------------------------------------------
+* HashOver script tag can now safely be placed anywhere on the page.
+* Page URL and title removed from count link and latest comments API.
+* Improved admin sidebar navigation tracking.
+* Improved performance of admin login.
+* Fixed bug causing nonexistent files to resolve to `false`.
+* Untracked JSON config files.
+
+
+Changes by Jacob Barkdull 2017-03-03
+--------------------------------------------------------------------------------
+* Admin Settings page now only merges settings into `config/settings.json`.
+* Added missing files to Source Code viewer.
+* Made small improvements to admin views.
+* Improved locale optionality.
+
+
+Changes by Jacob Barkdull 2017-03-01
+--------------------------------------------------------------------------------
+* Added new setting to control metadata collection on localhost.
+* Fixed AJAX comment posting.
+* Fixed admin login issue.
+
+
+Changes by Jacob Barkdull 2017-02-28
+--------------------------------------------------------------------------------
+* Fixed the comment thread's automatic placement position on the page.
+* Added new locales to Source Code viewer.
+
+
+Changes by Jacob Barkdull 2017-02-26
 --------------------------------------------------------------------------------
 * MIGRATION INFORMATION
 
@@ -163,6 +234,11 @@ Changes by Jacob Barkdull 2017-00-00
 * Improved latest comments API.
 * Improved comment count link API.
 * Improved SQL(ite) support.
+* Improved Spanish and Chinese locales.
+* Added Lithuanian locale by vKaotik.
+* Added Korean locale by dryoo.
+* Added Persian locale by paradox70.
+* Comments are now uncollapsed when loaded with a permalink.
 * JavaScript/JSON is now the assumed default mode.
 * PHP regular expressions now use the "study" flag.
 * The "Latest Comments" API frontend no longer uses its own stylesheet.
@@ -170,6 +246,7 @@ Changes by Jacob Barkdull 2017-00-00
 * The `ReadComments` class has been renamed to `Thread`.
 * The `JSMinifier` class has been renamed to `JavaScriptMinifier`.
 * The `ReadFiles` class has been renamed to `CommentFiles`.
+* Fixed JavaScript minification.
 * Added centralized source code viewer for all AGPL licensed PHP files.
 * Removed code to display source code from every PHP file.
 * Made some small improvements to the icons images.
