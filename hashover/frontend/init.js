@@ -116,7 +116,9 @@ HashOver.prototype.init = function ()
 
 	// Templatify UI HTML strings
 	for (var element in this.ui) {
-		this.ui[element] = this.strings.templatify (this.ui[element]);
+		if (this.ui.hasOwnProperty (element) === true) {
+			this.ui[element] = this.strings.templatify (this.ui[element]);
+		}
 	}
 
 	// Get sort div element

@@ -24,6 +24,8 @@ HashOver.prototype.AJAXEdit = function (json, permalink, destination, isReply)
 
 	// Update old in array comment with edited comment
 	for (var attribute in json.comment) {
-		oldComment[attribute] = json.comment[attribute];
+		if (json.comment.hasOwnProperty (attribute) === true) {
+			oldComment[attribute] = json.comment[attribute];
+		}
 	}
 };
