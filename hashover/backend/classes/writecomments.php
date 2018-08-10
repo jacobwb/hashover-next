@@ -31,7 +31,7 @@ class WriteComments extends PostData
 	protected $metadata;
 	protected $headers;
 	protected $userHeaders;
-	protected $kickbackURL;
+	protected $referer;
 	protected $name = '';
 	protected $password = '';
 	protected $loginHash = '';
@@ -160,20 +160,20 @@ class WriteComments extends PostData
 		// Check if we have an HTTP referer
 		if (!empty ($_SERVER['HTTP_REFERER'])) {
 			// If so, use it as the kickback URL
-			$this->kickbackURL = $_SERVER['HTTP_REFERER'];
+			$this->referer = $_SERVER['HTTP_REFERER'];
 		} else {
 			// Check if posting from remote domain
 			if ($this->remoteAccess === true) {
 				// If so, use absolute path
-				$this->kickbackURL = $setup->pageURL;
+				$this->referer = $setup->pageURL;
 			} else {
 				// If not, use relative path
-				$this->kickbackURL = $setup->filePath;
+				$this->referer = $setup->filePath;
 			}
 
 			// Add URL queries to kickback URL
 			if (!empty ($setup->URLQueries)) {
-				$this->kickbackURL .= '?' . $setup->URLQueries;
+				$this->referer .= '?' . $setup->URLQueries;
 			}
 		}
 	}
@@ -197,29 +197,34 @@ class WriteComments extends PostData
 		}
 	}
 
-	protected function kickback ($text = '', $error = false, $anchor = 'comments')
+	// Set header to redirect user back to the previous page
+	protected function kickback ($anchor = 'comments')
 	{
-		$message_type = ($error) ? 'error' : 'message';
+		if ($this->viaAJAX === false) {
+			header ('Location: ' . $this->referer . '#' . $anchor);
+		}
+	}
 
-		// Return error as JSON if request is AJAX
+	// Display message to visitor, via AJAX or redirect
+	protected function displayMessage ($text, $error = false)
+	{
+		// Message type as string
+		$message_type = ($error === true) ? 'error' : 'message';
+
+		// Check if request is AJAX
 		if ($this->viaAJAX === true) {
-			if (!empty ($text)) {
-				echo $this->misc->jsonData (array (
-					'message' => $text,
-					'type' => $message_type
-				));
-			}
-
-			return;
-		}
-
-		// Set cookie to specified message or error
-		if (!empty ($text)) {
+			// If so, display JSON for JavaScript frontend
+			echo $this->misc->jsonData (array (
+				'message' => $text,
+				'type' => $message_type
+			));
+		} else {
+			// If not, set cookie to specified message
 			$this->cookies->set ($message_type, $text);
-		}
 
-		// Set header to redirect user to previous page
-		header ('Location: ' . $this->kickbackURL . '#' . $anchor);
+			// And redirect user to previous page
+			$this->kickback ('hashover-form-section');
+		}
 	}
 
 	// Confirm that attempted actions are to existing comments
@@ -292,13 +297,13 @@ class WriteComments extends PostData
 
 			// Kick visitor back if told to
 			if ($kickback !== false) {
-				$this->kickback ($this->locale->text['logged-in']);
+				$this->displayMessage ($this->locale->text['logged-in']);
 			}
 
 		} catch (\Exception $error) {
 			// Kick visitor back with exception if told to
 			if ($kickback !== false) {
-				$this->kickback ($error->getMessage (), true);
+				$this->displayMessage ($error->getMessage (), true);
 				return true;
 			}
 
@@ -316,7 +321,7 @@ class WriteComments extends PostData
 		$this->login->clearLogin ();
 
 		// Kick visitor back
-		$this->kickback ($this->locale->text['logged-out']);
+		$this->displayMessage ($this->locale->text['logged-out']);
 
 		return true;
 	}
@@ -400,7 +405,7 @@ class WriteComments extends PostData
 					$this->metadata->removeFromLatest ($this->file);
 
 					// And kick visitor back with comment deletion message
-					$this->kickback ($this->locale->text['comment-deleted']);
+					$this->displayMessage ($this->locale->text['comment-deleted']);
 
 					return true;
 				}
@@ -410,11 +415,11 @@ class WriteComments extends PostData
 			sleep (5);
 
 			// Then kick visitor back with comment posting error
-			$this->kickback ($this->locale->text['post-fail'], true);
+			$this->displayMessage ($this->locale->text['post-fail'], true);
 
 		} catch (\Exception $error) {
 			// On exception kick visitor back with error
-			$this->kickback ($error->getMessage (), true);
+			$this->displayMessage ($error->getMessage (), true);
 		}
 
 		return false;
@@ -685,7 +690,7 @@ class WriteComments extends PostData
 					}
 
 					// Otherwise kick visitor back to posted comment
-					$this->kickback ('', false, 'hashover-c' . str_replace ('-', 'r', $this->file));
+					$this->kickback ('hashover-c' . str_replace ('-', 'r', $this->file));
 
 					return true;
 				}
@@ -695,11 +700,11 @@ class WriteComments extends PostData
 			sleep (5);
 
 			// Then kick visitor back with comment posting error
-			$this->kickback ($this->locale->text['post-fail'], true);
+			$this->displayMessage ($this->locale->text['post-fail'], true);
 
 		} catch (\Exception $error) {
 			// On exception kick visitor back with error
-			$this->kickback ($error->getMessage (), true);
+			$this->displayMessage ($error->getMessage (), true);
 		}
 
 		return false;
@@ -825,13 +830,13 @@ class WriteComments extends PostData
 			}
 
 			// Kick visitor back to comment
-			$this->kickback ('', false, $permalink);
+			$this->kickback ($permalink);
 
 			return true;
 		}
 
 		// Kick visitor back with an error on failure
-		$this->kickback ($this->locale->text['post-fail'], true);
+		$this->displayMessage ($this->locale->text['post-fail'], true);
 		return false;
 	}
 
@@ -863,7 +868,7 @@ class WriteComments extends PostData
 
 		} catch (\Exception $error) {
 			// On exception kick visitor back with error
-			$this->kickback ($error->getMessage (), true);
+			$this->displayMessage ($error->getMessage (), true);
 		}
 
 		return false;
