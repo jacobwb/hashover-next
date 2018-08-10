@@ -523,7 +523,7 @@ class WriteComments extends PostData
 			// Check if setup is for a comment edit
 			if ($editing === true) {
 				// If so, set status to "pending" if moderation of user edits is enabled
-				if (($this->setup->usesModeration and $this->setup->pendsUserEdits) === true) {
+				if ($this->setup->pendsUserEdits === true) {
 					$this->commentData['status'] = 'pending';
 				}
 			} else {

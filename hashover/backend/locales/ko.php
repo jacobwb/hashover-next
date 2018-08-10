@@ -155,8 +155,8 @@ $locale = array (
 
 	'setting-language'			=> '언어',
 	'setting-theme'				=> '테마',
-	'setting-uses-moderation'		=> '일반 사용자가 올린 의견은 검토가 필요합니다',
-	'setting-pends-user-edits'		=> '일반 사용자가 편집 한 댓글에는 추가 검토가 필요합니다.',
+	'setting-uses-moderation'		=> '최종 사용자가 게시 한 댓글의는 검토가 필요합니다',
+	'setting-pends-user-edits'		=> '일반 사용자가 편집 한 댓글에는 검토가 필요합니다',
 	'setting-data-format'			=> '설명 데이터 형식',
 	'setting-default-name'			=> '기본 댓글 작성자 이름',
 	'setting-allows-images'			=> '댓글에 이미지 표시 허용',

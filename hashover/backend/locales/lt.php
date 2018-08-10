@@ -164,8 +164,8 @@ $locale = array (
 
 	'setting-language'			=> 'Kalba',
 	'setting-theme'				=> 'Tema',
-	'setting-uses-moderation'		=> 'Įprastų vartotojų paskelbtiems komentarams reikia moderacijos',
-	'setting-pends-user-edits'		=> 'Norint įprastus naudotojus redaguoti komentarai reikalauja papildomo moderavimo',
+	'setting-uses-moderation'		=> 'Įprastų vartotojų paskelbtiems komentarai reikalauja moderacijos',
+	'setting-pends-user-edits'		=> 'Norint įprastus naudotojus redaguoti komentarai reikalauja moderacijos',
 	'setting-data-format'			=> 'Komentarų duomenų formatas',
 	'setting-default-name'			=> 'Numatytojo komentatoriaus vardas',
 	'setting-allows-images'			=> 'Leisti rodyti komentarus',

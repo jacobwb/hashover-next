@@ -3,6 +3,7 @@ Changes by Jacob Barkdull 2017-08-09
 * Improved admin view "Back" button style.
 * JavaScript: Only iterate over non-inherited object properties.
 * Differentiate backend redirect vs intend to display a message.
+* Decouple user edit moderation from overall moderation.
 * Fix/improve minified JavaScript copyright notice.
 * Other minor CSS changes.
 

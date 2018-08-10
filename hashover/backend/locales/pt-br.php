@@ -155,8 +155,8 @@ $locale = array (
 
 	'setting-language'			=> 'Língua',
 	'setting-theme'				=> 'Tema',
-	'setting-uses-moderation'		=> 'Os comentários postados pelos usuários normais requerem moderação',
-	'setting-pends-user-edits'		=> 'Os comentários editados por usuários normais requerem moderação adicional',
+	'setting-uses-moderation'		=> 'Os comentários postados por usuários normais requerem moderação',
+	'setting-pends-user-edits'		=> 'Os comentários editados por usuários normais requerem moderação',
 	'setting-data-format'			=> 'Formato de dados de comentários',
 	'setting-default-name'			=> 'Nome do comentador padrão',
 	'setting-allows-images'			=> 'Permitir exibição de imagens nos comentários',
