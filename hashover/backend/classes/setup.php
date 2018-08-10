@@ -157,7 +157,7 @@ class Setup extends Settings
 	{
 		// Return default value if POST and GET are empty
 		if (empty ($_GET[$key]) and empty ($_POST[$key])) {
-			return $default;
+			return urldecode ($default);
 		}
 
 		// Attempt to obtain GET data
@@ -175,7 +175,7 @@ class Setup extends Settings
 			$request = stripslashes ($request);
 		}
 
-		return $request;
+		return urldecode ($request);
 	}
 
 	protected function getDomainWithPort ($url = '')
