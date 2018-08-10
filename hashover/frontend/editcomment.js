@@ -68,9 +68,11 @@ HashOver.prototype.editComment = function (comment)
 	}, 100);
 
 	// Uncheck subscribe checkbox if user isn't subscribed
-	if (comment.subscribed !== true) {
-		this.elements.get ('edit-subscribe-' + permalink, true).checked = null;
-	}
+	this.elements.exists ('edit-subscribe-' + permalink, function (sub) {
+		if (comment.subscribed !== true) {
+			sub.checked = null;
+		}
+	});
 
 	// Displays onClick confirmation dialog for comment deletion
 	this.elements.get ('edit-delete-' + permalink, true).onclick = function ()
