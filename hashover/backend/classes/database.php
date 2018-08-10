@@ -18,7 +18,7 @@
 
 
 // Database! Database! Just living in the database! Wow! Wow!
-class Database
+class Database extends Secrets
 {
 	public $setup;
 	public $storageMode;
@@ -27,23 +27,23 @@ class Database
 	public function __construct (Setup $setup)
 	{
 		$this->setup = $setup;
-		$this->storageMode = $setup->databaseType;
+		$this->storageMode = $this->databaseType;
 
 		try {
-			if ($setup->databaseType === 'sqlite') {
-				$sqlite_file = $setup->commentsDirectory . '/' . $setup->databaseName . '.sqlite';
+			if ($this->databaseType === 'sqlite') {
+				$sqlite_file = $setup->commentsDirectory . '/' . $this->databaseName . '.sqlite';
 				$this->database = new \PDO ('sqlite:' . $sqlite_file);
 			} else {
 				$sql_connection = implode (';', array (
-					'host=' . $setup->databaseHost,
-					'dbname=' . $setup->databaseName,
-					'charset=' . $setup->databaseCharset
+					'host=' . $this->databaseHost,
+					'dbname=' . $this->databaseName,
+					'charset=' . $this->databaseCharset
 				));
 
 				$this->database = new \PDO (
-					$setup->databaseType . ':' . $sql_connection,
-					$setup->databaseUser,
-					$setup->databasePassword
+					$this->databaseType . ':' . $sql_connection,
+					$this->databaseUser,
+					$this->databasePassword
 				);
 			}
 		} catch (\PDOException $error) {
@@ -78,6 +78,20 @@ class Database
 		return $table;
 	}
 
+	// Get items column entries as array
+	protected function getItems (array $rows)
+	{
+		// Initial items to return
+		$items = array ();
+
+		// Run through each item row
+		foreach ($rows as $row) {
+			$items[] = $row['items'];
+		}
+
+		return $items;
+	}
+
 	// Read and return specific metadata from JSON file
 	public function readMeta ($name, $thread = 'auto', $global = false)
 	{
@@ -95,19 +109,16 @@ class Database
 			// If so, attempt to get all metadata
 			$fetch_all = $results->fetchAll (\PDO::FETCH_ASSOC);
 
-			if (isset ($fetch_all[0]['items'])) {
-				$columns = array ();
-
-				foreach ($fetch_all as $column) {
-					foreach ($column as $key => $value) {
-						$columns[] = $value;
-					}
+			// Check if we got the metadata
+			if ($fetch_all !== false and isset ($fetch_all[0])) {
+				// Return only the items column if present
+				if (isset ($fetch_all[0]['items'])) {
+					return $this->getItems ($fetch_all);
 				}
 
-				return $columns;
+				// Otherwise return the first row
+				return $fetch_all[0];
 			}
-
-			return $fetch_all[0];
 		}
 
 		return false;
@@ -362,10 +373,10 @@ class Database
 	public function queryThreads ()
 	{
 		// Database name
-		$name = $this->setup->databaseName;
+		$name = $this->databaseName;
 
 		// Check if database type if SQLite
-		if ($this->setup->databaseType === 'sqlite') {
+		if ($this->databaseType === 'sqlite') {
 			// If so, use SQLite statement
 			$statement  = 'SELECT * FROM sqlite_master ';
 			$statement .= 'WHERE type=\'table\'';

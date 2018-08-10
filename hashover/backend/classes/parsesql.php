@@ -58,7 +58,7 @@ class ParseSQL extends Database
 		parent::__construct ($setup);
 
 		// Throw exception if the SQL extension isn't loaded
-		switch ($setup->databaseType) {
+		switch ($this->databaseType) {
 			case 'sqlite': {
 				$setup->extensionsLoaded (array (
 					'pdo_sqlite',

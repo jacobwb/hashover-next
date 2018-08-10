@@ -114,16 +114,6 @@ class Settings extends Secrets
 		// '*.example.net'
 	);
 
-	// General database options
-	public $databaseType		= 'sqlite';			// Type of database, sqlite or mysql
-	public $databaseName		= 'hashover-threads';		// Database name
-
-	// SQL database options
-	public $databaseHost		= 'localhost';			// Database host name
-	public $databaseUser		= 'root';			// Database login user
-	public $databasePassword	= 'password';			// Database login password
-	public $databaseCharset		= 'utf8';			// Database character set
-
 	// Technical settings placeholders
 	public $rootDirectory;
 	public $httpRoot;

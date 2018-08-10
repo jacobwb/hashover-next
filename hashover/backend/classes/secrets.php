@@ -25,8 +25,10 @@
 // service(s), and/or political ideology.
 
 
-class Secrets
+class Secrets extends Settings
 {
+	// REQUIRED SETUP INFORMATION
+
 	// E-mail for notification of new comments
 	public $notificationEmail = 'example@example.com';
 
@@ -38,4 +40,24 @@ class Secrets
 
 	// Login password to gain admin rights (case-sensitive)
 	protected $adminPassword = 'passwd';
+
+	// OPTIONAL SQL INFORMATION
+
+	// Type of database, sqlite or mysql
+	protected $databaseType = 'sqlite';
+
+	// Database name
+	protected $databaseName = 'hashover-threads';
+
+	// SQL database host name
+	protected $databaseHost = 'localhost';
+
+	// SQL database login user
+	protected $databaseUser = 'root';
+
+	// SQL database login password
+	protected $databasePassword = 'password';
+
+	// SQL database character set
+	protected $databaseCharset = 'utf8';
 }

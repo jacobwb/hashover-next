@@ -17,7 +17,7 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class Setup extends Settings
+class Setup extends Secrets
 {
 	public $usage;
 	public $encryption;
