@@ -57,7 +57,11 @@ try {
 	$javascript->registerFile ('script.js');
 
 	// Register backend path setter
-	$javascript->registerFile ('backendpath.js');
+	$javascript->registerFile ('backendpath.js', array (
+		'dependencies' => array (
+			'rootpath.js'
+		)
+	));
 
 	// Register HashOver ready state detection method
 	$javascript->registerFile ('onready.js');

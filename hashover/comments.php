@@ -43,7 +43,11 @@ try {
 	$javascript->registerFile ('script.js');
 
 	// Register backend path setter
-	$javascript->registerFile ('backendpath.js');
+	$javascript->registerFile ('backendpath.js', array (
+		'dependencies' => array (
+			'rootpath.js'
+		)
+	));
 
 	// Register page URL getter method
 	$javascript->registerFile ('geturl.js');
