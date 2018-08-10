@@ -266,6 +266,17 @@ class Settings extends Secrets
 			$this->usesAutoLogin = false;
 		}
 
+		// Check if the Gravatar default image name is not custom
+		if ($this->gravatarDefault !== 'custom') {
+			// If so, list Gravatar default image names
+			$gravatar_defaults = array ('identicon', 'monsterid', 'wavatar', 'retro');
+
+			// And set Gravatar default image to custom if its value is invalid
+			if (!in_array ($this->gravatarDefault, $this->defaults, true)) {
+				$this->gravatarDefault = 'custom';
+			}
+		}
+
 		// Backend directory for HTTP
 		$this->httpBackend = $this->httpRoot . '/backend';
 
