@@ -1,5 +1,6 @@
 Changes by Jacob Barkdull 2017-08-09
 --------------------------------------------------------------------------------
+* Fixed bug causing required fields to always throw an exception.
 * Improved admin view "Back" button style.
 * JavaScript: Only iterate over non-inherited object properties.
 * Differentiate backend redirect vs intend to display a message.

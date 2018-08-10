@@ -486,12 +486,6 @@ class WriteComments extends PostData
 	// Setup and test for necessary comment data
 	protected function setupCommentData ($editing = false)
 	{
-		// Default status
-		$new_status = 'approved';
-
-		// Check if required fields have values
-		$this->login->validateFields ();
-
 		// Post fails when comment is empty
 		if (empty ($this->postData['comment'])) {
 			// Set cookies to indicate failure
@@ -545,6 +539,9 @@ class WriteComments extends PostData
 				$this->login->setCredentials ();
 			}
 		}
+
+		// Check if required fields have values
+		$this->login->validateFields ();
 
 		// Setup login data
 		$this->setupLogin ();
