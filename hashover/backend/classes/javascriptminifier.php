@@ -100,22 +100,22 @@ class JavaScriptMinifier
 			}
 		}
 
-		// Get URL add "unminified" URL query
+		// Create URL to unminified version
 		$unminified_url = 'http' . (isset ($_SERVER['HTTPS']) ? 's' : '') . '://';
 		$unminified_url .= $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-		$unminified_url .= '&hashover-unminified';
+		$unminified_url .= '?unminified';
 
-		// Copyright notice and URL to unminified code
-		$copyright = array (
-			'// Copyright (C) 2015 Jacob Barkdull',
+		// Copyright notice
+		$copyright = implode (PHP_EOL, array (
+			'// Copyright (C) 2018 Jacob Barkdull',
 			'// Under the terms of the GNU Affero General Public License.',
+			'// This program source code has been minified.',
 			'//',
-			'// Non-minified JavaScript:',
-			'//',
-			'//     ' . $unminified_url . PHP_EOL . PHP_EOL
-		);
+			'// Unminified version:',
+			'// ' . $unminified_url . PHP_EOL . PHP_EOL
+		));
 
 		// Return final minified JavaScript
-		return implode (PHP_EOL, $copyright) . trim ($js);
+		return $copyright . trim ($js);
 	}
 }

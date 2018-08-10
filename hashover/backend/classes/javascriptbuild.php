@@ -125,7 +125,7 @@ class JavaScriptBuild
 		$javascript = implode (PHP_EOL . PHP_EOL, $files);
 
 		// Minify the JavaScript if told to
-		if (!isset ($_GET['hashover-unminified'])) {
+		if (!isset ($_GET['unminified'])) {
 			if ($minify === true and $minify_level > 0) {
 				// Instantiate JavaScript minification class
 				$minifier = new JavaScriptMinifier ();
