@@ -21,6 +21,7 @@ class Setup extends Settings
 {
 	public $usage;
 	public $encryption;
+	public $isMobile = false;
 	public $remoteAccess = false;
 	public $pageURL;
 	public $pageTitle;

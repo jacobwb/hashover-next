@@ -124,9 +124,6 @@ class Settings extends Secrets
 	public $databasePassword	= 'password';			// Database login password
 	public $databaseCharset		= 'utf8';			// Database character set
 
-	// Automated settings
-	public $isMobile		= false;
-
 	// Technical settings placeholders
 	public $rootDirectory;
 	public $httpRoot;
