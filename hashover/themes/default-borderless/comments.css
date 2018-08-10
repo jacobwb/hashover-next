@@ -247,10 +247,7 @@ conditions, unless such conditions are required by law.
 	position: relative;
 }
 
-.hashover .hashover-name-input:before,
-.hashover .hashover-password-input:before,
-.hashover .hashover-email-input:before,
-.hashover .hashover-website-input:before,
+.hashover .hashover-input-cell > *:before,
 .hashover .hashover-required-input:after {
 	content: " ";
 	display: inline-block;
@@ -1146,10 +1143,7 @@ conditions, unless such conditions are required by law.
 
 /* Handle HDPI */
 .hashover.hashover-mobile .hashover-formatting,
-.hashover.hashover-mobile .hashover-name-input:before,
-.hashover.hashover-mobile .hashover-password-input:before,
-.hashover.hashover-mobile .hashover-email-input:before,
-.hashover.hashover-mobile .hashover-website-input:before,
+.hashover.hashover-mobile .hashover-input-cell > *:before,
 .hashover.hashover-mobile .hashover-required-input:after,
 .hashover.hashover-mobile .hashover-comment .hashover-buttons a {
 	background-image: url('../../images/inputs-and-buttons.svg');

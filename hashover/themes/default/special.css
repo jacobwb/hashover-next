@@ -14,16 +14,6 @@ body * {
 	line-height: 1.25em;
 }
 
-a, a:link {
-	display: inline-block;
-	border-bottom: 0.1em solid transparent;
-	margin-bottom: -0.1em;
-}
-
-a:hover {
-	border-bottom-color: #266394;
-}
-
 input, textarea {
 	padding: 3px 5px 3px 5px;
 	border: 1px solid #909090;

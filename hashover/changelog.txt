@@ -1,3 +1,9 @@
+Changes by Jacob Barkdull 2017-08-09
+--------------------------------------------------------------------------------
+* Improved admin view "Back" button style.
+* Other minor CSS changes.
+
+
 Changes by Jacob Barkdull 2017-04-11
 --------------------------------------------------------------------------------
 * "Notify me of replies" checkbox default state is now configurable.

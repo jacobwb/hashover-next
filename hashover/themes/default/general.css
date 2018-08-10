@@ -50,6 +50,7 @@ a:visited {
 }
 
 a:hover {
+	text-decoration: underline;
 	color: #266394;
 	cursor: pointer;
 }
@@ -122,4 +123,27 @@ table {
 
 .margin-right-children > * {
 	margin-right: 10px;
+}
+
+.plain-button {
+	padding: 0.65em 1.5em 0.6em 1.5em;
+	font-size: 0.5em;
+	background-color: rgba(200, 200, 255, 0.25);
+	-moz-border-radius: 4px 4px 4px 4px;
+	-webkit-border-radius: 4px 4px 4px 4px;
+	border-radius: 4px 4px 4px 4px;
+}
+
+.plain-button,
+.plain-button * {
+	vertical-align: middle;
+}
+
+.plain-button:hover,
+.plain-button:hover * {
+	text-decoration: none;
+}
+
+.plain-button:hover {
+	background-color: rgba(200, 200, 255, 0.33);
 }

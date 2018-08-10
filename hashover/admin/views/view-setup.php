@@ -51,16 +51,11 @@ if ($hashover->login->userIsAdmin !== true) {
 }
 
 // Create logout hyperlink
-$logout = new HTMLTag ('span', array (
-	'class' => 'right',
-
-	'children' => array (
-		new HTMLTag ('a', array (
-			'href' => '../login/?logout=true',
-			'target' => '_parent',
-			'innerHTML' => $hashover->locale->text['logout']
-		))
-	)
+$logout = new HTMLTag ('a', array (
+	'class' => 'plain-button right',
+	'href' => '../login/?logout=true',
+	'target' => '_parent',
+	'innerHTML' => $hashover->locale->text['logout']
 ));
 
 // Check if the form has been submitted

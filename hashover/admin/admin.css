@@ -49,6 +49,7 @@ body {
 #navigation a {
 	padding: 15px;
 	margin: 0px;
+	text-decoration: none;
 	border: none;
 }
 
