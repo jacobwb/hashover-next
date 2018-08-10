@@ -29,5 +29,23 @@ for (var i = 0, il = queries.length; i < il; i++) {
 	}
 }
 
+// Lastly override some settings
+options.settings = {
+	// We always want the theme appended to the page
+	appendsCss: true,
+
+	// We don't want the comments collapsed in anyway
+	collapsesInterface: false,
+	collapsesComments: false,
+
+	// Place the comment form at the bottom to deemphasize it
+	formPosition: 'bottom',
+
+	// Since passwords aren't required as admin, disable them
+	fieldOptions: {
+		password: false
+	}
+};
+
 // And instantiate HashOver
 var hashover = new HashOver (options);
