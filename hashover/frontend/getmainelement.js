@@ -22,7 +22,7 @@ HashOverConstructor.prototype.getMainElement = function (id)
 	this.classes.add (element, 'hashover');
 
 	// Check if backend is ready
-	if (this.constructor.prepared === true) {
+	if (this.constructor.backendReady === true) {
 		// If so, add class indictating desktop or mobile styling
 		this.classes.add (element, 'hashover-' + this.setup['device-type']);
 

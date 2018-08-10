@@ -31,7 +31,7 @@ function HashOver (options)
 	// Self-executing backend wait loop
 	(function backendWait () {
 		// Check if we're on the first instance or if HashOver is prepared
-		if (HashOver.prepared === true || HashOver.instanceCount === 0) {
+		if (HashOver.backendReady === true || HashOver.instanceCount === 0) {
 			// If so, execute the real constructor
 			HashOver.instantiator.call (hashover, options);
 		} else {
@@ -45,7 +45,7 @@ function HashOver (options)
 var HashOverConstructor = HashOver;
 
 // Indicator that backend information has been received (constructor.js)
-HashOver.prepared = false;
+HashOver.backendReady = false;
 
 // Initial HashOver instance count (constructor.js)
 HashOver.instanceCount = 0;

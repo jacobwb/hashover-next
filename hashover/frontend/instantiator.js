@@ -5,7 +5,7 @@ HashOver.instantiator = function (options)
 	var queries = HashOver.getBackendQueries (options);
 
 	// Check if we're instantiating the first HashOver object
-	if (HashOver.prepared !== true) {
+	if (HashOver.backendReady !== true) {
 		// If so, set query indicating a request for backend information
 		queries.push ('prepare=true');
 	}
@@ -28,7 +28,7 @@ HashOver.instantiator = function (options)
 		}
 
 		// Set the backend information
-		if (HashOver.prepared !== true) {
+		if (HashOver.backendReady !== true) {
 			// Locales from backend
 			HashOver.prototype.locale = json.locale;
 
@@ -39,7 +39,7 @@ HashOver.instantiator = function (options)
 			HashOver.prototype.ui = json.ui;
 
 			// Mark backend as ready
-			HashOver.prepared = true;
+			HashOver.backendReady = true;
 		}
 
 		// Thread information from backend
