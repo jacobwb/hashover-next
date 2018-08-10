@@ -1105,7 +1105,11 @@ conditions, unless such conditions are required by law.
 .hashover.hashover-mobile .hashover-formatting,
 .hashover.hashover-mobile .hashover-input-cell > *:before,
 .hashover.hashover-mobile .hashover-required-input:after,
-.hashover.hashover-mobile .hashover-comment .hashover-buttons a {
+.hashover.hashover-mobile .hashover-comment .hashover-buttons a,
+.hashover.hashover-vector .hashover-formatting,
+.hashover.hashover-vector .hashover-input-cell > *:before,
+.hashover.hashover-vector .hashover-required-input:after,
+.hashover.hashover-vector .hashover-comment .hashover-buttons a {
 	background-image: url('../../images/inputs-and-buttons.svg');
 }
 

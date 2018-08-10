@@ -26,6 +26,13 @@ HashOverConstructor.prototype.getMainElement = function (id)
 		// If so, add class indictating desktop or mobile styling
 		this.classes.add (element, 'hashover-' + this.setup['device-type']);
 
+		// Add class for raster or vector images
+		if (this.setup['image-format'] === 'svg') {
+			this.classes.add (element, 'hashover-vector');
+		} else {
+			this.classes.add (element, 'hashover-raster');
+		}
+
 		// And add class to indicate user login status
 		if (this.setup['user-is-logged-in'] === true) {
 			this.classes.add (element, 'hashover-logged-in');

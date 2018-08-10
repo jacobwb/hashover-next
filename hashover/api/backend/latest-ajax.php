@@ -71,6 +71,7 @@ try {
 		'image-extensions'	=> $hashover->setup->imageTypes,
 		'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
 		'theme-css'		=> $hashover->setup->getThemePath ('latest.css'),
+		'image-format'		=> $hashover->setup->imageFormat,
 		'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
 		'uses-user-timezone'	=> $hashover->setup->usesUserTimezone,
 		'uses-short-dates'	=> $hashover->setup->usesShortDates,

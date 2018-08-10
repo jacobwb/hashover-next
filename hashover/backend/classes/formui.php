@@ -454,6 +454,13 @@ class FormUI
 			$hashover_element->appendAttribute ('class', 'hashover-desktop');
 		}
 
+		// Add class for raster or vector images
+		if ($this->setup->imageFormat === 'svg') {
+			$hashover_element->appendAttribute ('class', 'hashover-vector');
+		} else {
+			$hashover_element->appendAttribute ('class', 'hashover-raster');
+		}
+
 		// Add class to indicate user login status
 		if ($this->login->userIsLoggedIn === true) {
 			$hashover_element->appendAttribute ('class', 'hashover-logged-in');

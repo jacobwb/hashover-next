@@ -30,14 +30,15 @@ class Avatars
 	public function __construct (Setup $setup)
 	{
 		$this->setup = $setup;
+		$this->isVector = ($setup->imageFormat === 'svg');
 		$this->isHTTPS = $setup->isHTTPS ();
 
 		// Get icon size from settings
-		$this->iconSize = ($setup->isMobile === true) ? 256 : $setup->iconSize;
+		$this->iconSize = $this->isVector ? 256 : $setup->iconSize;
 
 		// Default avatar
 		$avatar = $setup->httpImages . '/avatar';
-		$extension = ($setup->isMobile === true) ? 'svg' : 'png';
+		$extension = $this->isVector ? 'svg' : 'png';
 		$this->avatar = $avatar . '.' . $extension;
 
 		// Use HTTPS if this file is requested with HTTPS
