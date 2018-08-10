@@ -27,6 +27,12 @@ try {
 		'context' => 'normal'
 	));
 
+	// User settings passed during instantiation
+	$settings = $setup->getRequest ('settings');
+
+	// Load user settings
+	$setup->loadUserSettings ($settings);
+
 	// Instantiate HashOver statistics class
 	$statistics = new Statistics ('javascript');
 
@@ -38,6 +44,9 @@ try {
 
 	// Register initial constructor
 	$javascript->registerFile ('constructor.js');
+
+	// Register HashOver ready state detection method
+	$javascript->registerFile ('onready.js');
 
 	// Register HashOver script tag getter method
 	$javascript->registerFile ('script.js');
@@ -55,15 +64,11 @@ try {
 	// Register page title getter method
 	$javascript->registerFile ('gettitle.js');
 
-	// Register real constructor method
-	$javascript->registerFile ('instantiator.js', array (
-		'dependencies' => array (
-			'getbackendqueries.js'
-		)
-	));
+	// Register backend URL queries getter method
+	$javascript->registerFile ('getbackendqueries.js');
 
-	// Register HashOver ready state detection method
-	$javascript->registerFile ('onready.js');
+	// Register real constructor method
+	$javascript->registerFile ('instantiator.js');
 
 	// Register element creation methods
 	$javascript->registerFile ('elements.js');
@@ -244,6 +249,9 @@ try {
 
 	// Register initialization method
 	$javascript->registerFile ('init.js');
+
+	// Register comment thread/section creation method
+	$javascript->registerFile ('createthread.js');
 
 	// Register automatic instantiation code
 	$javascript->registerFile ('instantiate.js', array (

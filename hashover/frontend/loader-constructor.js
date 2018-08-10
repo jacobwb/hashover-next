@@ -22,26 +22,38 @@
 
 "use strict";
 
-// Initial constructor; overrides loader constructor (constructor.js)
+// Initial loader constructor (loader-constructor.js)
 function HashOver (options)
 {
-	// Reference to this object
-	var hashover = this;
+	// Create comments script
+	var ui = document.createElement ('script');
 
-	// Create the thread when the page is ready
-	HashOver.onReady (function () {
-		hashover.createThread (options);
-	});
-}
+	// This script
+	var script = HashOver.script;
 
-// Store options passed to loader
-HashOver.loaderOptions = window.hashoverOptions;
+	// Comments script path
+	var path = HashOver.rootPath + '/comments.php';
 
-// Indicator that backend information has been received (constructor.js)
-HashOver.backendReady = false;
+	// Check if the options are an object
+	if (options && options.constructor === Object) {
+		// If so, add settings object to request if they exist
+		if (options.settings.constructor === Object) {
+			path += '?settings=' + encodeURIComponent (
+				JSON.stringify (options.settings)
+			);
+		}
 
-// Initial HashOver instance count (constructor.js)
-HashOver.instanceCount = 0;
+		// And store options globally for later use
+		window.hashoverOptions = options;
+	}
 
-// Constructor to add HashOver methods to
+	// Set HashOver script attributes
+	ui.async = true;
+	ui.src = path;
+
+	// Add script to page
+	script.parentNode.insertBefore (ui, script.nextSibling);
+};
+
+// Constructor to add methods to
 var HashOverConstructor = HashOver;

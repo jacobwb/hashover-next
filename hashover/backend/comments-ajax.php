@@ -32,6 +32,14 @@ try {
 	$hashover->setup->setPageURL ('request');
 	$hashover->setup->setPageTitle ('request');
 	$hashover->setup->setThreadName ('request');
+
+	// User settings passed during instantiation
+	$settings = $hashover->setup->getRequest ('settings');
+
+	// Load user settings
+	$hashover->setup->loadUserSettings ($settings);
+
+	// Initialize HashOver and get comments
 	$hashover->initiate ();
 	$hashover->parsePrimary ();
 	$hashover->parsePopular ();

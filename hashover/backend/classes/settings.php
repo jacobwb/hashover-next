@@ -25,96 +25,9 @@
 // the settings, or create/edit the settings JSON file.
 
 
-// Default and advanced HashOver settings
-class Settings extends Secrets
+// Automated settings
+class Settings extends SensitiveSettings
 {
-	// Primary settings
-	public $language		= 'auto';			// UI language, for example 'en', 'de', etc. 'auto' to use system locale
-	public $theme			= 'default';			// Comment Cascading Style Sheet (CSS)
-	public $usesModeration		= false;			// Whether comments must be approved before they appear to other visitors
-	public $pendsUserEdits		= false;			// Whether comments need to be approved again when edited
-	public $dataFormat		= 'xml';			// Format comments will be stored in; options: xml, json, sql
-	public $defaultName		= 'Anonymous';			// Default name to use when one isn't given
-	public $allowsImages		= true;				// Whether external image URLs wrapped in [img] tags are embedded
-	public $allowsLogin		= true;				// Whether users can login and logout (when false form cookies are still set)
-	public $allowsLikes		= true;				// Whether a "Like" link is displayed
-	public $allowsDislikes		= false;			// Whether a "Dislike" link is displayed; allowing Reddit-style voting
-	public $usesAjax		= true;				// Whether AJAX is used for posting, editing, and loading comments
-	public $collapsesInterface	= false;			// Whether the comment form, thread, and end links are all initially hidden
-	public $collapsesComments	= true;				// Whether to hide comments and display a link to show them
-	public $collapseLimit		= 3;				// Number of comments that aren't hidden
-	public $replyMode		= 'thread';			// Whether to display replies as a 'thread' or as a 'stream'
-	public $streamDepth		= 3;				// In stream mode, the number of reply indentions to allow before the thread flattens
-	public $popularityThreshold	= 5;				// Minimum likes a comment needs to be popular
-	public $popularityLimit		= 2;				// Number of comments allowed to become popular
-	public $usesMarkdown		= true;				// Whether comments will be parsed for Markdown
-
-	// Date and Time settings
-	public $serverTimezone		= 'America/Los_Angeles';	// Server timezone
-	public $usesUserTimezone	= true;				// Whether comment dates should use the user's timezone (JavaScript-mode)
-	public $usesShortDates		= true;				// Whether comment dates are shortened, for example "X days ago"
-	public $timeFormat		= 'g:ia';			// Time format, use 'H:i' for 24-hour format (see: http://php.net/manual/en/function.date.php)
-	public $dateFormat		= 'm/d/Y';			// Date format (see: http://php.net/manual/en/function.date.php)
-
-	// Field options, use true/false to enable/disable a field,
-	// use 'required' to require a field be properly filled
-	public $fieldOptions = array (
-		'name'     => true,
-		'password' => true,
-		'email'    => true,
-		'website'  => true
-	);
-
-	// Behavior settings
-	public $displaysTitle		= true;				// Whether page title is shown or not
-	public $formPosition		= 'top';			// Position for primary form; options: 'top' or 'bottom'
-	public $usesAutoLogin		= true;				// Whether a user's first comment automatically logs them in
-	public $showsReplyCount		= true;				// Whether to show reply count separately from total
-	public $countIncludesDeleted	= true;				// Whether comment counts should include deleted comments
-	public $iconMode		= 'image';			// How to display avatar icons (either 'image', 'count' or 'none')
-	public $iconSize		= 45;				// Size of Gravatar icons in pixels
-	public $imageFormat		= 'png';			// Format for icons and other images (use 'svg' for HDPI)
-	public $usesLabels		= false;			// Whether to display labels above inputs
-	public $usesCancelButtons	= true;				// Whether forms have "Cancel" buttons
-	public $appendsCss		= true;				// Whether to automatically add a CSS <link> element to the page <head>
-	public $appendsRss		= true;				// Whether a comment RSS feed link is displayed
-
-	// Technical settings
-	public $loginMethod		= 'defaultLogin';		// Login method class for handling user login information
-	public $setsCookies		= true;				// Whether cookies are enabled
-	public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
-	public $storesIpAddress		= false;			// Whether to store users' IP addresses
-	public $subscribesUser		= true;				// Whether to subscribe the user to e-mail notifications by default
-	public $allowsUserReplies	= false;			// Whether given e-mails are sent as reply-to address to users
-	public $noreplyEmail		= 'noreply@example.com';	// E-mail used when no e-mail is given
-	public $spamDatabase		= 'remote';			// Whether to use a remote or local spam database
-	public $spamCheckModes		= 'php';			// Perform IP spam check in 'json' or 'php' mode, or 'both'
-	public $gravatarDefault		= 'custom';			// Gravatar theme to use ('custom', 'identicon', 'monsterid', 'wavatar', or 'retro')
-	public $gravatarForce		= false;			// Whether to force the themed Gravatar images instead of an avatar image
-	public $minifiesJavascript	= false;			// Whether JavaScript output should be minified
-	public $minifyLevel		= 4;				// How much to minify JavaScript code, options: 1, 2, 3, 4
-	public $enabledApi		= array ('all');		// An array of enabled API. 'all' = fully-enabled, empty array = fully disabled
-	public $latestMax		= 10;				// Maximum number of comments to save as latest comments
-	public $latestTrimWidth		= 100;				// Number of characters to trim latest comments to, 0 for no trim
-	public $userDeletionsUnlink	= false;			// Whether user deleted files are actually unlinked from the filesystem
-	public $allowLocalMetadata	= false;			// Whether default metadata should be collected while running on a local server
-
-	// Types of images allowed to be embedded in comments
-	public $imageTypes = array (
-		'jpeg',
-		'jpg',
-		'png',
-		'gif'
-	);
-
-	// External domains allowed to remotely load HashOver scripts
-	public $allowedDomains = array (
-		// '*.example.com',
-		// '*.example.org',
-		// '*.example.net'
-	);
-
-	// Technical settings placeholders
 	public $rootDirectory;
 	public $httpRoot;
 	public $httpBackend;
@@ -158,7 +71,7 @@ class Settings extends Secrets
 		$this->absolutePath	= $protocol . $this->domain;	// Absolute path or remote access
 
 		// Load JSON settings
-		$this->jsonSettings ();
+		$this->loadSettingsFile ();
 
 		// Synchronize settings
 		$this->syncSettings ();
@@ -179,41 +92,53 @@ class Settings extends Secrets
 		return false;
 	}
 
-	public function jsonSettings ()
+	// Overrides settings based on JSON data
+	protected function overrideSettings ($json, $class = 'Settings')
+	{
+		// Parse JSON data
+		$settings = @json_decode ($json, true);
+
+		// Return void if data is anything other than an array
+		if (!is_array ($settings)) {
+			return;
+		}
+
+		// Loop through JSON data
+		foreach ($settings as $setting => $value) {
+			// Check if the key contains dashes
+			if (mb_strpos ($setting, '-') !== false) {
+				// If so, convert setting key to lowercase
+				$setting = mb_strtolower ($setting);
+
+				// Then convert dashed-case setting key to camelCase
+				$setting = preg_replace_callback ('/-([a-z])/', function ($grp) {
+					return mb_strtoupper ($grp[1]);
+				}, $setting);
+			}
+
+			// Check if the setting from the JSON data exists
+			if (property_exists ('HashOver\\' . $class, $setting)) {
+				// If so, override the default if the setting types match
+				if (gettype ($value) === gettype ($this->{$setting})) {
+					$this->{$setting} = $value;
+				}
+			}
+		}
+	}
+
+	// Reads JSON settings file and uses it to override default settings
+	protected function loadSettingsFile ()
 	{
 		// JSON settings file path
 		$path = $this->getAbsolutePath ('config/settings.json');
 
-		// Do nothing if the JSON settings file doesn't exist
-		if (!file_exists ($path)) {
-			return;
-		}
+		// Check if JSON settings file exists
+		if (file_exists ($path)) {
+			// If so, read the file
+			$json = @file_get_contents ($path);
 
-		// Get JSON data
-		$data = @file_get_contents ($path);
-
-		// Load and decode JSON settings file
-		$json_settings = @json_decode ($data, true);
-
-		// Return void on failure
-		if ($json_settings === null) {
-			return;
-		}
-
-		// Loop through each setting
-		foreach ($json_settings as $key => $value) {
-			// Convert setting name to camelCase
-			$title_case_key = ucwords (str_replace ('-', ' ', strtolower ($key)));
-			$setting = lcfirst (str_replace (' ', '', $title_case_key));
-
-			// Check if the JSON setting property exists in the defaults
-			if (property_exists ($this, $setting)) {
-				// Check if the JSON value is the same type as the default
-				if (gettype ($value) === gettype ($this->{$setting})) {
-					// Override default setting
-					$this->{$setting} = $value;
-				}
-			}
+			// And override settings
+			$this->overrideSettings ($json);
 		}
 	}
 
@@ -269,6 +194,16 @@ class Settings extends Secrets
 
 		// Image directory for HTTP
 		$this->httpImages = $this->httpRoot . '/images';
+	}
+
+	// Accepts JSON data from the frontend to override default settings
+	public function loadUserSettings ($json)
+	{
+		// Only override settings safe to expose to the frontend
+		$this->overrideSettings ($json, 'SafeSettings');
+
+		// Synchronize settings
+		$this->syncSettings ();
 	}
 
 	// Returns a server-side absolute file path

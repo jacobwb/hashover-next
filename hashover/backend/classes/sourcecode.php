@@ -206,6 +206,16 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
+			'name' => 'SafeSettings',
+			'path' => 'backend/classes/safesettings.php'
+		),
+		array (
+			'type' => 'Class',
+			'name' => 'SensitiveSettings',
+			'path' => 'backend/classes/sensitivesettings.php'
+		),
+		array (
+			'type' => 'Class',
 			'name' => 'Settings',
 			'path' => 'backend/classes/settings.php'
 		),
@@ -350,6 +360,10 @@ class SourceCode
 		array (
 			'type' => 'Script',
 			'path' => 'comments.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'loader.php'
 		)
 	);
 
@@ -448,13 +462,16 @@ class SourceCode
 	// Display source code
 	public function display ($file, $type = 'text')
 	{
-		// Set content type header
-		$this->setContentType ($file, $type);
-
 		// Check if the given file is a known HashOver file
 		if ($this->isHashOverFile ($file) === true) {
-			// If so, load PHP file
-			$source = @file_get_contents ('../' . $file);
+			// If so, add directory change to file path
+			$file = '../' . $file;
+
+			// Set content type header
+			$this->setContentType ($file, $type);
+
+			// Load PHP file
+			$source = @file_get_contents ($file);
 
 			// File name
 			$name = basename ($file);

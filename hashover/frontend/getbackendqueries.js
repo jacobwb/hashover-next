@@ -1,28 +1,50 @@
 // Get supported HashOver backend queries from options (getbackendqueries.js)
-HashOverConstructor.getBackendQueries = function (options)
+HashOver.getBackendQueries = function (options)
 {
+	// URL query data object
+	var data = {};
+
+	// Options passed to loader constructor
+	var loaderOptions = HashOver.loaderOptions;
+
 	// URL queries array
 	var queries = [];
 
-	// Check if options parameter is an object
-	if (options && options.constructor === Object) {
-		// If so, use URL and title if available
-		var url = options.url || this.getURL (options.canonical);
-		var title = options.title || this.getTitle ();
-
-		// And add thread to request if told to
-		if (options.thread !== undefined) {
-			queries.push ('thread=' + options.thread);
-		}
-	} else {
-		// If not, get the URL and title from the page
-		var url = this.getURL ();
-		var title = this.getTitle ();
+	// Ensure options is an object
+	if (!options || options.constructor !== Object) {
+		options = {};
 	}
 
-	// Default backend request POST data
-	queries.push ('url=' + encodeURIComponent (url));
-	queries.push ('title=' + encodeURIComponent (title));
+	// Check for carryover options from loader constructor
+	if (loaderOptions && loaderOptions.constructor === Object) {
+		// If present, merge them into given options
+		for (var key in loaderOptions) {
+			if (options[key] === undefined) {
+				options[key] = loaderOptions[key];
+			}
+		}
+
+		// And add loader settings object to request if they exist
+		if (options.settings && options.settings.constructor === Object) {
+			data.settings = JSON.stringify (loaderOptions.settings);
+		}
+	}
+
+	// Use URL and title options if available
+	data.url = options.url || this.getURL (options.canonical);
+	data.title = options.title || this.getTitle ();
+
+	// And add thread to request if told to
+	if (typeof (options.thread) === 'string') {
+		data.thread = options.thread;
+	}
+
+	// Convert URL query data into query strings array
+	for (var name in data) {
+		if (data.hasOwnProperty (name) === true) {
+			queries.push (name + '=' + encodeURIComponent (data[name]));
+		}
+	}
 
 	return queries;
 };
