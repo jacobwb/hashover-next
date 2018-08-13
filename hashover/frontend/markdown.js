@@ -80,7 +80,7 @@ HashOverConstructor.prototype.markdown = {
 
 			// Return the original markdown code with HTML replacement
 			paragraphs[i] = paragraphs[i].replace (this.inlineCodeMarker, function (marker, number) {
-				return '<code class="hashover-inline">' + markdown.codeMarkers.inline.marks[number] + '</code>';
+				return '<code>' + markdown.codeMarkers.inline.marks[number] + '</code>';
 			});
 		}
 
@@ -89,7 +89,7 @@ HashOverConstructor.prototype.markdown = {
 
 		// Replace code block markers with original markdown code
 		string = string.replace (this.blockCodeMarker, function (marker, number) {
-			return '<code>' + markdown.codeMarkers.block.marks[number] + '</code>';
+			return '<pre>' + markdown.codeMarkers.block.marks[number] + '</pre>';
 		});
 
 		return string;

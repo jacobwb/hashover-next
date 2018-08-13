@@ -868,7 +868,6 @@ conditions, unless such conditions are required by law.
 
 .hashover .hashover-comment pre,
 .hashover .hashover-comment code {
-	display: inline-block;
 	width: 100%;
 	max-height: 400px;
 	white-space: pre;
@@ -880,8 +879,7 @@ conditions, unless such conditions are required by law.
 	overflow: auto;
 }
 
-.hashover code.hashover-inline {
-	display: inline;
+.hashover code {
 	padding: 1px 4px;
 }
 
