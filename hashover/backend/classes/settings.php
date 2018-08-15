@@ -184,7 +184,7 @@ class Settings extends SensitiveSettings
 			$gravatar_defaults = array ('identicon', 'monsterid', 'wavatar', 'retro');
 
 			// And set Gravatar default image to custom if its value is invalid
-			if (!in_array ($this->gravatarDefault, $this->defaults, true)) {
+			if (!in_array ($this->gravatarDefault, $gravatar_defaults, true)) {
 				$this->gravatarDefault = 'custom';
 			}
 		}
