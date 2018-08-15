@@ -69,8 +69,8 @@ class Login extends Secrets
 	public function prepareCredentials ()
 	{
 		// Set name
-		if (isset ($this->postData['name'])) {
-			$this->loginMethod->name = $this->postData['name'];
+		if (isset ($this->postData->data['name'])) {
+			$this->loginMethod->name = $this->postData->data['name'];
 		}
 
 		// Attempt to get name
@@ -99,13 +99,13 @@ class Login extends Secrets
 		$this->loginMethod->loginHash = hash ('ripemd160', $name . $password);
 
 		// Set e-mail address
-		if (isset ($this->postData['email'])) {
-			$this->loginMethod->email = $this->postData['email'];
+		if (isset ($this->postData->data['email'])) {
+			$this->loginMethod->email = $this->postData->data['email'];
 		}
 
 		// Set website URL
-		if (isset ($this->postData['website'])) {
-			$this->loginMethod->website = $this->postData['website'];
+		if (isset ($this->postData->data['website'])) {
+			$this->loginMethod->website = $this->postData->data['website'];
 		}
 	}
 
@@ -160,8 +160,8 @@ class Login extends Secrets
 		foreach ($this->setup->fieldOptions as $field => $status) {
 			if ($status === 'required' and empty ($this->$field)) {
 				// Don't set cookies if the request is via AJAX
-				if ($this->viaAJAX !== true) {
-					$this->cookies->setFailedOn ($field, $this->replyTo);
+				if ($this->postData->viaAJAX !== true) {
+					$this->cookies->setFailedOn ($field, $this->postData->replyTo);
 				}
 
 				throw new \Exception (sprintf (

@@ -19,7 +19,7 @@
 
 class PostData
 {
-	public $postData = array ();
+	public $data = array ();
 	public $remoteAccess = false;
 	public $file;
 	public $replyTo;
@@ -32,32 +32,32 @@ class PostData
 
 		// Set status
 		if (isset ($postget['status'])) {
-			$this->postData['status'] = $this->ForceUTF8 ($postget['status']);
+			$this->data['status'] = $this->ForceUTF8 ($postget['status']);
 		}
 
 		// Set name
 		if (isset ($postget['name'])) {
-			$this->postData['name'] = $this->ForceUTF8 ($postget['name']);
+			$this->data['name'] = $this->ForceUTF8 ($postget['name']);
 		}
 
 		// Set password
 		if (isset ($postget['password'])) {
-			$this->postData['password'] = $this->ForceUTF8 ($postget['password']);
+			$this->data['password'] = $this->ForceUTF8 ($postget['password']);
 		}
 
 		// Set e-mail address
 		if (isset ($postget['email'])) {
-			$this->postData['email'] = $this->ForceUTF8 ($postget['email']);
+			$this->data['email'] = $this->ForceUTF8 ($postget['email']);
 		}
 
 		// Set website URL
 		if (isset ($postget['website'])) {
-			$this->postData['website'] = $this->ForceUTF8 ($postget['website']);
+			$this->data['website'] = $this->ForceUTF8 ($postget['website']);
 		}
 
 		// Set comment
 		if (isset ($postget['comment'])) {
-			$this->postData['comment'] = $this->ForceUTF8 ($postget['comment']);
+			$this->data['comment'] = $this->ForceUTF8 ($postget['comment']);
 		}
 
 		// Set indicator of remote access

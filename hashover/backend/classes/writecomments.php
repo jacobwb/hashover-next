@@ -17,7 +17,7 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class WriteComments extends PostData
+class WriteComments extends Secrets
 {
 	protected $setup;
 	protected $crypto;
@@ -138,15 +138,13 @@ class WriteComments extends PostData
 
 	public function __construct (Setup $setup, Thread $thread)
 	{
-		// Construct parent class
-		parent::__construct ();
-
 		// Store parameters as properties
 		$this->setup = $setup;
 		$this->mode = $setup->usage['mode'];
 		$this->thread = $thread;
 
 		// Instantiate various classes
+		$this->postData = new PostData ();
 		$this->locale = new Locale ($setup);
 		$this->cookies = new Cookies ($setup);
 		$this->login = new Login ($setup);
@@ -167,7 +165,7 @@ class WriteComments extends PostData
 			$this->referer = $_SERVER['HTTP_REFERER'];
 		} else {
 			// Check if posting from remote domain
-			if ($this->remoteAccess === true) {
+			if ($this->postData->remoteAccess === true) {
 				// If so, use absolute path
 				$this->referer = $setup->pageURL;
 			} else {
@@ -191,7 +189,7 @@ class WriteComments extends PostData
 	// Set header to redirect user back to the previous page
 	protected function kickback ($anchor = 'comments')
 	{
-		if ($this->viaAJAX === false) {
+		if ($this->postData->viaAJAX === false) {
 			header ('Location: ' . $this->referer . '#' . $anchor);
 		}
 	}
@@ -203,7 +201,7 @@ class WriteComments extends PostData
 		$message_type = ($error === true) ? 'error' : 'message';
 
 		// Check if request is AJAX
-		if ($this->viaAJAX === true) {
+		if ($this->postData->viaAJAX === true) {
 			// If so, display JSON for JavaScript frontend
 			echo $this->misc->jsonData (array (
 				'message' => $text,
@@ -235,8 +233,8 @@ class WriteComments extends PostData
 			}
 
 			// Set cookies to indicate failure
-			if ($this->viaAJAX !== true) {
-				$this->cookies->setFailedOn ('comment', $this->replyTo, false);
+			if ($this->postData->viaAJAX !== true) {
+				$this->cookies->setFailedOn ('comment', $this->postData->replyTo, false);
 			}
 		}
 
@@ -352,9 +350,9 @@ class WriteComments extends PostData
 		}
 
 		// Check if we have both required passwords
-		if (!empty ($this->postData['password']) and !empty ($comment['password'])) {
+		if (!empty ($this->postData->data['password']) and !empty ($comment['password'])) {
 			// If so, get the user input password
-			$password = $this->encodeHTML ($this->postData['password']);
+			$password = $this->encodeHTML ($this->postData->data['password']);
 
 			// Get the comment password
 			$comment_password = $comment['password'];
@@ -394,9 +392,9 @@ class WriteComments extends PostData
 				$unlink_comment = ($user_deletions_unlink or $user_is_admin);
 
 				// If so, delete the comment file
-				if ($this->thread->data->delete ($this->file, $unlink_comment)) {
+				if ($this->thread->data->delete ($this->postData->file, $unlink_comment)) {
 					// Remove comment from latest comments metadata
-					$this->metadata->removeFromLatest ($this->file);
+					$this->metadata->removeFromLatest ($this->postData->file);
 
 					// And kick visitor back with comment deletion message
 					$this->displayMessage ($this->locale->text['comment-deleted']);
@@ -480,14 +478,14 @@ class WriteComments extends PostData
 	protected function setupCommentData ($editing = false)
 	{
 		// Post fails when comment is empty
-		if (empty ($this->postData['comment'])) {
+		if (empty ($this->postData->data['comment'])) {
 			// Set cookies to indicate failure
-			if ($this->viaAJAX !== true) {
-				$this->cookies->setFailedOn ('comment', $this->replyTo);
+			if ($this->postData->viaAJAX !== true) {
+				$this->cookies->setFailedOn ('comment', $this->postData->replyTo);
 			}
 
 			// Throw exception about reply requirement
-			if (!empty ($this->replyTo)) {
+			if (!empty ($this->postData->replyTo)) {
 				throw new \Exception ($this->locale->text['reply-needed']);
 			}
 
@@ -498,10 +496,10 @@ class WriteComments extends PostData
 		// Strictly verify if the user is logged in as admin
 		if ($this->login->verifyAdmin ($this->password) === true) {
 			// If so, check if status is set in POST data is set
-			if (!empty ($this->postData['status'])) {
+			if (!empty ($this->postData->data['status'])) {
 				// If so, use status if it is allowed
-				if (in_array ($this->postData['status'], $this->statuses, true)) {
-					$this->data['status'] = $this->postData['status'];
+				if (in_array ($this->postData->data['status'], $this->statuses, true)) {
+					$this->data['status'] = $this->postData->data['status'];
 				}
 			}
 		} else {
@@ -543,7 +541,7 @@ class WriteComments extends PostData
 		}
 
 		// Trim leading and trailing white space
-		$clean_code = $this->postData['comment'];
+		$clean_code = $this->postData->data['comment'];
 
 		// URL regular expression
 		$url_regex = '/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+)/i';
@@ -685,18 +683,18 @@ class WriteComments extends PostData
 				}
 
 				// Attempt to write edited comment
-				if ($this->thread->data->save ($this->file, $auth['comment'], true)) {
+				if ($this->thread->data->save ($this->postData->file, $auth['comment'], true)) {
 					// If successful, check if request is via AJAX
-					if ($this->viaAJAX === true) {
+					if ($this->postData->viaAJAX === true) {
 						// If so, return the comment data
 						return array (
-							'file' => $this->file,
+							'file' => $this->postData->file,
 							'comment' => $auth['comment']
 						);
 					}
 
 					// Otherwise kick visitor back to posted comment
-					$this->kickback ('hashover-c' . str_replace ('-', 'r', $this->file));
+					$this->kickback ('hashover-c' . str_replace ('-', 'r', $this->postData->file));
 
 					return true;
 				}
@@ -763,8 +761,8 @@ class WriteComments extends PostData
 			$webmaster_reply = '';
 
 			// Notify commenter of reply
-			if (!empty ($this->replyTo)) {
-				$reply_comment = $this->thread->data->read ($this->replyTo);
+			if (!empty ($this->postData->replyTo)) {
+				$reply_comment = $this->thread->data->read ($this->postData->replyTo);
 				$reply_body = html_entity_decode (strip_tags ($reply_comment['body']), ENT_COMPAT, 'UTF-8');
 				$reply_body = $this->indentedWordwrap ($reply_body);
 				$reply_name = !empty ($reply_comment['name']) ? $reply_comment['name'] : $this->setup->defaultName;
@@ -824,7 +822,7 @@ class WriteComments extends PostData
 			}
 
 			// Check if we're on AJAX
-			if ($this->viaAJAX === true) {
+			if ($this->postData->viaAJAX === true) {
 				// If so, increase comment count(s)
 				$this->thread->countComment ($comment_file);
 
@@ -857,15 +855,15 @@ class WriteComments extends PostData
 			$this->setupCommentData ();
 
 			// Set comment file name
-			if (isset ($this->replyTo)) {
+			if (isset ($this->postData->replyTo)) {
 				// Verify file exists
 				$this->verifyFile ('reply-to');
 
 				// Comment number
-				$comment_number = $this->thread->threadCount[$this->replyTo];
+				$comment_number = $this->thread->threadCount[$this->postData->replyTo];
 
 				// Rename file for reply
-				$comment_file = $this->replyTo . '-' . $comment_number;
+				$comment_file = $this->postData->replyTo . '-' . $comment_number;
 			} else {
 				$comment_file = $this->thread->primaryCount;
 			}
