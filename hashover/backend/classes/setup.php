@@ -17,10 +17,9 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class Setup extends Secrets
+class Setup extends Settings
 {
 	public $usage;
-	public $encryption;
 	public $isMobile = false;
 	public $remoteAccess = false;
 	public $pageURL;
@@ -101,39 +100,12 @@ class Setup extends Secrets
 			throw new \Exception ('Failed to find CRYPT_BLOWFISH. Blowfish hashing support is required.');
 		}
 
-		// Throw exception if notification email is set to the default
-		if ($this->notificationEmail === 'example@example.com') {
-			throw new \Exception (sprintf (
-				'You must use a UNIQUE notification e-mail in %s',
-				$this->getBackendPath ('classes/settings.php')
-			));
-		}
-
-		// Throw exception if encryption key is set to the default
-		if ($this->encryptionKey === '8CharKey') {
-			throw new \Exception (sprintf (
-				'You must use a UNIQUE encryption key in %s',
-				$this->getBackendPath ('classes/settings.php')
-			));
-		}
-
-		// Throw exception if administrative password is set to the default
-		if ($this->adminPassword === 'password') {
-			throw new \Exception (sprintf (
-				'You must use a UNIQUE admin password in %s',
-				$this->getBackendPath ('classes/settings.php')
-			));
-		}
-
 		// Throw exception if the script wasn't requested by this server
 		if ($this->usage['mode'] !== 'php') {
 			if ($this->refererCheck () === false) {
 				throw new \Exception ('External use not allowed.');
 			}
 		}
-
-		// Instantiate encryption class
-		$this->encryption = new Encryption ($this->encryptionKey);
 
 		// Check if visitor is on mobile device
 		if (!empty ($_SERVER['HTTP_USER_AGENT'])) {
@@ -424,17 +396,5 @@ class Setup extends Secrets
 
 		// Set page title
 		$this->pageTitle = $title;
-	}
-
-	// Weak verification of an admin login
-	public function adminLogin ($hash)
-	{
-		return ($hash === hash ('ripemd160', $this->adminName . $this->adminPassword));
-	}
-
-	// Strict verification of an admin login
-	public function verifyAdmin ($password)
-	{
-		return $this->encryption->verifyHash ($this->adminPassword, $password);
 	}
 }

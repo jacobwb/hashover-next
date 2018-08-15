@@ -50,7 +50,7 @@ try {
 		}
 
 		// Save the JSON data to the URL Query Pairs file
-		if ($hashover->setup->verifyAdmin ($hashover->login->password)
+		if ($hashover->login->verifyAdmin ()
 		    and $data_files->saveJSON ($queries_file, $ignored_queries))
 		{
 			// Redirect with success indicator

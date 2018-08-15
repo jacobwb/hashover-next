@@ -18,7 +18,7 @@
 
 
 // Encryption methods
-class Encryption
+class Crypto extends Secrets
 {
 	protected $prefix;
 	protected $cost = '$10$';
@@ -28,11 +28,21 @@ class Encryption
 	protected $options;
 	protected $alphabet = 'aAbBcCdDeEfFgGhHiIjJkKlLmM.nNoOpPqQrRsStTuUvVwWxXyYzZ/0123456789';
 
-	public function __construct ($encryption_key)
+	public function __construct (Setup $setup)
 	{
 		// Throw exception if encryption key isn't at least 8 characters long
-		if (mb_strlen ($encryption_key, '8bit') < 8) {
-			throw new Exception ('Encryption key must by at least 8 characters long.');
+		if (mb_strlen ($this->encryptionKey, '8bit') < 8) {
+			throw new \Exception (
+				'Encryption key must by at least 8 characters long.'
+			);
+		}
+
+		// Throw exception if encryption key is set to the default
+		if ($this->encryptionKey === '8CharKey') {
+			throw new \Exception (sprintf (
+				'You must use an encryption key other than "8CharKey" in %s',
+				$setup->getBackendPath ('classes/secrets.php')
+			));
 		}
 
 		// Blowfish prefix
@@ -42,7 +52,7 @@ class Encryption
 		$this->options = defined ('OPENSSL_RAW_DATA') ? OPENSSL_RAW_DATA : true;
 
 		// SHA-256 hash array
-		$this->encryptionHash = str_split (hash ('sha256', $encryption_key));
+		$this->encryptionHash = str_split (hash ('sha256', $this->encryptionKey));
 
 		// OpenSSL cipher IV
 		$this->ivSize = openssl_cipher_iv_length ($this->cipher);

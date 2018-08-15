@@ -360,7 +360,7 @@ try {
 		}
 
 		// Save the settings to the JSON settings file
-		if ($hashover->setup->verifyAdmin ($hashover->login->password)
+		if ($hashover->login->verifyAdmin ()
 		    and $data_files->saveJSON ($settings_file, $settings))
 		{
 			// Redirect with success indicator

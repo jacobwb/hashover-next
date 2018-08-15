@@ -20,7 +20,7 @@
 class WriteComments extends PostData
 {
 	protected $setup;
-	protected $encryption;
+	protected $crypto;
 	protected $mode;
 	protected $thread;
 	protected $locale;
@@ -143,7 +143,6 @@ class WriteComments extends PostData
 
 		// Store parameters as properties
 		$this->setup = $setup;
-		$this->encryption = $setup->encryption;
 		$this->mode = $setup->usage['mode'];
 		$this->thread = $thread;
 
@@ -154,6 +153,7 @@ class WriteComments extends PostData
 		$this->misc = new Misc ($this->mode);
 		$this->spamCheck = new SpamCheck ($setup);
 		$this->metadata = new Metadata ($setup, $thread);
+		$this->crypto = new Crypto ($setup);
 
 		// Setup initial login data
 		$this->setupLogin ();
@@ -360,7 +360,7 @@ class WriteComments extends PostData
 			$comment_password = $comment['password'];
 
 			// Attempt to compare the two passwords
-			$match = $this->encryption->verifyHash ($password, $comment_password);
+			$match = $this->crypto->verifyHash ($password, $comment_password);
 
 			// Authenticate if the passwords match
 			if ($match === true) {
@@ -370,7 +370,7 @@ class WriteComments extends PostData
 		}
 
 		// Admin is always authorized after strict verification
-		if ($this->setup->verifyAdmin ($this->password) === true) {
+		if ($this->login->verifyAdmin ($this->password) === true) {
 			$auth['authorized'] = true;
 		}
 
@@ -387,7 +387,7 @@ class WriteComments extends PostData
 			// Check if user is authorized
 			if ($auth['authorized'] === true) {
 				// Strict verification of an admin login
-				$user_is_admin = $this->setup->verifyAdmin ($this->password);
+				$user_is_admin = $this->login->verifyAdmin ($this->password);
 
 				// Unlink comment file indicator
 				$user_deletions_unlink = ($this->setup->userDeletionsUnlink === true);
@@ -496,7 +496,7 @@ class WriteComments extends PostData
 		}
 
 		// Strictly verify if the user is logged in as admin
-		if ($this->setup->verifyAdmin ($this->password) === true) {
+		if ($this->login->verifyAdmin ($this->password) === true) {
 			// If so, check if status is set in POST data is set
 			if (!empty ($this->postData['status'])) {
 				// If so, use status if it is allowed
@@ -605,7 +605,7 @@ class WriteComments extends PostData
 			// Check if we have an e-mail address
 			if (!empty ($this->email)) {
 				// Get encryption info for e-mail
-				$encryption_keys = $this->encryption->encrypt ($this->email);
+				$encryption_keys = $this->crypto->encrypt ($this->email);
 
 				// Set encrypted e-mail address
 				$this->data['email'] = $encryption_keys['encrypted'];
@@ -771,7 +771,7 @@ class WriteComments extends PostData
 				$webmaster_reply = 'In reply to ' . $reply_name . ':' . "\r\n\r\n" . $reply_body . "\r\n\r\n";
 
 				if (!empty ($reply_comment['email']) and !empty ($reply_comment['encryption'])) {
-					$reply_email = $this->encryption->decrypt ($reply_comment['email'], $reply_comment['encryption']);
+					$reply_email = $this->crypto->decrypt ($reply_comment['email'], $reply_comment['encryption']);
 
 					if ($reply_email !== $this->email
 					    and !empty ($reply_comment['notifications'])

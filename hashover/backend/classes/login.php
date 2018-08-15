@@ -17,10 +17,10 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class Login extends PostData
+class Login extends Secrets
 {
 	public $setup;
-	public $encryption;
+	public $crypto;
 	public $cookies;
 	public $locale;
 	public $loginMethod;
@@ -35,15 +35,22 @@ class Login extends PostData
 
 	public function __construct (Setup $setup)
 	{
-		parent::__construct ();
-
 		// Store parameters as properties
 		$this->setup = $setup;
-		$this->encryption = $setup->encryption;
+
+		// Throw exception if administrative password is set to the default
+		if ($this->adminPassword === 'password') {
+			throw new \Exception (sprintf (
+				'You must use an admin password other than "password" in %s',
+				$setup->getBackendPath ('classes/secrets.php')
+			));
+		}
 
 		// Instantiate various classes
+		$this->postdata = new PostData ();
 		$this->cookies = new Cookies ($setup);
 		$this->locale = new Locale ($setup);
+		$this->crypto = new Crypto ($setup);
 
 		// Name of login method class to instantiate
 		$login_class = 'HashOver\\' . $setup->loginMethod;
@@ -74,7 +81,7 @@ class Login extends PostData
 
 		// Set password
 		if ($password !== null) {
-			$this->loginMethod->password = $this->encryption->createHash ($password);
+			$this->loginMethod->password = $this->crypto->createHash ($password);
 		} else {
 			$this->loginMethod->password = '';
 		}
@@ -181,6 +188,30 @@ class Login extends PostData
 		}
 	}
 
+	// Weak verification of an admin login
+	public function adminLogin ()
+	{
+		// Create login hash
+		$hash = hash ('ripemd160', $this->adminName . $this->adminPassword);
+
+		// Check if the hashes match
+		$match = ($this->loginHash === $hash);
+
+		return $match;
+	}
+
+	// Strict verification of an admin login
+	public function verifyAdmin ($password = false)
+	{
+		// If no password was given use the current password
+		$password = ($password === false) ? $this->password : $password;
+
+		// Check if passwords match
+		$match = $this->crypto->verifyHash ($this->adminPassword, $password);
+
+		return $match;
+	}
+
 	// Check if user is logged in
 	public function getLogin ()
 	{
@@ -193,7 +224,7 @@ class Login extends PostData
 			$this->userIsLoggedIn = true;
 
 			// Check if user is logged in as admin
-			if ($this->setup->adminLogin ($this->loginHash) === true) {
+			if ($this->adminLogin () === true) {
 				$this->userIsAdmin = true;
 			}
 		}

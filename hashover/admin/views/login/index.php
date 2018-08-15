@@ -49,7 +49,7 @@ try {
 		$hashover->login->setLogin ();
 
 		// Check if the user is not admin
-		if ($hashover->setup->adminLogin ($hashover->login->loginHash) === false) {
+		if ($hashover->login->adminLogin () === false) {
 			// If so, logout
 			$hashover->login->clearLogin ();
 
