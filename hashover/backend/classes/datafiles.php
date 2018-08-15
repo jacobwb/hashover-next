@@ -131,7 +131,7 @@ class DataFiles
 
 			// Otherwise throw exception
 			throw new \Exception (sprintf (
-				'Failed to create metadata directory at: "%s"!',
+				'Failed to create metadata directory at: %s',
 				$metadata
 			));
 		}

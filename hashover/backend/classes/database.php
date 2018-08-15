@@ -176,7 +176,7 @@ class Database extends Secrets
 		// Throw exception on failure
 		if ($created === false) {
 			throw new \Exception (sprintf (
-				'Failed to create table "%s"',
+				'Failed to create "%s" table!',
 				$this->setup->threadName
 			));
 		}

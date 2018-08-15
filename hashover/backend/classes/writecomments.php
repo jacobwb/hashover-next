@@ -37,7 +37,7 @@ class WriteComments extends PostData
 	protected $loginHash = '';
 	protected $email = '';
 	protected $website = '';
-	protected $commentData = array ();
+	protected $data = array ();
 	protected $urls = array ();
 
 	// Fake inputs used as spam trap fields
@@ -138,12 +138,16 @@ class WriteComments extends PostData
 
 	public function __construct (Setup $setup, Thread $thread)
 	{
+		// Construct parent class
 		parent::__construct ();
 
+		// Store parameters as properties
 		$this->setup = $setup;
 		$this->encryption = $setup->encryption;
 		$this->mode = $setup->usage['mode'];
 		$this->thread = $thread;
+
+		// Instantiate various classes
 		$this->locale = new Locale ($setup);
 		$this->cookies = new Cookies ($setup);
 		$this->login = new Login ($setup);
@@ -182,19 +186,6 @@ class WriteComments extends PostData
 	protected function encodeHTML ($value)
 	{
 		return htmlentities ($value, ENT_COMPAT, 'UTF-8', false);
-	}
-
-	// Set mail headers
-	protected function setHeaders ($email, $user = true)
-	{
-		$this->headers  = 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
-		$this->headers .= 'From: ' . $email . "\r\n";
-		$this->headers .= 'Reply-To: ' . $email;
-
-		// Set commenter's headers to new value as well
-		if ($user === true) {
-			$this->userHeaders = $this->headers;
-		}
 	}
 
 	// Set header to redirect user back to the previous page
@@ -363,13 +354,16 @@ class WriteComments extends PostData
 		// Check if we have both required passwords
 		if (!empty ($this->postData['password']) and !empty ($comment['password'])) {
 			// If so, get the user input password
-			$user_password = $this->encodeHTML ($this->postData['password']);
+			$password = $this->encodeHTML ($this->postData['password']);
 
 			// Get the comment password
 			$comment_password = $comment['password'];
 
 			// Attempt to compare the two passwords
-			if ($this->encryption->verifyHash ($user_password, $comment_password) === true) {
+			$match = $this->encryption->verifyHash ($password, $comment_password);
+
+			// Authenticate if the passwords match
+			if ($match === true) {
 				$auth['user-owned'] = true;
 				$auth['authorized'] = true;
 			}
@@ -418,7 +412,6 @@ class WriteComments extends PostData
 			$this->displayMessage ($this->locale->text['post-fail'], true);
 
 		} catch (\Exception $error) {
-			// On exception kick visitor back with error
 			$this->displayMessage ($error->getMessage (), true);
 		}
 
@@ -493,9 +486,8 @@ class WriteComments extends PostData
 				$this->cookies->setFailedOn ('comment', $this->replyTo);
 			}
 
-			// Set reply cookie
+			// Throw exception about reply requirement
 			if (!empty ($this->replyTo)) {
-				// Throw exception about reply requirement
 				throw new \Exception ($this->locale->text['reply-needed']);
 			}
 
@@ -507,10 +499,9 @@ class WriteComments extends PostData
 		if ($this->setup->verifyAdmin ($this->password) === true) {
 			// If so, check if status is set in POST data is set
 			if (!empty ($this->postData['status'])) {
-				// If so, check if status is allowed
+				// If so, use status if it is allowed
 				if (in_array ($this->postData['status'], $this->statuses, true)) {
-					// If so, use it
-					$this->commentData['status'] = $this->postData['status'];
+					$this->data['status'] = $this->postData['status'];
 				}
 			}
 		} else {
@@ -518,12 +509,12 @@ class WriteComments extends PostData
 			if ($editing === true) {
 				// If so, set status to "pending" if moderation of user edits is enabled
 				if ($this->setup->pendsUserEdits === true) {
-					$this->commentData['status'] = 'pending';
+					$this->data['status'] = 'pending';
 				}
 			} else {
 				// If not, set status to "pending" if moderation is enabled
 				if ($this->setup->usesModeration === true) {
-					$this->commentData['status'] = 'pending';
+					$this->data['status'] = 'pending';
 				}
 			}
 		}
@@ -554,8 +545,11 @@ class WriteComments extends PostData
 		// Trim leading and trailing white space
 		$clean_code = $this->postData['comment'];
 
+		// URL regular expression
+		$url_regex = '/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+)/i';
+
 		// Extract URLs from comment
-		$clean_code = preg_replace_callback ('/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+)/i', 'self::urlExtractor', $clean_code);
+		$clean_code = preg_replace_callback ($url_regex, 'self::urlExtractor', $clean_code);
 
 		// Escape all HTML tags excluding allowed tags
 		$clean_code = $this->htmlSelectiveEscape ($clean_code);
@@ -582,55 +576,70 @@ class WriteComments extends PostData
 		}, $clean_code);
 
 		// Store clean code
-		$this->commentData['body'] = $clean_code;
+		$this->data['body'] = $clean_code;
 
 		// Store posting date
-		$this->commentData['date'] = date (DATE_ISO8601);
+		$this->data['date'] = date (DATE_ISO8601);
 
-		// Check if name is enabled and isn't empty
+		// Store name if one is given
 		if ($this->setup->fieldOptions['name'] !== false) {
-			// Store name
 			if (!empty ($this->name)) {
-				$this->commentData['name'] = $this->name;
+				$this->data['name'] = $this->name;
 			}
 		}
 
 		// Store password and login ID if a password is given
 		if ($this->setup->fieldOptions['password'] !== false) {
 			if (!empty ($this->password)) {
-				$this->commentData['password'] = $this->password;
+				$this->data['password'] = $this->password;
 			}
 		}
 
 		// Store login ID if login hash is non-empty
 		if (!empty ($this->loginHash)) {
-			$this->commentData['login_id'] = $this->loginHash;
+			$this->data['login_id'] = $this->loginHash;
 		}
 
-		// Store e-mail if one is given
+		// Check if the e-mail field is enabled
 		if ($this->setup->fieldOptions['email'] !== false) {
+			// Check if we have an e-mail address
 			if (!empty ($this->email)) {
+				// Get encryption info for e-mail
 				$encryption_keys = $this->encryption->encrypt ($this->email);
-				$this->commentData['email'] = $encryption_keys['encrypted'];
-				$this->commentData['encryption'] = $encryption_keys['keys'];
-				$this->commentData['email_hash'] = md5 (mb_strtolower ($this->email));
 
-				// Set e-mail subscription if one is given
-				$this->commentData['notifications'] = $this->setup->getRequest ('subscribe') ? 'yes' : 'no';
+				// Set encrypted e-mail address
+				$this->data['email'] = $encryption_keys['encrypted'];
+
+				// Set decryption keys
+				$this->data['encryption'] = $encryption_keys['keys'];
+
+				// Set e-mail hash
+				$this->data['email_hash'] = md5 (mb_strtolower ($this->email));
+
+				// Get subscription status
+				$subscribed = $this->setup->getRequest ('subscribe') ? 'yes' : 'no';
+
+				// And set e-mail subscription if one is given
+				$this->data['notifications'] = $subscribed;
 			}
 		}
 
 		// Store website URL if one is given
 		if ($this->setup->fieldOptions['website'] !== false) {
 			if (!empty ($this->website)) {
-				$this->commentData['website'] = $this->website;
+				$this->data['website'] = $this->website;
 			}
 		}
 
 		// Store user IP address if setup to and one is given
 		if ($this->setup->storesIpAddress === true) {
+			// Check if remote IP address exists
 			if (!empty ($_SERVER['REMOTE_ADDR'])) {
-				$this->commentData['ipaddr'] = $this->misc->makeXSSsafe ($_SERVER['REMOTE_ADDR']);
+				// If so, get XSS safe IP address
+				$ip = $this->misc->makeXSSsafe ($_SERVER['REMOTE_ADDR']);
+
+				// And set the IP address
+				$this->data['ipaddr'] = $ip;
 			}
 		}
 
@@ -657,7 +666,7 @@ class WriteComments extends PostData
 				$this->setupCommentData (true);
 
 				// Add status to editable fields if a new status is set
-				if (!empty ($this->commentData['status'])) {
+				if (!empty ($this->data['status'])) {
 					$update_fields[] = 'status';
 				}
 
@@ -668,8 +677,8 @@ class WriteComments extends PostData
 
 				// Update login information and comment
 				foreach ($update_fields as $key) {
-					if (!empty ($this->commentData[$key])) {
-						$auth['comment'][$key] = $this->commentData[$key];
+					if (!empty ($this->data[$key])) {
+						$auth['comment'][$key] = $this->data[$key];
 					} else {
 						unset ($auth['comment'][$key]);
 					}
@@ -700,7 +709,6 @@ class WriteComments extends PostData
 			$this->displayMessage ($this->locale->text['post-fail'], true);
 
 		} catch (\Exception $error) {
-			// On exception kick visitor back with error
 			$this->displayMessage ($error->getMessage (), true);
 		}
 
@@ -743,14 +751,14 @@ class WriteComments extends PostData
 	protected function writeComment ($comment_file)
 	{
 		// Write comment to file
-		if ($this->thread->data->save ($comment_file, $this->commentData)) {
+		if ($this->thread->data->save ($comment_file, $this->data)) {
 			// Add comment to latest comments metadata
 			$this->metadata->addLatestComment ($comment_file);
 
 			// Send notification e-mails
 			$permalink = 'hashover-c' . str_replace ('-', 'r', $comment_file);
 			$from_line = !empty ($this->name) ? $this->name : $this->setup->defaultName;
-			$mail_comment = html_entity_decode (strip_tags ($this->commentData['body']), ENT_COMPAT, 'UTF-8');
+			$mail_comment = html_entity_decode (strip_tags ($this->data['body']), ENT_COMPAT, 'UTF-8');
 			$mail_comment = $this->indentedWordwrap ($mail_comment);
 			$webmaster_reply = '';
 
@@ -815,30 +823,35 @@ class WriteComments extends PostData
 				$this->login (false);
 			}
 
-			// Return the comment data on success via AJAX
+			// Check if we're on AJAX
 			if ($this->viaAJAX === true) {
-				// Increase comment count(s)
+				// If so, increase comment count(s)
 				$this->thread->countComment ($comment_file);
 
+				// And return the comment data
 				return array (
 					'file' => $comment_file,
-					'comment' => $this->commentData
+					'comment' => $this->data
 				);
 			}
 
-			// Kick visitor back to comment
+			// Otherwise, kick visitor back to comment
 			$this->kickback ($permalink);
 
 			return true;
 		}
 
-		// Kick visitor back with an error on failure
+		// If not, kick visitor back with an error
 		$this->displayMessage ($this->locale->text['post-fail'], true);
+
 		return false;
 	}
 
 	public function postComment ()
 	{
+		// Initial status
+		$status = false;
+
 		try {
 			// Test for necessary comment data
 			$this->setupCommentData ();
@@ -848,8 +861,11 @@ class WriteComments extends PostData
 				// Verify file exists
 				$this->verifyFile ('reply-to');
 
+				// Comment number
+				$comment_number = $this->thread->threadCount[$this->replyTo];
+
 				// Rename file for reply
-				$comment_file = $this->replyTo . '-' . $this->thread->threadCount[$this->replyTo];
+				$comment_file = $this->replyTo . '-' . $comment_number;
 			} else {
 				$comment_file = $this->thread->primaryCount;
 			}
@@ -861,13 +877,12 @@ class WriteComments extends PostData
 			$this->thread->data->checkThread ();
 
 			// Write the comment file
-			return $this->writeComment ($comment_file);
+			$status = $this->writeComment ($comment_file);
 
 		} catch (\Exception $error) {
-			// On exception kick visitor back with error
 			$this->displayMessage ($error->getMessage (), true);
 		}
 
-		return false;
+		return $status;
 	}
 }

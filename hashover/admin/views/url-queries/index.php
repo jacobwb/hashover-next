@@ -25,7 +25,7 @@ try {
 	$ignored_queries = array ();
 
 	// Ignored URL queries JSON file location
-	$ignored_queries_file = $hashover->setup->getAbsolutePath ('config/ignored-queries.json');
+	$queries_file = $hashover->setup->getAbsolutePath ('config/ignored-queries.json');
 
 	// Check if the form has been submitted
 	if (!empty ($_POST['names']) and is_array ($_POST['names'])
@@ -51,7 +51,7 @@ try {
 
 		// Save the JSON data to the URL Query Pairs file
 		if ($hashover->setup->verifyAdmin ($hashover->login->password)
-		    and $data_files->saveJSON ($ignored_queries_file, $ignored_queries))
+		    and $data_files->saveJSON ($queries_file, $ignored_queries))
 		{
 			// Redirect with success indicator
 			header ('Location: index.php?status=success');
@@ -65,7 +65,7 @@ try {
 	}
 
 	// Otherwise, load and parse URL Query Pairs file
-	$json = $data_files->readJSON ($ignored_queries_file);
+	$json = $data_files->readJSON ($queries_file);
 
 	// Check for JSON parse error
 	if (is_array ($json)) {

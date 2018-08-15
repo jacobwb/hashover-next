@@ -37,13 +37,18 @@ class Login extends PostData
 	{
 		parent::__construct ();
 
+		// Store parameters as properties
 		$this->setup = $setup;
 		$this->encryption = $setup->encryption;
+
+		// Instantiate various classes
 		$this->cookies = new Cookies ($setup);
 		$this->locale = new Locale ($setup);
 
+		// Name of login method class to instantiate
+		$login_class = 'HashOver\\' . $setup->loginMethod;
+
 		// Instantiate login method class
-		$login_class = 'HashOver\\' . $this->setup->loginMethod;
 		$this->loginMethod = new $login_class ($setup, $this->cookies, $this->locale);
 
 		// Error message to display to the user

@@ -73,7 +73,7 @@ class CommentFiles extends DataFiles
 		    and !@chmod ($this->setup->threadDirectory, 0755))
 		{
 			throw new \Exception (sprintf (
-				'Failed to create comment thread directory at "%s"',
+				'Failed to create comment thread directory at: %s',
 				$this->setup->threadDirectory
 			));
 		}
@@ -83,7 +83,7 @@ class CommentFiles extends DataFiles
 		    and !@chmod ($this->setup->threadDirectory, 0755))
 		{
 			throw new \Exception (sprintf (
-				'Comment thread directory at "%s" is not writable.',
+				'Comment thread directory at %s is not writable.',
 				$this->setup->threadDirectory
 			));
 		}

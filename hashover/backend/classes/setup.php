@@ -73,10 +73,11 @@ class Setup extends Secrets
 
 	public function __construct (array $usage)
 	{
+		// Construst parent class
 		parent::__construct ();
 
+		// Store usage information
 		$this->usage = $usage;
-		$this->misc = new Misc ($usage['mode']);
 
 		// Check if PHP version is the minimum required
 		if (version_compare (PHP_VERSION, '5.3.3') < 0) {

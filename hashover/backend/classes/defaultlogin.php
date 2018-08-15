@@ -32,6 +32,7 @@ class DefaultLogin
 
 	public function __construct (Setup $setup, Cookies $cookies, Locale $locale)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
 		$this->encryption = $setup->encryption;
 		$this->cookies = $cookies;
