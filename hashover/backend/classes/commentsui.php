@@ -25,7 +25,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates a wrapper element for each comment
-	public function commentWrapper ($permalink = '{{permalink}}')
+	public function commentWrapper ($permalink = '{permalink}')
 	{
 		$comment_wrapper = new HTMLTag ('div', array (
 			'id' => $permalink,
@@ -33,8 +33,8 @@ class CommentsUI extends FormUI
 		), false);
 
 		if ($this->mode !== 'php') {
-			$comment_wrapper->appendAttribute ('class', '{{class}}', false);
-			$comment_wrapper->innerHTML ('{{html}}');
+			$comment_wrapper->appendAttribute ('class', '{class}', false);
+			$comment_wrapper->innerHTML ('{html}');
 
 			return $comment_wrapper->asHTML ();
 		}
@@ -43,7 +43,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates wrapper element to name element
-	public function nameWrapper ($class = '{{class}}', $link = '{{link}}')
+	public function nameWrapper ($class = '{class}', $link = '{link}')
 	{
 		$name_wrapper = new HTMLTag ('span', array (
 			'class' => 'hashover-comment-name ' . $class,
@@ -54,7 +54,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates name hyperlink/span element
-	public function nameElement ($element, $permalink = '{{permalink}}', $name = '{{name}}', $href = '{{href}}')
+	public function nameElement ($element, $permalink = '{permalink}', $name = '{name}', $href = '{href}')
 	{
 		// Decide what kind of element to create
 		switch ($element) {
@@ -87,7 +87,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates "Top of Thread" hyperlink element
-	public function parentThreadLink ($parent = '{{parent}}', $permalink = '{{permalink}}', $name = '{{name}}')
+	public function parentThreadLink ($parent = '{parent}', $permalink = '{permalink}', $name = '{name}')
 	{
 		// Get locale string
 		$thread_locale = $this->locale->text['thread'];
@@ -127,7 +127,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates date/permalink hyperlink element
-	public function dateLink ($href = '{{href}}', $permalink = '{{permalink}}', $date = '{{date}}')
+	public function dateLink ($href = '{href}', $permalink = '{permalink}', $date = '{date}')
 	{
 		// Create hyperlink element
 		$date_link = $this->queryLink ($href);
@@ -144,7 +144,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates element to hold a count of likes/dislikes each comment has
-	public function likeCount ($type, $permalink = '{{permalink}}', $text = '{{text}}')
+	public function likeCount ($type, $permalink = '{permalink}', $text = '{text}')
 	{
 		// CSS class
 		$class = 'hashover-' . $type;
@@ -160,7 +160,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates "Like"/"Dislike" hyperlink element
-	public function likeLink ($type, $permalink = '{{permalink}}', $class = '{{class}}', $title = '{{title}}', $text = '{{text}}')
+	public function likeLink ($type, $permalink = '{permalink}', $class = '{class}', $title = '{title}', $text = '{text}')
 	{
 		// Create hyperlink element
 		$link = new HTMLTag ('a', array (
@@ -175,7 +175,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates a form control hyperlink element
-	public function formLink ($href, $type, $permalink = '{{permalink}}', $class = '{{class}}', $title = '{{title}}')
+	public function formLink ($href, $type, $permalink = '{permalink}', $class = '{class}', $title = '{title}')
 	{
 		$form = 'hashover-' . $type;
 		$link = $this->queryLink ($href, array ($form . '=' . $permalink));
@@ -231,7 +231,7 @@ class CommentsUI extends FormUI
 		return $cancel_link->asHTML ();
 	}
 
-	public function userAvatar ($src = '{{src}}', $href = '{{href}}', $text = '{{text}}')
+	public function userAvatar ($src = '{src}', $href = '{href}', $text = '{text}')
 	{
 		// If avatars set to images
 		if ($this->setup->iconMode !== 'none') {
@@ -288,7 +288,7 @@ class CommentsUI extends FormUI
 		return $cancel_button;
 	}
 
-	public function replyForm ($permalink = '{{permalink}}', $file = '{{file}}', $subscribed = true)
+	public function replyForm ($permalink = '{permalink}', $file = '{file}', $subscribed = true)
 	{
 		// Create HashOver reply form
 		$reply_form = new HTMLTag ('div', array (
@@ -418,7 +418,7 @@ class CommentsUI extends FormUI
 		return $reply_form->asHTML ();
 	}
 
-	public function editForm ($permalink = '{{permalink}}', $file = '{{file}}', $name = '{{name}}', $website = '{{website}}', $body = '{{body}}', $status = '', $subscribed = true)
+	public function editForm ($permalink = '{permalink}', $file = '{file}', $name = '{name}', $website = '{website}', $body = '{body}', $status = '', $subscribed = true)
 	{
 		// "Edit Comment" locale string
 		$edit_comment = $this->locale->text['edit-comment'];
@@ -621,7 +621,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates thread hyperlink element
-	public function threadLink ($url = '{{url}}', $title = '{{title}}')
+	public function threadLink ($url = '{url}', $title = '{title}')
 	{
 		// Create hyperlink element
 		$thread_link = new HTMLTag ('a', array (

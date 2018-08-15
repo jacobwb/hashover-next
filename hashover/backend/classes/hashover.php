@@ -396,7 +396,6 @@ class HashOver
 
 		// Instantiate comment theme templater class
 		$this->templater = new HashOver\Templater (
-			$this->usage['mode'],
 			$this->setup
 		);
 	}

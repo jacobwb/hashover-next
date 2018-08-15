@@ -4,10 +4,10 @@ HashOverConstructor.prototype.strings = {
 	specifiers: /%([cdfs])/g,
 
 	// Curly-brace variable regular expression
-	curlyBraces: /(\{\{.+?\}\})/g,
+	curlyBraces: /(\{.+?\})/g,
 
 	// Curly-brace variable name regular expression
-	curlyNames: /\{\{(.+?)\}\}/,
+	curlyNames: /\{(.+?)\}/,
 
 	// Simplistic JavaScript port of sprintf function in C
 	sprintf: function (string, args)

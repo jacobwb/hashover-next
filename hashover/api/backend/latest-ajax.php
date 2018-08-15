@@ -85,7 +85,7 @@ try {
 		'name-link'		=> $hashover->ui->nameElement ('a'),
 		'name-span'		=> $hashover->ui->nameElement ('span'),
 		'thread-link'		=> $hashover->ui->threadLink (),
-		'reply-link'		=> $hashover->ui->formLink ('{{href}}', 'reply'),
+		'reply-link'		=> $hashover->ui->formLink ('{href}', 'reply'),
 		'like-count'		=> $hashover->ui->likeCount ('likes'),
 		'dislike-count'		=> $hashover->ui->likeCount ('dislikes'),
 		'name-wrapper'		=> $hashover->ui->nameWrapper (),

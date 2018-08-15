@@ -45,7 +45,7 @@ class PHPMode
 		$this->setup = $setup;
 		$this->ui = $ui;
 		$this->locale = new Locale ($setup);
-		$this->templater = new Templater ($setup->usage['mode'], $setup);
+		$this->templater = new Templater ($setup);
 		$this->markdown = new Markdown ();
 		$this->comments = $comments;
 	}
