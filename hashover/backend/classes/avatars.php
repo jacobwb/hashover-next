@@ -38,20 +38,20 @@ class Avatars
 	}
 
 	// Sets up avatar
-	protected function iconSetup ()
+	protected function iconSetup ($force_size = false)
 	{
-		// Desired size of icon
-		$size = $this->setup->iconSize;
+		// Decide desired size of icon
+		$size = $force_size ? $force_size : $this->setup->iconSize;
 
 		// Deside whether icon is vector
 		$size = $this->isVector ? 256 : $size;
 
-		// Set icon size
-		$this->iconSize = $size;
+		// Set icon size to the closest supported size
+		$this->iconSize = $this->closestSize ($size);
 
 		// Default avatar file names
 		$avatar = $this->setup->httpImages . '/avatar';
-		$png_avatar = $avatar . '.png';
+		$png_avatar = $avatar . '-' . $this->iconSize . '.png';
 		$svg_avatar = $avatar . '.svg';
 
 		// Set avatar property to appropriate type
@@ -83,9 +83,38 @@ class Avatars
 		$this->gravatar .= '.gravatar.com/avatar/';
 	}
 
-	// Attempt to get Gravatar avatar image
-	public function getGravatar ($hash)
+	// Gets default avatar size closest to the given size
+	protected function closestSize ($size = 45)
 	{
+		// Supported sizes
+		$sizes = array (45, 64, 128, 256, 512);
+
+		// Current supported size
+		$closest = $sizes[0];
+
+		// Find the closest size
+		for ($i = 0, $il = count ($sizes); $i < $il; $i++) {
+			// Check if the size is too small
+			if ($size > $closest) {
+				// If so, increase closest size
+				$closest = $sizes[$i];
+			} else {
+				// If not, end the loop
+				break;
+			}
+		}
+
+		return $closest;
+	}
+
+	// Attempt to get Gravatar avatar image
+	public function getGravatar ($hash, $force_size = false)
+	{
+		// Perform setup again if the size doesn't match
+		if ($force_size !== false and $force_size !== $this->iconSize) {
+			$this->iconSetup ($force_size);
+		}
+
 		// If no hash is given, return the default avatar
 		if (empty ($hash)) {
 			return $this->avatar;
