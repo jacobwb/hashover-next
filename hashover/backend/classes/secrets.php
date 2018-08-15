@@ -25,12 +25,12 @@
 // service(s), and/or political ideology.
 
 
-class Secrets extends Settings
+class Secrets
 {
 	// REQUIRED SETUP INFORMATION
 
 	// E-mail for notification of new comments
-	public $notificationEmail = 'example@example.com';
+	protected $notificationEmail = 'example@example.com';
 
 	// Unique encryption key (case-sensitive)
 	protected $encryptionKey = '8CharKey';
