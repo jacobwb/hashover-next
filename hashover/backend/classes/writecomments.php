@@ -20,15 +20,19 @@
 class WriteComments extends Secrets
 {
 	protected $setup;
-	protected $crypto;
 	protected $mode;
 	protected $thread;
+	protected $postData;
 	protected $locale;
 	protected $cookies;
 	protected $login;
 	protected $misc;
 	protected $spamCheck;
 	protected $metadata;
+	protected $crypto;
+	protected $avatar;
+	protected $templater;
+	protected $mail;
 	protected $referer;
 	protected $name = '';
 	protected $password = '';
