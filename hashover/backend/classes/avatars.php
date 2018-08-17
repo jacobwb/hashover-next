@@ -25,6 +25,8 @@ class Avatars
 	public $subdomain;
 	public $iconSize;
 	public $avatar;
+	public $png;
+	public $svh;
 	public $fallback;
 
 	public function __construct (Setup $setup)
@@ -51,30 +53,22 @@ class Avatars
 
 		// Default avatar file names
 		$avatar = $this->setup->httpImages . '/avatar';
-		$png_avatar = $avatar . '-' . $this->iconSize . '.png';
-		$svg_avatar = $avatar . '.svg';
+		$this->png = $avatar . '-' . $this->iconSize . '.png';
+		$this->svg = $avatar . '.svg';
 
 		// Set avatar property to appropriate type
-		$this->avatar = $this->isVector ? $svg_avatar : $png_avatar;
+		$this->avatar = $this->isVector ? $this->svg : $this->png;
 
 		// Use HTTPS if this file is requested with HTTPS
 		$this->http = ($this->isHTTPS ? 'https' : 'http') . '://';
 		$this->subdomain = $this->isHTTPS ? 'secure' : 'www';
 
-		// If set to custom, direct 404s to local avatar image
+		// Check if avatar is set to custom
 		if ($this->setup->gravatarDefault === 'custom') {
-			// The fallback image uses the PNG image
-			$fallback = $png_avatar;
-
-			// Make avatar path absolute if being accessed remotely
-			if ($this->setup->remoteAccess === false) {
-				$fallback = $this->setup->absolutePath . $fallback;
-			}
-
-			// URL encode fallback URL
-			$this->fallback = urlencode ($fallback);
+			// If so, direct 404s to local PNG avatar image
+			$this->fallback = urlencode ($this->png);
 		} else {
-			// If not direct to a themed default
+			// If not, direct 404s to a themed default
 			$this->fallback = $this->setup->gravatarDefault;
 		}
 
@@ -108,15 +102,21 @@ class Avatars
 	}
 
 	// Attempt to get Gravatar avatar image
-	public function getGravatar ($hash, $force_size = false)
+	public function getGravatar ($hash, $abs = false, $size = false)
 	{
 		// Perform setup again if the size doesn't match
-		if ($force_size !== false and $force_size !== $this->iconSize) {
-			$this->iconSetup ($force_size);
+		if ($size !== false and $size !== $this->iconSize) {
+			$this->iconSetup ($size);
 		}
 
 		// If no hash is given, return the default avatar
 		if (empty ($hash)) {
+			// Return absolute path if requested
+			if ($abs === true) {
+				return $this->setup->absolutePath . $this->avatar;
+			}
+
+			// Otherwise, return avatar path as-is
 			return $this->avatar;
 		}
 
