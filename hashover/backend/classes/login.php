@@ -20,9 +20,10 @@
 class Login extends Secrets
 {
 	public $setup;
-	public $crypto;
+	public $postData;
 	public $cookies;
 	public $locale;
+	public $crypto;
 	public $loginMethod;
 	public $fieldNeeded;
 	public $name = '';
@@ -39,7 +40,7 @@ class Login extends Secrets
 		$this->setup = $setup;
 
 		// Instantiate various classes
-		$this->postdata = new PostData ();
+		$this->postData = new PostData ();
 		$this->cookies = new Cookies ($setup);
 		$this->locale = new Locale ($setup);
 		$this->crypto = new Crypto ($setup);
