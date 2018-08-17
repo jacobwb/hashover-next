@@ -34,10 +34,6 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/url-queries/index.php'
-		),
-		array (
-			'type' => 'Script',
 			'path' => 'admin/views/login/index.php'
 		),
 		array (
@@ -58,7 +54,15 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
+			'path' => 'admin/views/url-queries/index.php'
+		),
+		array (
+			'type' => 'Script',
 			'path' => 'admin/views/view-setup.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'admin/index.php'
 		),
 		array (
 			'type' => 'Script',
