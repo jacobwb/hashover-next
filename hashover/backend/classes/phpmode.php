@@ -123,7 +123,8 @@ class PHPMode
 		return $code_placeholder;
 	}
 
-	protected function codeTagReturn ($grp) {
+	protected function codeTagReturn ($grp)
+	{
 		return $this->codeTags[($grp[1])];
 	}
 
@@ -136,7 +137,8 @@ class PHPMode
 		return $pre_placeholder;
 	}
 
-	protected function preTagReturn ($grp) {
+	protected function preTagReturn ($grp)
+	{
 		return $this->preTags[($grp[1])];
 	}
 
@@ -367,15 +369,13 @@ class PHPMode
 				$template['comment'] = $this->markdown->parseMarkdown ($template['comment']);
 			}
 
-			// Check for code tags
+			// Replace code tags with placeholder text
 			if (mb_strpos ($template['comment'], '<code>') !== false) {
-				// Replace code tags with placeholder text
 				$template['comment'] = preg_replace_callback ('/(<code>)([\s\S]*?)(<\/code>)/iS', 'self::codeTagReplace', $template['comment']);
 			}
 
-			// Check for pre tags
+			// Replace pre tags with placeholder text
 			if (mb_strpos ($template['comment'], '<pre>') !== false) {
-				// Replace pre tags with placeholder text
 				$template['comment'] = preg_replace_callback ('/(<pre>)([\s\S]*?)(<\/pre>)/iS', 'self::preTagReplace', $template['comment']);
 			}
 
@@ -393,8 +393,8 @@ class PHPMode
 			$paragraphs = preg_split ($this->paragraphRegex, $template['comment']);
 			$pd_comment = '';
 
+			// Wrap each paragraph in <p> tags and place <br> tags after each line
 			for ($i = 0, $il = count ($paragraphs); $i < $il; $i++) {
-				// Wrap comment in paragraph tag, replace single line breaks with break tags
 				$pd_comment .= '<p>' . preg_replace ($this->lineRegex, '<br>', $paragraphs[$i]) . '</p>' . PHP_EOL;
 			}
 
