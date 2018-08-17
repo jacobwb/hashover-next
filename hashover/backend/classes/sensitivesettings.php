@@ -35,6 +35,11 @@ class SensitiveSettings extends SafeSettings
 	public $usesModeration		= false;			// Whether comments must be approved before they appear to other visitors
 	public $pendsUserEdits		= false;			// Whether comments need to be approved again when edited
 
+	// E-mail settings
+	public $mailer			= 'sendmail';			// How to send notification e-mails, either 'sendmail' or 'smtp'
+	public $mailType		= 'text';			// What format to send e-mails in, either 'text' or 'html'
+	public $noreplyEmail		= 'noreply@example.com';	// E-mail used when no e-mail is given
+
 	// Behavior settings
 	public $usesAutoLogin		= true;				// Whether a user's first comment automatically logs them in
 
@@ -43,7 +48,6 @@ class SensitiveSettings extends SafeSettings
 	public $setsCookies		= true;				// Whether cookies are enabled
 	public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 	public $storesIpAddress		= false;			// Whether to store users' IP addresses
-	public $noreplyEmail		= 'noreply@example.com';	// E-mail used when no e-mail is given
 	public $spamDatabase		= 'remote';			// Whether to use a remote or local spam database
 	public $spamCheckModes		= 'php';			// Perform IP spam check in 'json' or 'php' mode, or 'both'
 	public $enabledApi		= array ('all');		// An array of enabled API. 'all' = fully-enabled, empty array = fully disabled

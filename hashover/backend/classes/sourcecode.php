@@ -111,6 +111,11 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
+			'name' => 'Crypto',
+			'path' => 'backend/classes/crypto.php'
+		),
+		array (
+			'type' => 'Class',
 			'name' => 'Database',
 			'path' => 'backend/classes/database.php'
 		),
@@ -126,8 +131,8 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
-			'name' => 'Encryption',
-			'path' => 'backend/classes/encryption.php'
+			'name' => 'Email',
+			'path' => 'backend/classes/email.php'
 		),
 		array (
 			'type' => 'Class',
@@ -208,6 +213,11 @@ class SourceCode
 			'type' => 'Class',
 			'name' => 'SafeSettings',
 			'path' => 'backend/classes/safesettings.php'
+		),
+		array (
+			'type' => 'Class',
+			'name' => 'Sendmail',
+			'path' => 'backend/classes/sendmail.php'
 		),
 		array (
 			'type' => 'Class',

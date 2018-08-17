@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>HashOver</title>
+
+		<style type="text/css" media="screen">
+			body {
+				padding: 0px;
+				margin: 0px;
+			}
+
+			#main, #main * {
+				font-size: 16px;
+				font-family: "Cantarell", "Arial", "Helvetica", "FreeSans", sans-serif;
+				color: #222222;
+			}
+
+			#main {
+				max-width: 640px;
+				padding: 32px 16px 32px 16px;
+				margin: 0px auto 0px auto;
+			}
+
+			#header {
+				text-align: center;
+				margin-bottom: 32px;
+			}
+
+			#avatar {
+				display: inline-block;
+				width: 128px;
+				height: 128px;
+				line-height: 128px;
+				border: 1px solid #AAAAAA;
+
+				-moz-border-radius: 50% 50% 50% 50%;
+				-webkit-border-radius: 50% 50% 50% 50%;
+				border-radius: 50% 50% 50% 50%;
+			}
+
+			#name {
+				font-weight: bold;
+				font-size: 32px;
+			}
+
+			.container {
+				/* Light blue */
+				background-color: #E5F0FF;
+
+				/* Light green */
+				/*background-color: #E5FFF0;*/
+
+				/* Light red (pink-ish) */
+				/*background-color: #FFE5F0;*/
+
+				padding: 0px;
+				overflow: hidden;
+
+				-moz-border-radius: 6px 6px 6px 6px;
+				-webkit-border-radius: 6px 6px 6px 6px;
+				border-radius: 6px 6px 6px 6px;
+			}
+
+			.container p {
+				margin: 16px;
+			}
+
+			p {
+				margin: 16px 0px 16px 0px;
+			}
+
+			#reply {
+				margin-bottom: 16px;
+			}
+
+			.footer {
+				border-top: 1px solid rgba(128, 128, 128, 0.5);
+				overflow: hidden;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="main">
+			<div id="header">
+				<img id="avatar" src="{avatar}" width="128" height="128" alt="avatar">
+				<p id="name">{name}</p>
+				<p>{domain}</p>
+			</div>
+
+			<div class="container">
+				{html-comment}
+			</div>
+
+			<p id="in-reply-to">{in-reply-to}</p>
+
+			<div id="reply" class="container">
+				{html-reply}
+			</div>
+
+			<div class="footer">
+				<p>{page}: <a href="{url}">{title}</a></p>
+				<p>{comment}: <a href="{permalink}">{permalink}</a></p>
+			</div>
+
+			<center class="footer">
+				<p>{sent-by}</p>
+			</center>
+		</div>
+	</body>
+</html>

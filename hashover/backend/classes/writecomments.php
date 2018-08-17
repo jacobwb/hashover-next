@@ -29,8 +29,6 @@ class WriteComments extends Secrets
 	protected $misc;
 	protected $spamCheck;
 	protected $metadata;
-	protected $headers;
-	protected $userHeaders;
 	protected $referer;
 	protected $name = '';
 	protected $password = '';
@@ -152,12 +150,12 @@ class WriteComments extends Secrets
 		$this->spamCheck = new SpamCheck ($setup);
 		$this->metadata = new Metadata ($setup, $thread);
 		$this->crypto = new Crypto ($setup);
+		$this->avatars = new Avatars ($setup);
+		$this->templater = new Templater ($setup);
+		$this->mail = new Email ($setup);
 
 		// Setup initial login data
 		$this->setupLogin ();
-
-		// Default email headers
-		$this->setHeaders ($setup->noreplyEmail);
 
 		// Check if we have an HTTP referer
 		if (!empty ($_SERVER['HTTP_REFERER'])) {
@@ -535,11 +533,6 @@ class WriteComments extends Secrets
 		// Setup login data
 		$this->setupLogin ();
 
-		// Set mail headers to user's e-mail address
-		if (!empty ($this->email)) {
-			$this->setHeaders ($this->email, false);
-		}
-
 		// Trim leading and trailing white space
 		$clean_code = $this->postData->data['comment'];
 
@@ -644,6 +637,12 @@ class WriteComments extends Secrets
 		return true;
 	}
 
+	// Converts a file name (1-2) to a permalink (hashover-c1r1)
+	protected function filePermalink ($file)
+	{
+		return 'hashover-c' . str_replace ('-', 'r', $file);
+	}
+
 	public function editComment ()
 	{
 		try {
@@ -694,7 +693,7 @@ class WriteComments extends Secrets
 					}
 
 					// Otherwise kick visitor back to posted comment
-					$this->kickback ('hashover-c' . str_replace ('-', 'r', $this->postData->file));
+					$this->kickback ($this->filePermalink ($this->postData->file));
 
 					return true;
 				}
@@ -713,106 +712,220 @@ class WriteComments extends Secrets
 		return false;
 	}
 
-	protected function indentedWordwrap ($text)
+	// Wordwrap text after adding indentation
+	protected function indentWordwrap ($text)
 	{
-		if (PHP_EOL !== "\r\n") {
-			$text = str_replace (PHP_EOL, "\r\n", $text);
-		}
+		// Line ending styles to convert
+		$styles = array ("\r\n", "\r");
 
-		$text = wordwrap ($text, 66, "\r\n", true);
-		$paragraphs = explode ("\r\n\r\n", $text);
-		$paragraphs = str_replace ("\r\n", "\r\n    ", $paragraphs);
+		// Convert line endings to UNIX-style
+		$text = str_replace ($styles, "\n", $text);
 
+		// Wordwrap the text to 64 characters long
+		$text = wordwrap ($text, 64, "\n", true);
+
+		// Split the text by paragraphs
+		$paragraphs = explode ("\n\n", $text);
+
+		// Indent the first line of each paragraph
 		array_walk ($paragraphs, function (&$paragraph) {
 			$paragraph = '    ' . $paragraph;
 		});
 
-		return implode ("\r\n\r\n", $paragraphs);
+		// Indent all other lines of each paragraph
+		$paragraphs = str_replace ("\n", "\r\n    ", $paragraphs);
+
+		// Convert paragraphs back to a string
+		$text = implode ("\r\n\r\n", $paragraphs);
+
+		return $text;
 	}
 
-	protected function sendNotification ($from, $comment, $reply = '', $permalink, $email, $header)
+	// Convert text paragraphs to HTML paragraph tags
+	protected function paragraphsTags ($text, $indention = '')
 	{
-		$subject  = $this->setup->domain . ' - New ';
-		$subject .= !empty ($reply) ? 'Reply' : 'Comment';
+		// Initial HTML paragraphs
+		$paragraphs = array ();
 
-		// Message body to original poster
-		$message  = 'From ' . $from . ":\r\n\r\n";
-		$message .= $comment . "\r\n\r\n";
-		$message .= 'In reply to:' . "\r\n\r\n" . $reply . "\r\n\r\n" . '----' . "\r\n\r\n";
-		$message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n\r\n";
-		$message .= 'Page: ' . $this->setup->pageURL;
+		// Break comment into paragraphs
+		$ps = preg_split ('/(\r\n|\r|\n){2}/S', $text);
 
-		// Send e-mail
-		mail ($email, $subject, $message, $header);
+		// Wrap each paragraph in <p> tags and place <br> tags after each line
+		for ($i = 0, $il = count ($ps); $i < $il; $i++) {
+			// Place <br> tags after each line
+			$paragraph = preg_replace ('/(\r\n|\r|\n)/S', '<br>\\1', $ps[$i]);
+
+			// Create <p> tag
+			$pTag = new HTMLTag ('p', $paragraph);
+
+			// Add paragraph to HTML
+			$paragraphs[] = $pTag->asHTML ($indention);
+		}
+
+		// Convert paragraphs array to string
+		$html = implode ("\r\n\r\n" . $indention, $paragraphs);
+
+		return $html;
+	}
+
+	// Sends a notification e-mail to another commenter
+	protected function sendNotifications ($file)
+	{
+		// Initial comment data
+		$data = array ();
+
+		// Shorthand
+		$default_name = $this->setup->defaultName;
+
+		// Commenter's name
+		$name = !empty ($this->name) ? $this->name : $default_name;
+
+		// Get comment permalink
+		$permalink = $this->filePermalink ($file);
+
+		// "New Comment" locale string
+		$new_comment = $this->locale->text['new-comment'];
+
+		// E-mail hash for Gravatar or empty for default avatar
+		$hash = !empty ($this->data['email_hash']) ? $this->data['email_hash'] : '';
+
+		// Add domain name to data
+		$data['domain'] = $this->setup->domain;
+
+		// Add name of commenter or configurable default name to date
+		$data['name'] = $name;
+
+		// Add avatar to data
+		$data['avatar'] = $this->avatars->getGravatar ($hash, true, 128);
+
+		// Add plain text comment to data
+		$data['text-comment'] = $this->indentWordwrap ($this->data['body']);
+
+		// Add "From <name>" locale string to data
+		$data['from'] = sprintf ($this->locale->text['from'], $name);
+
+		// Add some locale strings to data
+		$data['comment'] = $this->locale->text['comment'];
+		$data['page'] = $this->locale->text['page'];
+		$data['new-comment'] = $new_comment;
+
+		// Add message about where the e-mail is coming from to data
+		$data['sent-by'] = sprintf ($this->locale->text['sent-by'], $this->setup->domain);
+
+		// Add comment permalink to data
+		$data['permalink'] = $this->setup->pageURL . '#' . $permalink;
+
+		// Add page URL to data
+		$data['url'] = $this->setup->pageURL;
+
+		// Add page URL to data
+		$data['title'] = $this->setup->pageTitle;
+
+		// Attempt to read reply comment
+		$reply = $this->thread->data->read ($this->postData->replyTo);
+
+		// Check if the reply comment read successfully
+		if ($reply !== false) {
+			// If so, decide name of recipient
+			$reply_name = !empty ($reply['name']) ? $reply['name'] : $default_name;
+
+			// Add reply name to data
+			$data['reply-name'] = $reply_name;
+
+			// Add "In reply to" locale string to data
+			$data['in-reply-to'] = sprintf ($this->locale->text['thread'], $reply_name);
+
+			// Add indented body of recipient's comment to data
+			$data['text-reply'] = $this->indentWordwrap ($reply['body']);
+
+			// And add HTML version of the reply comment to data
+			if ($this->setup->mailType !== 'text') {
+				$data['html-reply'] = $this->paragraphsTags ($reply['body'], "\t\t\t\t");
+			}
+		}
+
+		// Get and parse plain text e-mail notification
+		$text_body = $this->templater->parseTheme ('email-notification.txt', $data);
+
+		// Set subject to "New Comment - <domain here>"
+		$this->mail->subject ($new_comment . ' - ' . $this->setup->domain);
+
+		// Set plain text version of the message
+		$this->mail->text ($text_body);
+
+		// Check if e-mail format is anything other than text
+		if ($this->setup->mailType !== 'text') {
+			// If so, add HTML version of the message to data
+			$data['html-comment'] = $this->paragraphsTags ($this->data['body'], "\t\t\t\t");
+
+			// Get and parse HTML e-mail notification
+			$html_body = $this->templater->parseTheme ('email-notification.html', $data);
+
+			// And set HTML version of the message if told to
+			$this->mail->html ($html_body);
+		}
+
+		// Only send admin notification if it's not admin posting
+		if ($this->email !== $this->notificationEmail) {
+			// Set e-mail to be sent to admin
+			$this->mail->to ($this->notificationEmail);
+
+			// Set e-mail as coming from the posting user
+			$this->mail->from ($this->email);
+
+			// And actually send the message
+			$this->mail->send ();
+		}
+
+		// Do nothing else if the reply comment failed to read
+		if ($reply === false) {
+			return;
+		}
+
+		// Do nothing else if the reply comment lacks e-mail and decrypt info
+		if (empty ($reply['email']) or empty ($reply['encryption'])) {
+			return;
+		}
+
+		// Do nothing else if the reply comment poster disabled notifications
+		if (!empty ($reply['notifications']) and $reply['notifications'] === 'no') {
+			return;
+		}
+
+		// Otherwise, decrypt the reply e-mail address
+		$reply_email = $this->crypto->decrypt ($reply['email'], $reply['encryption']);
+
+		// Check if the reply e-mail is different than the one logged in
+		if ($reply_email !== $this->email) {
+			// If not, set message to be sent to reply comment e-mail
+			$this->mail->to ($reply_email);
+
+			// If so, check if users are allowed to reply by email
+			if ($this->setup->allowsUserReplies === true) {
+				// If so, set e-mail as coming from posting user
+				$this->mail->from ($this->email);
+			} else {
+				// If not, set e-mail as coming from noreply e-mail
+				$this->mail->from ($this->noreplyEmail);
+			}
+
+			// And actually send the message
+			$this->mail->send ();
+		}
 	}
 
 	protected function writeComment ($comment_file)
 	{
-		// Write comment to file
-		if ($this->thread->data->save ($comment_file, $this->data)) {
-			// Add comment to latest comments metadata
+		// Attempt to save comment
+		$saved = $this->thread->data->save ($comment_file, $this->data);
+
+		// Check if the comment was saved successfully
+		if ($saved === true) {
+			// If so, add it to latest comments metadata
 			$this->metadata->addLatestComment ($comment_file);
 
 			// Send notification e-mails
-			$permalink = 'hashover-c' . str_replace ('-', 'r', $comment_file);
-			$from_line = !empty ($this->name) ? $this->name : $this->setup->defaultName;
-			$mail_comment = html_entity_decode (strip_tags ($this->data['body']), ENT_COMPAT, 'UTF-8');
-			$mail_comment = $this->indentedWordwrap ($mail_comment);
-			$webmaster_reply = '';
-
-			// Notify commenter of reply
-			if (!empty ($this->postData->replyTo)) {
-				$reply_comment = $this->thread->data->read ($this->postData->replyTo);
-				$reply_body = html_entity_decode (strip_tags ($reply_comment['body']), ENT_COMPAT, 'UTF-8');
-				$reply_body = $this->indentedWordwrap ($reply_body);
-				$reply_name = !empty ($reply_comment['name']) ? $reply_comment['name'] : $this->setup->defaultName;
-				$webmaster_reply = 'In reply to ' . $reply_name . ':' . "\r\n\r\n" . $reply_body . "\r\n\r\n";
-
-				if (!empty ($reply_comment['email']) and !empty ($reply_comment['encryption'])) {
-					$reply_email = $this->crypto->decrypt ($reply_comment['email'], $reply_comment['encryption']);
-
-					if ($reply_email !== $this->email
-					    and !empty ($reply_comment['notifications'])
-					    and $reply_comment['notifications'] === 'yes')
-					{
-						if ($this->setup->allowsUserReplies === true) {
-							$this->userHeaders = $this->headers;
-
-							// Add user's e-mail address to "From" line
-							if (!empty ($this->email)) {
-								$from_line .= ' <' . $this->email . '>';
-							}
-						}
-
-						// Message body to original poster
-						$reply_message  = 'From ' . $from_line . ":\r\n\r\n";
-						$reply_message .= $mail_comment . "\r\n\r\n";
-						$reply_message .= 'In reply to:' . "\r\n\r\n" . $reply_body . "\r\n\r\n" . '----' . "\r\n\r\n";
-						$reply_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n\r\n";
-						$reply_message .= 'Page: ' . $this->setup->pageURL;
-
-						// Send
-						mail ($reply_email, $this->setup->domain . ' - New Reply', $reply_message, $this->userHeaders);
-					}
-				}
-			}
-
-			// Notify webmaster via e-mail
-			if ($this->email !== $this->setup->notificationEmail) {
-				// Add user's e-mail address to "From" line
-				if (!empty ($this->email)) {
-					$from_line .= ' <' . $this->email . '>';
-				}
-
-				$webmaster_message  = 'From ' . $from_line . ":\r\n\r\n";
-				$webmaster_message .= $mail_comment . "\r\n\r\n";
-				$webmaster_message .= $webmaster_reply . '----' . "\r\n\r\n";
-				$webmaster_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n\r\n";
-				$webmaster_message .= 'Page: ' . $this->setup->pageURL;
-
-				// Send
-				mail ($this->setup->notificationEmail, 'New Comment', $webmaster_message, $this->headers);
-			}
+			$this->sendNotifications ($comment_file);
 
 			// Set/update user login cookie
 			if ($this->setup->usesAutoLogin !== false
@@ -834,7 +947,7 @@ class WriteComments extends Secrets
 			}
 
 			// Otherwise, kick visitor back to comment
-			$this->kickback ($permalink);
+			$this->kickback ($this->filePermalink ($comment_file));
 
 			return true;
 		}

@@ -81,6 +81,27 @@ function ui_array (Setup $setup)
 				'sql' => 'SQL'
 			)
 		),
+		'mailer' => array (
+			'type' => 'select',
+			'value' => $setup->mailer,
+
+			'options' => array (
+				'sendmail' => 'Sendmail'
+			)
+		),
+		'mail-type' => array (
+			'type' => 'select',
+			'value' => $setup->mailType,
+
+			'options' => array (
+				'text' => 'Text',
+				'html' => 'HTML'
+			)
+		),
+		'noreply-email' => array (
+			'type' => 'text',
+			'value' => $setup->noreplyEmail
+		),
 		'default-name' => array (
 			'type' => 'text',
 			'value' => $setup->defaultName
@@ -231,7 +252,10 @@ function ui_array (Setup $setup)
 		'login-method' => array (
 			'type' => 'select',
 			'value' => $setup->loginMethod,
-			'options' => array ('defaultLogin' => 'Default Login')
+
+			'options' => array (
+				'defaultLogin' => 'Default Login'
+			)
 		),
 		'sets-cookies' => array (
 			'type' => 'checkbox',
@@ -252,10 +276,6 @@ function ui_array (Setup $setup)
 		'allows-user-replies' => array (
 			'type' => 'checkbox',
 			'value' => $setup->allowsUserReplies
-		),
-		'noreply-email' => array (
-			'type' => 'text',
-			'value' => $setup->noreplyEmail
 		),
 		'spam-batabase' => array (
 			'type' => 'select',
