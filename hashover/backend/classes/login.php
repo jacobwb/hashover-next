@@ -38,14 +38,6 @@ class Login extends Secrets
 		// Store parameters as properties
 		$this->setup = $setup;
 
-		// Throw exception if administrative password is set to the default
-		if ($this->adminPassword === 'password') {
-			throw new \Exception (sprintf (
-				'You must use an admin password other than "password" in %s',
-				$setup->getBackendPath ('classes/secrets.php')
-			));
-		}
-
 		// Instantiate various classes
 		$this->postdata = new PostData ();
 		$this->cookies = new Cookies ($setup);

@@ -49,6 +49,9 @@ class HashOver
 		// Instantiate general setup class
 		$this->setup = new HashOver\Setup ($this->usage);
 
+		//Instantiate setup checks class
+		$this->setupChecks = new HashOver\SetupChecks ($this->setup);
+
 		// Instantiate class for reading comments
 		$this->thread = new HashOver\Thread ($this->setup);
 

@@ -95,11 +95,6 @@ class Setup extends Settings
 		// Comment threads directory path
 		$this->pagesDirectory = $this->commentsDirectory . '/threads';
 
-		// Throw exception if for Blowfish hashing support isn't detected
-		if ((defined ('CRYPT_BLOWFISH') and CRYPT_BLOWFISH) === false) {
-			throw new \Exception ('Failed to find CRYPT_BLOWFISH. Blowfish hashing support is required.');
-		}
-
 		// Throw exception if the script wasn't requested by this server
 		if ($this->usage['mode'] !== 'php') {
 			if ($this->refererCheck () === false) {

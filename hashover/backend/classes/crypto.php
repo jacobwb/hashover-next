@@ -37,14 +37,6 @@ class Crypto extends Secrets
 			);
 		}
 
-		// Throw exception if encryption key is set to the default
-		if ($this->encryptionKey === '8CharKey') {
-			throw new \Exception (sprintf (
-				'You must use an encryption key other than "8CharKey" in %s',
-				$setup->getBackendPath ('classes/secrets.php')
-			));
-		}
-
 		// Blowfish prefix
 		$this->prefix = (version_compare (PHP_VERSION, '5.3.7') < 0) ? '$2a' : '$2y';
 

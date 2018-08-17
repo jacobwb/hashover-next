@@ -226,6 +226,11 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
+			'name' => 'SetupChecks',
+			'path' => 'backend/classes/setupchecks.php'
+		),
+		array (
+			'type' => 'Class',
 			'name' => 'SourceSode',
 			'path' => 'backend/classes/sourcecode.php'
 		),
