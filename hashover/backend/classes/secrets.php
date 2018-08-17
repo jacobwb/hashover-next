@@ -60,4 +60,24 @@ class Secrets
 
 	// SQL database character set
 	protected $databaseCharset = 'utf8';
+
+	// OPTIONAL SMTP MAILER SETUP
+
+	// SMTP server host name
+	protected $smtpHost = 'smtp.gmail.com';
+
+	// SMTP server port number
+	protected $smtpPort = 465;
+
+	// SMTP server encryption method
+	protected $smtpCrypto = 'ssl';
+
+	// SMTP server requires login authentication
+	protected $smtpAuth = true;
+
+	// SMTP server user
+	protected $smtpUser = 'user';
+
+	// SMTP server password
+	protected $smtpPassword = 'password';
 }

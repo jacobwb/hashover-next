@@ -29,6 +29,27 @@ class Email extends Secrets
 
 		// Instantiate mailer class
 		$this->mailer = new $mail_class ($setup);
+
+		// Setup SMTP Mailer
+		if (mb_strtolower ($setup->mailer) !== 'sendmail') {
+			// Set SMTP server host
+			$this->mailer->setHost ($this->smtpHost);
+
+			// Set SMTP server port number
+			$this->mailer->setPort ($this->smtpPort);
+
+			// Set SMTP server encryption method
+			$this->mailer->setCrypto ($this->smtpCrypto);
+
+			// Set whether SMTP server requires authentication
+			$this->mailer->setAuth ($this->smtpAuth);
+
+			// Set SMTP server login user
+			$this->mailer->setUser ($this->smtpUser);
+
+			// Set SMTP server login password
+			$this->mailer->setPassword ($this->smtpPassword);
+		}
 	}
 
 	// Call mailer method

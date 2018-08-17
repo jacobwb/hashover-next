@@ -245,6 +245,11 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
+			'name' => 'SMTP',
+			'path' => 'backend/classes/smtp.php'
+		),
+		array (
+			'type' => 'Class',
 			'name' => 'SourceSode',
 			'path' => 'backend/classes/sourcecode.php'
 		),

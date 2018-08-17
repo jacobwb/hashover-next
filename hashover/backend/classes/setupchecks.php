@@ -69,5 +69,24 @@ class SetupChecks extends Secrets
 				));
 			}
 		}
+
+		// Check if we're sending notification e-mails through SMTP
+		if ($setup->mailer === 'smtp') {
+			// If so, throw exception if SMTP user is set to the default
+			if ($this->smtpUser === 'user') {
+				throw new \Exception (sprintf (
+					'You must use an SMTP user name other than "user" in %s',
+					$setup->getBackendPath ('classes/secrets.php')
+				));
+			}
+
+			// Throw exception if SMTP password is set to the default
+			if ($this->smtpPassword === 'password') {
+				throw new \Exception (sprintf (
+					'You must use an SMTP password other than "password" in %s',
+					$setup->getBackendPath ('classes/secrets.php')
+				));
+			}
+		}
 	}
 }

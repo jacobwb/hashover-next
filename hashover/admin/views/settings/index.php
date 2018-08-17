@@ -86,7 +86,8 @@ function ui_array (Setup $setup)
 			'value' => $setup->mailer,
 
 			'options' => array (
-				'sendmail' => 'Sendmail'
+				'sendmail' => 'Sendmail',
+				'smtp' => 'SMTP'
 			)
 		),
 		'mail-type' => array (
