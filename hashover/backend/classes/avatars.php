@@ -19,24 +19,53 @@
 
 class Avatars
 {
-	public $setup;
-	public $isHTTPS = false;
-	public $http;
-	public $subdomain;
-	public $iconSize;
-	public $avatar;
-	public $png;
-	public $svh;
-	public $fallback;
+	protected $setup;
+	protected $isVector;
+	protected $gravatar;
+	protected $iconSize;
+	protected $avatar;
+	protected $png;
+	protected $svg;
+	protected $fallback;
 
+	// Supported icon sizes
+	protected $iconSizes = array (45, 64, 128, 256, 512);
+
+	// Initial setup
 	public function __construct (Setup $setup)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
+
+		// Whether icon is vector based on setting
 		$this->isVector = ($setup->imageFormat === 'svg');
+
+		// Get HTTPS status
 		$this->isHTTPS = $setup->isHTTPS ();
 
-		// Setup
+		// Icon setup
 		$this->iconSetup ();
+	}
+
+	// Gets default avatar size closest to the given size
+	protected function closestSize ($size = 45)
+	{
+		// Current supported size
+		$closest = $this->iconSizes[0];
+
+		// Find the closest size
+		for ($i = 0, $il = count ($this->iconSizes); $i < $il; $i++) {
+			// Check if the size is too small
+			if ($size > $closest) {
+				// If so, increase closest size
+				$closest = $this->iconSizes[$i];
+			} else {
+				// If not, end the loop
+				break;
+			}
+		}
+
+		return $closest;
 	}
 
 	// Sets up avatar
@@ -75,30 +104,6 @@ class Avatars
 		// Gravatar URL
 		$this->gravatar  = $this->http . $this->subdomain;
 		$this->gravatar .= '.gravatar.com/avatar/';
-	}
-
-	// Gets default avatar size closest to the given size
-	protected function closestSize ($size = 45)
-	{
-		// Supported sizes
-		$sizes = array (45, 64, 128, 256, 512);
-
-		// Current supported size
-		$closest = $sizes[0];
-
-		// Find the closest size
-		for ($i = 0, $il = count ($sizes); $i < $il; $i++) {
-			// Check if the size is too small
-			if ($size > $closest) {
-				// If so, increase closest size
-				$closest = $sizes[$i];
-			} else {
-				// If not, end the loop
-				break;
-			}
-		}
-
-		return $closest;
 	}
 
 	// Attempt to get Gravatar avatar image
