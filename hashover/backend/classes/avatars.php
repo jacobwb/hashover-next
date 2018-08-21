@@ -41,10 +41,17 @@ class Avatars
 		$this->isVector = ($setup->imageFormat === 'svg');
 
 		// Get HTTPS status
-		$this->isHTTPS = $setup->isHTTPS ();
+		$is_https = $setup->isHTTPS ();
+
+		// Use HTTPS if this file is requested with HTTPS
+		$http = ($is_https ? 'https' : 'http') . '://';
+		$subdomain = $is_https ? 'secure' : 'www';
+
+		// Construct Gravatar icon URL
+		$this->gravatar = $http . $subdomain . '.gravatar.com/avatar/';
 
 		// Icon setup
-		$this->iconSetup ();
+		$this->iconSetup ($setup->iconSize);
 	}
 
 	// Gets default avatar size closest to the given size
@@ -69,48 +76,40 @@ class Avatars
 	}
 
 	// Sets up avatar
-	protected function iconSetup ($force_size = false)
+	protected function iconSetup ($size = 45)
 	{
-		// Decide desired size of icon
-		$size = $force_size ? $force_size : $this->setup->iconSize;
+		// Set icon size (256 for vector)
+		$this->iconSize = $this->isVector ? 256 : $size;
 
-		// Deside whether icon is vector
-		$size = $this->isVector ? 256 : $size;
-
-		// Set icon size to the closest supported size
-		$this->iconSize = $this->closestSize ($size);
+		// Set default icon size (256 for vector)
+		$default_size = $this->isVector ? 256 : $this->closestSize ($size);
 
 		// Default avatar file names
 		$avatar = $this->setup->httpImages . '/avatar';
-		$this->png = $avatar . '-' . $this->iconSize . '.png';
+		$this->png = $avatar . '-' . $default_size . '.png';
 		$this->svg = $avatar . '.svg';
 
 		// Set avatar property to appropriate type
 		$this->avatar = $this->isVector ? $this->svg : $this->png;
 
-		// Use HTTPS if this file is requested with HTTPS
-		$this->http = ($this->isHTTPS ? 'https' : 'http') . '://';
-		$this->subdomain = $this->isHTTPS ? 'secure' : 'www';
-
 		// Check if avatar is set to custom
 		if ($this->setup->gravatarDefault === 'custom') {
 			// If so, direct 404s to local PNG avatar image
-			$this->fallback = urlencode ($this->png);
+			$this->fallback = $this->setup->absolutePath . $this->png;
 		} else {
 			// If not, direct 404s to a themed default
 			$this->fallback = $this->setup->gravatarDefault;
 		}
-
-		// Gravatar URL
-		$this->gravatar  = $this->http . $this->subdomain;
-		$this->gravatar .= '.gravatar.com/avatar/';
 	}
 
 	// Attempt to get Gravatar avatar image
 	public function getGravatar ($hash, $abs = false, $size = false)
 	{
+		// Decide desired size of icon
+		$size = $size ?: $this->setup->iconSize;
+
 		// Perform setup again if the size doesn't match
-		if ($size !== false and $size !== $this->iconSize) {
+		if ($size !== $this->iconSize) {
 			$this->iconSetup ($size);
 		}
 
@@ -127,8 +126,8 @@ class Avatars
 
 		// Gravatar URL
 		$gravatar  = $this->gravatar . $hash . '.png?r=pg';
-		$gravatar .= '&amp;s=' . $this->iconSize;
-		$gravatar .= '&amp;d=' . $this->fallback;
+		$gravatar .= '&amp;s=' . urlencode ($this->iconSize);
+		$gravatar .= '&amp;d=' . urlencode ($this->fallback);
 
 		// Force Gravatar default avatar if enabled
 		if ($this->setup->gravatarForce === true) {
