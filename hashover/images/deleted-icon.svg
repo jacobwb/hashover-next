@@ -1,12 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="45" width="45" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
-<defs>
-<linearGradient id="linearGradient4934" y2="145.22" gradientUnits="userSpaceOnUse" x2="149.57" gradientTransform="matrix(0 -.059560 15.735 0 -2262.5 30.916)" y1="145.22" x1="140.43">
-<stop stop-color="#e10000" offset="0"/>
-<stop stop-color="#e10000" stop-opacity="0" offset="1"/>
-</linearGradient>
-</defs>
+<svg width="45" height="45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 <metadata>
 <rdf:RDF>
 <cc:Work rdf:about="">
@@ -16,10 +10,6 @@
 </cc:Work>
 </rdf:RDF>
 </metadata>
-<rect fill-opacity=".098039" height="45" width="45" y="-8.1766e-7" x="-4.7401e-7" fill="#f00"/>
-<g>
-<path d="m10.92 9.2905c-1.5743 0.1783-2.6456 2.0965-1.5506 3.2225l10.322 9.9922-10.322 9.9902c-1.6546 2.0253 1.3427 4.0545 2.8086 2.7188l10.322-9.9922 10.322 9.9922c1.9706 1.6587 4.2165-1.271 2.8086-2.7188l-10.322-9.99 10.322-9.992c1.654-2.025-1.343-4.0515-2.808-2.7167l-10.323 9.9907-10.322-9.9907c-0.348-0.3371-0.803-0.5058-1.258-0.5058z" fill="#f00"/>
-<path d="m19.691 22.505-10.322 9.992c-1.6536 2.0234 1.3447 4.053 2.8088 2.7188l10.323-9.9921 10.323 9.9921c1.9689 1.6578 4.2151-1.2729 2.8088-2.7188l-10.323-9.9922z" fill="#e10000"/>
-<path d="m19.18 22.008 0.51132 0.49718h5.618l0.49959-0.48937z" fill="url(#linearGradient4934)"/>
-</g>
+<rect x="-4.7401e-7" y="-8.1766e-7" width="45" height="45" fill="#f00" fill-opacity=".50196"/>
+<path d="m15.696 14.5c-0.92505 0.10799-1.5545 1.2697-0.91112 1.9517l6.0651 6.0518-6.0651 6.0506c-0.97223 1.2266 0.78896 2.4556 1.6503 1.6466l6.0651-6.0518 6.0651 6.0518c1.1579 1.0046 2.4776-0.76978 1.6503-1.6466l-6.0651-6.0505 6.0651-6.0517c0.97188-1.2264-0.78914-2.4538-1.65-1.6454l-6.0657 6.0509-6.0651-6.0509c-0.20448-0.20416-0.47184-0.30634-0.73919-0.30634z" fill-opacity=".50196" stroke-width=".59655"/>
 </svg>

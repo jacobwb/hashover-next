@@ -939,8 +939,8 @@ conditions, unless such conditions are required by law.
 	background-image: url('../../images/inputs-and-buttons.png');
 	background-repeat: no-repeat;
 	background-attachment: scroll;
-	opacity: 0.50;
-	filter: alpha(opacity=50);
+	opacity: 0.75;
+	filter: alpha(opacity=75);
 }
 
 .hashover .hashover-formatting:hover,
