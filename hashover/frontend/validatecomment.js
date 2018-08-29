@@ -3,9 +3,7 @@ HashOver.prototype.validateComment = function (skipComment, form, type, permalin
 {
 	skipComment = skipComment || false;
 	type = type || 'main';
-	permalink = permalink || null;
-	isReply = isReply || false;
-	isEdit = isEdit || false;
+	permalink = permalink || '';
 
 	// Validate comment form
 	var message = this.commentValidator (form, skipComment, isReply);

@@ -43,7 +43,7 @@ class Login extends Secrets
 		$this->postData = new PostData ();
 		$this->cookies = new Cookies ($setup);
 		$this->locale = new Locale ($setup);
-		$this->crypto = new Crypto ($setup);
+		$this->crypto = new Crypto ();
 
 		// Name of login method class to instantiate
 		$login_class = 'HashOver\\' . $setup->loginMethod;
@@ -70,10 +70,10 @@ class Login extends Secrets
 		$name = $this->setup->getRequest ('name');
 
 		// Attempt to get password
-		$password = $this->setup->getRequest ('password', null);
+		$password = $this->setup->getRequest ('password');
 
 		// Set password
-		if ($password !== null) {
+		if ($password !== false) {
 			$this->loginMethod->password = $this->crypto->createHash ($password);
 		} else {
 			$this->loginMethod->password = '';
@@ -85,7 +85,7 @@ class Login extends Secrets
 			$random_password = bin2hex (openssl_random_pseudo_bytes (16));
 
 			// And use user password or random password
-			$password = $password ? $password : $random_password;
+			$password = $password ?: $random_password;
 		}
 
 		// Generate a RIPEMD-160 hash to indicate user login

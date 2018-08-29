@@ -45,7 +45,7 @@ try {
 
 	// Check for comments
 	if ($hashover->thread->totalCount > 1) {
-		// Parse comments; TODO: Use starting point
+		// Parse comments
 		$hashover->parsePrimary ();
 		$hashover->parsePopular ();
 

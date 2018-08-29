@@ -25,10 +25,11 @@ class CommentFiles extends DataFiles
 
 	public function __construct (Setup $setup)
 	{
+		// Construst parent class
 		parent::__construct ($setup);
 
+		// Store parameters as properties
 		$this->setup = $setup;
-		$this->storageMode = 'flat-file';
 	}
 
 	// Returns a comment file path for a given file and thread

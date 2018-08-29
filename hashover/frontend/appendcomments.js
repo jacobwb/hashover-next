@@ -1,32 +1,38 @@
 // For appending new comments to the thread on page (appendcomments.js)
 HashOver.prototype.appendComments = function (comments)
 {
+	// Shorter variables
+	var primary = this.instance.comments.primary;
+
 	// Run through each comment
 	for (var i = 0, il = comments.length; i < il; i++) {
-		// Skip existing comments
-		if (this.permalinks.getComment (comments[i].permalink, this.instance.comments.primary) !== null) {
+		// Check if comment exists
+		if (this.permalinks.getComment (comments[i].permalink, primary) !== null) {
 			// Check comment's replies
 			if (comments[i].replies !== undefined) {
 				this.appendComments (comments[i].replies);
 			}
 
+			// And do nothing else
 			continue;
 		}
 
 		// Check if comment is a reply
 		var isReply = (comments[i].permalink.indexOf ('r') > -1);
 
+		// Set append element to more section
+		var element = this.instance['sort-section'];
+
 		// Add comment to comments array
 		this.addComments (comments[i], isReply, i);
 
-		// Check that comment is not a reply
-		if (isReply !== true) {
-			// If so, append to primary comments
-			var element = this.instance['more-section'];
-		} else {
-			// If not, append to its parent's element
+		// Check if the comment is a reply
+		if (isReply === true) {
+			// If so, get comment's parent element
 			var parent = this.permalinks.getParent (comments[i].permalink, true);
-			var element = this.elements.get (parent, true) || this.instance['more-section'];
+
+			// Set append to parent element or more section
+			element = this.elements.get (parent, true) || element;
 		}
 
 		// Parse comment

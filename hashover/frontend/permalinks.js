@@ -3,8 +3,6 @@ HashOverConstructor.prototype.permalinks = {
 	// Returns the permalink of a comment's parent
 	getParent: function (permalink, flatten)
 	{
-		flatten = flatten || false;
-
 		var parent = permalink.split ('r');
 		var length = parent.length - 1;
 
@@ -30,17 +28,22 @@ HashOverConstructor.prototype.permalinks = {
 	{
 		// Run through all comments
 		for (var i = 0, il = comments.length; i < il; i++) {
+			// Current comment
+			var comment = comments[i];
+
 			// Return comment if its permalink matches
-			if (comments[i].permalink === permalink) {
-				return comments[i];
+			if (comment.permalink === permalink) {
+				return comment;
 			}
 
 			// Recursively check replies when present
-			if (comments[i].replies !== undefined) {
-				var comment = this.getComment (permalink, comments[i].replies);
+			if (comment.replies !== undefined) {
+				// Get attempt to get reply by permalink
+				var reply = this.getComment (permalink, comment.replies);
 
-				if (comment !== null) {
-					return comment;
+				// Return reply if its permalink matches
+				if (reply !== null) {
+					return reply;
 				}
 			}
 		}
@@ -52,6 +55,15 @@ HashOverConstructor.prototype.permalinks = {
 	// Generate file from permalink
 	getFile: function (permalink)
 	{
-		return permalink.slice(1).replace(/r/g, '-').replace ('-pop', '');
+		// Remove leading 'c'
+		var file = permalink.slice (1);
+
+		// Replace 'r' by '-'
+		file = file.replace (/r/g, '-');
+
+		// Remove "-pop" if present
+		file = file.replace ('-pop', '');
+
+		return file;
 	}
 };

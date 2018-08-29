@@ -31,6 +31,7 @@ class Thread
 
 	public function __construct (Setup $setup)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
 
 		// Instantiate necessary class data format class
@@ -172,10 +173,16 @@ class Thread
 	// Read comments
 	public function read ($start = 0, $end = null)
 	{
+		// Initial data to return
 		$comments = array ();
+
+		// Number of comments to skip
 		$limit_count = 0;
+
+		// Number of comments successfully added to return data
 		$allowed_count = 0;
 
+		// Run through each comment
 		foreach ($this->commentList as $i => $key) {
 			// Skip until starting point is reached
 			if ($limit_count < $start) {
@@ -202,19 +209,17 @@ class Thread
 				// If so, add the comment to output
 				$comments[$i] = $comment;
 
-				// And count deleted status comments
-				if (!empty ($comment['status'])
-				    and $comment['status'] === 'deleted')
-				{
+				// Count deleted status comments
+				if (!empty ($comment['status']) and $comment['status'] === 'deleted') {
 					$this->countDeleted ($key);
 				}
+
+				// And increase added count
+				$allowed_count++;
 			} else {
 				// If not, set comment status as a read error
 				$comments[$i]['status'] = 'read-error';
-				continue;
 			}
-
-			$allowed_count++;
 		}
 
 		return $comments;

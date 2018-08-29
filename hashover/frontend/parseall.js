@@ -1,10 +1,6 @@
 // Run all comments in array data through comments.parse function (parseall.js)
 HashOver.prototype.parseAll = function (comments, element, collapse, popular, sort, method)
 {
-	popular = popular || false;
-	sort = sort || false;
-	method = method || 'ascending';
-
 	// Comments HTML
 	var html = '';
 

@@ -49,19 +49,19 @@ try {
 			}
 		}
 
-		// Save the JSON data to the URL Query Pairs file
-		if ($hashover->login->verifyAdmin ()
-		    and $data_files->saveJSON ($queries_file, $ignored_queries))
-		{
-			// Redirect with success indicator
-			header ('Location: index.php?status=success');
-		} else {
-			// Redirect with failure indicator
-			header ('Location: index.php?status=failure');
+		// Check if the user login is admin
+		if ($hashover->login->verifyAdmin () === true) {
+			// If so, attempt to save the JSON data
+			$saved = $data_files->saveJSON ($queries_file, $ignored_queries);
+
+			// If saved successfully, redirect with success indicator
+			if ($saved === true) {
+				redirect ('index.php?status=success');
+			}
 		}
 
-		// Exit after redirect
-		exit;
+		// Otherwise, redirect with failure indicator
+		redirect ('index.php?status=failure');
 	}
 
 	// Otherwise, load and parse URL Query Pairs file

@@ -1,19 +1,21 @@
 // For showing more comments, via AJAX or removing a class (hidemorelink.js)
-HashOver.prototype.hideMoreLink = function (finishedCallback)
+HashOver.prototype.hideMoreLink = function (callback)
 {
-	finishedCallback = finishedCallback || null;
-
 	// Reference to this object
 	var hashover = this;
+
+	// Sort section element
+	var sortSection = this.instance['sort-section'];
+
+	// More link element
+	var moreLink = this.instance['more-link'];
 
 	// Add class to hide the more hyperlink
 	this.classes.add (this.instance['more-link'], 'hashover-hide-more-link');
 
 	setTimeout (function () {
 		// Remove the more hyperlink from page
-		if (hashover.instance['sort-section'].contains (hashover.instance['more-link']) === true) {
-			hashover.instance['sort-section'].removeChild (hashover.instance['more-link']);
-		}
+		moreLink.parentNode.removeChild (moreLink);
 
 		// Show comment count and sort options
 		hashover.elements.get ('count-wrapper').style.display = '';
@@ -24,7 +26,7 @@ HashOver.prototype.hideMoreLink = function (finishedCallback)
 		});
 
 		// Get each hidden comment element
-		var collapsed = hashover.instance['sort-section'].getElementsByClassName ('hashover-hidden');
+		var collapsed = sortSection.getElementsByClassName ('hashover-hidden');
 
 		// Remove hidden comment class from each comment
 		for (var i = collapsed.length - 1; i >= 0; i--) {
@@ -32,8 +34,8 @@ HashOver.prototype.hideMoreLink = function (finishedCallback)
 		}
 
 		// Execute callback function
-		if (finishedCallback !== null) {
-			finishedCallback ();
+		if (typeof (callback) === 'function') {
+			callback ();
 		}
 	}, 350);
 };

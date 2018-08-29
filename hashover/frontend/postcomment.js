@@ -3,8 +3,6 @@ HashOver.prototype.postComment = function (destination, form, button, callback, 
 {
 	type = type || 'main';
 	permalink = permalink || '';
-	isReply = isReply || false;
-	isEdit = isEdit || false;
 
 	// Return false if comment is invalid
 	if (this.validateComment (false, form, type, permalink, isReply, isEdit) === false) {

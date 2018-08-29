@@ -21,13 +21,12 @@
 class Database extends Secrets
 {
 	public $setup;
-	public $storageMode;
 	public $database;
 
 	public function __construct (Setup $setup)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
-		$this->storageMode = $this->databaseType;
 
 		try {
 			if ($this->databaseType === 'sqlite') {

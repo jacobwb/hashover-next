@@ -121,8 +121,11 @@ HashOver.prototype.init = function ()
 		}
 	}
 
+	// Get the sort section
+	var sortSection = this.elements.get ('sort-section');
+
 	// Get sort div element
-	this.instance['sort-section'] = this.elements.get ('sort-section');
+	this.instance['sort-section'] = sortSection;
 
 	// Display most popular comments
 	this.elements.exists ('top-comments', function (topComments) {
@@ -132,7 +135,7 @@ HashOver.prototype.init = function ()
 	});
 
 	// Add initial event handlers
-	this.parseAll (this.instance.comments.primary, this.instance['sort-section'], this.setup['collapses-comments']);
+	this.parseAll (this.instance.comments.primary, sortSection, this.setup['collapses-comments']);
 
 	// Create uncollapse UI hyperlink if enabled
 	this.optionalMethod ('uncollapseInterfaceLink');
@@ -149,7 +152,7 @@ HashOver.prototype.init = function ()
 
 	// Set onclick and onsubmit event handlers
 	this.elements.duplicateProperties (postButton, formEvents, function () {
-		return hashover.postComment (hashover.instance['sort-section'], formElement, postButton, hashover.AJAXPost);
+		return hashover.postComment (sortSection, formElement, postButton, hashover.AJAXPost);
 	});
 
 	// Check if login is enabled
@@ -233,9 +236,13 @@ HashOver.prototype.init = function ()
 
 	// Log execution time and memory usage in JavaScript console
 	if (window.console) {
-		console.log (this.strings.sprintf ('HashOver: front-end %d ms, backend %d ms, %s', [
-			this.execTime, this.statistics['execution-time'], this.statistics['script-memory']
-		]));
+		console.log (this.strings.sprintf (
+			'HashOver: front-end %d ms, backend %d ms, %s', [
+				this.execTime,
+				this.statistics['execution-time'],
+				this.statistics['script-memory']
+			]
+		));
 	}
 
 	// Page onload compatibility wrapper

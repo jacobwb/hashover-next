@@ -380,19 +380,19 @@ try {
 			}
 		}
 
-		// Save the settings to the JSON settings file
-		if ($hashover->login->verifyAdmin ()
-		    and $data_files->saveJSON ($settings_file, $settings))
-		{
-			// Redirect with success indicator
-			header ('Location: index.php?status=success');
-		} else {
-			// Redirect with failure indicator
-			header ('Location: index.php?status=failure');
+		// Check if the user login is admin
+		if ($hashover->login->verifyAdmin () === true) {
+			// If so, attempt to save the settings
+			$saved = $data_files->saveJSON ($settings_file, $settings);
+
+			// If saved successfully, redirect with success indicator
+			if ($saved === true) {
+				redirect ('index.php?status=success');
+			}
 		}
 
-		// Exit after redirect
-		exit;
+		// Otherwise, redirect with failure indicator
+		redirect ('index.php?status=failure');
 	}
 
 	// Otherwise, create settings table

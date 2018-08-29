@@ -20,9 +20,9 @@
 class DefaultLogin
 {
 	public $setup;
-	public $crypto;
 	public $cookies;
 	public $locale;
+	public $crypto;
 	public $enabled = true;
 	public $name;
 	public $password;
@@ -38,7 +38,7 @@ class DefaultLogin
 		$this->locale = $locale;
 
 		// Instantiate Encryption class
-		$this->crypto = new Crypto ($setup);
+		$this->crypto = new Crypto ();
 
 		// Disable login if cookies are disabled
 		if ($setup->setsCookies === false) {

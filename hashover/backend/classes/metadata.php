@@ -25,6 +25,7 @@ class Metadata
 
 	public function __construct (Setup $setup, Thread $thread)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
 		$this->thread = $thread;
 		$this->data = $thread->data;

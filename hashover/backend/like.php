@@ -95,7 +95,6 @@ function get_json_response ($hashover, $key, $action)
 	$data = array ();
 
 	// Store references to some long variables
-	$storageMode =& $hashover->thread->data->storageMode;
 	$thread = $hashover->setup->threadName;
 
 	// Sanitize file path

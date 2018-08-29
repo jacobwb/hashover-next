@@ -17,28 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Redirects the user back to where they came from
-function redirect ($url = '')
-{
-	// Check if we're redirecting to a specific URL
-	if (!empty ($url)) {
-		// If so, use it
-		header ('Location: ' . $url);
-	} else {
-		// If not, check if there is a redirect specified
-		if (!empty ($_GET['redirect'])) {
-			// If so, use it
-			header ('Location: ' . $_GET['redirect']);
-		} else {
-			// If not, redirect to moderation
-			header ('Location: ../moderation/');
-		}
-	}
-
-	// Exit after redirect
-	exit;
-}
-
 try {
 	// View setup
 	require (realpath ('../view-setup.php'));

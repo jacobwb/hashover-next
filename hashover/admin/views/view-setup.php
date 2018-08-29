@@ -39,14 +39,35 @@ $hashover->finalize ();
 // Instantiate FileWriter class
 $data_files = new DataFiles ($hashover->setup);
 
+// Redirects the user back to where they came from
+function redirect ($url = '')
+{
+	// Check if we're redirecting to a specific URL
+	if (!empty ($url)) {
+		// If so, use it
+		header ('Location: ' . $url);
+	} else {
+		// If not, check if there is a redirect specified
+		if (!empty ($_GET['redirect'])) {
+			// If so, use it
+			header ('Location: ' . $_GET['redirect']);
+		} else {
+			// If not, redirect to moderation
+			header ('Location: ../moderation/');
+		}
+	}
+
+	// Exit after redirect
+	exit;
+}
+
 // Exit if the user isn't logged in as admin
 if ($hashover->login->userIsAdmin !== true) {
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri_parts = explode ('?', $uri);
 
 	if (basename ($uri_parts[0]) !== 'login') {
-		header ('Location: ../login/?redirect=' . urlencode ($uri));
-		exit;
+		redirect ('../login/?redirect=' . urlencode ($uri));
 	}
 }
 
@@ -95,7 +116,6 @@ if (!empty ($_GET['status'])) {
 
 	// Set message as HTML
 	$form_message = $message->asHTML ("\t\t");
-
 } else {
 	// If not, set the message as an empty string
 	$form_message = '';

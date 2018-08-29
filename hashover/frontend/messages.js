@@ -38,8 +38,6 @@ HashOver.prototype.messages = {
 	// Gets the client height of a message element
 	getHeight: function (element, setChild)
 	{
-		setChild = setChild || false;
-
 		var firstChild = element.children[0];
 		var maxHeight = 80;
 
@@ -123,9 +121,6 @@ HashOver.prototype.messages = {
 	{
 		type = type || 'main';
 		permalink = permalink || '';
-		error = error || false;
-		isReply = isReply || false;
-		isEdit = isEdit || false;
 
 		// Reference to this object
 		var messages = this;
@@ -147,6 +142,7 @@ HashOver.prototype.messages = {
 			}
 		}
 
+		// Check if the message isn't empty
 		if (messageText !== undefined && messageText !== '') {
 			// Add message text to element
 			message.textContent = messageText;

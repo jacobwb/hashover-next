@@ -2,16 +2,13 @@
 HashOver.prototype.validateEmail = function (type, permalink, form, isReply, isEdit)
 {
 	type = type || 'main';
-	permalink = permalink || null;
-	isReply = isReply || false;
-	isEdit = isEdit || false;
+	permalink = permalink || '';
 
 	// Subscribe checkbox ID
 	var subscribe = type + '-subscribe';
 
-	// Check whether comment is an reply or edit
+	// Use reply form checkbox if comment is a reply
 	if (isReply === true || isEdit === true) {
-		// If so, use form subscribe checkbox
 		subscribe += '-' + permalink;
 	}
 

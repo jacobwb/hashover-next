@@ -66,7 +66,6 @@ class SensitiveSettings extends SafeSettings
 
 	// External domains allowed to remotely load HashOver scripts
 	public $allowedDomains = array (
-		'127.0.0.1:8000'
 		// '*.example.com',
 		// '*.example.org',
 		// '*.example.net'

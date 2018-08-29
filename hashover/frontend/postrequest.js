@@ -1,8 +1,6 @@
 // Posts comments via AJAX (postrequest.js)
 HashOver.prototype.postRequest = function (destination, form, button, callback, type, permalink, close, isReply, isEdit)
 {
-	close = close || null;
-
 	var formElements = form.elements;
 	var elementsLength = formElements.length;
 	var queries = [];
@@ -19,7 +17,7 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 			callback.apply (hashover, [ json, permalink, destination, isReply ]);
 
 			// Execute callback function if one was provided
-			if (close !== null) {
+			if (typeof (close) === 'function') {
 				close ();
 			}
 

@@ -25,6 +25,7 @@ class Locale
 
 	public function __construct (Setup $setup)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
 		$this->mode = $setup->usage['mode'];
 

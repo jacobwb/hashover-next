@@ -911,19 +911,20 @@ class FormUI
 
 				// Array of select tag sort options
 				$sort_options = array (
-					array ('value' => 'ascending', 'innerHTML' => $this->locale->text['sort-ascending']),
-					array ('value' => 'descending', 'innerHTML' => $this->locale->text['sort-descending']),
-					array ('value' => 'by-date', 'innerHTML' => $this->locale->text['sort-by-date']),
-					array ('value' => 'by-likes', 'innerHTML' => $this->locale->text['sort-by-likes']),
-					array ('value' => 'by-replies', 'innerHTML' => $this->locale->text['sort-by-replies']),
-					array ('value' => 'by-name', 'innerHTML' => $this->locale->text['sort-by-name'])
+					'ascending'	=> $this->locale->text['sort-ascending'],
+					'descending'	=> $this->locale->text['sort-descending'],
+					'by-date'	=> $this->locale->text['sort-by-date'],
+					'by-likes'	=> $this->locale->text['sort-by-likes'],
+					'by-replies'	=> $this->locale->text['sort-by-replies'],
+					'by-name'	=> $this->locale->text['sort-by-name']
 				);
 
-				// Create sort options for sort dropdown menu element
-				for ($i = 0, $il = count ($sort_options); $i < $il; $i++) {
+				// Run through each sort option
+				foreach ($sort_options as $value => $html) {
+					// Create option for sort dropdown menu element
 					$option = new HTMLTag ('option', array (
-						'value' => $sort_options[$i]['value'],
-						'innerHTML' => $sort_options[$i]['innerHTML']
+						'value' => $value,
+						'innerHTML' => $html
 					), false);
 
 					// Add sort option element to sort dropdown menu
@@ -945,19 +946,20 @@ class FormUI
 
 				// Array of select tag threaded sort options
 				$threaded_sort_options = array (
-					array ('value' => 'threaded-descending', 'innerHTML' => $this->locale->text['sort-descending']),
-					array ('value' => 'threaded-by-date', 'innerHTML' => $this->locale->text['sort-by-date']),
-					array ('value' => 'threaded-by-likes', 'innerHTML' => $this->locale->text['sort-by-likes']),
-					array ('value' => 'by-popularity', 'innerHTML' => $this->locale->text['sort-by-popularity']),
-					array ('value' => 'by-discussion', 'innerHTML' => $this->locale->text['sort-by-discussion']),
-					array ('value' => 'threaded-by-name', 'innerHTML' => $this->locale->text['sort-by-name'])
+					'threaded-descending'	=> $this->locale->text['sort-descending'],
+					'threaded-by-date'	=> $this->locale->text['sort-by-date'],
+					'threaded-by-likes'	=> $this->locale->text['sort-by-likes'],
+					'by-popularity'		=> $this->locale->text['sort-by-popularity'],
+					'by-discussion'		=> $this->locale->text['sort-by-discussion'],
+					'threaded-by-name'	=> $this->locale->text['sort-by-name']
 				);
 
-				// Create sort options for sort dropdown menu element
-				for ($i = 0, $il = count ($threaded_sort_options); $i < $il; $i++) {
+				// Run through each threaded sort option
+				foreach ($threaded_sort_options as $value => $html) {
+					// Create option for sort dropdown menu element
 					$option = new HTMLTag ('option', array (
-						'value' => $threaded_sort_options[$i]['value'],
-						'innerHTML' => $threaded_sort_options[$i]['innerHTML']
+						'value' => $value,
+						'innerHTML' => $html
 					), false);
 
 					// Add sort option element to threaded option group
@@ -1037,9 +1039,10 @@ class FormUI
 				$rss_link->createAttribute ('href', $this->setup->getHttpPath ('api/rss.php'));
 				$rss_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
 
-				// RSS Feed hyperlink text
+				// "RSS Feed" locale string
 				$rss_link_text = $this->locale->text['rss-feed'];
 
+				// Create RSS feed attributes
 				$rss_link->createAttributes (array (
 					'id' => 'hashover-rss-link',
 					'target' => '_blank',

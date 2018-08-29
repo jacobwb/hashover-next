@@ -41,7 +41,6 @@ try {
 	// Check for comments
 	if ($hashover->thread->totalCount > 1) {
 		// Parse primary comments
-		// TODO: Use starting point
 		$hashover->parsePrimary (0);
 
 		// Display as JSON data

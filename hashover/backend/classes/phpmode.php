@@ -21,10 +21,10 @@ class PHPMode
 {
 	public $setup;
 	public $ui;
+	public $comments;
 	public $locale;
 	public $templater;
 	public $markdown;
-	public $comments;
 
 	protected $trimTagRegexes = array (
 		'blockquote' => '/(<blockquote>)([\s\S]*?)(<\/blockquote>)/iS',
@@ -42,12 +42,15 @@ class PHPMode
 
 	public function __construct (Setup $setup, CommentsUI $ui, array $comments)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
 		$this->ui = $ui;
+		$this->comments = $comments;
+
+		// Instantiate various classes
 		$this->locale = new Locale ($setup);
 		$this->templater = new Templater ($setup);
 		$this->markdown = new Markdown ();
-		$this->comments = $comments;
 	}
 
 	protected function fileFromPermalink ($permalink)

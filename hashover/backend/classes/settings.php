@@ -77,7 +77,7 @@ class Settings extends SensitiveSettings
 		$this->syncSettings ();
 	}
 
-	function isHTTPS ()
+	public function isHTTPS ()
 	{
 		// The connection is HTTPS if server says so
 		if (!empty ($_SERVER['HTTPS']) and $_SERVER['HTTPS'] !== 'off') {

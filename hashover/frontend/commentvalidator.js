@@ -1,8 +1,6 @@
 // Validate a comment form (commentvalidator.js)
 HashOver.prototype.commentValidator = function (form, skipComment, isReply)
 {
-	skipComment = skipComment || false;
-
 	// Check each input field for if they are required
 	for (var field in this.setup['field-options']) {
 		// Skip other people's prototypes

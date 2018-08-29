@@ -20,10 +20,12 @@
 class Cookies
 {
 	public $setup;
+	public $domain;
 	public $secure = false;
 
 	public function __construct (Setup $setup)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
 		$this->domain = $setup->domain;
 
@@ -39,12 +41,12 @@ class Cookies
 	}
 
 	// Set a cookie with expiration date
-	public function set ($name, $value = '', $date = '')
+	public function set ($name, $value = '', $date = false)
 	{
 		$name = 'hashover-' . $name;
 
 		// Use specific expiration date or the one in Settings
-		$date = !empty ($date) ? $date : $this->setup->cookieExpiration;
+		$date = $date ?: $this->setup->cookieExpiration;
 
 		// Set the cookie if cookies are enabled
 		if ($this->setup->setsCookies !== false) {

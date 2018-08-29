@@ -1,68 +1,80 @@
 // onClick event for more button (showmorecomments.js)
-HashOver.prototype.showMoreComments = function (element, finishedCallback)
+HashOver.prototype.showMoreComments = function (element, callback)
 {
-	finishedCallback = finishedCallback || null;
-
 	// Reference to this object
 	var hashover = this;
 
 	// Do nothing if already showing all comments
 	if (this.instance['showing-more'] === true) {
 		// Execute callback function
-		if (finishedCallback !== null) {
-			finishedCallback ();
+		if (typeof (callback) === 'function') {
+			callback ();
 		}
 
 		return false;
 	}
 
 	// Check if AJAX is enabled
-	if (this.setup['uses-ajax'] !== false) {
-		// If so, set request path
-		var requestPath = this.setup['http-backend'] + '/load-comments.php';
+	if (this.setup['uses-ajax'] === false) {
+		// If so, hide the more hyperlink; displaying the comments
+		this.hideMoreLink (callback);
 
-		// Set URL queries
-		var queries = [
-			'url=' + encodeURIComponent (this.instance['page-url']),
-			'title=' + encodeURIComponent (this.instance['page-title']),
-			'thread=' + encodeURIComponent (this.instance['thread-name']),
-			'start=' + encodeURIComponent (this.setup['collapse-limit']),
-			'ajax=yes'
-		];
+		// And set all comments as shown
+		this.instance['showing-more'] = true;
 
-		// Handle AJAX request return data
-		this.ajax ('POST', requestPath, queries, function (json) {
-			// Store start time
+		return false;
+	}
+
+	// Otherwise, set request path
+	var requestPath = this.setup['http-backend'] + '/load-comments.php';
+
+	// Set URL queries
+	var queries = [
+		'url=' + encodeURIComponent (this.instance['page-url']),
+		'title=' + encodeURIComponent (this.instance['page-title']),
+		'thread=' + encodeURIComponent (this.instance['thread-name']),
+		'start=' + encodeURIComponent (this.setup['collapse-limit']),
+		'ajax=yes'
+	];
+
+	// Handle AJAX request return data
+	this.ajax ('POST', requestPath, queries, function (json) {
+		// Remove loading class from element
+		hashover.classes.remove (element, 'hashover-loading');
+
+		// Hide the more hyperlink
+		hashover.hideMoreLink (function () {
+			// Afterwards, store start time
 			var execStart = Date.now ();
 
 			// Display the comments
 			hashover.appendComments (json.primary);
 
-			// Remove loading class from element
-			hashover.classes.remove (element, 'hashover-loading');
-
-			// Hide the more hyperlink and display the comments
-			hashover.hideMoreLink (finishedCallback);
+			// Execute callback function
+			if (typeof (callback) === 'function') {
+				callback ();
+			}
 
 			// Store execution time
 			var execTime = Date.now () - execStart;
 
-			// Log execution time and memory usage in JavaScript console
+			// And log execution time and memory usage in JavaScript console
 			if (window.console) {
-				console.log (hashover.strings.sprintf ('HashOver: front-end %d ms, backend %d ms, %s', [
-					execTime, json.statistics['execution-time'], json.statistics['script-memory']
-				]));
+				console.log (hashover.strings.sprintf (
+					'HashOver: front-end %d ms, backend %d ms, %s', [
+						execTime,
+						json.statistics['execution-time'],
+						json.statistics['script-memory']
+					]
+				));
 			}
-		}, true);
+		});
+	}, true);
 
-		// And set class to indicate loading to element
-		this.classes.add (element, 'hashover-loading');
-	} else {
-		// If not, hide the more hyperlink and display the comments
-		this.hideMoreLink (finishedCallback);
-	}
+	// Set class to indicate loading to element
+	this.classes.add (element, 'hashover-loading');
 
-	// Set all comments as shown
+	// And set all comments as shown
 	this.instance['showing-more'] = true;
 
 	return false;

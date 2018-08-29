@@ -153,7 +153,7 @@ class WriteComments extends Secrets
 		$this->misc = new Misc ($this->mode);
 		$this->spamCheck = new SpamCheck ($setup);
 		$this->metadata = new Metadata ($setup, $thread);
-		$this->crypto = new Crypto ($setup);
+		$this->crypto = new Crypto ();
 		$this->avatars = new Avatars ($setup);
 		$this->templater = new Templater ($setup);
 		$this->mail = new Email ($setup);
@@ -782,7 +782,7 @@ class WriteComments extends Secrets
 		$default_name = $this->setup->defaultName;
 
 		// Commenter's name
-		$name = !empty ($this->name) ? $this->name : $default_name;
+		$name = $this->name ?: $default_name;
 
 		// Get comment permalink
 		$permalink = $this->filePermalink ($file);
@@ -793,14 +793,14 @@ class WriteComments extends Secrets
 		// E-mail hash for Gravatar or empty for default avatar
 		$hash = !empty ($this->data['email_hash']) ? $this->data['email_hash'] : '';
 
-		// Add domain name to data
-		$data['domain'] = $this->setup->domain;
-
-		// Add name of commenter or configurable default name to date
-		$data['name'] = $name;
-
 		// Add avatar to data
 		$data['avatar'] = $this->avatars->getGravatar ($hash, true, 128);
+
+		// Add name of commenter or configurable default name to data
+		$data['name'] = $name;
+
+		// Add domain name to data
+		$data['domain'] = $this->setup->domain;
 
 		// Add plain text comment to data
 		$data['text-comment'] = $this->indentWordwrap ($this->data['body']);
@@ -813,9 +813,6 @@ class WriteComments extends Secrets
 		$data['page'] = $this->locale->text['page'];
 		$data['new-comment'] = $new_comment;
 
-		// Add message about where the e-mail is coming from to data
-		$data['sent-by'] = sprintf ($this->locale->text['sent-by'], $this->setup->domain);
-
 		// Add comment permalink to data
 		$data['permalink'] = $this->setup->pageURL . '#' . $permalink;
 
@@ -824,6 +821,9 @@ class WriteComments extends Secrets
 
 		// Add page URL to data
 		$data['title'] = $this->setup->pageTitle;
+
+		// Add message about where the e-mail is coming from to data
+		$data['sent-by'] = sprintf ($this->locale->text['sent-by'], $this->setup->domain);
 
 		// Attempt to read reply comment
 		$reply = $this->thread->data->read ($this->postData->replyTo);

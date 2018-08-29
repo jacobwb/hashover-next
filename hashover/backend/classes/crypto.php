@@ -28,7 +28,7 @@ class Crypto extends Secrets
 	protected $options;
 	protected $alphabet = 'aAbBcCdDeEfFgGhHiIjJkKlLmM.nNoOpPqQrRsStTuUvVwWxXyYzZ/0123456789';
 
-	public function __construct (Setup $setup)
+	public function __construct ()
 	{
 		// Throw exception if encryption key isn't at least 8 characters long
 		if (mb_strlen ($this->encryptionKey, '8bit') < 8) {

@@ -1,22 +1,26 @@
 // For posting comments (ajaxpost.js)
-HashOver.prototype.AJAXPost = function (json, permalink, destination, isReply)
+HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 {
-	// If there aren't any comments, replace first comment message
+	// Check if there are no comments
 	if (this.instance['total-count'] === 0) {
+		// If so, add first comment message
 		this.instance.comments.primary[0] = json.comment;
-		destination.innerHTML = this.comments.parse (json.comment);
+
+		// And place the comment on the page
+		dest.innerHTML = this.comments.parse (json.comment);
 	} else {
 		// Add comment to comments array
 		this.addComments (json.comment, isReply);
 
 		// Create div element for comment
-		var commentNode = this.HTMLToNodeList (this.comments.parse (json.comment));
+		var elements = this.HTMLToNodeList (this.comments.parse (json.comment));
 
 		// Append comment to parent element
 		if (this.setup['stream-mode'] === true && permalink.split('r').length > this.setup['stream-depth']) {
-			destination.parentNode.insertBefore (commentNode[0], destination.nextSibling);
+			dest.parentNode.insertBefore (elements[0], dest.nextSibling);
 		} else {
-			destination.appendChild (commentNode[0]);
+			// If not, append to destination element
+			dest.appendChild (elements[0]);
 		}
 	}
 

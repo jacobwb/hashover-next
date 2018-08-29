@@ -20,6 +20,12 @@
 class HashOver
 {
 	public $usage = array ();
+	public $setupChecks;
+	public $commentCount;
+	public $popularList = array ();
+	public $popularCount = 0;
+	public $rawComments = array ();
+
 	public $statistics;
 	public $misc;
 	public $setup;
@@ -28,10 +34,6 @@ class HashOver
 	public $commentParser;
 	public $markdown;
 	public $cookies;
-	public $commentCount;
-	public $popularList = array ();
-	public $popularCount = 0;
-	public $rawComments = array ();
 	public $comments = array ();
 	public $ui;
 	public $templater;
@@ -187,6 +189,7 @@ class HashOver
 	// Adds a comment to the popular list if it has enough likes
 	protected function checkPopularity (array $comment, $key, array $key_parts)
 	{
+		// Initial popularity
 		$popularity = 0;
 
 		// Add number of likes to popularity value
@@ -251,8 +254,13 @@ class HashOver
 
 		// Run all comments through parser
 		foreach ($this->rawComments as $key => $comment) {
+			// Split comment key by dash
 			$key_parts = explode ('-', $key);
+
+			// Count number of reply indention levels
 			$indentions = count ($key_parts);
+
+			// Default status
 			$status = 'approved';
 
 			// Check comment's popularity
@@ -265,18 +273,26 @@ class HashOver
 				continue;
 			}
 
+			// Check if the comment has two or more indention levels
 			if ($indentions > 1 and $this->setup->streamDepth > 0) {
+				// If so, set level to first array item reference
 				$level =& $this->comments['primary'][$key_parts[0] - 1];
 
+				// Check if stream mode is enabled and indention goes out of depth
 				if ($this->setup->replyMode === 'stream'
 				    and $indentions > $this->setup->streamDepth)
 				{
+					// If so, set level to reply array item reference within depth
 					$level =& $this->getRepliesLevel ($level, $this->setup->streamDepth, $key_parts);
+
+					// And set level to reply array new item reference
 					$level =& $level['replies'][];
 				} else {
+					// If not, set level to reply array item reference
 					$level =& $this->getRepliesLevel ($level, $indentions, $key_parts);
 				}
 			} else {
+				// If not, set level to new array item reference
 				$level =& $this->comments['primary'][];
 			}
 
@@ -285,50 +301,66 @@ class HashOver
 				$status = $comment['status'];
 			}
 
+			// Switch between different statuses
 			switch ($status) {
-				// Parse as pending notice, viewable and editable by owner and admin
+				// Comment is pending
 				case 'pending': {
+					// Parse the comment generally
 					$parsed = $this->commentParser->parse ($comment, $key, $key_parts, false);
 
+					// Check if the comment is editable
 					if (!isset ($parsed['editable'])) {
+						// If so, parse comment as pending notice
 						$level = $this->commentParser->notice ('pending', $key, $last_date);
-						break;
-					}
+					} else {
+						// If not, update last sort date
+						$last_date = $parsed['sort-date'];
 
-					$last_date = $parsed['sort-date'];
-					$level = $parsed;
+						// And set current level to parsed comment
+						$level = $parsed;
+					}
 
 					break;
 				}
 
-				// Parse as deletion notice, viewable and editable by admin
+				// Comment is deleted
 				case 'deleted': {
+					// Check if user is admin
 					if ($this->login->userIsAdmin === true) {
+						// If so, parse the comment generally
 						$level = $this->commentParser->parse ($comment, $key, $key_parts, false);
+
+						// And update the last sort date
 						$last_date = $level['sort-date'];
 					} else {
+						// If not, parse comment as deleted notice
 						$level = $this->commentParser->notice ('deleted', $key, $last_date);
 					}
 
 					break;
 				}
 
-				// Parse as deletion notice, non-existent comment
+				// Comment is missing; parse as deletion notice
 				case 'missing': {
 					$level = $this->commentParser->notice ('deleted', $key, $last_date);
 					break;
 				}
 
-				// Parse as an unknown/error notice
+				// Comment read failure; parse as an error notice
 				case 'read-error': {
 					$level = $this->commentParser->notice ('error', $key, $last_date);
 					break;
 				}
 
-				// Otherwise parse comment normally
+				// Comment is approved or otherwise
 				default: {
+					// Set comment status as approved
 					$comment['status'] = 'approved';
+
+					// Parse comment generally
 					$level = $this->commentParser->parse ($comment, $key, $key_parts);
+
+					// And update last sort date
 					$last_date = $level['sort-date'];
 
 					break;
@@ -349,9 +381,7 @@ class HashOver
 		$this->comments['popular'] = array ();
 
 		// If no comments or popularity limit is 0, return void
-		if ($this->thread->totalCount <= 1
-		    or $this->setup->popularityLimit <= 0)
-		{
+		if ($this->thread->totalCount <= 1 or $this->setup->popularityLimit <= 0) {
 			return;
 		}
 
@@ -365,15 +395,14 @@ class HashOver
 		$count = count ($this->popularList);
 		$this->popularCount = min ($limit, $count);
 
-		// Run through each popular comment
+		// Parse every popular comment
 		for ($i = 0; $i < $this->popularCount; $i++) {
-			$item =& $this->popularList[$i];
-
-			// Parse comment
-			$parsed = $this->commentParser->parse ($item['comment'], $item['key'], $item['parts'], true);
-
-			// And add it to popular comments
-			$this->comments['popular'][$i] = $parsed;
+			$this->comments['popular'][$i] = $this->commentParser->parse (
+				$this->popularList[$i]['comment'],
+				$this->popularList[$i]['key'],
+				$this->popularList[$i]['parts'],
+				true
+			);
 		}
 	}
 
@@ -416,17 +445,27 @@ class HashOver
 			$this->comments
 		);
 
-		// Run popular comments through parser
+		// Check if we have popular comments
 		if (!empty ($this->comments['popular'])) {
+			// If so, run popular comments through parser
 			foreach ($this->comments['popular'] as $comment) {
-				$this->ui->popularComments .= $phpmode->parseComment ($comment, null, true) . PHP_EOL;
+				// Parse comment
+				$html = $phpmode->parseComment ($comment, null, true);
+
+				// And add comment to popular comments properly
+				$this->ui->popularComments .= $html . PHP_EOL;
 			}
 		}
 
-		// Run primary comments through parser
+		// Check if we have normal comments
 		if (!empty ($this->comments['primary'])) {
+			// If so, run primary comments through parser
 			foreach ($this->comments['primary'] as $comment) {
-				$this->ui->comments .= $phpmode->parseComment ($comment, null) . PHP_EOL;
+				// Parse comment
+				$html = $phpmode->parseComment ($comment, null);
+
+				// And add comment to comments properly
+				$this->ui->comments .= $html . PHP_EOL;
 			}
 		}
 
