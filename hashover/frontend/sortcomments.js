@@ -1,4 +1,4 @@
-// Comment sorting (sortcomments.js)
+// Sort any given comments (sortcomments.js)
 HashOver.prototype.sortComments = function (method)
 {
 	// Initial sorted comments array
@@ -7,9 +7,22 @@ HashOver.prototype.sortComments = function (method)
 	// Configurable default name
 	var defaultName = this.setup['default-name'];
 
+	// Sorts comments by date
+	function sortByDate (a, b)
+	{
+		// Return microtime difference if dates are different
+		if (b['sort-date'] !== a['sort-date']) {
+			return b['sort-date'] - a['sort-date'];
+		}
+
+		// Otherwise, return 1
+		return 1;
+	}
+
 	// Returns the sum number of replies in a comment thread
 	function replyPropertySum (comment, callback)
 	{
+		// Initial sum
 		var sum = 0;
 
 		// Check if there are replies to the current comment
@@ -26,26 +39,46 @@ HashOver.prototype.sortComments = function (method)
 		return sum;
 	}
 
-	// Calculation callback for `replyPropertySum` function
+	// Returns a comment's number of replies
 	function replyCounter (comment)
 	{
-		return (comment.replies) ? comment.replies.length : 0;
+		return comment.replies ? comment.replies.length : 0;
 	}
 
-	// Calculation callback for `replyPropertySum` function
+	// Returns a comment's number of likes minus dislikes
 	function netLikes (comment)
 	{
 		return (comment.likes || 0) - (comment.dislikes || 0);
 	}
 
-	// Sort methods
+	// Sorts comments alphabetically by commenters names
+	function sortByCommenter (a, b)
+	{
+		// Lowercase commenter name or default name
+		var nameA = (a.name || defaultName).toLowerCase ();
+		var nameB = (b.name || defaultName).toLowerCase ();
+
+		// Remove @ character if present
+		nameA = (nameA.charAt (0) === '@') ? nameA.slice (1) : nameA;
+		nameB = (nameB.charAt (0) === '@') ? nameB.slice (1) : nameB;
+
+		// Return 1 or -1 based on lexicographical difference
+		if (nameA !== nameB) {
+			return (nameA > nameB) ? 1 : -1;
+		}
+
+		// Otherwise, return 0
+		return 0;
+	}
+
+	// Decide how to sort the comments
 	switch (method) {
 		// Sort all comment in reverse order
 		case 'descending': {
 			// Get all comments
 			var tmpArray = this.getAllComments (this.instance.comments.primary);
 
-			// And reverse the comments
+			// And return reversed comments
 			sortArray = tmpArray.reverse ();
 
 			break;
@@ -53,26 +86,23 @@ HashOver.prototype.sortComments = function (method)
 
 		// Sort all comments by date
 		case 'by-date': {
-			sortArray = this.getAllComments (this.instance.comments.primary).sort (function (a, b) {
-				if (a['sort-date'] === b['sort-date']) {
-					return 1;
-				}
+			// Get all comments
+			var tmpArray = this.getAllComments (this.instance.comments.primary);
 
-				return b['sort-date'] - a['sort-date'];
-			});
+			// And return comments sorted by date
+			sortArray = tmpArray.sort (sortByDate);
 
 			break;
 		}
 
 		// Sort all comment by net number of likes
 		case 'by-likes': {
-			sortArray = this.getAllComments (this.instance.comments.primary).sort (function (a, b) {
-				a.likes = a.likes || 0;
-				b.likes = b.likes || 0;
-				a.dislikes = a.dislikes || 0;
-				b.dislikes = b.dislikes || 0;
+			// Get all comments
+			var tmpArray = this.getAllComments (this.instance.comments.primary);
 
-				return (b.likes - b.dislikes) - (a.likes - a.dislikes);
+			// And return sorted comments
+			sortArray = tmpArray.sort (function (a, b) {
+				return netLikes (b) - netLikes (a);
 			});
 
 			break;
@@ -80,15 +110,12 @@ HashOver.prototype.sortComments = function (method)
 
 		// Sort all comment by number of replies
 		case 'by-replies': {
-			// Clone the primary comments
+			// Clone the comments
 			var tmpArray = this.cloneObject (this.instance.comments.primary);
 
-			// And sort them by number of replies
+			// And return comments sorted by number of replies
 			sortArray = tmpArray.sort (function (a, b) {
-				var ac = (!!a.replies) ? a.replies.length : 0;
-				var bc = (!!b.replies) ? b.replies.length : 0;
-
-				return bc - ac;
+				return replyCounter (b) - replyCounter (a);
 			});
 
 			break;
@@ -96,10 +123,10 @@ HashOver.prototype.sortComments = function (method)
 
 		// Sort threads by the sum of replies to its comments
 		case 'by-discussion': {
-			// Clone the primary comments
+			// Clone the comments
 			var tmpArray = this.cloneObject (this.instance.comments.primary);
 
-			// And sort them by the sum of each comment's replies
+			// And return comments sorted by the sum of each comment's replies
 			sortArray = tmpArray.sort (function (a, b) {
 				var replyCountA = replyPropertySum (a, replyCounter);
 				var replyCountB = replyPropertySum (b, replyCounter);
@@ -112,10 +139,10 @@ HashOver.prototype.sortComments = function (method)
 
 		// Sort threads by the sum of likes to it's comments
 		case 'by-popularity': {
-			// Clone the primary comments
+			// Clone the comments
 			var tmpArray = this.cloneObject (this.instance.comments.primary);
 
-			// And sort them by the sum of each comment's net likes
+			// And return comments sorted by the sum of each comment's net likes
 			sortArray = tmpArray.sort (function (a, b) {
 				var likeCountA = replyPropertySum (a, netLikes);
 				var likeCountB = replyPropertySum (b, netLikes);
@@ -131,34 +158,18 @@ HashOver.prototype.sortComments = function (method)
 			// Get all comments
 			var tmpArray = this.getAllComments (this.instance.comments.primary);
 
-			// And sort them alphabetically by the commenter names
-			sortArray = tmpArray.sort (function (a, b) {
-				var nameA = (a.name || defaultName).toLowerCase ();
-				var nameB = (b.name || defaultName).toLowerCase ();
-
-				nameA = (nameA.charAt (0) === '@') ? nameA.slice (1) : nameA;
-				nameB = (nameB.charAt (0) === '@') ? nameB.slice (1) : nameB;
-
-				if (nameA > nameB) {
-					return 1;
-				}
-
-				if (nameA < nameB) {
-					return -1;
-				}
-
-				return 0;
-			});
+			// And return comments sorted by the commenter names
+			sortArray = tmpArray.sort (sortByCommenter);
 
 			break;
 		}
 
 		// Sort threads in reverse order
 		case 'threaded-descending': {
-			// Clone the primary comments
+			// Clone the comments
 			var tmpArray = this.cloneObject (this.instance.comments.primary);
 
-			// And reverse the comments
+			// And return reversed comments
 			sortArray = tmpArray.reverse ();
 
 			break;
@@ -166,34 +177,23 @@ HashOver.prototype.sortComments = function (method)
 
 		// Sort threads by date
 		case 'threaded-by-date': {
-			// Clone the primary comments
+			// Clone the comments
 			var tmpArray = this.cloneObject (this.instance.comments.primary);
 
-			// And sort them by date
-			sortArray = tmpArray.sort (function (a, b) {
-				if (a['sort-date'] === b['sort-date']) {
-					return 1;
-				}
-
-				return b['sort-date'] - a['sort-date'];
-			});
+			// And return comments sorted by date
+			sortArray = tmpArray.sort (sortByDate);
 
 			break;
 		}
 
 		// Sort threads by net likes
 		case 'threaded-by-likes': {
-			// Clone the primary comments
+			// Clone the comments
 			var tmpArray = this.cloneObject (this.instance.comments.primary);
 
-			// And sort them by the net number of likes
+			// And return comments sorted by the net number of likes
 			sortArray = tmpArray.sort (function (a, b) {
-				a.likes = a.likes || 0;
-				b.likes = b.likes || 0;
-				a.dislikes = a.dislikes || 0;
-				b.dislikes = b.dislikes || 0;
-
-				return (b.likes - b.dislikes) - (a.likes - a.dislikes);
+				return netLikes (b) - netLikes (a);
 			});
 
 			break;
@@ -201,34 +201,12 @@ HashOver.prototype.sortComments = function (method)
 
 		// Sort threads by commenter names
 		case 'threaded-by-name': {
-			// Clone the primary comments
+			// Clone the comments
 			var tmpArray = this.cloneObject (this.instance.comments.primary);
 
-			// And sort them alphabetically by the commenter names
-			sortArray = tmpArray.sort (function (a, b) {
-				var nameA = (a.name || defaultName).toLowerCase ();
-				var nameB = (b.name || defaultName).toLowerCase ();
+			// And return comments sorted by the commenter names
+			sortArray = tmpArray.sort (sortByCommenter);
 
-				nameA = (nameA.charAt (0) === '@') ? nameA.slice (1) : nameA;
-				nameB = (nameB.charAt (0) === '@') ? nameB.slice (1) : nameB;
-
-				if (nameA > nameB) {
-					return 1;
-				}
-
-				if (nameA < nameB) {
-					return -1;
-				}
-
-				return 0;
-			});
-
-			break;
-		}
-
-		// By default simply use the primary comments as-is
-		default: {
-			sortArray = this.instance.comments.primary;
 			break;
 		}
 	}

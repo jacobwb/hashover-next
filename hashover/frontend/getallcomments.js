@@ -1,25 +1,35 @@
 // "Flatten" the comments object (getallcomments.js)
 HashOver.prototype.getAllComments = function (comments)
 {
-	var commentsCopy = this.cloneObject (comments);
+	// Initial flatten comments
 	var output = [];
 
+	// Clone the comments
+	var tmpArray = this.cloneObject (comments);
+
+	// Recursively descend into comment replies
 	function descend (comment)
 	{
+		// Add the current comment to flattened output
 		output.push (comment);
 
+		// Check if comment has replies
 		if (comment.replies !== undefined) {
-			for (var reply = 0, total = comment.replies.length; reply < total; reply++) {
-				descend (comment.replies[reply]);
+			// If so, descend into the replies
+			for (var i = 0, il = comment.replies.length; i < il; i++) {
+				descend (comment.replies[i]);
 			}
 
+			// And remove replies from flattened output
 			delete comment.replies;
 		}
 	}
 
-	for (var comment = 0, total = commentsCopy.length; comment < total; comment++) {
-		descend (commentsCopy[comment]);
+	// Initial descent into comments
+	for (var i = 0, il = tmpArray.length; i < il; i++) {
+		descend (tmpArray[i]);
 	}
 
+	// Return flattened comments
 	return output;
 };
