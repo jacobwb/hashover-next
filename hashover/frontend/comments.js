@@ -377,8 +377,8 @@ HashOverConstructor.prototype.comments = {
 
 		// Recursively parse replies
 		if (comment.replies !== undefined) {
-			for (var reply = 0, total = comment.replies.length; reply < total; reply++) {
-				replies += this.parse (comment.replies[reply], comment, collapse);
+			for (var i = 0, il = comment.replies.length; i < il; i++) {
+				replies += this.parse (comment.replies[i], comment, collapse);
 			}
 		}
 

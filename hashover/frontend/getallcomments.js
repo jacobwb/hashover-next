@@ -1,7 +1,7 @@
 // "Flatten" the comments object (getallcomments.js)
 HashOver.prototype.getAllComments = function (comments)
 {
-	// Initial flatten comments
+	// Initial flattened comments
 	var output = [];
 
 	// Clone the comments

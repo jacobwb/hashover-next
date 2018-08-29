@@ -19,24 +19,17 @@ HashOver.prototype.sortComments = function (method)
 		return 1;
 	}
 
-	// Returns the sum number of replies in a comment thread
-	function replyPropertySum (comment, callback)
+	// Returns a comment's number of likes minus dislikes
+	function netLikes (comment)
 	{
-		// Initial sum
-		var sum = 0;
+		// Number of likes or zero
+		var likes = comment.likes || 0;
 
-		// Check if there are replies to the current comment
-		if (comment.replies !== undefined) {
-			// If so, run through them adding up the number of replies
-			for (var i = 0, il = comment.replies.length; i < il; i++) {
-				sum += replyPropertySum (comment.replies[i], callback);
-			}
-		}
+		// Number of dislikes or zero
+		var dislikes = comment.dislikes || 0;
 
-		// Calculate the sum based on the give callback
-		sum += callback (comment);
-
-		return sum;
+		// Return the difference
+		return likes - dislikes;
 	}
 
 	// Returns a comment's number of replies
@@ -45,10 +38,24 @@ HashOver.prototype.sortComments = function (method)
 		return comment.replies ? comment.replies.length : 0;
 	}
 
-	// Returns a comment's number of likes minus dislikes
-	function netLikes (comment)
+	// Returns the sum number of replies in a comment thread
+	function replySum (comment, callback)
 	{
-		return (comment.likes || 0) - (comment.dislikes || 0);
+		// Initial sum
+		var sum = 0;
+
+		// Check if there are replies to the current comment
+		if (comment.replies !== undefined) {
+			// If so, run through them adding up the number of replies
+			for (var i = 0, il = comment.replies.length; i < il; i++) {
+				sum += replySum (comment.replies[i], callback);
+			}
+		}
+
+		// Calculate the sum based on the give callback
+		sum += callback (comment);
+
+		return sum;
 	}
 
 	// Sorts comments alphabetically by commenters names
@@ -73,7 +80,7 @@ HashOver.prototype.sortComments = function (method)
 
 	// Decide how to sort the comments
 	switch (method) {
-		// Sort all comment in reverse order
+		// Sort all comments in reverse order
 		case 'descending': {
 			// Get all comments
 			var tmpArray = this.getAllComments (this.instance.comments.primary);
@@ -95,7 +102,7 @@ HashOver.prototype.sortComments = function (method)
 			break;
 		}
 
-		// Sort all comment by net number of likes
+		// Sort all comments by net number of likes
 		case 'by-likes': {
 			// Get all comments
 			var tmpArray = this.getAllComments (this.instance.comments.primary);
@@ -108,7 +115,7 @@ HashOver.prototype.sortComments = function (method)
 			break;
 		}
 
-		// Sort all comment by number of replies
+		// Sort all comments by number of replies
 		case 'by-replies': {
 			// Clone the comments
 			var tmpArray = this.cloneObject (this.instance.comments.primary);
@@ -128,8 +135,8 @@ HashOver.prototype.sortComments = function (method)
 
 			// And return comments sorted by the sum of each comment's replies
 			sortArray = tmpArray.sort (function (a, b) {
-				var replyCountA = replyPropertySum (a, replyCounter);
-				var replyCountB = replyPropertySum (b, replyCounter);
+				var replyCountA = replySum (a, replyCounter);
+				var replyCountB = replySum (b, replyCounter);
 
 				return replyCountB - replyCountA;
 			});
@@ -144,8 +151,8 @@ HashOver.prototype.sortComments = function (method)
 
 			// And return comments sorted by the sum of each comment's net likes
 			sortArray = tmpArray.sort (function (a, b) {
-				var likeCountA = replyPropertySum (a, netLikes);
-				var likeCountB = replyPropertySum (b, netLikes);
+				var likeCountA = replySum (a, netLikes);
+				var likeCountB = replySum (b, netLikes);
 
 				return likeCountB - likeCountA;
 			});
@@ -153,7 +160,7 @@ HashOver.prototype.sortComments = function (method)
 			break;
 		}
 
-		// Sort all comment by the commenter names
+		// Sort all comments by the commenter names
 		case 'by-name': {
 			// Get all comments
 			var tmpArray = this.getAllComments (this.instance.comments.primary);
