@@ -130,7 +130,7 @@ function create_rss (&$hashover)
 
 	// Create channel atom link element
 	$atom_link = $xml->createElement ('atom:link');
-	$atom_link->setAttribute ('href', 'http://' . $hashover->setup->domain . $_SERVER['PHP_SELF'] . '?url=' . $metadata['url']);
+	$atom_link->setAttribute ('href', 'http://' . $hashover->setup->domain . $_SERVER['PHP_SELF'] . '?url=' . urlencode ($metadata['url']));
 	$atom_link->setAttribute ('rel', 'self');
 
 	// Add channel atom link to channel element
@@ -226,8 +226,7 @@ function create_rss (&$hashover)
 
 		// Create item avatar element
 		$item_avatar = $xml->createElement ('avatar');
-		$web_root = 'http://' . $hashover->setup->domain . $hashover->setup->httpRoot;
-		$item_avatar_value = $xml->createTextNode ($web_root . $comment['avatar']);
+		$item_avatar_value = $xml->createTextNode ($comment['avatar']);
 		$item_avatar->appendChild ($item_avatar_value);
 
 		// Add item avatar element to item element
@@ -312,7 +311,7 @@ function create_rss (&$hashover)
 
 try {
 	// Instantiate HashOver class
-	$hashover = new \HashOver ('php', 'api');
+	$hashover = new \HashOver ('rss', 'api');
 	$hashover->setup->setPageURL ('request');
 	$hashover->setup->collapsesComments = false;
 	$hashover->initiate ();

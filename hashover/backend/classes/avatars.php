@@ -95,7 +95,15 @@ class Avatars
 		// Check if avatar is set to custom
 		if ($this->setup->gravatarDefault === 'custom') {
 			// If so, direct 404s to local PNG avatar image
-			$this->fallback = $this->setup->absolutePath . $this->png;
+			$fallback = $this->png;
+
+			// Make avatar path absolute when not accessed remotely
+			if ($this->setup->remoteAccess === false) {
+				$fallback = $this->setup->absolutePath . $fallback;
+			}
+
+			// And set final fallback avatar path property
+			$this->fallback = $fallback;
 		} else {
 			// If not, direct 404s to a themed default
 			$this->fallback = $this->setup->gravatarDefault;
@@ -115,8 +123,8 @@ class Avatars
 
 		// If no hash is given, return the default avatar
 		if (empty ($hash)) {
-			// Return absolute path if requested
-			if ($abs === true) {
+			// Return absolute path if told to and accessed remotely
+			if ($abs === true and $this->setup->remoteAccess !== true) {
 				return $this->setup->absolutePath . $this->avatar;
 			}
 

@@ -174,7 +174,13 @@ class Setup extends Settings
 
 	protected function refererCheck ()
 	{
-		// No referer set
+		// Setup remote access in API usage context
+		if ($this->usage['context'] === 'api') {
+			$this->setupRemoteAccess ();
+			return true;
+		}
+
+		// Return true if no is referer set
 		if (empty ($_SERVER['HTTP_REFERER'])) {
 			return true;
 		}
@@ -200,13 +206,6 @@ class Setup extends Settings
 				$this->setupRemoteAccess ();
 				return true;
 			}
-		}
-
-		// Check if the usage context is an API
-		if ($this->usage['context'] === 'api') {
-			// If so, setup remote access
-			$this->setupRemoteAccess ();
-			return true;
 		}
 
 		return false;
