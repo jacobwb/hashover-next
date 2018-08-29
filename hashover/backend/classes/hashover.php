@@ -215,7 +215,7 @@ class HashOver
 	}
 
 	// Parse primary comments
-	public function parsePrimary ($start = 0)
+	public function parsePrimary ()
 	{
 		// Initial comments array
 		$this->comments['primary'] = array ();

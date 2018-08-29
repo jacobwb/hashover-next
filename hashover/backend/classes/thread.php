@@ -172,27 +172,18 @@ class Thread
 	}
 
 	// Read comments
-	public function read ($start = 0, $end = null)
+	public function read ($end = null)
 	{
 		// Initial data to return
 		$comments = array ();
 
-		// Number of comments to skip
-		$limit_count = 0;
-
 		// Number of comments successfully added to return data
-		$allowed_count = 0;
+		$added_count = 0;
 
 		// Run through each comment
 		foreach ($this->commentList as $i => $key) {
-			// Skip until starting point is reached
-			if ($limit_count < $start) {
-				$limit_count++;
-				continue;
-			}
-
 			// Stop at end point
-			if ($end !== null and $allowed_count >= $end) {
+			if ($end !== null and $added_count >= $end) {
 				break;
 			}
 
@@ -216,7 +207,7 @@ class Thread
 				}
 
 				// And increase added count
-				$allowed_count++;
+				$added_count++;
 			} else {
 				// If not, set comment status as a read error
 				$comments[$i]['status'] = 'read-error';
