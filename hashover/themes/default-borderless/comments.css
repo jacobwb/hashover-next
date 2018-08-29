@@ -91,7 +91,7 @@ conditions, unless such conditions are required by law.
 	margin-bottom: 12px;
 	padding-bottom: 10px;
 	vertical-align: top;
-	border-bottom: 1px dashed rgb(190, 190, 190);
+	border-bottom: 1px dashed #AAAAAA;
 }
 
 .hashover #hashover-message {
@@ -137,7 +137,7 @@ conditions, unless such conditions are required by law.
 
 .hashover .hashover-message.hashover-message-open > *,
 .hashover .hashover-formatting-message.hashover-message-open > * {
-	color: initial;
+	color: inherit;
 }
 
 .hashover .hashover-message.hashover-message-open > * {
@@ -539,7 +539,7 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-comment-label {
 	width: 100%;
 	display: block;
-	border: 1px solid #AAA;
+	border: 1px solid #AAAAAA;
 	margin-bottom: -1px;
 }
 
@@ -848,7 +848,7 @@ conditions, unless such conditions are required by law.
 
 .hashover .hashover-select-wrapper {
 	overflow: hidden;
-	margin-top: -3px;
+	margin-top: -1px;
 	line-height: 14px;
 	vertical-align: middle;
 	cursor: pointer;
@@ -1062,7 +1062,7 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-more-link {
 	display: block;
 	padding: 12px;
-	margin-bottom: 12px;
+	margin-bottom: 24px;
 	background-color: rgba(230, 237, 250, 0.6);
 	border: 1px dashed #AAAAFF;
 	text-align: center;
