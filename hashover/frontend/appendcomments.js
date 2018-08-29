@@ -44,7 +44,7 @@ HashOver.prototype.appendComments = function (comments)
 			element.insertAdjacentHTML ('beforeend', html);
 		} else {
 			// If not, convert HTML to NodeList
-			var comment = this.HTMLToNodeList (html);
+			var comment = this.htmlChildren (html);
 
 			// And append the first node
 			element.appendChild (comment[0]);

@@ -165,7 +165,7 @@ try {
 
 		'dependencies' => array (
 			'addcomments.js',
-			'htmltonodelist.js',
+			'htmlchildren.js',
 			'incrementcounts.js'
 		)
 	));
@@ -175,7 +175,7 @@ try {
 		'include' => $setup->usesAjax,
 
 		'dependencies' => array (
-			'htmltonodelist.js'
+			'htmlchildren.js'
 		)
 	));
 

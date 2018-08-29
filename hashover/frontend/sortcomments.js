@@ -1,7 +1,10 @@
 // Comment sorting (sortcomments.js)
 HashOver.prototype.sortComments = function (method)
 {
+	// Initial sorted comments array
 	var sortArray = [];
+
+	// Configurable default name
 	var defaultName = this.setup['default-name'];
 
 	// Returns the sum number of replies in a comment thread

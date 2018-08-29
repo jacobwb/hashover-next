@@ -7,20 +7,16 @@ HashOver.prototype.AJAXEdit = function (json, permalink, destination, isReply)
 	// Get old comment from primary comments
 	var oldItem = this.permalinks.getComment (permalink, this.instance.comments.primary);
 
-	// Get new comment element nodes
-	var newComment = this.HTMLToNodeList (this.comments.parse (json.comment));
+	// Get new comment child elements
+	var newComment = this.htmlChildren (this.comments.parse (json.comment));
 
 	// Get old and new comment elements
-	var newNodes = newComment[0].childNodes;
-	var oldNodes = comment.childNodes;
+	var newElements = newComment[0].children;
+	var oldElements = comment.children;
 
 	// Replace old comment with edited comment
-	for (var i = 0, il = newNodes.length; i < il; i++) {
-		if (typeof (oldNodes[i]) === 'object'
-		    && typeof (newNodes[i]) === 'object')
-		{
-			comment.replaceChild (newNodes[i], oldNodes[i]);
-		}
+	for (var i = newElements.length - 1; i >= 0; i--) {
+		comment.replaceChild (newElements[i], oldElements[i]);
 	}
 
 	// Add controls back to the comment

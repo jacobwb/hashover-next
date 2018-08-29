@@ -12,12 +12,22 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 		// Add comment to comments array
 		this.addComments (json.comment, isReply);
 
-		// Create div element for comment
-		var elements = this.HTMLToNodeList (this.comments.parse (json.comment));
+		// Get comment child elements
+		var elements = this.htmlChildren (this.comments.parse (json.comment));
 
-		// Append comment to parent element
-		if (this.setup['stream-mode'] === true && permalink.split('r').length > this.setup['stream-depth']) {
-			dest.parentNode.insertBefore (elements[0], dest.nextSibling);
+		// Check if the comment is a reply and has a permalink
+		if (isReply === true && permalink !== undefined) {
+			// If so, store indicator of when comment is out of stream depth
+			var outOfDepth = (permalink.split ('r').length > this.setup['stream-depth']);
+
+			// Check if we are in stream mode and out of the allowed depth
+			if (this.setup['stream-mode'] === true && outOfDepth === true) {
+				// If so, append comment to parent element
+				dest.parentNode.insertBefore (elements[0], dest.nextSibling);
+			} else {
+				// If not, append to destination element
+				dest.appendChild (elements[0]);
+			}
 		} else {
 			// If not, append to destination element
 			dest.appendChild (elements[0]);
