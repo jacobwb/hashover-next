@@ -1,6 +1,6 @@
 // Collection of comment parsing functions (comments.js)
 HashOverConstructor.prototype.comments = {
-	collapsedCount: 0,
+	collapseLimit: 0,
 	codeOpenRegex: /<code>/i,
 	codeTagRegex: /(<code>)([\s\S]*?)(<\/code>)/ig,
 	preOpenRegex: /<pre>/i,
@@ -28,13 +28,10 @@ HashOverConstructor.prototype.comments = {
 	},
 
 	// Add comment content to HTML template
-	parse: function (comment, parent, collapse, sort, method, popular)
+	parse: function (comment, parent, collapse, popular)
 	{
+		// Parameter defaults
 		parent = parent || null;
-		collapse = collapse || false;
-		sort = sort || false;
-		method = method || 'ascending';
-		popular = popular || false;
 
 		// Reference to the parent object
 		var hashover = this.parent;
@@ -43,7 +40,6 @@ HashOverConstructor.prototype.comments = {
 		var permalink = 'hashover-' + commentKey;
 		var nameClass = 'hashover-name-plain';
 		var template = { permalink: commentKey };
-		var isReply = (parent !== null);
 		var commentDate = comment.date;
 		var codeTagCount = 0;
 		var codeTags = [];
@@ -63,39 +59,25 @@ HashOverConstructor.prototype.comments = {
 			return openTag + hashover.EOLTrim (innerHTML) + closeTag;
 		}
 
-		// Get parent comment via permalink
-		if (isReply === false && commentKey.indexOf ('r') > -1) {
-			// Get the parent comment permalink
-			var parentPermalink = hashover.permalinks.getParent (commentKey);
-
-			// Get the parent comment by its permalink
-			parent = hashover.permalinks.getComment (parentPermalink, hashover.instance.comments.primary);
-			isReply = (parent !== null);
-		}
-
 		// Check if this comment is a popular comment
 		if (popular === true) {
 			// Remove "-pop" from text for avatar
 			permatext = permatext.replace ('-pop', '');
 		} else {
-			// Check if comment is a reply
-			if (isReply === true) {
-				// Check that comments are being sorted
-				if (!sort || method === 'ascending') {
-					// Append class to indicate comment is a reply
-					classes += ' hashover-reply';
-				}
+			// Append class to indicate comment is a reply when appropriate
+			if (parent !== null) {
+				classes += ' hashover-reply';
 			}
 
-			// Check if comments are being collapsed
-			if (hashover.setup['collapses-comments'] !== false) {
-				// If so, append class to indicate collapsed comment
-				if (hashover.instance['total-count'] > 0) {
-					if (collapse === true && this.collapsedCount >= hashover.setup['collapse-limit']) {
-						classes += ' hashover-hidden';
-					} else {
-						this.collapsedCount++;
-					}
+			// Check if we have comments to collapse
+			if (collapse === true && hashover.instance['total-count'] > 0) {
+				// If so, check if we've reached the collapse limit
+				if (this.collapseLimit >= hashover.setup['collapse-limit']) {
+					// If so, append class to indicate collapsed comment
+					classes += ' hashover-hidden';
+				} else {
+					// If not, increase collapse limit
+					this.collapseLimit++;
 				}
 			}
 		}
@@ -157,7 +139,7 @@ HashOverConstructor.prototype.comments = {
 			}
 
 			// Construct parent thread hyperlink
-			if (isReply === true) {
+			if (parent !== null) {
 				var parentThread = 'hashover-' + parent.permalink;
 				var parentName = parent.name || hashover.setup['default-name'];
 

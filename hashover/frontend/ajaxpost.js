@@ -15,8 +15,17 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 		// Add comment to comments array
 		this.addComments (json.comment, isReply);
 
+		// Fetch parent comment by its permalink
+		var parent = this.permalinks.getComment (
+			this.permalinks.getParent (json.comment.permalink),
+			this.instance.comments.primary
+		);
+
+		// Parse comment
+		var comment = this.comments.parse (json.comment, parent);
+
 		// Get comment child elements
-		var elements = this.htmlChildren (this.comments.parse (json.comment));
+		var elements = this.htmlChildren (comment);
 
 		// Check if the comment is a reply and has a permalink
 		if (isReply === true && permalink !== undefined) {

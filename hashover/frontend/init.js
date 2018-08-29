@@ -181,7 +181,7 @@ HashOver.prototype.init = function ()
 				hashover.showMoreComments (sortSelectDiv, function () {
 					hashover.instance['sort-section'].textContent = '';
 					hashover.sortComments (sortSelect.value);
-				});
+				}, false);
 			} else {
 				// If not, sort the comments normally
 				hashover.instance['sort-section'].textContent = '';

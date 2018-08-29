@@ -1,5 +1,5 @@
 // onClick event for more button (showmorecomments.js)
-HashOver.prototype.showMoreComments = function (element, callback)
+HashOver.prototype.showMoreComments = function (element, callback, append)
 {
 	// Reference to this object
 	var hashover = this;
@@ -47,8 +47,17 @@ HashOver.prototype.showMoreComments = function (element, callback)
 			// Afterwards, store start time
 			var execStart = Date.now ();
 
-			// Display the comments
-			hashover.appendComments (json.primary);
+			// Replace initial comments
+			hashover.instance.comments.primary = json.primary;
+
+			// Check if we are appending the comments
+			if (append !== false) {
+				// If so, sort the comments
+				var sorted = hashover.sortComments (json.primary);
+
+				// And append the sorted comments
+				hashover.appendComments (sorted);
+			}
 
 			// Execute callback function
 			if (typeof (callback) === 'function') {

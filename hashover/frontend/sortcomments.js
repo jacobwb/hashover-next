@@ -219,5 +219,5 @@ HashOver.prototype.sortComments = function (method)
 	}
 
 	// Parse the sorted comments
-	this.parseAll (sortArray, this.instance['sort-section'], false, false, true, method);
+	this.parseAll (sortArray, this.instance['sort-section']);
 };
