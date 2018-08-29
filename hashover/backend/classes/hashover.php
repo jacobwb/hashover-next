@@ -19,12 +19,13 @@
 
 class HashOver
 {
-	public $usage = array ();
-	public $setupChecks;
-	public $commentCount;
-	public $popularList = array ();
-	public $popularCount = 0;
-	public $rawComments = array ();
+	protected $usage = array ();
+	protected $setupChecks;
+	protected $commentCount;
+	protected $popularList = array ();
+	protected $popularCount = 0;
+	protected $rawComments = array ();
+	protected $collapseCount = 0;
 
 	public $statistics;
 	public $setup;
@@ -33,6 +34,7 @@ class HashOver
 	public $commentParser;
 	public $markdown;
 	public $cookies;
+	public $login;
 	public $comments = array ();
 	public $ui;
 	public $templater;

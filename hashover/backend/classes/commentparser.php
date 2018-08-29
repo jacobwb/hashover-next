@@ -20,11 +20,11 @@
 // Parse comments and create deleted comment note
 class CommentParser
 {
-	public $setup;
-	public $login;
-	public $locale;
-	public $avatars;
-	public $cookies;
+	protected $setup;
+	protected $login;
+	protected $locale;
+	protected $avatars;
+	protected $cookies;
 
 	protected $dateIntervalLocales;
 	protected $todayLocale;

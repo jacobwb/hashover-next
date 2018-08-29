@@ -19,8 +19,9 @@
 
 class Locale
 {
-	public $setup;
-	public $mode;
+	protected $setup;
+	protected $mode;
+
 	public $text;
 
 	public function __construct (Setup $setup)
@@ -107,7 +108,7 @@ class Locale
 	}
 
 	// Injects optionality into a given locale string
-	public function optionality ($locale, $choice = 'optional')
+	protected function optionality ($locale, $choice = 'optional')
 	{
 		// Optionality locale key (default to optional)
 		$key = ($choice === 'required') ? 'required' : 'optional';
@@ -128,7 +129,7 @@ class Locale
 	}
 
 	// Prepares locale by modifying them in various ways
-	public function prepareLocale ()
+	protected function prepareLocale ()
 	{
 		// Add optionality to form field title locales
 		foreach ($this->setup->fieldOptions as $field => $option) {

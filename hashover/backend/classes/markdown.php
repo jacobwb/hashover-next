@@ -19,9 +19,9 @@
 
 class Markdown
 {
-	public    $blockCodeRegex = '/```([\s\S]+?)```/S';
+	protected $blockCodeRegex = '/```([\s\S]+?)```/S';
 	protected $paragraphRegex = '/(?:\r\n|\r|\n){2}/S';
-	public    $inlineCodeRegex = '/(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/iS';
+	protected $inlineCodeRegex = '/(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/iS';
 
 	// Array for inline code and code block markers
 	protected $codeMarkers = array (
@@ -30,7 +30,7 @@ class Markdown
 	);
 
 	// Markdown patterns to search for
-	public $search = array (
+	protected $search = array (
 		'/\*\*([^ *])([\s\S]+?)([^ *])\*\*/S',
 		'/\*([^ *])([\s\S]+?)([^ *])\*/S',
 		'/(^|\W)_([^_]+?[\s\S]+?)_(\W|$)/S',
@@ -39,7 +39,7 @@ class Markdown
 	);
 
 	// HTML replacements for markdown patterns
-	public $replace = array (
+	protected $replace = array (
 		'<strong>\\1\\2\\3</strong>',
 		'<em>\\1\\2\\3</em>',
 		'\\1<u>\\2</u>\\3',

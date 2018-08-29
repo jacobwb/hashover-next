@@ -19,8 +19,9 @@
 
 class SpamCheck
 {
-	public $blocklist;
-	public $database;
+	protected $blocklist;
+	protected $database;
+
 	public $error;
 
 	public function __construct (Setup $setup)
@@ -33,7 +34,7 @@ class SpamCheck
 	}
 
 	// Compare array of IP addresses to user's IP
-	public function checkIPs ($ips = array ())
+	protected function checkIPs ($ips = array ())
 	{
 		// Do nothing if input isn't an array
 		if (!is_array ($ips)) {
@@ -75,7 +76,7 @@ class SpamCheck
 	}
 
 	// Get Stop Forum Spam remote spam database JSON
-	public function getStopForumSpamJSON ()
+	protected function getStopForumSpamJSON ()
 	{
 		// Stop Forum Spam API URL
 		$url = 'https://www.stopforumspam.com/api?ip=' . $_SERVER['REMOTE_ADDR'] . '&f=json';

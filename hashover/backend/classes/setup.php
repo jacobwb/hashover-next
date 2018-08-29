@@ -33,7 +33,7 @@ class Setup extends Settings
 	public $URLQueries;
 
 	// Required extensions to check for
-	public $extensions = array (
+	protected $extensions = array (
 		'date',
 		'dom',
 		'json',
@@ -45,7 +45,7 @@ class Setup extends Settings
 	);
 
 	// Characters that aren't allowed in directory names
-	public $reservedCharacters = array (
+	protected $reservedCharacters = array (
 		'<',
 		'>',
 		':',
@@ -65,7 +65,7 @@ class Setup extends Settings
 	);
 
 	// HashOver-specific URL queries to be ignored
-	public $ignoredQueries = array (
+	protected $ignoredQueries = array (
 		'hashover-reply',
 		'hashover-edit'
 	);

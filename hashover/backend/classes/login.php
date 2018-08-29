@@ -19,13 +19,14 @@
 
 class Login extends Secrets
 {
-	public $setup;
-	public $postData;
-	public $cookies;
-	public $locale;
-	public $crypto;
-	public $loginMethod;
-	public $fieldNeeded;
+	protected $setup;
+	protected $postData;
+	protected $cookies;
+	protected $locale;
+	protected $crypto;
+	protected $loginMethod;
+	protected $fieldNeeded;
+
 	public $name = '';
 	public $password = '';
 	public $loginHash = '';

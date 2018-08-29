@@ -19,10 +19,11 @@
 
 class Statistics
 {
-	public $mode;
-	public $executionStart;
-	public $executionEnd;
-	public $executionMicroTime;
+	protected $mode;
+	protected $executionStart;
+	protected $executionEnd;
+	protected $executionMicroTime;
+
 	public $executionTime;
 	public $scriptMemory;
 	public $systemMemory;

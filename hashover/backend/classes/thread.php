@@ -19,7 +19,8 @@
 
 class Thread
 {
-	public $setup;
+	protected $setup;
+
 	public $data;
 	public $commentList = array ();
 	public $threadCount = array ();
@@ -95,7 +96,7 @@ class Thread
 	}
 
 	// Counts a deleted comment
-	public function countDeleted ($comment)
+	protected function countDeleted ($comment)
 	{
 		// Count deleted replies
 		if (strpos ($comment, '-') === false) {
@@ -156,7 +157,7 @@ class Thread
 	}
 
 	// Organize comments
-	public function organizeComments ()
+	protected function organizeComments ()
 	{
 		foreach ($this->commentList as $key) {
 			// Check for missing comments

@@ -19,9 +19,9 @@
 
 class Cookies
 {
-	public $setup;
-	public $domain;
-	public $secure = false;
+	protected $setup;
+	protected $domain;
+	protected $secure = false;
 
 	public function __construct (Setup $setup)
 	{

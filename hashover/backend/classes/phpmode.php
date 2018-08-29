@@ -19,12 +19,12 @@
 
 class PHPMode
 {
-	public $setup;
-	public $ui;
-	public $comments;
-	public $locale;
-	public $templater;
-	public $markdown;
+	protected $setup;
+	protected $ui;
+	protected $comments;
+	protected $locale;
+	protected $templater;
+	protected $markdown;
 
 	protected $trimTagRegexes = array (
 		'blockquote' => '/(<blockquote>)([\s\S]*?)(<\/blockquote>)/iS',

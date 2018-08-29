@@ -20,7 +20,7 @@
 class Templater
 {
 	// Setup information
-	public $setup;
+	protected $setup;
 
 	// Store arguments passed during instantiation
 	public function __construct (Setup $setup)

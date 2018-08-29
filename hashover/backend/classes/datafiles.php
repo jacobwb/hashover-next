@@ -19,7 +19,7 @@
 
 class DataFiles
 {
-	public $setup;
+	protected $setup;
 
 	public function __construct (Setup $setup)
 	{
@@ -44,7 +44,7 @@ class DataFiles
 	}
 
 	// Convert a string to OS-specific line endings
-	public function osLineEndings ($string)
+	protected function osLineEndings ($string)
 	{
 		return preg_replace ('/\r\n|\r|\n/', PHP_EOL, $string);
 	}

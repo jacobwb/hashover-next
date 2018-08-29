@@ -19,22 +19,23 @@
 
 class FormUI
 {
-	public $setup;
-	public $mode;
-	public $locale;
-	public $avatars;
-	public $misc;
-	public $cookies;
-	public $login;
-	public $commentCounts;
-	public $pageTitle;
-	public $pageURL;
-	public $postCommentOn;
-	public $popularComments;
-	public $comments;
+	protected $setup;
+	protected $mode;
+	protected $locale;
+	protected $avatars;
+	protected $misc;
+	protected $cookies;
+	protected $login;
+	protected $commentCounts;
+	protected $pageTitle;
+	protected $pageURL;
 
 	protected $emphasizedField;
 	protected $defaultLoginInputs;
+
+	public $postCommentOn;
+	public $popularComments;
+	public $comments;
 
 	public function __construct (Setup $setup, array $counts)
 	{

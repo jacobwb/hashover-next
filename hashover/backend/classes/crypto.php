@@ -91,7 +91,7 @@ class Crypto extends Secrets
 	}
 
 	// Generates a random encryption key
-	public function createKey ($string)
+	protected function createKey ($string)
 	{
 		// Shuffle alphanumeric character array as to randomize it
 		shuffle ($string);

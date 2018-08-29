@@ -19,9 +19,9 @@
 
 class Metadata
 {
-	public $setup;
-	public $thread;
-	public $data;
+	protected $setup;
+	protected $thread;
+	protected $data;
 
 	public function __construct (Setup $setup, Thread $thread)
 	{

@@ -19,10 +19,11 @@
 
 class DefaultLogin
 {
-	public $setup;
-	public $cookies;
-	public $locale;
-	public $crypto;
+	protected $setup;
+	protected $cookies;
+	protected $locale;
+	protected $crypto;
+
 	public $enabled = true;
 	public $name;
 	public $password;

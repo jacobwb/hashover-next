@@ -20,8 +20,8 @@
 // Database! Database! Just living in the database! Wow! Wow!
 class Database extends Secrets
 {
-	public $setup;
-	public $database;
+	protected $setup;
+	protected $database;
 
 	public function __construct (Setup $setup)
 	{
@@ -50,7 +50,7 @@ class Database extends Secrets
 		}
 	}
 
-	public function getCommentThread ($thread)
+	protected function getCommentThread ($thread)
 	{
 		return ($thread !== 'auto') ? $thread : $this->setup->threadName;
 	}

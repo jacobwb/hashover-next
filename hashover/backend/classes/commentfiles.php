@@ -20,8 +20,7 @@
 // Read and count comments
 class CommentFiles extends DataFiles
 {
-	public $setup;
-	public $storageMode;
+	protected $setup;
 
 	public function __construct (Setup $setup)
 	{
@@ -33,7 +32,7 @@ class CommentFiles extends DataFiles
 	}
 
 	// Returns a comment file path for a given file and thread
-	public function getCommentPath ($file, $extension, $thread = 'auto')
+	protected function getCommentPath ($file, $extension, $thread = 'auto')
 	{
 		$default = $this->setup->threadDirectory;
 		$path = $this->setup->pagesDirectory;
@@ -44,7 +43,7 @@ class CommentFiles extends DataFiles
 	}
 
 	// Read directory contents, put filenames in array, count files
-	public function loadFiles ($extension, array $files = array (), $auto = true)
+	protected function loadFiles ($extension, array $files = array (), $auto = true)
 	{
 		if ($auto === true) {
 			$pattern = $this->setup->threadDirectory . '/*.' . $extension;
