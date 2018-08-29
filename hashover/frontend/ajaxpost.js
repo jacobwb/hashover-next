@@ -1,6 +1,9 @@
 // For posting comments (ajaxpost.js)
 HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 {
+	// Reference to this object
+	var hashover = this;
+
 	// Check if there are no comments
 	if (this.instance['total-count'] === 0) {
 		// If so, add first comment message
@@ -32,6 +35,13 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 			// If not, append to destination element
 			dest.appendChild (elements[0]);
 		}
+	}
+
+	// Add class to indicate comment is out of order
+	if (isReply !== true && this.instance['showing-more'] === false) {
+		this.elements.exists (json.comment.permalink, function (comment) {
+			hashover.classes.add (comment, 'hashover-disjoined');
+		});
 	}
 
 	// Add controls to the new comment

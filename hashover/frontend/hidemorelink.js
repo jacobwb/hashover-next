@@ -25,13 +25,16 @@ HashOver.prototype.hideMoreLink = function (callback)
 			popularSection.style.display = '';
 		});
 
-		// Get each hidden comment element
-		var collapsed = sortSection.getElementsByClassName ('hashover-hidden');
-
-		// Remove hidden comment class from each comment
-		for (var i = collapsed.length - 1; i >= 0; i--) {
-			hashover.classes.remove (collapsed[i], 'hashover-hidden');
+		// Callback to remove specific class names
+		var classRemover = function (element, elements, i, className) {
+			hashover.classes.remove (element, className);
 		}
+
+		// Remove hidden comment class from comments
+		hashover.elements.eachClass (sortSection, 'hashover-hidden', classRemover);
+
+		// Remove out of order class from comments
+		hashover.elements.eachClass (sortSection, 'hashover-disjoined', classRemover);
 
 		// Execute callback function
 		if (typeof (callback) === 'function') {

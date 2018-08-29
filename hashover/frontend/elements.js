@@ -78,5 +78,17 @@ HashOverConstructor.prototype.elements = {
 
 		// Add the properties to the object
 		return this.addProperties (element, properties);
+	},
+
+	// Execute a callback for each element with a specific class
+	eachClass: function (element, className, callback)
+	{
+		// Get elements with a specific class name
+		var elements = element.getElementsByClassName (className);
+
+		// Execute callback for each element
+		for (var i = elements.length - 1; i >= 0; i--) {
+			callback (elements[i], elements, i, className);
+		}
 	}
 };

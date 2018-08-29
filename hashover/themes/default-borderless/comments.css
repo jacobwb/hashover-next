@@ -1059,6 +1059,11 @@ conditions, unless such conditions are required by law.
 	margin: 0px;
 }
 
+.hashover .hashover-disjoined {
+	padding-top: 24px;
+	border-top: 1px dashed #AAAAAA;
+}
+
 .hashover .hashover-more-link {
 	display: block;
 	padding: 12px;

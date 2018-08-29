@@ -3,11 +3,6 @@ HashOver.prototype.uncollapseCommentsLink = function ()
 {
 	// Check whether there are more than the collapse limit
 	if (this.instance['total-count'] > this.setup['collapse-limit']) {
-		// Create element for the comments
-		this.instance['more-section'] = this.elements.create ('div', {
-			className: 'hashover-more-section'
-		});
-
 		// If so, create "More Comments" hyperlink
 		this.instance['more-link'] = this.elements.create ('a', {
 			href: '#',
@@ -20,11 +15,11 @@ HashOver.prototype.uncollapseCommentsLink = function ()
 			}
 		});
 
-		// Add more button link to sort div
-		this.instance['sort-section'].appendChild (this.instance['more-section']);
+		// Sort section element
+		var sortSection = this.instance['sort-section'];
 
-		// Add more button link to sort div
-		this.instance['sort-section'].appendChild (this.instance['more-link']);
+		// Add more button link after sort div
+		sortSection.parentNode.appendChild (this.instance['more-link']);
 
 		// And consider comments collapsed
 		this.instance['showing-more'] = false;

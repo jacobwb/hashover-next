@@ -1019,6 +1019,17 @@ conditions, unless such conditions are required by law.
 	margin: 0px;
 }
 
+.hashover .hashover-disjoined:before {
+	content: "===";
+	display: block;
+	padding: 6px;
+	text-align: center;
+}
+
+.hashover .hashover-disjoined .hashover-header {
+	border-top: 1px solid #AAAAAA;
+}
+
 .hashover .hashover-more-link {
 	display: block;
 	padding: 12px;
