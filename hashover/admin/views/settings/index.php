@@ -483,20 +483,53 @@ try {
 					'size' => 1
 				));
 
-				foreach ($setting['options'] as $value => $text) {
-					// Create setting option
-					$option = new HTMLTag ('option', array (
-						'value' => $value,
-						'innerHTML' => $text
-					), false);
+				foreach ($setting['options'] as $value => $data) {
+					// Check if the current option is an array
+					if (is_array ($data)) {
+						// If so, add an option group spacer to menu
+						$select->appendChild (new HTMLTag ('optgroup', array (
+							'label' => '&nbsp;'
+						)));
 
-					// Select proper option
-					if ($value === $setting['value']) {
-						$option->createAttribute ('selected', 'true');
+						// Create an option group with localized label
+						$optgroup = new HTMLTag ('optgroup', array (
+							'label' => $hashover->locale->text[$value]
+						));
+
+						// Run through each optgroup option
+						foreach ($data as $opt_value => $opt_text) {
+							// Create setting option
+							$option = new HTMLTag ('option', array (
+								'value' => $opt_value,
+								'innerHTML' => $opt_text
+							), false);
+
+							// Select proper option
+							if ($opt_value === $setting['value']) {
+								$option->createAttribute ('selected', 'true');
+							}
+
+							// Append option to optgroup
+							$optgroup->appendChild ($option);
+						}
+
+						// And append optgroup to menu
+						$select->appendChild ($optgroup);
+					} else {
+						// If not, create setting option
+						$option = new HTMLTag ('option', array (
+							'value' => $value,
+							'innerHTML' => $data
+						), false);
+
+						// Select proper option
+						if ($value === $setting['value']) {
+							$option->createAttribute ('selected', 'true');
+						}
+
+						// Append option to menu
+						$select->appendChild ($option);
 					}
-
-					// Append option to menu
-					$select->appendChild ($option);
 				}
 
 				// Append dropdown menu to wrapper element
