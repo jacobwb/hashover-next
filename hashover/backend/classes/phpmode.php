@@ -185,7 +185,6 @@ class PHPMode
 		$comment_key = $comment['permalink'];
 		$permalink = 'hashover-' . $comment['permalink'];
 		$template['permalink'] = $comment_key;
-		$is_reply = ($parent !== null);
 		$this->codeTagCount = 0;
 		$this->codeTags = array ();
 		$this->preTagCount = 0;
@@ -199,21 +198,21 @@ class PHPMode
 		// Wrapper element for each comment
 		$comment_wrapper = $this->ui->commentWrapper ($permalink);
 
-		// Get parent comment via permalink
-		if ($is_reply === false and strpos ($comment_key, 'r') !== false) {
-			$parent_permalink = $this->getParentPermalink ($comment_key);
-			$parent = $this->findByPermalink ($parent_permalink, $this->comments['primary']);
-			$is_reply = ($parent !== null);
-		}
-
 		// Check if this comment is a popular comment
 		if ($popular === true) {
-			// Remove "-pop" from text for avatar
+			// Attempt to get parent comment permalink
+			$parent = $this->getParentPermalink ($comment_key);
+
+			// Get parent comment by its permalink if it exists
+			if ($parent !== null) {
+				$parent = $this->findByPermalink ($parent, $this->comments['primary']);
+			}
+
+			// And remove "-pop" from text for avatar
 			$permatext = str_replace ('-pop', '', $permatext);
 		} else {
-			// Check if comment is a reply
-			if ($is_reply === true) {
-				// Append class to indicate comment is a reply
+			// Append class to indicate comment is a reply when appropriate
+			if ($parent !== null) {
 				$comment_wrapper->appendAttribute ('class', 'hashover-reply');
 			}
 		}
@@ -255,7 +254,7 @@ class PHPMode
 			}
 
 			// Add "Top of Thread" hyperlink to template
-			if ($is_reply === true) {
+			if ($parent !== null) {
 				$parent_thread = 'hashover-' . $parent['permalink'];
 				$parent_name = Misc::getArrayItem ($parent, 'name') ?: $this->setup->defaultName;
 				$template['parent-link'] = $this->ui->parentThreadLink ($parent_thread, $comment_key, $parent_name);

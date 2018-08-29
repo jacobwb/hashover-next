@@ -1,31 +1,39 @@
 // Add various events to various elements in each comment (addcontrols.js)
-HashOverConstructor.prototype.addControls = function (json, popular)
+HashOverConstructor.prototype.addControls = function (comment)
 {
 	// Reference to this object
 	var hashover = this;
 
+	// Adds the same event handlers to each comment reply
 	function stepIntoReplies ()
 	{
-		if (json.replies !== undefined) {
-			for (var reply = 0, total = json.replies.length; reply < total; reply++) {
-				hashover.addControls (json.replies[reply]);
+		// Check if the comment has replies
+		if (comment.replies !== undefined) {
+			// If so, add event handlers to each reply
+			for (var i = 0, il = comment.replies.length; i < il; i++) {
+				hashover.addControls (comment.replies[i]);
 			}
 		}
 	}
 
-	if (json.notice !== undefined) {
+	// Check if comment is a notice
+	if (comment.notice !== undefined) {
+		// If so, handle replies
 		stepIntoReplies ();
+
+		// And do nothing else
 		return false;
 	}
 
-	// Get permalink from JSON object
-	var permalink = json.permalink;
+	// Get permalink from comment
+	var permalink = comment.permalink;
 
 	// Set onclick functions for external images
 	if (this.setup['allows-images'] !== false) {
 		// Get embedded image elements
 		var embeddedImgs = document.getElementsByClassName ('hashover-embedded-image');
 
+		// Run through each embedded image element
 		for (var i = 0, il = embeddedImgs.length; i < il; i++) {
 			embeddedImgs[i].onclick = function ()
 			{
@@ -34,25 +42,36 @@ HashOverConstructor.prototype.addControls = function (json, popular)
 		}
 	}
 
-	// Check if collapsed comments are enabled
-	if (this.setup['collapses-comments'] !== false) {
-		// Get thread link of comment
-		this.elements.exists ('thread-link-' + permalink, function (threadLink) {
-			// Add onClick event to thread hyperlink
-			threadLink.onclick = function ()
+	// Get thread link of comment
+	this.elements.exists ('thread-link-' + permalink, function (threadLink) {
+		// Add onClick event to thread hyperlink
+		threadLink.onclick = function ()
+		{
+			// Callback to execute after uncollapsing comments
+			var callback = function ()
 			{
-				hashover.showMoreComments (threadLink, function () {
-					var parentThread = permalink.replace (hashover.regex.thread, '$1');
-					var scrollToElement = hashover.elements.get (parentThread, true);
+				// Afterwards, get the parent comment permlink
+				var parentThread = permalink.replace (hashover.regex.thread, '$1');
 
-					// Scroll to the comment
-					scrollToElement.scrollIntoView ({ behavior: 'smooth' });
-				});
+				// Get the parent comment element
+				var scrollToElement = hashover.elements.get (parentThread, true);
 
-				return false;
+				// Scroll to the parent comment
+				scrollToElement.scrollIntoView ({ behavior: 'smooth' });
 			};
-		});
-	}
+
+			// Check if collapsed comments are enabled
+			if (hashover.setup['collapses-comments'] !== false) {
+				// If so, show uncollapse comments
+				hashover.showMoreComments (threadLink, callback);
+			} else {
+				// If not, execute callback directly
+				callback ();
+			}
+
+			return false;
+		};
+	});
 
 	// Get reply link of comment
 	this.elements.exists ('reply-link-' + permalink, function (replyLink) {
@@ -69,13 +88,13 @@ HashOverConstructor.prototype.addControls = function (json, popular)
 		// If so, add onClick event to "Edit" hyperlinks
 		editLink.onclick = function ()
 		{
-			hashover.editComment (json);
+			hashover.editComment (comment);
 			return false;
 		};
 	});
 
 	// Check if the comment doesn't belong to the logged in user
-	if (json['user-owned'] === undefined) {
+	if (comment['user-owned'] === undefined) {
 		// If so, check if likes are enabled
 		if (this.setup['allows-likes'] !== false) {
 			// If so, check if the like link exists

@@ -12,6 +12,7 @@ HashOverLatest.prototype.addControls = function (json, popular)
 		// Get embedded image elements
 		var embeddedImgs = document.getElementsByClassName ('hashover-embedded-image');
 
+		// Run through each embedded image element
 		for (var i = 0, il = embeddedImgs.length; i < il; i++) {
 			embeddedImgs[i].onclick = function ()
 			{

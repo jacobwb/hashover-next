@@ -61,7 +61,15 @@ HashOverConstructor.prototype.comments = {
 
 		// Check if this comment is a popular comment
 		if (popular === true) {
-			// Remove "-pop" from text for avatar
+			// Attempt to get parent comment permalink
+			parent = hashover.permalinks.getParent (commentKey);
+
+			// Get parent comment by its permalink if it exists
+			if (parent !== null) {
+				parent = hashover.permalinks.getComment (parent, hashover.instance.comments.primary);
+			}
+
+			// And remove "-pop" from text for avatar
 			permatext = permatext.replace ('-pop', '');
 		} else {
 			// Append class to indicate comment is a reply when appropriate
