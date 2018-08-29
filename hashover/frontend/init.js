@@ -168,8 +168,9 @@ HashOver.prototype.init = function ()
 		}
 	}
 
-	// Five method sort
+	// Check if sort method drop down menu exists
 	this.elements.exists ('sort-select', function (sortSelect) {
+		// If so, add change event handler
 		sortSelect.onchange = function ()
 		{
 			// Check if the comments are collapsed
@@ -190,40 +191,58 @@ HashOver.prototype.init = function ()
 		};
 	});
 
-	// Display reply or edit form when the proper URL queries are set
+	// Check if reply or edit form request URL queries are set
 	if (pageURL.match (/hashover-(reply|edit)=/)) {
+		// If so, get the permalink from form request URL query
 		var permalink = pageURL.replace (/.*?hashover-(edit|reply)=(c[0-9r\-pop]+).*?/, '$2');
 
-		if (!pageURL.match ('hashover-edit=')) {
-			// Check if the comments are collapsed
-			if (hashover.setup['collapses-comments'] !== false) {
-				// If so, show more comments
-				this.showMoreComments (this.instance['more-link'], function () {
-					// Then display and scroll to reply form
-					hashover.replyToComment (permalink);
-					scrollToElement (pageHash);
-				});
-			} else {
-				// If not, display and scroll to reply form
-				this.replyToComment (permalink);
+		// Check if the reply form is requested
+		if (pageURL.match ('hashover-reply=')) {
+			// If so, define a callback to execute after showing comments
+			var callback = function ()
+			{
+				// Open the reply form
+				hashover.replyToComment (permalink);
+
+				// Then scroll to reply form
 				scrollToElement (pageHash);
-			}
-		} else {
-			var isPop = permalink.match ('-pop');
-			var comments = (isPop) ? this.instance.comments.popular : this.instance.comments.primary;
+			};
 
 			// Check if the comments are collapsed
 			if (hashover.setup['collapses-comments'] !== false) {
-				// If so, show more comments
-				this.showMoreComments (this.instance['more-link'], function () {
-					// Then display and scroll to edit form
-					hashover.editComment (hashover.permalinks.getComment (permalink, comments));
-					scrollToElement (pageHash);
-				});
+				// If so, show more comments before executing callback
+				this.showMoreComments (this.instance['more-link'], callback);
 			} else {
-				// If not, display and scroll to edit form
-				this.editComment (this.permalinks.getComment (permalink, comments));
+				// If not, execute callback directly
+				callback ();
+			}
+		} else {
+			// If not, indicate if the comment is popular
+			var isPop = permalink.match ('-pop');
+
+			// Define a callback to execute after showing comments
+			var callback = function ()
+			{
+				// Decide appropriate array to get comment from
+				var comments = hashover.instance.comments[isPop ? 'popular' : 'primary'];
+
+				// Get the comment being edited
+				var edit = hashover.permalinks.getComment (permalink, comments);
+
+				// Open comment edit form
+				hashover.editComment (edit);
+
+				// Then scroll to edit form
 				scrollToElement (pageHash);
+			};
+
+			// Check if the comments are collapsed
+			if (hashover.setup['collapses-comments'] !== false) {
+				// If so, show more comments before executing callback
+				this.showMoreComments (this.instance['more-link'], callback);
+			} else {
+				// If not, execute callback directly
+				callback ();
 			}
 		}
 	}
