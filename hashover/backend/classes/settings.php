@@ -61,13 +61,15 @@ class Settings extends SensitiveSettings
 		// Determine HTTP or HTTPS
 		$protocol = ($this->isHTTPS () ? 'https' : 'http') . '://';
 
+		// Domain name for refer checking & notifications
+		$this->domain = Misc::getArrayItem ($_SERVER, 'HTTP_HOST') ?: 'localhost';
+
 		// Technical settings
 		$this->rootDirectory	= $root_directory;		// Root directory for script
 		$this->httpRoot		= $http_directory;		// Root directory for HTTP
 		$this->httpBackend	= $http_directory . '/backend';	// Backend directory for HTTP
 		$this->httpImages	= $http_directory . '/images';	// Image directory for HTTP
 		$this->cookieExpiration	= time () + 60 * 60 * 24 * 30;	// Cookie expiration date
-		$this->domain		= $_SERVER['HTTP_HOST'];	// Domain name for refer checking & notifications
 		$this->absolutePath	= $protocol . $this->domain;	// Absolute path or remote access
 
 		// Load JSON settings
@@ -85,7 +87,7 @@ class Settings extends SensitiveSettings
 		}
 
 		// Assume the connection is HTTPS on standard SSL port
-		if ($_SERVER['SERVER_PORT'] == 443) {
+		if (Misc::getArrayItem ($_SERVER, 'SERVER_PORT') === 443) {
 			return true;
 		}
 

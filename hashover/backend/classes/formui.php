@@ -43,7 +43,6 @@ class FormUI
 		$this->locale = new Locale ($setup);
 		$this->login = new Login ($setup);
 		$this->avatars = new Avatars ($setup);
-		$this->misc = new Misc ($this->mode);
 		$this->cookies = new Cookies ($setup);
 		$this->commentCounts = $counts;
 		$this->pageTitle = $this->setup->pageTitle;
@@ -91,7 +90,7 @@ class FormUI
 				'input-type' => 'text',
 				'input-name' => 'name',
 				'input-title' => $this->locale->text['name-tip'],
-				'input-value' => $this->misc->makeXSSsafe ($this->login->name)
+				'input-value' => Misc::makeXSSsafe ($this->login->name)
 			),
 
 			'password' => array (
@@ -113,7 +112,7 @@ class FormUI
 				'input-type' => 'email',
 				'input-name' => 'email',
 				'input-title' => $this->locale->text['email-tip'],
-				'input-value' => $this->misc->makeXSSsafe ($this->login->email)
+				'input-value' => Misc::makeXSSsafe ($this->login->email)
 			),
 
 			'website' => array (
@@ -124,7 +123,7 @@ class FormUI
 				'input-type' => 'url',
 				'input-name' => 'website',
 				'input-title' => $this->locale->text['website-tip'],
-				'input-value' => $this->misc->makeXSSsafe ($this->login->website)
+				'input-value' => Misc::makeXSSsafe ($this->login->website)
 			)
 		);
 
@@ -526,10 +525,10 @@ class FormUI
 			// Check if the message is a normal message
 			if ($this->cookies->getValue ('message') !== null) {
 				// If so, get an XSS safe version of the message
-				$message = $this->misc->makeXSSsafe ($this->cookies->getValue ('message'));
+				$message = Misc::makeXSSsafe ($this->cookies->getValue ('message'));
 			} else {
 				// If not, get an XSS safe version of the error message
-				$message = $this->misc->makeXSSsafe ($this->cookies->getValue ('error'));
+				$message = Misc::makeXSSsafe ($this->cookies->getValue ('error'));
 
 				// And set a class to the message element indicating an error
 				$message_container->appendAttribute ('class', 'hashover-message-error');
@@ -576,12 +575,12 @@ class FormUI
 		// Logged in
 		if ($this->login->userIsLoggedIn === true) {
 			if (!empty ($this->login->name)) {
-				$user_name = $this->misc->makeXSSsafe ($this->login->name);
+				$user_name = Misc::makeXSSsafe ($this->login->name);
 			} else {
 				$user_name = $this->setup->defaultName;
 			}
 
-			$user_website = $this->misc->makeXSSsafe ($this->login->website);
+			$user_website = Misc::makeXSSsafe ($this->login->website);
 			$name_class = 'hashover-name-plain';
 			$is_twitter = false;
 
@@ -684,7 +683,7 @@ class FormUI
 		}
 
 		// Get comment text if a comment cookie is set
-		$comment_text = $this->misc->makeXSSsafe ($this->cookies->getValue ('comment'));
+		$comment_text = Misc::makeXSSsafe ($this->cookies->getValue ('comment'));
 
 		// Comment form placeholder text
 		$comment_form = $this->locale->text['comment-form'];
@@ -704,7 +703,7 @@ class FormUI
 			$reply_to_input = new HTMLTag ('input', array (
 				'type' => 'hidden',
 				'name' => 'reply-to',
-				'value' => $this->misc->makeXSSsafe ($replied)
+				'value' => Misc::makeXSSsafe ($replied)
 			), false, true);
 
 			// And add hidden reply to input element to form element

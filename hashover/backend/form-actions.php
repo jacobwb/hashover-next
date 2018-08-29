@@ -102,13 +102,11 @@ try {
 		$parsed = $hashover->commentParser->parse ($comment, $file, $key_parts);
 
 		// Return JSON or JSONP function call
-		echo $hashover->misc->jsonData (array (
+		echo Misc::jsonData (array (
 			'comment' => $parsed,
 			'count' => $hashover->getCommentCount ()
 		));
 	}
 } catch (\Exception $error) {
-	$misc = new Misc ($mode);
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), $mode);
 }

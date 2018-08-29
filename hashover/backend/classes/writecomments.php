@@ -26,7 +26,6 @@ class WriteComments extends Secrets
 	protected $locale;
 	protected $cookies;
 	protected $login;
-	protected $misc;
 	protected $spamCheck;
 	protected $metadata;
 	protected $crypto;
@@ -150,7 +149,6 @@ class WriteComments extends Secrets
 		$this->locale = new Locale ($setup);
 		$this->cookies = new Cookies ($setup);
 		$this->login = new Login ($setup);
-		$this->misc = new Misc ($this->mode);
 		$this->spamCheck = new SpamCheck ($setup);
 		$this->metadata = new Metadata ($setup, $thread);
 		$this->crypto = new Crypto ();
@@ -205,7 +203,7 @@ class WriteComments extends Secrets
 		// Check if request is AJAX
 		if ($this->postData->viaAJAX === true) {
 			// If so, display JSON for JavaScript frontend
-			echo $this->misc->jsonData (array (
+			echo Misc::jsonData (array (
 				'message' => $text,
 				'type' => $message_type
 			));
@@ -631,7 +629,7 @@ class WriteComments extends Secrets
 			// Check if remote IP address exists
 			if (!empty ($_SERVER['REMOTE_ADDR'])) {
 				// If so, get XSS safe IP address
-				$ip = $this->misc->makeXSSsafe ($_SERVER['REMOTE_ADDR']);
+				$ip = Misc::makeXSSsafe ($_SERVER['REMOTE_ADDR']);
 
 				// And set the IP address
 				$this->data['ipaddr'] = $ip;
@@ -791,7 +789,7 @@ class WriteComments extends Secrets
 		$new_comment = $this->locale->text['new-comment'];
 
 		// E-mail hash for Gravatar or empty for default avatar
-		$hash = !empty ($this->data['email_hash']) ? $this->data['email_hash'] : '';
+		$hash = Misc::getArrayItem ($this->data, 'email_hash') ?: '';
 
 		// Add avatar to data
 		$data['avatar'] = $this->avatars->getGravatar ($hash, true, 128);
@@ -831,7 +829,7 @@ class WriteComments extends Secrets
 		// Check if the reply comment read successfully
 		if ($reply !== false) {
 			// If so, decide name of recipient
-			$reply_name = !empty ($reply['name']) ? $reply['name'] : $default_name;
+			$reply_name = Misc::getArrayItem ($reply, 'name') ?: $default_name;
 
 			// Add reply name to data
 			$data['reply-name'] = $reply_name;

@@ -179,7 +179,7 @@ function create_rss (&$hashover)
 		$comment['body'] = preg_replace ('/(<|<\/)code>/iS', '\\1pre>', $comment['body']);
 
 		// Get name from comment or use configured default
-		$name = !empty ($comment['name']) ? $comment['name'] : $hashover->setup->defaultName;
+		$name = Misc::getArrayItem ($comment, 'name') ?: $hashover->setup->defaultName;
 
 		// Create item element
 		$item = $xml->createElement ('item');
@@ -322,6 +322,5 @@ try {
 	create_rss ($hashover);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('rss');
-	$misc->displayError ($error->getMessage ());
+	echo Misc::displayError ($error->getMessage (), 'rss');
 }

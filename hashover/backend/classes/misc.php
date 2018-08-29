@@ -19,10 +19,15 @@
 
 class Misc
 {
-	public $mode;
+	// Allowed JavaScript constructors
+	protected static $objects = array (
+		'HashOver',
+		'HashOverCountLink',
+		'HashOverLatest'
+	);
 
 	// XSS-unsafe characters to search for
-	protected $searchXSS = array (
+	protected static $searchXSS = array (
 		'&',
 		'<',
 		'>',
@@ -33,7 +38,7 @@ class Misc
 	);
 
 	// XSS-safe replacement character entities
-	protected $replaceXSS = array (
+	protected static $replaceXSS = array (
 		'&amp;',
 		'&lt;',
 		'&gt;',
@@ -43,20 +48,8 @@ class Misc
 		'&#92;'
 	);
 
-	// Allowed JavaScript constructors
-	protected $objects = array (
-		'HashOver',
-		'HashOverCountLink',
-		'HashOverLatest'
-	);
-
-	public function __construct ($mode)
-	{
-		$this->mode = $mode;
-	}
-
 	// Return JSON or JSONP function call
-	public function jsonData ($data, $self_error = false)
+	public static function jsonData ($data, $self_error = false)
 	{
 		// Encode JSON data
 		$json = json_encode ($data);
@@ -67,13 +60,13 @@ class Misc
 		}
 
 		// Otherwise, make JSONP callback index XSS safe
-		$index = $this->makeXSSsafe ($_GET['jsonp']);
+		$index = self::makeXSSsafe ($_GET['jsonp']);
 
 		// Make JSONP object constructor name XSS safe
-		$object = $this->makeXSSsafe ($_GET['jsonp_object']);
+		$object = self::makeXSSsafe ($_GET['jsonp_object']);
 
 		// Check if constructor is allowed, if not use default
-		$allowed_object = in_array ($object, $this->objects, true);
+		$allowed_object = in_array ($object, self::$objects, true);
 		$object = $allowed_object ? $object : 'HashOver';
 
 		// Check if the JSONP index contains a numeric value
@@ -89,26 +82,29 @@ class Misc
 		}
 
 		// Otherwise, return an error
-		return $this->jsonData (array (
+		return self::jsonData (array (
 			'message' => 'JSONP index must have a numeric value.',
 			'type' => 'error'
 		), true);
 	}
 
 	// Make a string XSS-safe
-	public function makeXSSsafe ($string)
+	public static function makeXSSsafe ($string)
 	{
 		// Return cookie value without harmful characters
-		return str_replace ($this->searchXSS, $this->replaceXSS, $string);
+		return str_replace (self::$searchXSS, self::$replaceXSS, $string);
 	}
 
 	// Returns error in HTML paragraph
-	public function displayError ($error = 'Something went wrong!')
+	public static function displayError ($error = 'Something went wrong!', $mode = 'php')
 	{
-		$xss_safe = $this->makeXSSsafe ($error);
+		// Initial error message data
 		$data = array ();
 
-		switch ($this->mode) {
+		// Make error message XSS safe
+		$xss_safe = self::makeXSSsafe ($error);
+
+		switch ($mode) {
 			// Minimal JavaScript to display error message on page
 			case 'javascript': {
 				$data[] = 'var hashover = document.getElementById (\'hashover\') || document.body;';
@@ -128,7 +124,7 @@ class Misc
 
 			// JSON to indicate error
 			case 'json': {
-				$data[] = $this->jsonData (array (
+				$data[] = self::jsonData (array (
 					'message' => $error,
 					'type' => 'error'
 				));
@@ -143,6 +139,15 @@ class Misc
 			}
 		}
 
-		echo implode (PHP_EOL, $data);
+		// Convert error message data to string
+		$message = implode (PHP_EOL, $data);
+
+		return $message;
+	}
+
+	// Returns an array item or a given default value
+	public static function getArrayItem (array $data, $key)
+	{
+		return !empty ($data[$key]) ? $data[$key] : false;
 	}
 }

@@ -28,7 +28,5 @@ try {
 		'logout' => $logout->asHTML ("\t\t\t")
 	));
 } catch (\Exception $error) {
-	$misc = new Misc ('php');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage ());
 }

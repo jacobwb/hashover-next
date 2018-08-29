@@ -108,7 +108,7 @@ class CommentParser
 		if ($this->setup->iconMode !== 'none') {
 			if ($this->setup->iconMode === 'image') {
 				// Get MD5 hash for Gravatar
-				$hash = !empty ($comment['email_hash']) ? $comment['email_hash'] : '';
+				$hash = Misc::getArrayItem ($comment, 'email_hash') ?: '';
 				$output['avatar'] = $this->avatars->getGravatar ($hash);
 			} else {
 				$output['avatar'] = end ($key_parts);

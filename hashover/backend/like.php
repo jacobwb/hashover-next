@@ -166,10 +166,8 @@ try {
 	$data = get_json_response ($hashover, $key, $action);
 
 	// Return JSON or JSONP function call
-	echo $hashover->misc->jsonData ($data);
+	echo Misc::jsonData ($data);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('json');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'json');
 }

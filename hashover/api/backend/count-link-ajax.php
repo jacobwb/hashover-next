@@ -67,10 +67,8 @@ try {
 	);
 
 	// Encode JSON data
-	echo $hashover->misc->jsonData ($data);
+	echo Misc::jsonData ($data);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('json');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'json');
 }

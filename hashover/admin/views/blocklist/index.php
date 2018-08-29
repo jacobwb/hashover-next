@@ -65,15 +65,12 @@ try {
 
 	// Create IP address inputs
 	for ($i = 0, $il = max (3, count ($blocklist)); $i < $il; $i++) {
-		// Use IP address from file or blank
-		$address = !empty ($blocklist[$i]) ? $blocklist[$i] : '';
-
 		// Create input tag
 		$input = new HTMLTag ('input', array (
 			'class' => 'addresses',
 			'type' => 'text',
 			'name' => 'addresses[]',
-			'value' => $address,
+			'value' => Misc::getArrayItem ($blocklist, $i) ?: '',
 			'size' => '15',
 			'maxlength' => '15',
 			'placeholder' => '127.0.0.1',
@@ -98,7 +95,5 @@ try {
 	echo $hashover->templater->parseTemplate ('blocklist.html', $template);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('php');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage ());
 }

@@ -32,7 +32,5 @@ try {
 	echo $hashover->templater->parseTemplate ('updates.html', $template);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('php');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage ());
 }

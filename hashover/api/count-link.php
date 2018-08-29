@@ -93,7 +93,5 @@ try {
 	echo $statistics->executionEnd ();
 
 } catch (\Exception $error) {
-	$misc = new Misc ('javascript');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'javascript');
 }

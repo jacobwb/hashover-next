@@ -166,8 +166,7 @@ class Locale
 	public function permissionsInfo ($file)
 	{
 		// PHP user, or www-data
-		$php_user = isset ($_SERVER['USER']) ? $_SERVER['USER'] : '';
-		$php_user = !empty ($php_user) ? $php_user : 'www-data';
+		$php_user = Misc::getArrayItem ($_SERVER, 'USER') ?: 'www-data';
 
 		return sprintf (
 			$this->text['permissions-info'],

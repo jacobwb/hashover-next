@@ -90,16 +90,16 @@ class PHPMode
 			return;
 		}
 
-		$permalink = !empty ($comment['permalink']) ? $comment['permalink'] : '';
+		$permalink = Misc::getArrayItem ($comment, 'permalink') ?: '';
 
 		if ($_GET['hashover-edit'] === $permalink) {
 			$file = $this->fileFromPermalink ($permalink);
 
 			$body = $comment['body'];
 			$body = preg_replace ($this->linkRegex, '\\1', $body);
-			$status = !empty ($comment['status']) ? $comment['status'] : 'approved';
-			$name = !empty ($comment['name']) ? $comment['name'] : '';
-			$website = !empty ($comment['website']) ? $comment['website'] : '';
+			$status = Misc::getArrayItem ($comment, 'status') ?: 'approved';
+			$name = Misc::getArrayItem ($comment, 'name') ?: '';
+			$website = Misc::getArrayItem ($comment, 'website') ?: '';
 			$subscribed = isset ($comment['subscribed']);
 
 			$form = new HTMLTag ('form', array (
@@ -222,7 +222,7 @@ class PHPMode
 		$template['avatar'] = $this->ui->userAvatar ($comment['avatar'], $permalink, $permatext);
 
 		if (!isset ($comment['notice'])) {
-			$name = !empty ($comment['name']) ? $comment['name'] : $this->setup->defaultName;
+			$name = Misc::getArrayItem ($comment, 'name') ?: $this->setup->defaultName;
 			$is_twitter = false;
 
 			// Check if user's name is a Twitter handle
@@ -257,7 +257,7 @@ class PHPMode
 			// Add "Top of Thread" hyperlink to template
 			if ($is_reply === true) {
 				$parent_thread = 'hashover-' . $parent['permalink'];
-				$parent_name = !empty ($parent['name']) ? $parent['name'] : $this->setup->defaultName;
+				$parent_name = Misc::getArrayItem ($parent, 'name') ?: $this->setup->defaultName;
 				$template['parent-link'] = $this->ui->parentThreadLink ($parent_thread, $comment_key, $parent_name);
 			}
 

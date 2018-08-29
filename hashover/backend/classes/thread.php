@@ -210,7 +210,7 @@ class Thread
 				$comments[$i] = $comment;
 
 				// Count deleted status comments
-				if (!empty ($comment['status']) and $comment['status'] === 'deleted') {
+				if (Misc::getArrayItem ($comment, 'status') === 'deleted') {
 					$this->countDeleted ($key);
 				}
 

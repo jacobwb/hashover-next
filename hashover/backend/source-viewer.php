@@ -27,7 +27,7 @@ try {
 	// Check if a file is requested
 	if (isset ($_GET['file'])) {
 		// Get return type
-		$type = !empty ($_GET['type']) ? $_GET['type'] : 'text';
+		$type = Misc::getArrayItem ($_GET, 'type') ?: 'text';
 
 		// Display source code
 		$source_code->display ($_GET['file'], $type);
@@ -69,7 +69,7 @@ try {
 		// Run through HashOver files array
 		foreach ($source_code->files as $file) {
 			$path = $hashover->setup->getHttpPath ($file['path']);
-			$name = !empty ($file['name']) ? $file['name'] : basename ($path);
+			$name = Misc::getArrayItem ($file, 'name') ?: basename ($path);
 			$href = '?file=' . $file['path'];
 
 			// Create row and columns
@@ -115,7 +115,5 @@ try {
 		));
 	}
 } catch (\Exception $error) {
-	$misc = new Misc ('php');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage ());
 }

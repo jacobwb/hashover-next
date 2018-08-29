@@ -27,7 +27,6 @@ class HashOver
 	public $rawComments = array ();
 
 	public $statistics;
-	public $misc;
 	public $setup;
 	public $thread;
 	public $locale;
@@ -56,11 +55,9 @@ class HashOver
 
 		// Instantiate class for reading comments
 		$this->thread = new HashOver\Thread ($this->setup);
-
-		// Instantiate class of miscellaneous functions
-		$this->misc = new HashOver\Misc ($mode);
 	}
 
+	// Returns a localized comment count
 	public function getCommentCount ($locale_key = 'showing-comments')
 	{
 		// Shorter variables
@@ -260,9 +257,6 @@ class HashOver
 			// Count number of reply indention levels
 			$indentions = count ($key_parts);
 
-			// Default status
-			$status = 'approved';
-
 			// Check comment's popularity
 			if ($this->setup->popularityLimit > 0) {
 				$this->checkPopularity ($comment, $key, $key_parts);
@@ -297,9 +291,7 @@ class HashOver
 			}
 
 			// Set status to what's stored in the comment
-			if (!empty ($comment['status'])) {
-				$status = $comment['status'];
-			}
+			$status = HashOver\Misc::getArrayItem ($comment, 'status') ?: 'approved';
 
 			// Switch between different statuses
 			switch ($status) {

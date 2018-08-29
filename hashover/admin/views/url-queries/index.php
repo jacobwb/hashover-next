@@ -78,12 +78,12 @@ try {
 	// Create URL Query Pair inputs
 	for ($i = 0, $il = max (3, count ($ignored_queries)); $i < $il; $i++) {
 		// Use URL query pairs from file or blank
-		$query = !empty ($ignored_queries[$i]) ? $ignored_queries[$i] : '';
+		$query = Misc::getArrayItem ($ignored_queries, $i) ?: '';
 
 		// Split query pair into name and value
 		$query_parts = explode ('=', $query);
 		$query_name = $query_parts[0];
-		$query_value = !empty ($query_parts[1]) ? $query_parts[1] : '';
+		$query_value = Misc::getArrayItem ($query_parts, 1) ?: '';
 
 		// Create input tag
 		$input = new HTMLTag ('div', array (
@@ -128,7 +128,5 @@ try {
 	echo $hashover->templater->parseTemplate ('url-queries.html', $template);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('php');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage ());
 }
