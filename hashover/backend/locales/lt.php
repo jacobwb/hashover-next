@@ -169,6 +169,7 @@ $locale = array (
 
 	'setting-language'			=> 'Kalba',
 	'setting-theme'				=> 'Tema',
+	'setting-default-sorting'		=> 'Numatytoji komentarų rūšiavimo tvarka',
 	'setting-uses-moderation'		=> 'Įprastų vartotojų paskelbtiems komentarai reikalauja moderacijos',
 	'setting-pends-user-edits'		=> 'Norint įprastus naudotojus redaguoti komentarai reikalauja moderacijos',
 	'setting-data-format'			=> 'Komentarų duomenų formatas',

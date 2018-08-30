@@ -1,8 +1,8 @@
 // Sort any given comments (sortcomments.js)
-HashOver.prototype.sortComments = function (method)
+HashOver.prototype.sortComments = function (comments, method)
 {
-	// Initial sorted comments array
-	var sortArray = [];
+	// Sort method or default
+	method = method || this.setup['default-sorting'];
 
 	// Configurable default name
 	var defaultName = this.setup['default-name'];
@@ -83,141 +83,135 @@ HashOver.prototype.sortComments = function (method)
 		// Sort all comments in reverse order
 		case 'descending': {
 			// Get all comments
-			var tmpArray = this.getAllComments (this.instance.comments.primary);
+			var sortArray = this.getAllComments (comments);
 
 			// And return reversed comments
-			sortArray = tmpArray.reverse ();
-
-			break;
+			return sortArray.reverse ();
 		}
 
 		// Sort all comments by date
 		case 'by-date': {
 			// Get all comments
-			var tmpArray = this.getAllComments (this.instance.comments.primary);
+			var sortArray = this.getAllComments (comments);
 
 			// And return comments sorted by date
-			sortArray = tmpArray.sort (sortByDate);
-
-			break;
+			return sortArray.sort (sortByDate);
 		}
 
 		// Sort all comments by net number of likes
 		case 'by-likes': {
 			// Get all comments
-			var tmpArray = this.getAllComments (this.instance.comments.primary);
+			var sortArray = this.getAllComments (comments);
 
 			// And return sorted comments
-			sortArray = tmpArray.sort (function (a, b) {
+			return sortArray.sort (function (a, b) {
 				return netLikes (b) - netLikes (a);
 			});
-
-			break;
 		}
 
 		// Sort all comments by number of replies
 		case 'by-replies': {
 			// Clone the comments
-			var tmpArray = this.cloneObject (this.instance.comments.primary);
+			var sortArray = this.cloneObject (comments);
 
 			// And return comments sorted by number of replies
-			sortArray = tmpArray.sort (function (a, b) {
+			return sortArray.sort (function (a, b) {
 				return replyCounter (b) - replyCounter (a);
 			});
-
-			break;
 		}
 
 		// Sort threads by the sum of replies to its comments
 		case 'by-discussion': {
 			// Clone the comments
-			var tmpArray = this.cloneObject (this.instance.comments.primary);
+			var sortArray = this.cloneObject (comments);
 
 			// And return comments sorted by the sum of each comment's replies
-			sortArray = tmpArray.sort (function (a, b) {
+			return sortArray.sort (function (a, b) {
 				var replyCountA = replySum (a, replyCounter);
 				var replyCountB = replySum (b, replyCounter);
 
 				return replyCountB - replyCountA;
 			});
-
-			break;
 		}
 
 		// Sort threads by the sum of likes to it's comments
 		case 'by-popularity': {
 			// Clone the comments
-			var tmpArray = this.cloneObject (this.instance.comments.primary);
+			var sortArray = this.cloneObject (comments);
 
 			// And return comments sorted by the sum of each comment's net likes
-			sortArray = tmpArray.sort (function (a, b) {
+			return sortArray.sort (function (a, b) {
 				var likeCountA = replySum (a, netLikes);
 				var likeCountB = replySum (b, netLikes);
 
 				return likeCountB - likeCountA;
 			});
-
-			break;
 		}
 
 		// Sort all comments by the commenter names
 		case 'by-name': {
 			// Get all comments
-			var tmpArray = this.getAllComments (this.instance.comments.primary);
+			var sortArray = this.getAllComments (comments);
 
 			// And return comments sorted by the commenter names
-			sortArray = tmpArray.sort (sortByCommenter);
-
-			break;
+			return sortArray.sort (sortByCommenter);
 		}
 
 		// Sort threads in reverse order
 		case 'threaded-descending': {
 			// Clone the comments
-			var tmpArray = this.cloneObject (this.instance.comments.primary);
+			var sortArray = this.cloneObject (comments);
 
 			// And return reversed comments
-			sortArray = tmpArray.reverse ();
-
-			break;
+			return sortArray.reverse ();
 		}
 
 		// Sort threads by date
 		case 'threaded-by-date': {
 			// Clone the comments
-			var tmpArray = this.cloneObject (this.instance.comments.primary);
+			var sortArray = this.cloneObject (comments);
 
 			// And return comments sorted by date
-			sortArray = tmpArray.sort (sortByDate);
-
-			break;
+			return sortArray.sort (sortByDate);
 		}
 
 		// Sort threads by net likes
 		case 'threaded-by-likes': {
 			// Clone the comments
-			var tmpArray = this.cloneObject (this.instance.comments.primary);
+			var sortArray = this.cloneObject (comments);
 
 			// And return comments sorted by the net number of likes
-			sortArray = tmpArray.sort (function (a, b) {
+			return sortArray.sort (function (a, b) {
 				return netLikes (b) - netLikes (a);
 			});
-
-			break;
 		}
 
 		// Sort threads by commenter names
 		case 'threaded-by-name': {
 			// Clone the comments
-			var tmpArray = this.cloneObject (this.instance.comments.primary);
+			var sortArray = this.cloneObject (comments);
 
 			// And return comments sorted by the commenter names
-			sortArray = tmpArray.sort (sortByCommenter);
-
-			break;
+			return sortArray.sort (sortByCommenter);
 		}
 	}
 
+	// By default simply return the comments as-is
+	return comments;
+};
+
+// Sort primary comments (sortcomments.js)
+HashOver.prototype.sortPrimary = function (method)
+{
+	// Sorted comment destination
+	var dest = this.instance['sort-section'];
+
+	// Sort the primary comments
+	var sorted = this.sortComments (this.instance.comments.primary, method);
+
+	// Remove all content at the destination
+	dest.textContent = '';
+
 	// Parse the sorted comments
-	this.parseAll (sortArray, this.instance['sort-section']);
+	this.parseAll (sorted, dest);
 };

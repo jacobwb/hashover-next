@@ -160,6 +160,7 @@ $locale = array (
 
 	'setting-language'			=> '言語',
 	'setting-theme'				=> 'テーマ',
+	'setting-default-sorting'		=> 'デフォルトのコメント並べ替え順',
 	'setting-uses-moderation'		=> '普通のユーザーが投稿したコメントは管理が必要です',
 	'setting-pends-user-edits'		=> '通常のユーザーが編集したコメントは管理が必要です',
 	'setting-data-format'			=> 'コメントデータフォーマット',

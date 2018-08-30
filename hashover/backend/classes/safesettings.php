@@ -36,6 +36,7 @@ class SafeSettings
 	public $allowsDislikes		= false;			// Whether a "Dislike" link is displayed; allowing Reddit-style voting
 	public $usesAjax		= true;				// Whether AJAX is used for posting, editing, and loading comments
 	public $collapsesInterface	= false;			// Whether the comment form, thread, and end links are all initially hidden
+	public $defaultSorting		= 'ascending';			// Default way comments are sorted
 	public $collapsesComments	= true;				// Whether to hide comments and display a link to show them
 	public $collapseLimit		= 3;				// Number of comments that aren't hidden
 	public $replyMode		= 'thread';			// Whether to display replies as a 'thread' or as a 'stream'

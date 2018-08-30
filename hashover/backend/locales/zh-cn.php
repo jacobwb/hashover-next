@@ -160,6 +160,7 @@ $locale = array (
 
 	'setting-language'			=> '语言',
 	'setting-theme'				=> '主题',
+	'setting-default-sorting'		=> '默认评论排序顺序',
 	'setting-uses-moderation'		=> '普通用户发布的评论需要审核',
 	'setting-pends-user-edits'		=> '普通用户编辑的评论需要审核',
 	'setting-data-format'			=> '评论数据格式',

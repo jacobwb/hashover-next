@@ -18,7 +18,7 @@
 
 
 // Generates an array of various settings information
-function ui_array (Setup $setup)
+function ui_array (Setup $setup, Locale $locale)
 {
 	// Theme names
 	$themes = array ();
@@ -62,6 +62,28 @@ function ui_array (Setup $setup)
 			'type' => 'select',
 			'value' => $setup->theme,
 			'options' => $themes
+		),
+		'default-sorting' => array (
+			'type' => 'select',
+			'value' => $setup->defaultSorting,
+
+			'options' => array (
+				'ascending'	=> $locale->text['sort-ascending'],
+				'descending'	=> $locale->text['sort-descending'],
+				'by-date'	=> $locale->text['sort-by-date'],
+				'by-likes'	=> $locale->text['sort-by-likes'],
+				'by-replies'	=> $locale->text['sort-by-replies'],
+				'by-name'	=> $locale->text['sort-by-name'],
+
+				'sort-threads' => array (
+					'threaded-descending'	=> $locale->text['sort-descending'],
+					'threaded-by-date'	=> $locale->text['sort-by-date'],
+					'threaded-by-likes'	=> $locale->text['sort-by-likes'],
+					'by-popularity'		=> $locale->text['sort-by-popularity'],
+					'by-discussion'		=> $locale->text['sort-by-discussion'],
+					'threaded-by-name'	=> $locale->text['sort-by-name']
+				)
+			)
 		),
 		'uses-moderation' => array (
 			'type' => 'checkbox',
@@ -341,7 +363,7 @@ try {
 	require (realpath ('../view-setup.php'));
 
 	// Get array of UI elements to create
-	$ui = ui_array ($hashover->setup);
+	$ui = ui_array ($hashover->setup, $hashover->locale);
 
 	// Check if the form has been submitted
 	if (isset ($_POST['save'])) {

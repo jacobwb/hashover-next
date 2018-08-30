@@ -160,6 +160,7 @@ $locale = array (
 
 	'setting-language'			=> 'Dil',
 	'setting-theme'				=> 'Tema',
+	'setting-default-sorting'		=> 'Varsayılan yorum sıralama sırası',
 	'setting-uses-moderation'		=> 'Normal kullanıcılar tarafından gönderilen yorumlar ılımlılık gerektirir',
 	'setting-pends-user-edits'		=> 'Normal kullanıcılar tarafından düzenlendi yorumlar ılımlılık gerektirir',
 	'setting-data-format'			=> 'Yorum veri formatı',

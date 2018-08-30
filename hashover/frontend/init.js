@@ -134,8 +134,16 @@ HashOver.prototype.init = function ()
 		}
 	});
 
-	// Add initial event handlers
-	this.parseAll (this.instance.comments.primary, sortSection, this.setup['collapses-comments']);
+	// Initial comments
+	var comments = this.instance.comments.primary;
+
+	// Sort the initial comments if they weren't sorted on the backend
+	if (this.setup['collapses-comments'] === false || this.setup['uses-ajax'] === false) {
+		comments = this.sortComments (comments);
+	}
+
+	// Parse all of the initial comments
+	this.parseAll (comments, sortSection, this.setup['collapses-comments']);
 
 	// Create uncollapse UI hyperlink if enabled
 	this.optionalMethod ('uncollapseInterfaceLink');
@@ -180,13 +188,11 @@ HashOver.prototype.init = function ()
 
 				// And uncollapse the comments before sorting
 				hashover.showMoreComments (sortSelectDiv, function () {
-					hashover.instance['sort-section'].textContent = '';
-					hashover.sortComments (sortSelect.value);
+					hashover.sortPrimary (sortSelect.value);
 				}, false);
 			} else {
-				// If not, sort the comments normally
-				hashover.instance['sort-section'].textContent = '';
-				hashover.sortComments (sortSelect.value);
+				// If not, sort comments immediately
+				hashover.sortPrimary (sortSelect.value);
 			}
 		};
 	});

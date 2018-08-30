@@ -927,6 +927,11 @@ class FormUI
 						'innerHTML' => $html
 					), false);
 
+					// Set option as selected if its the configured default
+					if ($value === $this->setup->defaultSorting) {
+						$option->createAttribute ('selected', 'selected');
+					}
+
 					// Add sort option element to sort dropdown menu
 					$sort_select->appendChild ($option);
 				}
@@ -961,6 +966,11 @@ class FormUI
 						'value' => $value,
 						'innerHTML' => $html
 					), false);
+
+					// Set option as selected if its the configured default
+					if ($value === $this->setup->defaultSorting) {
+						$option->createAttribute ('selected', 'selected');
+					}
 
 					// Add sort option element to threaded option group
 					$threaded_optgroup->appendChild ($option);

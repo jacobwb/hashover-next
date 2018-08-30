@@ -160,6 +160,7 @@ $locale = array (
 
 	'setting-language'			=> '언어',
 	'setting-theme'				=> '테마',
+	'setting-default-sorting'		=> '기본 댓글 정렬 순서',
 	'setting-uses-moderation'		=> '최종 사용자가 게시 한 댓글의는 검토가 필요합니다',
 	'setting-pends-user-edits'		=> '일반 사용자가 편집 한 댓글에는 검토가 필요합니다',
 	'setting-data-format'			=> '설명 데이터 형식',

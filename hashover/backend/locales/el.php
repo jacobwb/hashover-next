@@ -160,6 +160,7 @@ $locale = array (
 
 	'setting-language'			=> 'Γλώσσα',
 	'setting-theme'				=> 'Θέμα',
+	'setting-default-sorting'		=> 'Προκαθορισμένη σειρά ταξινόμησης σχολίων',
 	'setting-uses-moderation'		=> 'Τα σχόλια από απλούς χρήστες απαιτούν έγκριση',
 	'setting-pends-user-edits'		=> 'Τα επεξεργασμένα σχόλια από απλούς χρήστες απαιτούν έγκριση',
 	'setting-data-format'			=> 'Τύπος δεδομένων σχολίων',

@@ -160,6 +160,7 @@ $locale = array (
 
 	'setting-language'			=> 'زبان',
 	'setting-theme'				=> 'تم',
+	'setting-default-sorting'		=> 'نظم مرتب سازی پیشفرض پیش فرض',
 	'setting-uses-moderation'		=> 'نظرات ارسال شده توسط کاربران عادی نیاز به نظارت دارند',
 	'setting-pends-user-edits'		=> 'نظرات ویرایش شده توسط کاربران عادی نیاز به نظارت دارند',
 	'setting-data-format'			=> 'فرمت داده اظهار نظر',

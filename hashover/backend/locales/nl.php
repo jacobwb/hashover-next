@@ -160,6 +160,7 @@ $locale = array (
 
 	'setting-language'			=> 'Taal',
 	'setting-theme'				=> 'Thema',
+	'setting-default-sorting'		=> 'Standaard sorteervolgorde voor reacties',
 	'setting-uses-moderation'		=> 'Opmerkingen geplaatst door normale gebruikers vereisen moderatie',
 	'setting-pends-user-edits'		=> 'Opmerkingen bewerkt door normale gebruikers vereisen moderatie',
 	'setting-data-format'			=> 'Gegevensindeling van de gegevens',

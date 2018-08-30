@@ -48,6 +48,17 @@ try {
 	// Page, setup, and comment data array
 	$data = array ();
 
+	// Check if backend sorting and collapsing is enabled
+	if ($hashover->setup->collapsesComments === true
+	    and $hashover->setup->usesAjax === true)
+	{
+		// If so, sort the comments first
+		$hashover->sortPrimary ();
+
+		// Then collapse the comments
+		$hashover->collapseComments ();
+	}
+
 	// Check if we're preparing HashOver
 	if ($hashover->setup->getRequest ('prepare') !== false) {
 		// Set/update default page metadata
@@ -93,6 +104,7 @@ try {
 		$data['setup'] = array (
 			'server-eol'		=> PHP_EOL,
 			'collapse-limit'	=> $hashover->setup->collapseLimit,
+			'default-sorting'	=> $hashover->setup->defaultSorting,
 			'default-name'		=> $hashover->setup->defaultName,
 			'user-is-logged-in'	=> $hashover->login->userIsLoggedIn,
 			'user-is-admin'		=> $hashover->login->userIsAdmin,
