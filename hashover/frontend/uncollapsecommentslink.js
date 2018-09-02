@@ -1,6 +1,9 @@
 // Creates the "Show X Other Comments" button (uncollapsecommentslink.js)
 HashOver.prototype.uncollapseCommentsLink = function ()
 {
+	// Reference to this object
+	var hashover = this;
+
 	// Check whether there are more than the collapse limit
 	if (this.instance['total-count'] > this.setup['collapse-limit']) {
 		// If so, create "More Comments" hyperlink

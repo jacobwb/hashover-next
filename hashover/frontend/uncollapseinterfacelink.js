@@ -1,6 +1,9 @@
 // Creates the interface uncollapse button (uncollapseinterfacelink.js)
 HashOver.prototype.uncollapseInterfaceLink = function ()
 {
+	// Reference to this object
+	var hashover = this;
+
 	// Main element
 	var main = this.instance['main-element'];
 

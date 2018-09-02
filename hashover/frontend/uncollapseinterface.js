@@ -1,6 +1,9 @@
 // Uncollapses the user interface (uncollapseinterface.js)
 HashOver.prototype.uncollapseInterface = function (callback)
 {
+	// Reference to this object
+	var hashover = this;
+
 	// Elements to unhide
 	var uncollapseIDs = [ 'form-section', 'comments-section', 'end-links' ];
 
