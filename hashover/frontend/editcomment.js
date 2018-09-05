@@ -74,20 +74,22 @@ HashOver.prototype.editComment = function (comment)
 		}
 	});
 
-	// Displays onClick confirmation dialog for comment deletion
-	this.elements.get ('edit-delete-' + permalink, true).onclick = function ()
-	{
-		return confirm (hashover.locale['delete-comment']);
-	};
+	// Get delete button
+	var editDelete = this.elements.get('edit-delete-' + permalink, true);
 
-	// Change "Edit" link to "Cancel" link
-	this.cancelSwitcher ('edit', link, placeholder, permalink);
-
-	// Attach event listeners to "Save Edit" button
+	// Get "Save Edit" button
 	var saveEdit = this.elements.get ('edit-post-' + permalink, true);
 
 	// Get the element of comment being replied to
 	var destination = this.elements.get (permalink, true);
+
+	// Change "Edit" link to "Cancel" link
+	this.cancelSwitcher ('edit', link, placeholder, permalink);
+
+	// Displays confirmation dialog for comment deletion
+	editDelete.onclick = function () {
+		return confirm (hashover.locale['delete-comment']);
+	};
 
 	// Attach click event to formatting revealer hyperlink
 	this.formattingOnclick ('edit', permalink);

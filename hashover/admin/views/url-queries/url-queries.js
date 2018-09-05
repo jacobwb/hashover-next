@@ -29,8 +29,7 @@ document.addEventListener ('DOMContentLoaded', function () {
 	};
 
 	// Disable the "Save" button when clicked
-	saveButton.onclick = function ()
-	{
+	saveButton.onclick = function () {
 		this.disabled = true;
 	};
 }, false);

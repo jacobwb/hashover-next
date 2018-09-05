@@ -1,25 +1,32 @@
 // Attach click event to formatting revealer hyperlinks (formattingonclick.js)
 HashOver.prototype.formattingOnclick = function (type, permalink)
 {
-	permalink = (permalink !== undefined) ? '-' + permalink : '';
+	// Prepend dash to permalink if present
+	permalink = permalink ? '-' + permalink : '';
 
 	// Reference to this object
 	var hashover = this;
 
-	// Get formatting message elements
-	var formattingID = type + '-formatting';
-	var formatting = this.elements.get (formattingID + permalink, true);
-	var formattingMessage = this.elements.get (formattingID + '-message' + permalink, true);
+	// Get "Formatting" hyperlink element
+	var link = this.elements.get (type + '-formatting' + permalink, true);
+
+	// Get formatting message element
+	var message = this.elements.get (type + '-formatting-message' + permalink, true);
 
 	// Attach click event to formatting revealer hyperlink
-	formatting.onclick = function ()
+	link.onclick = function ()
 	{
-		if (hashover.classes.contains (formattingMessage, 'hashover-message-open')) {
-			hashover.messages.close (formattingMessage);
+		// Check if message is open
+		if (hashover.classes.contains (message, 'hashover-message-open')) {
+			// If so, close it
+			hashover.messages.close (message);
+
+			// And do nothing else
 			return false;
 		}
 
-		hashover.messages.open (formattingMessage);
+		// Otherwise, open it
+		hashover.messages.open (message);
 		return false;
 	}
 };

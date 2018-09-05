@@ -27,9 +27,11 @@ HashOver.prototype.replyToComment = function (permalink)
 	// Prevent input submission
 	this.preventSubmit (form);
 
-	// Add form to page
+	// Get form by its permalink ID
 	var replyForm = this.elements.get ('placeholder-reply-form-' + permalink, true);
-	    replyForm.appendChild (form);
+
+	// Add form to page
+	replyForm.appendChild (form);
 
 	// Change "Reply" link to "Cancel" link
 	this.cancelSwitcher ('reply', link, replyForm, permalink);

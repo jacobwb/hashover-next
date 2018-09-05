@@ -57,6 +57,6 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 	this.addControls (json.comment);
 
 	// Update comment count
-	this.elements.get ('count').textContent = json.count;
+	this.elements.get('count').textContent = json.count;
 	this.incrementCounts (isReply);
 };

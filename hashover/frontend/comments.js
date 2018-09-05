@@ -1,29 +1,44 @@
 // Collection of comment parsing functions (comments.js)
 HashOverConstructor.prototype.comments = {
-	collapseLimit: 0,
-	codeOpenRegex: /<code>/i,
-	codeTagRegex: /(<code>)([\s\S]*?)(<\/code>)/ig,
-	preOpenRegex: /<pre>/i,
-	preTagRegex: /(<pre>)([\s\S]*?)(<\/pre>)/ig,
-	lineRegex: /(?:\r\n|\r|\n)/g,
-	codeTagMarkerRegex: /CODE_TAG\[([0-9]+)\]/g,
-	preTagMarkerRegex: /PRE_TAG\[([0-9]+)\]/g,
+	// URL replacement for automatic hyperlinks
+	linksReplace: '<a href="$1" rel="noopener noreferrer" target="_blank">$1</a>',
 
-	// Tags that will have their innerHTML trimmed
-	trimTagRegexes: {
-		blockquote: {
-			test: /<blockquote>/,
-			replace: /(<blockquote>)([\s\S]*?)(<\/blockquote>)/ig
+	// Various regular expressions
+	rx: {
+		// Matches various line ending styles
+		lines: /(?:\r\n|\r|\n)/g,
+
+		// For <code> tags
+		code: {
+			// Matches <code> opening
+			open: /<code>/i,
+
+			// Replacement for code tag processing
+			replace: /(<code>)([\s\S]*?)(<\/code>)/ig,
+
+			// Matches code tag markers
+			marker: /CODE_TAG\[([0-9]+)\]/g
 		},
 
-		ul: {
-			test: /<ul>/,
-			replace: /(<ul>)([\s\S]*?)(<\/ul>)/ig
+		// For <pre> tags
+		pre: {
+			// Matches <pre> opening
+			open: /<pre>/i,
+
+			// Replacement for pre tag processing
+			replace: /(<pre>)([\s\S]*?)(<\/pre>)/ig,
+
+			// Matches pre tag markers
+			marker: /PRE_TAG\[([0-9]+)\]/g
 		},
 
-		ol: {
-			test: /<ol>/,
-			replace: /(<ol>)([\s\S]*?)(<\/ol>)/ig
+		// Tags that will have their inner HTML trimmed
+		trimTags: {
+			// Matches blockquote/ul/ol tags openings
+			open: /<(blockquote|ul|ol)>/,
+
+			// Replacement for blockquote/ul/ol trimming
+			replace: /(<(blockquote|ul|ol)>)([\s\S]*?)(<\/\2>)/ig
 		}
 	},
 
@@ -49,15 +64,7 @@ HashOverConstructor.prototype.comments = {
 		var replies = '';
 
 		// Text for avatar image alt attribute
-		var permatext = commentKey.slice (1);
-		    permatext = permatext.split ('r');
-		    permatext = permatext.pop ();
-
-		// Trims whitespace from an HTML tag's inner HTML
-		function tagTrimmer (fullTag, openTag, innerHTML, closeTag)
-		{
-			return openTag + hashover.EOLTrim (innerHTML) + closeTag;
-		}
+		var permatext = commentKey.slice(1).split('r').pop();
 
 		// Check if this comment is a popular comment
 		if (popular === true) {
@@ -91,22 +98,34 @@ HashOverConstructor.prototype.comments = {
 		}
 
 		// Add avatar image to template
-		template.avatar = hashover.strings.parseTemplate (hashover.ui['user-avatar'], {
-			src: comment.avatar,
-			href: permalink,
-			text: permatext
-		});
+		template.avatar = hashover.strings.parseTemplate (
+			hashover.ui['user-avatar'], {
+				src: comment.avatar,
+				href: permalink,
+				text: permatext
+			}
+		);
 
+		// Check if comment is not a notice
 		if (comment.notice === undefined) {
+			// If so, define commenter name
 			var name = comment.name || hashover.setup['default-name'];
+
+			// Initial website
 			var website = comment.website;
-			var isTwitter = false;
+
+			// Name is Twitter handle indicator
+			var isTwitter = (name.charAt (0) === '@');
 
 			// Check if user's name is a Twitter handle
-			if (name.charAt (0) === '@') {
+			if (isTwitter === true) {
+				// If so, remove the leading "@" character
 				name = name.slice (1);
+
+				// Set Twitter name class
 				nameClass = 'hashover-name-twitter';
-				isTwitter = true;
+
+				// Get the name length
 				var nameLength = name.length;
 
 				// Check if Twitter handle is valid length
@@ -120,43 +139,55 @@ HashOverConstructor.prototype.comments = {
 
 			// Check whether user gave a website
 			if (website !== undefined) {
+				// If so, set normal website class where appropriate
 				if (isTwitter === false) {
 					nameClass = 'hashover-name-website';
 				}
 
-				// If so, display name as a hyperlink
-				var nameElement = hashover.strings.parseTemplate (hashover.ui['name-link'], {
-					href: website,
-					permalink: commentKey,
-					name: name
-				});
+				// And set name as a hyperlink
+				var nameElement = hashover.strings.parseTemplate (
+					hashover.ui['name-link'], {
+						href: website,
+						permalink: commentKey,
+						name: name
+					}
+				);
 			} else {
-				// If not, display name as plain text
-				var nameElement = hashover.strings.parseTemplate (hashover.ui['name-span'], {
-					permalink: commentKey,
-					name: name
-				});
+				// If not, set name as plain text
+				var nameElement = hashover.strings.parseTemplate (
+					hashover.ui['name-span'], {
+						permalink: commentKey,
+						name: name
+					}
+				);
 			}
 
 			// Construct thread link
 			if ((comment.url && comment.title) !== undefined) {
-				template['thread-link'] = hashover.strings.parseTemplate (hashover.ui['thread-link'], {
-					url: comment.url,
-					title: comment.title
-				});
+				template['thread-link'] = hashover.strings.parseTemplate (
+					hashover.ui['thread-link'], {
+						url: comment.url,
+						title: comment.title
+					}
+				);
 			}
 
-			// Construct parent thread hyperlink
+			// Check if comment has a parent
 			if (parent !== null) {
+				// If so, create the parent thread permalink
 				var parentThread = 'hashover-' + parent.permalink;
+
+				// Get the parent's name
 				var parentName = parent.name || hashover.setup['default-name'];
 
 				// Add thread parent hyperlink to template
-				template['parent-link'] = hashover.strings.parseTemplate (hashover.ui['parent-link'], {
-					parent: parentThread,
-					permalink: commentKey,
-					name: parentName
-				});
+				template['parent-link'] = hashover.strings.parseTemplate (
+					hashover.ui['parent-link'], {
+						parent: parentThread,
+						permalink: commentKey,
+						name: parentName
+					}
+				);
 			}
 
 			// Check if the logged in user owns the comment
@@ -183,10 +214,12 @@ HashOverConstructor.prototype.comments = {
 			// Check if the comment is editable for the user
 			if (comment['editable'] !== undefined) {
 				// If so, add "Edit" hyperlink to template
-				template['edit-link'] = hashover.strings.parseTemplate (hashover.ui['edit-link'], {
-					href: comment.url || hashover.instance['file-path'],
-					permalink: commentKey
-				});
+				template['edit-link'] = hashover.strings.parseTemplate (
+					hashover.ui['edit-link'], {
+						href: comment.url || hashover.instance['file-path'],
+						permalink: commentKey
+					}
+				);
 			}
 
 			// Add like link and count to template if likes are enabled
@@ -204,10 +237,12 @@ HashOverConstructor.prototype.comments = {
 			}
 
 			// Add name HTML to template
-			template.name = hashover.strings.parseTemplate (hashover.ui['name-wrapper'], {
-				class: nameClass,
-				link: nameElement
-			});
+			template.name = hashover.strings.parseTemplate (
+				hashover.ui['name-wrapper'], {
+					class: nameClass,
+					link: nameElement
+				}
+			);
 
 			// Check if user timezones is enabled
 			if (hashover.setup['uses-user-timezone'] !== false) {
@@ -240,19 +275,23 @@ HashOverConstructor.prototype.comments = {
 			}
 
 			// Add date from comment as permalink hyperlink to template
-			template.date = hashover.strings.parseTemplate (hashover.ui['date-link'], {
-				href: comment.url || hashover.instance['file-path'],
-				permalink: permalink,
-				date: commentDate
-			});
+			template.date = hashover.strings.parseTemplate (
+				hashover.ui['date-link'], {
+					href: comment.url || hashover.instance['file-path'],
+					permalink: permalink,
+					date: commentDate
+				}
+			);
 
 			// Add "Reply" hyperlink to template
-			template['reply-link'] = hashover.strings.parseTemplate (hashover.ui['reply-link'], {
-				href: comment.url || hashover.instance['file-path'],
-				permalink: commentKey,
-				class: replyClass,
-				title: replyTitle
-			});
+			template['reply-link'] = hashover.strings.parseTemplate (
+				hashover.ui['reply-link'], {
+					href: comment.url || hashover.instance['file-path'],
+					permalink: commentKey,
+					class: replyClass,
+					title: replyTitle
+				}
+			);
 
 			// Add reply count to template
 			if (comment.replies !== undefined) {
@@ -268,7 +307,7 @@ HashOverConstructor.prototype.comments = {
 			}
 
 			// Add HTML anchor tag to URLs
-			var body = comment.body.replace (hashover.regex.links, '<a href="$1" rel="noopener noreferrer" target="_blank">$1</a>');
+			var body = comment.body.replace (hashover.regex.links, this.linksReplace);
 
 			// Replace [img] tags with external image placeholder if enabled
 			body = body.replace (hashover.regex.imageTags, function (fullURL, url) {
@@ -286,63 +325,85 @@ HashOverConstructor.prototype.comments = {
 				body = hashover.markdown.parse (body);
 			}
 
-			// Check for code tags
-			if (this.codeOpenRegex.test (body) === true) {
-				// Replace code tags with marker text
-				body = body.replace (this.codeTagRegex, function (fullTag, openTag, innerHTML, closeTag) {
-					var codeMarker = openTag + 'CODE_TAG[' + codeTagCount + ']' + closeTag;
+			// Check if there are code tags in the comment
+			if (this.rx.code.open.test (body) === true) {
+				// If so, define regular expression callback
+				var codeReplacer = function (fullTag, open, html, close) {
+					// Create code marker
+					var codeMarker = open + 'CODE_TAG[' + codeTagCount + ']' + close;
 
-					codeTags[codeTagCount] = hashover.EOLTrim (innerHTML);
+					// Store original HTML for later re-injection
+					codeTags[codeTagCount] = hashover.EOLTrim (html);
+
+					// Increase code tag count
 					codeTagCount++;
 
+					// Return code tag marker
 					return codeMarker;
-				});
+				};
+
+				// And replace code tags with marker text
+				body = body.replace (this.rx.code.replace, codeReplacer);
 			}
 
-			// Check for pre tags
-			if (this.preOpenRegex.test (body) === true) {
-				// Replace pre tags with marker text
-				body = body.replace (this.preTagRegex, function (fullTag, openTag, innerHTML, closeTag) {
-					var preMarker = openTag + 'PRE_TAG[' + preTagCount + ']' + closeTag;
+			// Check if there are pre tags in the comment
+			if (this.rx.pre.open.test (body) === true) {
+				// If so, define regular expression callback
+				var preReplacer = function (fullTag, open, html, close) {
+					// Create pre marker
+					var preMarker = open + 'PRE_TAG[' + preTagCount + ']' + close;
 
-					preTags[preTagCount] = hashover.EOLTrim (innerHTML);
+					// Store original HTML for later re-injection
+					preTags[preTagCount] = hashover.EOLTrim (html);
+
+					// Increase pre tag count
 					preTagCount++;
 
+					// Return pre tag marker
 					return preMarker;
-				});
+				};
+
+				// Replace pre tags with marker text
+				body = body.replace (this.rx.pre.replace, preReplacer);
 			}
 
-			// Check for various multi-line tags
-			for (var trimTag in this.trimTagRegexes) {
-				if (this.trimTagRegexes.hasOwnProperty (trimTag) === true
-				    && this.trimTagRegexes[trimTag]['test'].test (body) === true)
-				{
-					// Trim whitespace
-					body = body.replace (this.trimTagRegexes[trimTag]['replace'], tagTrimmer);
-				}
+			// Check if comment has whitespace to be trimmed
+			if (this.rx.trimTags.open.test (body) === true) {
+				// If so, define a regular expression callback
+				var tagTrimmer = function (fullTag, open, name, html, close) {
+					return open + hashover.EOLTrim (html) + close;
+				};
+
+				// And trim whitespace from comment
+				body = body.replace (this.rx.trimTags.replace, tagTrimmer);
 			}
 
 			// Break comment into paragraphs
 			var paragraphs = body.split (hashover.regex.paragraphs);
+
+			// Initial paragraph'd comment
 			var pdComment = '';
 
-			// Wrap comment in paragraph tag
-			// Replace single line breaks with break tags
+			// Run through paragraphs
 			for (var i = 0, il = paragraphs.length; i < il; i++) {
-				pdComment += '<p>' + paragraphs[i].replace (this.lineRegex, '<br>') + '</p>' + hashover.setup['server-eol'];
+				// Replace single line breaks with break tags
+				var lines = paragraphs[i].replace (this.rx.lines, '<br>');
+
+				// Wrap comment in paragraph tags
+				pdComment += '<p>' + lines + '</p>' + hashover.setup['server-eol'];
 			}
 
 			// Replace code tag markers with original code tag HTML
 			if (codeTagCount > 0) {
-				pdComment = pdComment.replace (this.codeTagMarkerRegex, function (marker, number) {
-					return codeTags[number];
+				pdComment = pdComment.replace (this.rx.code.marker, function (m, i) {
+					return codeTags[i];
 				});
 			}
 
 			// Replace pre tag markers with original pre tag HTML
 			if (preTagCount > 0) {
-				pdComment = pdComment.replace (this.preTagMarkerRegex, function (marker, number) {
-					return preTags[number];
+				pdComment = pdComment.replace (this.rx.pre.marker, function (m, i) {
+					return preTags[i];
 				});
 			}
 
@@ -356,10 +417,12 @@ HashOverConstructor.prototype.comments = {
 			template.comment = comment.notice;
 
 			// Add name HTML to template
-			template.name = hashover.strings.parseTemplate (hashover.ui['name-wrapper'], {
-				class: nameClass,
-				link: comment.title
-			});
+			template.name = hashover.strings.parseTemplate (
+				hashover.ui['name-wrapper'], {
+					class: nameClass,
+					link: comment.title
+				}
+			);
 		}
 
 		// Comment HTML template
@@ -373,11 +436,13 @@ HashOverConstructor.prototype.comments = {
 		}
 
 		// Wrap comment HTML
-		var wrapper = hashover.strings.parseTemplate (hashover.ui['comment-wrapper'], {
-			permalink: permalink,
-			class: classes,
-			html: html + replies
-		});
+		var wrapper = hashover.strings.parseTemplate (
+			hashover.ui['comment-wrapper'], {
+				permalink: permalink,
+				class: classes,
+				html: html + replies
+			}
+		);
 
 		return wrapper;
 	}

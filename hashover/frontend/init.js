@@ -79,7 +79,7 @@ HashOver.prototype.init = function ()
 		}
 
 		// Open the message element if there's a message
-		if (hashover.elements.get ('message').textContent !== '') {
+		if (hashover.elements.get('message').textContent !== '') {
 			hashover.messages.show ();
 		}
 	}
@@ -165,8 +165,9 @@ HashOver.prototype.init = function ()
 
 	// Check if login is enabled
 	if (this.setup['allows-login'] !== false) {
-		// Attach event listeners to "Login" button
+		// If so, check if user is logged in
 		if (this.setup['user-is-logged-in'] !== true) {
+			// If so, get the login button
 			var loginButton = this.elements.get ('login-button');
 
 			// Set onclick and onsubmit event handlers

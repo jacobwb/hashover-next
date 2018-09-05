@@ -18,7 +18,7 @@ HashOver.prototype.hideMoreLink = function (callback)
 		moreLink.parentNode.removeChild (moreLink);
 
 		// Show comment count and sort options
-		hashover.elements.get ('count-wrapper').style.display = '';
+		hashover.elements.get('count-wrapper').style.display = '';
 
 		// Show popular comments section
 		hashover.elements.exists ('popular-section', function (popularSection) {

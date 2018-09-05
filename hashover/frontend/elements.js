@@ -5,6 +5,7 @@ HashOverConstructor.prototype.elements = {
 	// Shorthand for Document.getElementById ()
 	get: function (id, force, prefix)
 	{
+		// Append pseudo-namespace prefix unless told not to
 		id = (prefix !== false) ? 'hashover-' + id : id;
 
 		if (force === true || !this.cache[id]) {
@@ -15,9 +16,13 @@ HashOverConstructor.prototype.elements = {
 	},
 
 	// Execute callback function if element isn't false
-	exists: function (element, callback, prefix)
+	exists: function (id, callback, prefix)
 	{
-		if (element = this.get (element, true, prefix)) {
+		// Attempt to get element
+		var element = this.get (id, true, prefix);
+
+		// Execute callback if element exists
+		if (element !== null) {
 			return callback (element);
 		}
 
@@ -27,11 +32,14 @@ HashOverConstructor.prototype.elements = {
 	// Adds properties to an element
 	addProperties: function (element, properties)
 	{
-		element = element || document.createElement ('span');
-		properties = properties || {};
+		// Do nothing if no element or properties were given
+		if (!element || !properties || properties.constructor !== Object) {
+			return element;
+		}
 
 		// Add each property to element
 		for (var property in properties) {
+			// Do nothing if property was inherited
 			if (properties.hasOwnProperty (property) === false) {
 				continue;
 			}
@@ -52,16 +60,18 @@ HashOverConstructor.prototype.elements = {
 	},
 
 	// Creates an element with attributes
-	create: function (tagName, attributes)
+	create: function (name, attr)
 	{
 		tagName = tagName || 'span';
 		attributes = attributes || {};
 
 		// Create element
-		var element = document.createElement (tagName);
+		var element = document.createElement (name || 'span');
 
 		// Add properties to element
-		element = this.addProperties (element, attributes);
+		if (attr && attr.constructor === Object) {
+			element = this.addProperties (element, attr);
+		}
 
 		return element;
 	},
@@ -69,6 +79,7 @@ HashOverConstructor.prototype.elements = {
 	// Adds duplicate event listeners to an element
 	duplicateProperties: function (element, names, value)
 	{
+		// Initial properties
 		var properties = {};
 
 		// Construct a properties object with duplicate values
@@ -77,7 +88,9 @@ HashOverConstructor.prototype.elements = {
 		}
 
 		// Add the properties to the object
-		return this.addProperties (element, properties);
+		element = this.addProperties (element, properties);
+
+		return element;
 	},
 
 	// Execute a callback for each element with a specific class
