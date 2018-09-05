@@ -25,14 +25,32 @@
 // Initial loader constructor (loader-constructor.js)
 function HashOver (options)
 {
-	// Create comments script
-	var ui = document.createElement ('script');
+	// Check if the frontend is ready
+	if (HashOver.frontendReady === true) {
+		// Call frontend constructor
+		this.frontendConstructor (options);
 
-	// This script
-	var script = HashOver.script;
+		// And do nothing else
+		return;
+	}
 
-	// Comments script path
+	// Do nothing is frontend is loading
+	if (HashOver.frontendReady === 'loading') {
+		return;
+	}
+
+	// Otherwise, create frontend script
+	var frontend = document.createElement ('script');
+
+	// Frontend script path
 	var path = HashOver.rootPath + '/comments.php';
+
+	// Some elements around this script
+	var parent = HashOver.script.parentNode;
+	var sibling = HashOver.script.nextSibling;
+
+	// Store this instance as constructor property
+	HashOver.loaderInstance = this;
 
 	// Check if the options are an object
 	if (options && options.constructor === Object) {
@@ -43,17 +61,23 @@ function HashOver (options)
 			);
 		}
 
-		// And store options globally for later use
-		window.hashoverOptions = options;
+		// And store the options
+		HashOver.loaderOptions = options;
 	}
 
 	// Set HashOver script attributes
-	ui.async = true;
-	ui.src = path;
+	frontend.async = true;
+	frontend.src = path;
 
 	// Add script to page
-	script.parentNode.insertBefore (ui, script.nextSibling);
+	parent.insertBefore (frontend, sibling);
+
+	// And set frontend as loading
+	HashOver.frontendReady = 'loading';
 };
+
+// Set frontend as not ready (loader-constructor.js)
+HashOver.frontendReady = false;
 
 // Constructor to add methods to
 var HashOverConstructor = HashOver;

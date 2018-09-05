@@ -22,8 +22,22 @@
 
 "use strict";
 
-// Initial constructor; overrides loader constructor (constructor.js)
-function HashOver (options)
+// Initial constructor or use loader constructor (constructor.js)
+var HashOver = HashOver || function () {
+	this.frontendConstructor.apply (this, arguments);
+};
+
+// Set frontend as ready (constructor.js)
+HashOver.frontendReady = true;
+
+// Indicator that backend information has been received (constructor.js)
+HashOver.backendReady = false;
+
+// Initial HashOver instance count (constructor.js)
+HashOver.instanceCount = 0;
+
+// Constructor code stored separately for loader
+HashOver.prototype.frontendConstructor = function (options)
 {
 	// Reference to this object
 	var hashover = this;
@@ -32,16 +46,7 @@ function HashOver (options)
 	HashOver.onReady (function () {
 		hashover.createThread (options);
 	});
-}
-
-// Store options passed to loader
-HashOver.loaderOptions = window.hashoverOptions;
-
-// Indicator that backend information has been received (constructor.js)
-HashOver.backendReady = false;
-
-// Initial HashOver instance count (constructor.js)
-HashOver.instanceCount = 0;
+};
 
 // Constructor to add HashOver methods to
 var HashOverConstructor = HashOver;
