@@ -91,10 +91,10 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 		sendRequest ();
 	}
 
-	// Re-enable button after 20 seconds
+	// Re-enable button after 10 seconds
 	setTimeout (function () {
 		button.disabled = false;
-	}, 20000);
+	}, 10000);
 
 	return false;
 };

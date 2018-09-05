@@ -12,17 +12,17 @@ HashOver.prototype.postComment = function (destination, form, button, callback, 
 	// Disable button
 	setTimeout (function () {
 		button.disabled = true;
-	}, 500);
+	}, 250);
 
 	// Post by sending an AJAX request if enabled
 	if (this.postRequest) {
 		return this.postRequest.apply (this, arguments);
 	}
 
-	// Re-enable button after 20 seconds
+	// Re-enable button after 10 seconds
 	setTimeout (function () {
 		button.disabled = false;
-	}, 20000);
+	}, 10000);
 
 	return true;
 };
