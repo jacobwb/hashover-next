@@ -1,25 +1,22 @@
 // Collection of convenient element functions (elements.js)
 HashOverConstructor.prototype.elements = {
-	cache: {},
-
 	// Shorthand for Document.getElementById ()
-	get: function (id, force, prefix)
+	get: function (id, asIs)
 	{
 		// Append pseudo-namespace prefix unless told not to
-		id = (prefix !== false) ? 'hashover-' + id : id;
+		id = (asIs === true) ? id : 'hashover-' + id;
 
-		if (force === true || !this.cache[id]) {
-			this.cache[id] = document.getElementById (id);
-		}
+		// Attempt to get the element by its ID
+		var element = document.getElementById (id);
 
-		return this.cache[id];
+		return element;
 	},
 
 	// Execute callback function if element isn't false
-	exists: function (id, callback, prefix)
+	exists: function (id, callback, asIs)
 	{
 		// Attempt to get element
-		var element = this.get (id, true, prefix);
+		var element = this.get (id, asIs);
 
 		// Execute callback if element exists
 		if (element !== null) {
@@ -62,9 +59,6 @@ HashOverConstructor.prototype.elements = {
 	// Creates an element with attributes
 	create: function (name, attr)
 	{
-		tagName = tagName || 'span';
-		attributes = attributes || {};
-
 		// Create element
 		var element = document.createElement (name || 'span');
 

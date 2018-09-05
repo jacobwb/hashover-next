@@ -54,7 +54,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 				var parentThread = permalink.replace (hashover.regex.thread, '$1');
 
 				// Get the parent comment element
-				var scrollToElement = hashover.elements.get (parentThread, true);
+				var scrollToElement = hashover.elements.get (parentThread);
 
 				// Scroll to the parent comment
 				scrollToElement.scrollIntoView ({ behavior: 'smooth' });

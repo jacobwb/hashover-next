@@ -32,7 +32,7 @@ HashOver.prototype.cancelSwitcher = function (form, link, wrapper, permalink)
 	if (this.setup['uses-cancel-buttons'] !== false) {
 		// If so, get "Cancel" button
 		var cancelButtonId = form + '-cancel-' + permalink;
-		var cancelButton = this.elements.get (cancelButtonId, true);
+		var cancelButton = this.elements.get (cancelButtonId);
 
 		// Attach event listeners to "Cancel" button
 		cancelButton.onclick = linkOnClick;

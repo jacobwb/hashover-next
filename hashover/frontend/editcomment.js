@@ -23,10 +23,10 @@ HashOver.prototype.editComment = function (comment)
 	var body = comment.body.replace (this.regex.links, '$1');
 
 	// Get edit form placeholder
-	var placeholder = this.elements.get ('placeholder-edit-form-' + permalink, true);
+	var placeholder = this.elements.get ('placeholder-edit-form-' + permalink);
 
 	// Get edit link element
-	var link = this.elements.get ('edit-link-' + permalink, true);
+	var link = this.elements.get ('edit-link-' + permalink);
 
 	// Create edit form element
 	var form = this.elements.create ('form', {
@@ -75,13 +75,13 @@ HashOver.prototype.editComment = function (comment)
 	});
 
 	// Get delete button
-	var editDelete = this.elements.get('edit-delete-' + permalink, true);
+	var editDelete = this.elements.get('edit-delete-' + permalink);
 
 	// Get "Save Edit" button
-	var saveEdit = this.elements.get ('edit-post-' + permalink, true);
+	var saveEdit = this.elements.get ('edit-post-' + permalink);
 
 	// Get the element of comment being replied to
-	var destination = this.elements.get (permalink, true);
+	var destination = this.elements.get (permalink);
 
 	// Change "Edit" link to "Cancel" link
 	this.cancelSwitcher ('edit', link, placeholder, permalink);

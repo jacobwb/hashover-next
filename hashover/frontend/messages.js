@@ -128,17 +128,17 @@ HashOver.prototype.messages = {
 		// Decide which message element to use
 		if (isEdit === true) {
 			// An edit form message
-			var container = this.parent.elements.get ('edit-message-container-' + permalink, true);
-			var message = this.parent.elements.get ('edit-message-' + permalink, true);
+			var container = this.parent.elements.get ('edit-message-container-' + permalink);
+			var message = this.parent.elements.get ('edit-message-' + permalink);
 		} else {
 			if (isReply !== true) {
 				// The primary comment form message
-				var container = this.parent.elements.get ('message-container', true);
-				var message = this.parent.elements.get ('message', true);
+				var container = this.parent.elements.get ('message-container');
+				var message = this.parent.elements.get ('message');
 			} else {
 				// Of a reply form message
-				var container = this.parent.elements.get ('reply-message-container-' + permalink, true);
-				var message = this.parent.elements.get ('reply-message-' + permalink, true);
+				var container = this.parent.elements.get ('reply-message-container-' + permalink);
+				var message = this.parent.elements.get ('reply-message-' + permalink);
 			}
 		}
 

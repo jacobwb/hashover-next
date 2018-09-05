@@ -5,7 +5,7 @@ HashOver.prototype.replyToComment = function (permalink)
 	var hashover = this;
 
 	// Get reply link element
-	var link = this.elements.get ('reply-link-' + permalink, true);
+	var link = this.elements.get ('reply-link-' + permalink);
 
 	// Get file
 	var file = this.permalinks.getFile (permalink);
@@ -28,7 +28,7 @@ HashOver.prototype.replyToComment = function (permalink)
 	this.preventSubmit (form);
 
 	// Get form by its permalink ID
-	var replyForm = this.elements.get ('placeholder-reply-form-' + permalink, true);
+	var replyForm = this.elements.get ('placeholder-reply-form-' + permalink);
 
 	// Add form to page
 	replyForm.appendChild (form);
@@ -37,10 +37,10 @@ HashOver.prototype.replyToComment = function (permalink)
 	this.cancelSwitcher ('reply', link, replyForm, permalink);
 
 	// Attach event listeners to "Post Reply" button
-	var postReply = this.elements.get ('reply-post-' + permalink, true);
+	var postReply = this.elements.get ('reply-post-' + permalink);
 
 	// Get the element of comment being replied to
-	var destination = this.elements.get (permalink, true);
+	var destination = this.elements.get (permalink);
 
 	// Attach click event to formatting revealer hyperlink
 	this.formattingOnclick ('reply', permalink);
