@@ -28,7 +28,7 @@ HashOver.prototype.hideMoreLink = function (callback)
 		// Callback to remove specific class names
 		var classRemover = function (element, elements, i, className) {
 			hashover.classes.remove (element, className);
-		}
+		};
 
 		// Remove hidden comment class from comments
 		hashover.elements.eachClass (sortSection, 'hashover-hidden', classRemover);

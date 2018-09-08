@@ -39,5 +39,5 @@ function HashOverCountLink ()
 	}
 };
 
-// Constructor to add HashOver methods to
+// Constructor to add shared methods to (constructor.js)
 var HashOverConstructor = HashOverCountLink;

@@ -95,7 +95,7 @@ class Setup extends Settings
 		// Comment threads directory path
 		$this->pagesDirectory = $this->commentsDirectory . '/threads';
 
-		// Throw exception if the script wasn't requested by this server
+		// Throw exception if script wasn't requested by this server
 		if ($this->usage['mode'] !== 'php') {
 			if ($this->refererCheck () === false) {
 				throw new \Exception ('External use not allowed.');
@@ -112,16 +112,19 @@ class Setup extends Settings
 		}
 	}
 
+	// Throws an exception if a require extension isn't loaded
 	public function extensionsLoaded (array $extensions)
 	{
-		// Throw exceptions if an extension isn't loaded
+		// Run through given extensions
 		foreach ($extensions as $extension) {
+			// Throw exception if extension isn't loaded
 			if (extension_loaded ($extension) === false) {
 				throw new \Exception ('Failed to detect required extension: ' . $extension . '.');
 			}
 		}
 	}
 
+	// Gets value from POST or GET data
 	public function getRequest ($key, $default = false)
 	{
 		// Return default value if POST and GET are empty
@@ -165,6 +168,7 @@ class Setup extends Settings
 		return $url['host'];
 	}
 
+	// Enables and sets up remote access
 	protected function setupRemoteAccess ()
 	{
 		$this->remoteAccess = true;
@@ -172,6 +176,7 @@ class Setup extends Settings
 		$this->syncSettings ();
 	}
 
+	// Checks remote request against allowed domains setting
 	protected function refererCheck ()
 	{
 		// Setup remote access in API usage context
@@ -188,7 +193,7 @@ class Setup extends Settings
 		// Get HTTP referer domain with port
 		$domain = $this->getDomainWithPort ($_SERVER['HTTP_REFERER']);
 
-		// Check if the script was requested by this server
+		// Check if script was requested by this server
 		if ($domain === $this->domain) {
 			return true;
 		}
@@ -200,7 +205,7 @@ class Setup extends Settings
 			$domain_regex = preg_replace ($sub_regex, '(?:.*?\.)*', $safe_domain);
 			$domain_regex = '/^' . $domain_regex . '$/iS';
 
-			// Check if the script was requested from an allowed domain
+			// Check if script was requested from an allowed domain
 			if (preg_match ($domain_regex, $domain)) {
 				// If so, setup remote access
 				$this->setupRemoteAccess ();
@@ -211,6 +216,7 @@ class Setup extends Settings
 		return false;
 	}
 
+	// Gets current page URL
 	protected function getPageURL ()
 	{
 		// Attempt to obtain URL via GET or POST
@@ -230,6 +236,7 @@ class Setup extends Settings
 		throw new \Exception ('Failed to obtain page URL.');
 	}
 
+	// Sanitizes given data for HTML use
 	protected function sanitizeData ($data = '')
 	{
 		// Strip HTML tags from data
@@ -241,6 +248,7 @@ class Setup extends Settings
 		return $data;
 	}
 
+	// Gets sanitized data from POST or GET data
 	protected function requestData ($data = '', $default = false)
 	{
 		// Attempt to obtain data via GET or POST
@@ -254,9 +262,10 @@ class Setup extends Settings
 		return $request;
 	}
 
+	// Sets comment thread to read comments from
 	public function setThreadName ($name = '')
 	{
-		// Request the thread if told to
+		// Request thread if told to
 		if ($name === 'request') {
 			$name = $this->requestData ('thread', $this->threadName);
 		}
@@ -277,6 +286,7 @@ class Setup extends Settings
 		$this->threadName = $name;
 	}
 
+	// Gets configured URL queries to be ignored
 	protected function getIgnoredQueries ()
 	{
 		// Ignored URL queries list file
@@ -303,6 +313,7 @@ class Setup extends Settings
 		return $queries;
 	}
 
+	// Sets page URL
 	public function setPageURL ($url = '')
 	{
 		// Set page URL
@@ -331,22 +342,34 @@ class Setup extends Settings
 			$this->filePath = $url_parts['path'];
 		}
 
-		// Remove unwanted URL queries
+		// Check if URL has queries
 		if (!empty ($url_parts['query'])) {
+			// If so, split queries by ampersand
 			$url_queries = explode ('&', $url_parts['query']);
+
+			// Get configured queries to be ignored
 			$ignored_queries = $this->getIgnoredQueries ();
 
+			// Run through queries
 			for ($q = 0, $ql = count ($url_queries); $q < $ql; $q++) {
-				if (!in_array ($url_queries[$q], $ignored_queries, true)) {
-					$equals = explode ('=', $url_queries[$q]);
+				// Skip configured name=value queries to be ignored
+				if (in_array ($url_queries[$q], $ignored_queries, true)) {
+					continue;
+				}
 
-					if (!in_array ($equals[0], $ignored_queries, true)) {
-						$this->URLQueryList[] = $url_queries[$q];
-					}
+				// Split current query by equals sign
+				$equals = explode ('=', $url_queries[$q]);
+
+				// And add query if its name is not to be ignored
+				if (!in_array ($equals[0], $ignored_queries, true)) {
+					$this->URLQueryList[] = $url_queries[$q];
 				}
 			}
 
+			// Store a string version of queries
 			$this->URLQueries = implode ('&', $this->URLQueryList);
+
+			// And add queries to thread name
 			$this->threadName .= '-' . $this->URLQueries;
 		}
 
@@ -378,9 +401,10 @@ class Setup extends Settings
 		$this->setThreadName ($this->threadName);
 	}
 
+	// Sets page title
 	public function setPageTitle ($title = '')
 	{
-		// Requesting the title if told to
+		// Request title if told to
 		if ($title === 'request') {
 			$title = $this->requestData ('title', '');
 		}

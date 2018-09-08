@@ -28,12 +28,14 @@ HashOver.prototype.comments.addRatings = function (comment, template, action, co
 		}
 
 		// Add like/dislike link to HTML template
-		template[action + '-link'] = hashover.strings.parseTemplate (hashover.ui[action + '-link'], {
-			permalink: commentKey,
-			class: className,
-			title: title,
-			text: text
-		});
+		template[action + '-link'] = hashover.strings.parseTemplate (
+			hashover.ui[action + '-link'], {
+				permalink: commentKey,
+				class: className,
+				title: title,
+				text: text
+			}
+		);
 	}
 
 	// Check if the comment has been likes/dislikes
@@ -47,8 +49,10 @@ HashOver.prototype.comments.addRatings = function (comment, template, action, co
 	}
 
 	// Add like count to HTML template
-	template[action + '-count'] = hashover.strings.parseTemplate (hashover.ui[action + '-count'], {
-		permalink: commentKey,
-		text: count || ''
-	});
+	template[action + '-count'] = hashover.strings.parseTemplate (
+		hashover.ui[action + '-count'], {
+			permalink: commentKey,
+			text: count || ''
+		}
+	);
 };

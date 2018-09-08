@@ -86,6 +86,25 @@ class CommentsUI extends FormUI
 		return $name_link->asHTML ();
 	}
 
+	// Creates hyperlink with URL queries to link reference
+	protected function queryLink ($href = false, array $queries = array ())
+	{
+		// Create hyperlink with relative local or absolute remote path
+		$link = new HTMLTag ('a', array (
+			'href' => $href ?: $this->setup->filePath
+		), false);
+
+		// Merge given URL queries with existing page URL queries
+		$queries = array_merge ($this->setup->URLQueryList, $queries);
+
+		// Add URL queries to link path
+		if (!empty ($queries)) {
+			$link->appendAttribute ('href', '?' . implode ('&', $queries), false);
+		}
+
+		return $link;
+	}
+
 	// Creates "Top of Thread" hyperlink element
 	public function parentThreadLink ($parent = '{parent}', $permalink = '{permalink}', $name = '{name}')
 	{
@@ -105,25 +124,6 @@ class CommentsUI extends FormUI
 		), false);
 
 		return $thread_link->asHTML ();
-	}
-
-	// Creates hyperlink with URL queries to link reference
-	protected function queryLink ($href = false, array $queries = array ())
-	{
-		// Create hyperlink with relative local or absolute remote path
-		$link = new HTMLTag ('a', array (
-			'href' => $href ?: $this->setup->filePath
-		), false);
-
-		// Merge given URL queries with existing page URL queries
-		$queries = array_merge ($this->setup->URLQueryList, $queries);
-
-		// Add URL queries to link path
-		if (!empty ($queries)) {
-			$link->appendAttribute ('href', '?' . implode ('&', $queries), false);
-		}
-
-		return $link;
 	}
 
 	// Creates date/permalink hyperlink element
@@ -177,8 +177,13 @@ class CommentsUI extends FormUI
 	// Creates a form control hyperlink element
 	public function formLink ($href, $type, $permalink = '{permalink}', $class = '{class}', $title = '{title}')
 	{
+		// Form ID for hyperlinks
 		$form = 'hashover-' . $type;
+
+		// Create hyperlink element
 		$link = $this->queryLink ($href, array ($form . '=' . $permalink));
+
+		// "Reply to Comment" or "Edit Comment" locale key
 		$title_locale = ($type === 'reply') ? 'reply-to-comment' : 'edit-your-comment';
 
 		// Create more attributes
@@ -266,8 +271,13 @@ class CommentsUI extends FormUI
 
 	public function cancelButton ($type, $permalink)
 	{
+		// Create hyperlink element
 		$cancel_button = $this->queryLink ($this->setup->filePath);
+
+		// Cancel button class
 		$class = 'hashover-' . $type . '-cancel';
+
+		// "Cancel" locale string
 		$cancel_locale = $this->locale->text['cancel'];
 
 		// Add ID attribute with JavaScript variable single quote break out

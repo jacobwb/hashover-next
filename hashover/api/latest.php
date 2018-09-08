@@ -66,6 +66,9 @@ try {
 	// Register element creation methods
 	$javascript->registerFile ('elements.js');
 
+	// Register classList polyfill methods
+	$javascript->registerFile ('classes.js');
+
 	// Register main HashOver element getter method
 	$javascript->registerFile ('getmainelement.js');
 
@@ -111,9 +114,6 @@ try {
 			'openembeddedimage.js'
 		)
 	));
-
-	// Register classList polyfill methods
-	$javascript->registerFile ('classes.js');
 
 	// Register theme stylesheet appender method
 	$javascript->registerFile ('appendcss.js', array (

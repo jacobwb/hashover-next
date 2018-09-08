@@ -55,7 +55,7 @@ function HashOver (options)
 	// Check if the options are an object
 	if (options && options.constructor === Object) {
 		// If so, add settings object to request if they exist
-		if (options.settings.constructor === Object) {
+		if (options.settings && options.settings.constructor === Object) {
 			path += '?settings=' + encodeURIComponent (
 				JSON.stringify (options.settings)
 			);
@@ -79,5 +79,5 @@ function HashOver (options)
 // Set frontend as not ready (loader-constructor.js)
 HashOver.frontendReady = false;
 
-// Constructor to add methods to
+// Constructor to add methods to (loader-constructor.js)
 var HashOverConstructor = HashOver;

@@ -4,18 +4,17 @@ HashOverLatest.prototype.addControls = function (json, popular)
 	// Reference to this object
 	var hashover = this;
 
-	// Get permalink from JSON object
-	var permalink = json.permalink;
-
 	// Set onclick functions for external images
 	if (this.setup['allows-images'] !== false) {
+		// Main element
+		var main = this.instance['main-element'];
+
 		// Get embedded image elements
-		var embeddedImgs = document.getElementsByClassName ('hashover-embedded-image');
+		var embeds = main.getElementsByClassName ('hashover-embedded-image');
 
 		// Run through each embedded image element
-		for (var i = 0, il = embeddedImgs.length; i < il; i++) {
-			embeddedImgs[i].onclick = function ()
-			{
+		for (var i = 0, il = embeds.length; i < il; i++) {
+			embeds[i].onclick = function () {
 				hashover.openEmbeddedImage (this);
 			};
 		}

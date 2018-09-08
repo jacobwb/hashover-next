@@ -30,12 +30,8 @@ conditions, unless such conditions are required by law.
 	z-index: 3;
 }
 
-#hashover-form {
-	border: none;
-}
-
-.hashover #hashover-requiredFields,
 .hashover .hashover-hidden,
+.hashover #hashover-requiredFields,
 .hashover .hashover-notice > .hashover-balloon > .hashover-footer,
 .hashover .hashover-first .hashover-balloon,
 .hashover .hashover-first .hashover-avatar:before,
@@ -83,6 +79,10 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-reply .hashover-header,
 .hashover .hashover-form-footer {
 	border: 1px solid #AAAAAA;
+}
+
+#hashover-form {
+	border: none;
 }
 
 .hashover .hashover-dashed-title {
@@ -1159,17 +1159,17 @@ conditions, unless such conditions are required by law.
 }
 
 @media only screen and (max-width: 640px) {
-	#hashover .hashover-formatting-table {
+	.hashover .hashover-formatting-table {
 		padding: 12px 12px 0px 12px;
 	}
 
-	#hashover .hashover-formatting-table > * {
+	.hashover .hashover-formatting-table > * {
 		display: table-row;
 		width: 100%;
 		border-bottom: 1px solid #AAAAAA;
 	}
 
-	#hashover .hashover-formatting-table p {
+	.hashover .hashover-formatting-table p {
 		margin-bottom: 12px;
 	}
 }

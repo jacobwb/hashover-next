@@ -46,5 +46,10 @@ HashOver.getBackendQueries = function (options)
 		}
 	}
 
+	// Set request backend information for the first instance
+	if (HashOver.backendReady !== true) {
+		queries.push ('prepare=true');
+	}
+
 	return queries;
 };

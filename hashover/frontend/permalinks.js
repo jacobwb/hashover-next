@@ -3,7 +3,10 @@ HashOverConstructor.prototype.permalinks = {
 	// Returns the permalink of a comment's parent
 	getParent: function (permalink, flatten)
 	{
+		// Split permalink by reply 'r'
 		var parent = permalink.split ('r');
+
+		// Number of replies
 		var length = parent.length - 1;
 
 		// Limit depth if in stream mode

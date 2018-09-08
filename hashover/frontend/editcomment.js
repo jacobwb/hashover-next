@@ -37,13 +37,15 @@ HashOver.prototype.editComment = function (comment)
 	});
 
 	// Place edit form fields into form
-	form.innerHTML = hashover.strings.parseTemplate (hashover.ui['edit-form'], {
-		permalink: permalink,
-		file: file,
-		name: name,
-		website: website,
-		body: body
-	});
+	form.innerHTML = hashover.strings.parseTemplate (
+		hashover.ui['edit-form'], {
+			permalink: permalink,
+			file: file,
+			name: name,
+			website: website,
+			body: body
+		}
+	);
 
 	// Prevent input submission
 	this.preventSubmit (form);

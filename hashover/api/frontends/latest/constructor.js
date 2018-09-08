@@ -28,11 +28,12 @@ function HashOverLatest (options)
 	// Reference to this HashOver object
 	var hashover = this;
 
-	// Backend queries
+	// Initial backend queries
+	var queries = [];
+
+	// Add thread to queries if present
 	if (options && options.thread !== undefined) {
-		var queries = ['thread=' + encodeURIComponent (options.thread)];
-	} else {
-		var queries = [];
+		queries.push ('thread=' + encodeURIComponent (options.thread));
 	}
 
 	// Backend request path
@@ -75,5 +76,5 @@ function HashOverLatest (options)
 	}
 };
 
-// Constructor to add HashOver methods to
+// Constructor to add shared methods to (constructor.js)
 var HashOverConstructor = HashOverLatest;

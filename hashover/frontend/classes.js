@@ -1,59 +1,61 @@
 // Collection of element class related functions (classes.js)
 HashOverConstructor.prototype.classes = new (function () {
-	// Check whether browser has classList support
+	// If browser supports classList define wrapper functions
 	if (document.documentElement.classList) {
-		// If so, wrap relevant functions
-		// classList.contains () method
-		this.contains = function (element, className)
-		{
-			return element.classList.contains (className);
+		// classList.contains method
+		this.contains = function (element, name) {
+			return element.classList.contains (name);
 		};
 
-		// classList.add () method
-		this.add = function (element, className)
-		{
-			element.classList.add (className);
+		// classList.add method
+		this.add = function (element, name) {
+			element.classList.add (name);
 		};
 
-		// classList.remove () method
-		this.remove = function (element, className)
-		{
-			element.classList.remove (className);
-		};
-	} else {
-		// If not, define fallback functions
-		// classList.contains () method
-		this.contains = function (element, className)
-		{
-			if (!element || !element.className) {
-				return false;
-			}
-
-			var regex = new RegExp ('(^|\\s)' + className + '(\\s|$)');
-			return regex.test (element.className);
+		// classList.remove method
+		this.remove = function (element, name) {
+			element.classList.remove (name);
 		};
 
-		// classList.add () method
-		this.add = function (element, className)
-		{
-			if (!element) {
-				return false;
-			}
-
-			if (!this.contains (element, className)) {
-				element.className += (element.className ? ' ' : '') + className;
-			}
-		};
-
-		// classList.remove () method
-		this.remove = function (element, className)
-		{
-			if (!element || !element.className) {
-				return false;
-			}
-
-			var regex = new RegExp ('(^|\\s)' + className + '(\\s|$)', 'g');
-			element.className = element.className.replace (regex, '$2');
-		};
+		// And do nothing else
+		return;
 	}
+
+	// Otherwise, define reasonable classList.contains fallback
+	this.contains = function (element, name)
+	{
+		// Check if element exists with classes
+		if (element && element.className) {
+			// If so, compile regular expression for class
+			var rx = new RegExp ('(^|\\s)' + name + '(\\s|$)');
+
+			// Test class attribute for class name
+			return rx.test (element.className);
+		}
+
+		// Otherwise, return false
+		return false;
+	};
+
+	// Define reasonable classList.add fallback
+	this.add = function (element, name)
+	{
+		// Append class if element doesn't already contain the class
+		if (element && !this.contains (element, name)) {
+			element.className += (element.className ? ' ' : '') + name;
+		}
+	};
+
+	// Define reasonable classList.remove fallback
+	this.remove = function (element, name)
+	{
+		// Check if element exists with classes
+		if (element && element.className) {
+			// If so, compile regular expression for class
+			var rx = new RegExp ('(^|\\s)' + name + '(\\s|$)', 'g');
+
+			// Remove class from class attribute
+			element.className = element.className.replace (rx, '$2');
+		}
+	};
 }) ();

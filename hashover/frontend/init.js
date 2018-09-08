@@ -34,7 +34,7 @@ HashOver.prototype.init = function ()
 		if (hashover.setup['collapses-comments'] !== false) {
 			// Check if comment exists on the page
 			var linkedHidden = hashover.elements.exists (pageHash, function (comment) {
-				// Check if the comment is visable
+				// Check if the comment is visible
 				if (hashover.classes.contains (comment, 'hashover-hidden') === false) {
 					// If so, scroll to the comment
 					scrollToElement (pageHash);
@@ -46,9 +46,8 @@ HashOver.prototype.init = function ()
 
 			// Check if the linked comment is hidden
 			if (linkedHidden === false) {
-				// If not, show more comments
+				// If not, scroll to comment after showing more comments
 				hashover.showMoreComments (hashover.instance['more-link'], function () {
-					// Then scroll to comment
 					scrollToElement (pageHash);
 				});
 			}

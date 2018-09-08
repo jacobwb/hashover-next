@@ -70,61 +70,56 @@ class FormUI
 		$this->defaultLoginInputs = $this->loginInputs ();
 	}
 
-	// Re-encode a URL
-	protected function safeURLEncode ($url)
-	{
-		return urlencode (urldecode ($url));
-	}
-
 	// Creates input elements for user login information
 	protected function loginInputs ($permalink = '', $edit_form = false, $name = '', $website = '')
 	{
+		// Prepend dash to permalink if present
 		$permalink = !empty ($permalink) ? '-' . $permalink : '';
 
 		// Login input attribute information
 		$login_input_attributes = array (
 			'name' => array (
-				'wrapper-class' => 'hashover-name-input',
-				'label-class' => 'hashover-name-label',
-				'placeholder' => $this->locale->text['name'],
-				'input-id' => 'hashover-main-name' . $permalink,
-				'input-type' => 'text',
-				'input-name' => 'name',
-				'input-title' => $this->locale->text['name-tip'],
-				'input-value' => Misc::makeXSSsafe ($this->login->name)
+				'wrapper-class'		=> 'hashover-name-input',
+				'label-class'		=> 'hashover-name-label',
+				'placeholder'		=> $this->locale->text['name'],
+				'input-id'		=> 'hashover-main-name' . $permalink,
+				'input-type'		=> 'text',
+				'input-name'		=> 'name',
+				'input-title'		=> $this->locale->text['name-tip'],
+				'input-value'		=> Misc::makeXSSsafe ($this->login->name)
 			),
 
 			'password' => array (
-				'wrapper-class' => 'hashover-password-input',
-				'label-class' => 'hashover-password-label',
-				'placeholder' => $this->locale->text['password'],
-				'input-id' => 'hashover-main-password' . $permalink,
-				'input-type' => 'password',
-				'input-name' => 'password',
-				'input-title' => $this->locale->text['password-tip'],
-				'input-value' => ''
+				'wrapper-class'		=> 'hashover-password-input',
+				'label-class'		=> 'hashover-password-label',
+				'placeholder'		=> $this->locale->text['password'],
+				'input-id'		=> 'hashover-main-password' . $permalink,
+				'input-type'		=> 'password',
+				'input-name'		=> 'password',
+				'input-title'		=> $this->locale->text['password-tip'],
+				'input-value'		=> ''
 			),
 
 			'email' => array (
-				'wrapper-class' => 'hashover-email-input',
-				'label-class' => 'hashover-email-label',
-				'placeholder' => $this->locale->text['email'],
-				'input-id' => 'hashover-main-email' . $permalink,
-				'input-type' => 'email',
-				'input-name' => 'email',
-				'input-title' => $this->locale->text['email-tip'],
-				'input-value' => Misc::makeXSSsafe ($this->login->email)
+				'wrapper-class'		=> 'hashover-email-input',
+				'label-class'		=> 'hashover-email-label',
+				'placeholder'		=> $this->locale->text['email'],
+				'input-id'		=> 'hashover-main-email' . $permalink,
+				'input-type'		=> 'email',
+				'input-name'		=> 'email',
+				'input-title'		=> $this->locale->text['email-tip'],
+				'input-value'		=> Misc::makeXSSsafe ($this->login->email)
 			),
 
 			'website' => array (
-				'wrapper-class' => 'hashover-website-input',
-				'label-class' => 'hashover-website-label',
-				'placeholder' => $this->locale->text['website'],
-				'input-id' => 'hashover-main-website' . $permalink,
-				'input-type' => 'url',
-				'input-name' => 'website',
-				'input-title' => $this->locale->text['website-tip'],
-				'input-value' => Misc::makeXSSsafe ($this->login->website)
+				'wrapper-class'		=> 'hashover-website-input',
+				'label-class'		=> 'hashover-website-label',
+				'placeholder'		=> $this->locale->text['website'],
+				'input-id'		=> 'hashover-main-website' . $permalink,
+				'input-type'		=> 'url',
+				'input-name'		=> 'website',
+				'input-title'		=> $this->locale->text['website-tip'],
+				'input-value'		=> Misc::makeXSSsafe ($this->login->website)
 			)
 		);
 
@@ -256,7 +251,7 @@ class FormUI
 			$subscribe->appendAttribute ('id', '-' . $id, false);
 		}
 
-		// Check checkbox
+		// Tick the checkbox
 		if ($checked === true) {
 			$subscribe->createAttribute ('checked', 'true');
 		}
@@ -286,7 +281,10 @@ class FormUI
 
 	protected function commentForm (HTMLTag $form, $type, $placeholder, $text, $permalink = '')
 	{
+		// Prepend dash to permalink if present
 		$permalink = !empty ($permalink) ? '-' . $permalink : '';
+
+		// Form title locale key
 		$title_locale = ($type === 'reply') ? 'reply-form' : 'comment-form';
 
 		// Create textarea
@@ -424,7 +422,10 @@ class FormUI
 
 	protected function acceptedFormatting ($type, $permalink = '')
 	{
+		// Prepend dash to permalink if present
 		$permalink = !empty ($permalink) ? '-' . $permalink : '';
+
+		// "Formatting" hyperlink locale
 		$accepted_format = $this->locale->text['comment-formatting'];
 
 		// Create accepted HTML message revealer hyperlink
@@ -437,6 +438,12 @@ class FormUI
 
 		// Return the hyperlink
 		return $accepted_formatting;
+	}
+
+	// Re-encode a URL
+	protected function safeURLEncode ($url)
+	{
+		return urlencode (urldecode ($url));
 	}
 
 	public function initialHTML ($hashover_wrapper = true)
@@ -1040,14 +1047,19 @@ class FormUI
 		// End links array
 		$end_links = array ();
 
+		// Check if there is at least one comment
 		if ($this->commentCounts['total'] > 1) {
+			// If so, check if the RSS API is enabled
 			if ($this->setup->appendsRss === true
 			    and $this->setup->apiStatus ('rss') !== 'disabled')
 			{
+				// If so, encode page URL
+				$page_url = $this->safeURLEncode ($this->setup->pageURL);
+
 				// Create RSS feed link
 				$rss_link = new HTMLTag ('a', array (), false);
 				$rss_link->createAttribute ('href', $this->setup->getHttpPath ('api/rss.php'));
-				$rss_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
+				$rss_link->appendAttribute ('href', '?url=' . $page_url, false);
 
 				// "RSS Feed" locale string
 				$rss_link_text = $this->locale->text['rss-feed'];
@@ -1068,7 +1080,7 @@ class FormUI
 		// Source Code hyperlink text
 		$source_link_text = $this->locale->text['source-code'];
 
-		// Create link to HashOver source code (fixme! can be done better)
+		// Create link to HashOver source code
 		$source_link = new HTMLTag ('a', array (
 			'href' => $this->setup->getBackendPath ('source-viewer.php'),
 			'id' => 'hashover-source-link',

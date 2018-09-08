@@ -1,8 +1,15 @@
 // Parses a string as markdown (markdown.js)
 HashOverConstructor.prototype.markdown = {
+	// Matches a markdown code block
 	blockCodeRegex: /```([\s\S]+?)```/g,
+
+	// Matches markdown inline code
 	inlineCodeRegex: /(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/ig,
+
+	// Matches temporary code block placeholder
 	blockCodeMarker: /CODE_BLOCK\[([0-9]+)\]/g,
+
+	// Matches temporary inline code placeholder
 	inlineCodeMarker: /CODE_INLINE\[([0-9]+)\]/g,
 
 	// Array for inline code and code block markers
@@ -13,10 +20,19 @@ HashOverConstructor.prototype.markdown = {
 
 	// Markdown patterns to search for
 	markdownSearch: [
+		// Matches **bold** text
 		/\*\*([^ *])([\s\S]+?)([^ *])\*\*/g,
+
+		// Matches *italic* text
 		/\*([^ *])([\s\S]+?)([^ *])\*/g,
+
+		// Matches _underlined_ text
 		/(^|\W)_([^_]+?[\s\S]+?)_(\W|$)/g,
+
+		// Matches forced __underlined_ text
 		/__([^ _])([\s\S]+?)([^ _])__/g,
+
+		// Matches ~~strikethrough~~ text
 		/~~([^ ~])([\s\S]+?)([^ ~])~~/g
 	],
 

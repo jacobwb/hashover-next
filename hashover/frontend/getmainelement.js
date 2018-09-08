@@ -1,6 +1,7 @@
 // Get main HashOver UI element (getmainelement.js)
 HashOverConstructor.prototype.getMainElement = function (id)
 {
+	// Given element ID or default
 	id = id || 'hashover';
 
 	// Attempt to get main HashOver element

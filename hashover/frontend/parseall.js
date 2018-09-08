@@ -1,4 +1,4 @@
-// Run all comments in array data through comments.parse function (parseall.js)
+// Parse all comments in a given array (parseall.js)
 HashOver.prototype.parseAll = function (comments, element, collapse, popular)
 {
 	// Comments HTML

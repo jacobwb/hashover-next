@@ -15,8 +15,10 @@ HashOverLatest.prototype.comments.addRatings = function (comment, template, acti
 	}
 
 	// Add like count to HTML template
-	template[action + '-count'] = hashover.strings.parseTemplate (hashover.ui[action + '-count'], {
-		permalink: commentKey,
-		text: count || ''
-	});
+	template[action + '-count'] = hashover.strings.parseTemplate (
+		hashover.ui[action + '-count'], {
+			permalink: commentKey,
+			text: count || ''
+		}
+	);
 };

@@ -4,11 +4,15 @@ HashOverConstructor.prototype.comments.embedImage = function (url)
 	// Reference to the parent object
 	var hashover = this.parent;
 
-	// Get image extension from URL
+	// Remove hash from image URL
 	var urlExtension = url.split ('#')[0];
-	    urlExtension = urlExtension.split ('?')[0];
-	    urlExtension = urlExtension.split ('.');
-	    urlExtension = urlExtension.pop ();
+
+	// Remove queries from image URL
+	urlExtension = urlExtension.split ('?')[0];
+
+	// Get file extendion
+	urlExtension = urlExtension.split ('.');
+	urlExtension = urlExtension.pop ();
 
 	// Check if the image extension is an allowed type
 	if (hashover.setup['image-extensions'].indexOf (urlExtension) > -1) {

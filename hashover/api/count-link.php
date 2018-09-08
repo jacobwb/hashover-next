@@ -66,9 +66,6 @@ try {
 	// Register HashOver ready state detection method
 	$javascript->registerFile ('onready.js');
 
-	// Register element creation methods
-	$javascript->registerFile ('elements.js');
-
 	// Register AJAX-related methods
 	$javascript->registerFile ('ajax.js');
 

@@ -30,13 +30,15 @@ HashOverConstructor.prototype.addControls = function (comment)
 
 	// Set onclick functions for external images
 	if (this.setup['allows-images'] !== false) {
+		// Main element
+		var main = this.instance['main-element'];
+
 		// Get embedded image elements
-		var embeddedImgs = document.getElementsByClassName ('hashover-embedded-image');
+		var embeds = main.getElementsByClassName ('hashover-embedded-image');
 
 		// Run through each embedded image element
-		for (var i = 0, il = embeddedImgs.length; i < il; i++) {
-			embeddedImgs[i].onclick = function ()
-			{
+		for (var i = 0, il = embeds.length; i < il; i++) {
+			embeds[i].onclick = function () {
 				hashover.openEmbeddedImage (this);
 			};
 		}
@@ -76,8 +78,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 	// Get reply link of comment
 	this.elements.exists ('reply-link-' + permalink, function (replyLink) {
 		// Add onClick event to "Reply" hyperlink
-		replyLink.onclick = function ()
-		{
+		replyLink.onclick = function () {
 			hashover.replyToComment (permalink);
 			return false;
 		};
@@ -86,8 +87,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 	// Check if the comment is editable for the user
 	this.elements.exists ('edit-link-' + permalink, function (editLink) {
 		// If so, add onClick event to "Edit" hyperlinks
-		editLink.onclick = function ()
-		{
+		editLink.onclick = function () {
 			hashover.editComment (comment);
 			return false;
 		};
@@ -100,8 +100,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 			// If so, check if the like link exists
 			this.elements.exists ('like-' + permalink, function (likeLink) {
 				// Add onClick event to "Like" hyperlinks
-				likeLink.onclick = function ()
-				{
+				likeLink.onclick = function () {
 					hashover.likeComment ('like', permalink);
 					return false;
 				};
@@ -118,8 +117,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 			// If so, check if the dislike link exists
 			this.elements.exists ('dislike-' + permalink, function (dislikeLink) {
 				// Add onClick event to "Dislike" hyperlinks
-				dislikeLink.onclick = function ()
-				{
+				dislikeLink.onclick = function () {
 					hashover.likeComment ('dislike', permalink);
 					return false;
 				};

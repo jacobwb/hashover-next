@@ -1,7 +1,7 @@
 // Create a new comment thread/section (createthread.js)
 HashOver.prototype.createThread = function (options)
 {
-	// Reference to this HashOver object
+	// Reference to this object
 	var hashover = this;
 
 	// Self-executing backend wait loop

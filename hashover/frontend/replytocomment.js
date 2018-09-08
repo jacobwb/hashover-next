@@ -19,10 +19,12 @@ HashOver.prototype.replyToComment = function (permalink)
 	});
 
 	// Place reply fields into form
-	form.innerHTML = hashover.strings.parseTemplate (hashover.ui['reply-form'], {
-		permalink: permalink,
-		file: file
-	});
+	form.innerHTML = this.strings.parseTemplate (
+		this.ui['reply-form'], {
+			permalink: permalink,
+			file: file
+		}
+	);
 
 	// Prevent input submission
 	this.preventSubmit (form);

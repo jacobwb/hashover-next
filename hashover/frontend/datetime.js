@@ -6,26 +6,61 @@ HashOverConstructor.prototype.dateTime = {
 	// Simple PHP date function port
 	format: function (format, date)
 	{
+		// Format parameter or default
 		format = format || 'DATE_ISO8601';
+
+		// Date parameter or default
 		date = date || new Date ();
 
+		// Get hours from date, in 24 hour format
 		var hours = date.getHours ();
+
+		// AM/PM based if 24 hour time is above 12 hours
 		var ampm = (hours >= 12) ? 'pm' : 'am';
+
+		// Get day from date, as a number
 		var day = date.getDate ();
+
+		// Get weekday from date, as a number
 		var weekDay = date.getDay ();
+
+		// Get localized weekday, Sunday through Saturday
 		var dayName = this.parent.locale['day-names'][weekDay];
+
+		// Get month from date, as an index 0-11
 		var monthIndex = date.getMonth ();
+
+		// Get localized month, January through December
 		var monthName = this.parent.locale['month-names'][monthIndex];
+
+		// Convert 24 hour time to 12 hour
 		var hours12 = (hours % 12) ? hours % 12 : 12;
+
+		// Get minutes from date
 		var minutes = date.getMinutes ();
+
+		// Get month from date, as a number 1-12
 		var month = monthIndex + 1;
+
+		// Get timezone offset in hours from date
 		var offsetHours = (date.getTimezoneOffset() / 60) * 100;
+
+		// Add leading zero to timezone offset
 		var offset = ((offsetHours < 1000) ? '0' : '') + offsetHours;
+
+		// Convert timezone offset to time format, -07:00
 		var offsetColon = offset.match (this.offsetRegex).join (':');
+
+		// Timezone offset positivity
 		var offsetPositivity = (offsetHours > 0) ? '-' : '+';
+
+		// Get seconds from date
 		var seconds = date.getSeconds ();
+
+		// Get year from date
 		var year = date.getFullYear ();
 
+		// Format characters, see: http://php.net/manual/en/function.date.php
 		var characters = {
 			a: ampm,
 			A: ampm.toUpperCase (),
@@ -57,11 +92,12 @@ HashOverConstructor.prototype.dateTime = {
 		// Convert constant to uppercase
 		dateConstant = dateConstant.toUpperCase ();
 
+		// Pre-defined constants, see: http://php.net/manual/en/class.datetime.php
 		switch (dateConstant) {
 			case 'DATE_ATOM':
 			case 'DATE_RFC3339':
 			case 'DATE_W3C': {
-				format = 'Y-m-d\TH:i:sP';
+				format = 'Y-m-d\\TH:i:sP';
 				break;
 			}
 
@@ -71,7 +107,7 @@ HashOverConstructor.prototype.dateTime = {
 			}
 
 			case 'DATE_ISO8601': {
-				format = 'Y-m-d\TH:i:sO';
+				format = 'Y-m-d\\TH:i:sO';
 				break;
 			}
 
@@ -119,15 +155,21 @@ HashOverConstructor.prototype.dateTime = {
 			}
 		}
 
+		// Split format into individual characters
 		var formatParts = format.split ('');
 
-		for (var i = 0, c, il = formatParts.length; i < il; i++) {
+		// Run through format characters
+		for (var i = 0, il = formatParts.length; i < il; i++) {
+			// Current format character
+			var c = formatParts[i];
+
+			// Skip escaped characters
 			if (i > 0 && formatParts[i - 1] === '\\') {
 				formatParts[i - 1] = '';
 				continue;
 			}
 
-			c = formatParts[i];
+			// Replace characters with date/time
 			formatParts[i] = characters[c] || c;
 		}
 

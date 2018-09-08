@@ -48,5 +48,5 @@ HashOver.prototype.frontendConstructor = function (options)
 	});
 };
 
-// Constructor to add HashOver methods to
+// Constructor to add shared methods to (constructor.js)
 var HashOverConstructor = HashOver;

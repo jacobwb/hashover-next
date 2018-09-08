@@ -1,17 +1,11 @@
 // Real constructor (instantiator.js)
 HashOver.instantiator = function (options)
 {
-	// Get backend queries
-	var queries = HashOver.getBackendQueries (options);
-
-	// Check if we're instantiating the first HashOver object
-	if (HashOver.backendReady !== true) {
-		// If so, set query indicating a request for backend information
-		queries.push ('prepare=true');
-	}
-
 	// Reference to this object
 	var hashover = this;
+
+	// Get backend queries
+	var queries = HashOver.getBackendQueries (options);
 
 	// Increment HashOver instance count
 	HashOver.instanceCount++;
