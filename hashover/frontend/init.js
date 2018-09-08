@@ -113,13 +113,6 @@ HashOver.prototype.init = function ()
 	// Add main HashOver element to this HashOver instance
 	this.instance['main-element'] = mainElement;
 
-	// Templatify UI HTML strings
-	for (var element in this.ui) {
-		if (this.ui.hasOwnProperty (element) === true) {
-			this.ui[element] = this.strings.templatify (this.ui[element]);
-		}
-	}
-
 	// Get the sort section
 	var sortSection = this.getElement ('sort-section');
 

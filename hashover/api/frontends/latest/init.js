@@ -13,13 +13,6 @@ HashOverLatest.prototype.init = function ()
 	// Add main HashOver element to this HashOver instance
 	this.instance['main-element'] = this.getMainElement ('hashover-widget');
 
-	// Templatify UI HTML strings
-	for (var element in this.ui) {
-		if (this.ui.hasOwnProperty (element) === true) {
-			this.ui[element] = this.strings.templatify (this.ui[element]);
-		}
-	}
-
 	// Parse every comment
 	for (var i = 0, il = comments.length; i < il; i++) {
 		html += this.parseComment (comments[i]);

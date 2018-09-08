@@ -29,8 +29,20 @@ HashOver.instantiator = function (options)
 			// Setup information from backend
 			HashOver.prototype.setup = json.setup;
 
-			// UI HTML from backend
-			HashOver.prototype.ui = json.ui;
+			// Initial UI HTML
+			HashOver.prototype.ui = {};
+
+			// Templatify UI HTML from backend
+			for (var name in json.ui) {
+				// Check if property wasn't inherited
+				if (json.ui.hasOwnProperty (name) === true) {
+					// If so, templatify current string
+					var template = hashover.strings.templatify (json.ui[name]);
+
+					// And store the template
+					HashOver.prototype.ui[name] = template;
+				}
+			}
 
 			// Mark backend as ready
 			HashOver.backendReady = true;
