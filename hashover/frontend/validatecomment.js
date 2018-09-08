@@ -10,7 +10,7 @@ HashOver.prototype.validateComment = function (skipComment, form, type, permalin
 
 	// Display the validator's message
 	if (message !== true) {
-		this.messages.show (message, type, permalink, true, isReply, isEdit);
+		this.showMessage (message, type, permalink, true, isReply, isEdit);
 		return false;
 	}
 

@@ -19,14 +19,14 @@ HashOver.prototype.formattingOnclick = function (type, permalink)
 		// Check if message is open
 		if (hashover.classes.contains (message, 'hashover-message-open')) {
 			// If so, close it
-			hashover.messages.close (message);
+			hashover.closeMessage (message);
 
 			// And do nothing else
 			return false;
 		}
 
 		// Otherwise, open it
-		hashover.messages.open (message);
+		hashover.openMessage (message);
 		return false;
 	}
 };

@@ -30,7 +30,7 @@ HashOver.prototype.emailValidator = function (form, subscribe, type, permalink, 
 			var message = this.locale['invalid-email'];
 
 			// Show the message and focus the e-mail input
-			this.messages.show (message, type, permalink, true, isReply, isEdit);
+			this.showMessage (message, type, permalink, true, isReply, isEdit);
 			form.email.focus ();
 
 			return false;

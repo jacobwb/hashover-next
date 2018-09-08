@@ -31,7 +31,7 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 			form.comment.value = '';
 		} else {
 			// If not, display the message return instead
-			hashover.messages.show (json.message, type, permalink, (json.type === 'error'), isReply, isEdit);
+			hashover.showMessage (json.message, type, permalink, (json.type === 'error'), isReply, isEdit);
 			return false;
 		}
 

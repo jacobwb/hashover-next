@@ -79,7 +79,7 @@ HashOver.prototype.init = function ()
 
 		// Open the message element if there's a message
 		if (hashover.getElement('message').textContent !== '') {
-			hashover.messages.show ();
+			hashover.showMessage ();
 		}
 	}
 
