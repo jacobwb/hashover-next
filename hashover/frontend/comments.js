@@ -260,12 +260,12 @@ HashOverConstructor.prototype.comments = {
 					// And format local time if the comment was posted today
 					if (postDateCopy.setHours (0, 0, 0, 0) === localDate.setHours (0, 0, 0, 0)) {
 						commentDate = hashover.strings.sprintf (hashover.locale['today'], [
-							hashover.dateTime.format (hashover.setup['time-format'], postDate)
+							hashover.getDateTime (hashover.setup['time-format'], postDate)
 						]);
 					}
 				} else {
 					// If not, format a long local date/time
-					commentDate = hashover.dateTime.format (hashover.locale['date-time'], postDate);
+					commentDate = hashover.getDateTime (hashover.locale['date-time'], postDate);
 				}
 			}
 
