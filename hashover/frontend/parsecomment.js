@@ -311,16 +311,12 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 		// Add HTML anchor tag to URLs
 		var body = comment.body.replace (this.rx.links, this.rx.html.linksReplace);
 
-		// Replace [img] tags with external image placeholder if enabled
-		body = body.replace (this.rx.imageTags, function (fullURL, url) {
-			// Check if embedded images are enabled
-			if (hashover.setup['allows-images'] !== false) {
-				return hashover.optionalMethod ('embedImage', [ url ]);
-			}
-
-			// Convert image URL into an anchor tag
-			return '<a href="' + url + '" rel="noopener noreferrer" target="_blank">' + url + '</a>';
-		});
+		// Replace [img] tags with placeholders if embedded images are enabled
+		if (hashover.setup['allows-images'] !== false) {
+			body = body.replace (this.rx.imageTags, function (m, link, url) {
+				return hashover.optionalMethod ('embedImage', arguments);
+			});
+		}
 
 		// Parse markdown in comment if enabled
 		if (this.parseMarkdown !== undefined) {

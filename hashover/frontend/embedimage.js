@@ -1,5 +1,5 @@
 // Convert URL to embed image HTML (embedimage.js)
-HashOverConstructor.prototype.embedImage = function (url)
+HashOverConstructor.prototype.embedImage = function (m, link, url)
 {
 	// Reference to the parent object
 	var hashover = this.parent;
@@ -37,4 +37,7 @@ HashOverConstructor.prototype.embedImage = function (url)
 		// And return the embedded image HTML
 		return embeddedImage.outerHTML;
 	}
+
+	// Otherwise, return original link
+	return link;
 };
