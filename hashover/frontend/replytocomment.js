@@ -8,7 +8,7 @@ HashOver.prototype.replyToComment = function (permalink)
 	var link = this.elements.get ('reply-link-' + permalink);
 
 	// Get file
-	var file = this.permalinks.getFile (permalink);
+	var file = this.permalinkFile (permalink);
 
 	// Create reply form element
 	var form = this.elements.create ('form', {

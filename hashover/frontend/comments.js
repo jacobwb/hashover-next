@@ -69,11 +69,11 @@ HashOverConstructor.prototype.comments = {
 		// Check if this comment is a popular comment
 		if (popular === true) {
 			// Attempt to get parent comment permalink
-			parent = hashover.permalinks.getParent (commentKey);
+			parent = hashover.permalinkParent (commentKey);
 
 			// Get parent comment by its permalink if it exists
 			if (parent !== null) {
-				parent = hashover.permalinks.getComment (parent, hashover.instance.comments.primary);
+				parent = hashover.permalinksComment (parent, hashover.instance.comments.primary);
 			}
 
 			// And remove "-pop" from text for avatar

@@ -13,7 +13,7 @@ HashOver.prototype.editComment = function (comment)
 	var permalink = comment.permalink;
 
 	// Get file
-	var file = this.permalinks.getFile (permalink);
+	var file = this.permalinkFile (permalink);
 
 	// Get name and website
 	var name = comment.name || '';

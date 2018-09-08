@@ -4,8 +4,8 @@ HashOver.prototype.addComments = function (comment, isReply)
 	// Check if comment is a reply
 	if (isReply === true) {
 		// If so, fetch parent comment by its permalink
-		var parent = this.permalinks.getComment (
-			this.permalinks.getParent (comment.permalink),
+		var parent = this.permalinkComment (
+			this.permalinkParent (comment.permalink),
 			this.instance.comments.primary
 		);
 

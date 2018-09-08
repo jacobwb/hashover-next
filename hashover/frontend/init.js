@@ -233,7 +233,7 @@ HashOver.prototype.init = function ()
 				var comments = hashover.instance.comments[isPop ? 'popular' : 'primary'];
 
 				// Get the comment being edited
-				var edit = hashover.permalinks.getComment (permalink, comments);
+				var edit = hashover.permalinkComment (permalink, comments);
 
 				// Open comment edit form
 				hashover.editComment (edit);

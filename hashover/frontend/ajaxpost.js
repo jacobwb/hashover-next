@@ -16,8 +16,8 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 		this.addComments (json.comment, isReply);
 
 		// Fetch parent comment by its permalink
-		var parent = this.permalinks.getComment (
-			this.permalinks.getParent (json.comment.permalink),
+		var parent = this.permalinkComment (
+			this.permalinkParent (json.comment.permalink),
 			this.instance.comments.primary
 		);
 
