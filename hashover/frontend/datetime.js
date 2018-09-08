@@ -131,7 +131,7 @@ HashOverConstructor.prototype.getDateTime = function (format, date)
 		}
 
 		case 'GNOME_DATE': {
-			format = 'D M d, g:i A';
+			format = 'D M j, g:i A';
 			break;
 		}
 
