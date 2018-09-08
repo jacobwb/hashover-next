@@ -156,6 +156,9 @@ HashOverConstructor.prototype.getDateTime = function (format, date)
 		}
 	}
 
+	// Initial date/time format
+	var dateTime = '';
+
 	// Split format into individual characters
 	var formatParts = format.split ('');
 
@@ -164,15 +167,17 @@ HashOverConstructor.prototype.getDateTime = function (format, date)
 		// Current format character
 		var c = formatParts[i];
 
-		// Skip escaped characters
-		if (i > 0 && formatParts[i - 1] === '\\') {
-			formatParts[i - 1] = '';
-			continue;
+		// Check if current character is being escaped
+		if (formatParts[i - 1] === '\\') {
+			// If so, leave character as-is
+			dateTime += c;
+		} else {
+			// If not, replace characters with date/time
+			if (c !== '\\') {
+				dateTime += characters[c] || c;
+			}
 		}
-
-		// Replace characters with date/time
-		formatParts[i] = characters[c] || c;
 	}
 
-	return formatParts.join ('');
+	return dateTime;
 };
