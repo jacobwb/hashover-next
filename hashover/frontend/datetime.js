@@ -26,13 +26,13 @@ HashOverConstructor.prototype.getDateTime = function (format, date)
 	var weekDay = date.getDay ();
 
 	// Get localized weekday, Sunday through Saturday
-	var dayName = this.parent.locale['day-names'][weekDay];
+	var dayName = this.locale['day-names'][weekDay];
 
 	// Get month from date, as an index 0-11
 	var monthIndex = date.getMonth ();
 
 	// Get localized month, January through December
-	var monthName = this.parent.locale['month-names'][monthIndex];
+	var monthName = this.locale['month-names'][monthIndex];
 
 	// Convert 24 hour time to 12 hour
 	var hours12 = (hours % 12) ? hours % 12 : 12;

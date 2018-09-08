@@ -46,8 +46,8 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 	// Parameter defaults
 	parent = parent || null;
 
-	// Reference to the parent object
-	var hashover = this.parent;
+	// Reference to this object
+	var hashover = this;
 
 	var commentKey = comment.permalink;
 	var permalink = 'hashover-' + commentKey;

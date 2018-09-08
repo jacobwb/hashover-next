@@ -98,7 +98,7 @@ HashOverConstructor.prototype.parseMarkdown = function (string)
 	}
 
 	// Join paragraphs
-	string = ps.join (this.parent.setup['server-eol'] + this.parent.setup['server-eol']);
+	string = ps.join (this.setup['server-eol'] + this.setup['server-eol']);
 
 	// Replace code block markers with original markdown code
 	string = string.replace (this.rx.md.blockMarker, function (marker, number) {

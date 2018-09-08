@@ -77,15 +77,6 @@ function HashOverLatest (options)
 		// Initiate HashOver latest comments
 		hashover.init ();
 	}, true);
-
-	// Add parent proterty to all prototype objects
-	for (var name in this) {
-		var value = this[name];
-
-		if (value && value.constructor === Object) {
-			value.parent = this;
-		}
-	}
 };
 
 // Constructor to add shared methods to (constructor.js)

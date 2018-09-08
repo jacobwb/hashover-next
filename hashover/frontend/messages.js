@@ -65,12 +65,12 @@ HashOver.prototype.getHeight = function (element, setChild)
 // Open a message element (messages.js)
 HashOver.prototype.openMessage = function (element)
 {
-	// Reference to the parent object
-	var parent = this.parent;
+	// Reference to this object
+	var hashover = this;
 
 	// Add classes to indicate message element is open
-	this.parent.classes.remove (element, 'hashover-message-animated');
-	this.parent.classes.add (element, 'hashover-message-open');
+	this.classes.remove (element, 'hashover-message-animated');
+	this.classes.add (element, 'hashover-message-open');
 
 	// Get height of element
 	var maxHeight = this.getHeight (element);
@@ -79,12 +79,12 @@ HashOver.prototype.openMessage = function (element)
 	var firstChild = element.children[0];
 
 	// Remove class indicating message element is open
-	this.parent.classes.remove (element, 'hashover-message-open');
+	this.classes.remove (element, 'hashover-message-open');
 
 	setTimeout (function () {
 		// Add class to indicate message element is open
-		parent.classes.add (element, 'hashover-message-open');
-		parent.classes.add (element, 'hashover-message-animated');
+		hashover.classes.add (element, 'hashover-message-open');
+		hashover.classes.add (element, 'hashover-message-animated');
 
 		// Set max-height styles
 		element.style.maxHeight = maxHeight + 'px';
@@ -101,8 +101,8 @@ HashOver.prototype.openMessage = function (element)
 // Close a message element (messages.js)
 HashOver.prototype.closeMessage = function (element)
 {
-	// Reference to the parent object
-	var parent = this.parent;
+	// Reference to this object
+	var hashover = this;
 
 	// Set max-height style to specific height before transition
 	element.style.maxHeight = this.getHeight (element, true) + 'px';
@@ -113,8 +113,8 @@ HashOver.prototype.closeMessage = function (element)
 		element.style.maxHeight = '';
 
 		// Remove classes indicating message element is open
-		parent.classes.remove (element, 'hashover-message-open');
-		parent.classes.remove (element, 'hashover-message-error');
+		hashover.classes.remove (element, 'hashover-message-open');
+		hashover.classes.remove (element, 'hashover-message-error');
 	}, 150);
 };
 
@@ -130,18 +130,18 @@ HashOver.prototype.showMessage = function (messageText, type, permalink, error, 
 	// Check if message is in an edit form
 	if (isEdit === true) {
 		// If so, get message from edit form by permalink
-		var container = this.parent.getElement ('edit-message-container-' + permalink);
-		var message = this.parent.getElement ('edit-message-' + permalink);
+		var container = this.getElement ('edit-message-container-' + permalink);
+		var message = this.getElement ('edit-message-' + permalink);
 	} else {
 		// If not, check if message is anything other than a reply
 		if (isReply !== true) {
 			// If so, get primary message element
-			var container = this.parent.getElement ('message-container');
-			var message = this.parent.getElement ('message');
+			var container = this.getElement ('message-container');
+			var message = this.getElement ('message');
 		} else {
 			// If not, get message from reply form by permalink
-			var container = this.parent.getElement ('reply-message-container-' + permalink);
-			var message = this.parent.getElement ('reply-message-' + permalink);
+			var container = this.getElement ('reply-message-container-' + permalink);
+			var message = this.getElement ('reply-message-' + permalink);
 		}
 	}
 
@@ -152,7 +152,7 @@ HashOver.prototype.showMessage = function (messageText, type, permalink, error, 
 
 		// Add class to indicate message is an error if set
 		if (error === true) {
-			this.parent.classes.add (container, 'hashover-message-error');
+			this.classes.add (container, 'hashover-message-error');
 		}
 	}
 

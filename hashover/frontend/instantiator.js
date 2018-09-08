@@ -60,13 +60,4 @@ HashOver.instantiator = function (options)
 
 	// Set instance number to current instance count
 	this.instanceNumber = HashOver.instanceCount;
-
-	// Add parent proterty to all prototype objects
-	for (var name in this) {
-		var value = this[name];
-
-		if (value && value.constructor === Object) {
-			value.parent = this;
-		}
-	}
 };

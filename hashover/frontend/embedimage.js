@@ -2,7 +2,7 @@
 HashOverConstructor.prototype.embedImage = function (m, link, url)
 {
 	// Reference to the parent object
-	var hashover = this.parent;
+	var hashover = this;
 
 	// Remove hash from image URL
 	var urlExtension = url.split ('#')[0];

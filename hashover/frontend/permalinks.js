@@ -8,8 +8,8 @@ HashOverConstructor.prototype.permalinkParent = function (permalink, flatten)
 	var length = parent.length - 1;
 
 	// Limit depth if in stream mode
-	if (this.parent.setup['stream-mode'] === true && flatten === true) {
-		length = Math.min (this.parent.setup['stream-depth'], length);
+	if (this.setup['stream-mode'] === true && flatten === true) {
+		length = Math.min (this.setup['stream-depth'], length);
 	}
 
 	// Check if there is a parent after flatten
