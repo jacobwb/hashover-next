@@ -37,7 +37,7 @@ HashOverConstructor.prototype.ajax = function (method, path, data, callback, asy
 		data.push ('jsonp_object=' + constructor || 'HashOver');
 
 		// Create request script
-		var request = this.elements.create ('script', {
+		var request = this.createElement ('script', {
 			src: path + '?' + data.join ('&'),
 			async: async
 		});

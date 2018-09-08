@@ -63,8 +63,8 @@ try {
 	// Register HashOver ready state detection method
 	$javascript->registerFile ('onready.js');
 
-	// Register element creation methods
-	$javascript->registerFile ('elements.js');
+	// Register element creation method
+	$javascript->registerFile ('createelement.js');
 
 	// Register classList polyfill methods
 	$javascript->registerFile ('classes.js');

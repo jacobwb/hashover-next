@@ -17,12 +17,12 @@ HashOverConstructor.prototype.comments.embedImage = function (url)
 	// Check if the image extension is an allowed type
 	if (hashover.setup['image-extensions'].indexOf (urlExtension) > -1) {
 		// If so, create a wrapper element for the embedded image
-		var embeddedImage = hashover.elements.create ('span', {
+		var embeddedImage = hashover.createElement ('span', {
 			className: 'hashover-embedded-image-wrapper'
 		});
 
 		// Append an image tag to the embedded image wrapper
-		embeddedImage.appendChild (hashover.elements.create ('img', {
+		embeddedImage.appendChild (hashover.createElement ('img', {
 			className: 'hashover-embedded-image',
 			src: hashover.setup['image-placeholder'],
 			title: hashover.locale['external-image-tip'],

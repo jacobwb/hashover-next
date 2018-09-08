@@ -23,13 +23,13 @@ HashOver.prototype.editComment = function (comment)
 	var body = comment.body.replace (this.regex.links, '$1');
 
 	// Get edit form placeholder
-	var placeholder = this.elements.get ('placeholder-edit-form-' + permalink);
+	var placeholder = this.getElement ('placeholder-edit-form-' + permalink);
 
 	// Get edit link element
-	var link = this.elements.get ('edit-link-' + permalink);
+	var link = this.getElement ('edit-link-' + permalink);
 
 	// Create edit form element
-	var form = this.elements.create ('form', {
+	var form = this.createElement ('form', {
 		id: 'hashover-edit-' + permalink,
 		className: 'hashover-edit-form',
 		action: this.setup['http-backend'] + '/form-actions.php',
@@ -37,8 +37,8 @@ HashOver.prototype.editComment = function (comment)
 	});
 
 	// Place edit form fields into form
-	form.innerHTML = hashover.strings.parseTemplate (
-		hashover.ui['edit-form'], {
+	form.innerHTML = this.strings.parseTemplate (
+		this.ui['edit-form'], {
 			permalink: permalink,
 			file: file,
 			name: name,
@@ -54,7 +54,7 @@ HashOver.prototype.editComment = function (comment)
 	placeholder.appendChild (form);
 
 	// Set status dropdown menu option to comment status
-	this.elements.exists ('edit-status-' + permalink, function (status) {
+	this.elementExists ('edit-status-' + permalink, function (status) {
 		var statuses = [ 'approved', 'pending', 'deleted' ];
 
 		if (comment.status !== undefined) {
@@ -70,20 +70,20 @@ HashOver.prototype.editComment = function (comment)
 	}, 100);
 
 	// Uncheck subscribe checkbox if user isn't subscribed
-	this.elements.exists ('edit-subscribe-' + permalink, function (sub) {
+	this.elementExists ('edit-subscribe-' + permalink, function (sub) {
 		if (comment.subscribed !== true) {
 			sub.checked = null;
 		}
 	});
 
 	// Get delete button
-	var editDelete = this.elements.get('edit-delete-' + permalink);
+	var editDelete = this.getElement('edit-delete-' + permalink);
 
 	// Get "Save Edit" button
-	var saveEdit = this.elements.get ('edit-post-' + permalink);
+	var saveEdit = this.getElement ('edit-post-' + permalink);
 
 	// Get the element of comment being replied to
-	var destination = this.elements.get (permalink);
+	var destination = this.getElement (permalink);
 
 	// Change "Edit" link to "Cancel" link
 	this.cancelSwitcher ('edit', link, placeholder, permalink);
@@ -97,7 +97,7 @@ HashOver.prototype.editComment = function (comment)
 	this.formattingOnclick ('edit', permalink);
 
 	// Set onclick and onsubmit event handlers
-	this.elements.duplicateProperties (saveEdit, [ 'onclick', 'onsubmit' ], function () {
+	this.duplicateProperties (saveEdit, [ 'onclick', 'onsubmit' ], function () {
 		return hashover.postComment (destination, form, this, hashover.AJAXEdit, 'edit', permalink, link.onclick, false, true);
 	});
 

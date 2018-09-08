@@ -76,6 +76,9 @@ try {
 	// Register comment thread/section creation method
 	$javascript->registerFile ('createthread.js');
 
+	// Register element creation method
+	$javascript->registerFile ('createelement.js');
+
 	// Register classList polyfill methods
 	$javascript->registerFile ('classes.js');
 
@@ -127,8 +130,11 @@ try {
 	// Register comment parsing methods
 	$javascript->registerFile ('comments.js');
 
-	// Register element creation methods
-	$javascript->registerFile ('elements.js');
+	// Register element retriever method
+	$javascript->registerFile ('getelement.js');
+
+	// Register element class processer method
+	$javascript->registerFile ('eachclass.js');
 
 	// Register parse all comments method
 	$javascript->registerFile ('parseall.js');
@@ -207,6 +213,9 @@ try {
 
 	// Register formatting message onclick event handler method
 	$javascript->registerFile ('formattingonclick.js');
+
+	// Register element property duplicator method
+	$javascript->registerFile ('duplicateproperties.js');
 
 	// Register miscellaneous form event handler methods
 	$javascript->registerFile ('formevents.js');

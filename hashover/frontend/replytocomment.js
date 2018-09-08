@@ -5,13 +5,13 @@ HashOver.prototype.replyToComment = function (permalink)
 	var hashover = this;
 
 	// Get reply link element
-	var link = this.elements.get ('reply-link-' + permalink);
+	var link = this.getElement ('reply-link-' + permalink);
 
 	// Get file
 	var file = this.permalinkFile (permalink);
 
 	// Create reply form element
-	var form = this.elements.create ('form', {
+	var form = this.createElement ('form', {
 		id: 'hashover-reply-' + permalink,
 		className: 'hashover-reply-form',
 		action: this.setup['http-backend'] + '/form-actions.php',
@@ -30,7 +30,7 @@ HashOver.prototype.replyToComment = function (permalink)
 	this.preventSubmit (form);
 
 	// Get form by its permalink ID
-	var replyForm = this.elements.get ('placeholder-reply-form-' + permalink);
+	var replyForm = this.getElement ('placeholder-reply-form-' + permalink);
 
 	// Add form to page
 	replyForm.appendChild (form);
@@ -39,16 +39,16 @@ HashOver.prototype.replyToComment = function (permalink)
 	this.cancelSwitcher ('reply', link, replyForm, permalink);
 
 	// Attach event listeners to "Post Reply" button
-	var postReply = this.elements.get ('reply-post-' + permalink);
+	var postReply = this.getElement ('reply-post-' + permalink);
 
 	// Get the element of comment being replied to
-	var destination = this.elements.get (permalink);
+	var destination = this.getElement (permalink);
 
 	// Attach click event to formatting revealer hyperlink
 	this.formattingOnclick ('reply', permalink);
 
 	// Set onclick and onsubmit event handlers
-	this.elements.duplicateProperties (postReply, [ 'onclick', 'onsubmit' ], function () {
+	this.duplicateProperties (postReply, [ 'onclick', 'onsubmit' ], function () {
 		return hashover.postComment (destination, form, this, hashover.AJAXPost, 'reply', permalink, link.onclick, true, false);
 	});
 

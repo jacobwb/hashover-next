@@ -22,7 +22,7 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 			}
 
 			// Get the comment element by its permalink
-			var scrollToElement = hashover.elements.get (json.comment.permalink);
+			var scrollToElement = hashover.getElement (json.comment.permalink);
 
 			// Scroll comment into view
 			scrollToElement.scrollIntoView ({ behavior: 'smooth' });

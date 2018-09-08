@@ -8,10 +8,10 @@ HashOver.prototype.formattingOnclick = function (type, permalink)
 	var hashover = this;
 
 	// Get "Formatting" hyperlink element
-	var link = this.elements.get (type + '-formatting' + permalink);
+	var link = this.getElement (type + '-formatting' + permalink);
 
 	// Get formatting message element
-	var message = this.elements.get (type + '-formatting-message' + permalink);
+	var message = this.getElement (type + '-formatting-message' + permalink);
 
 	// Attach click event to formatting revealer hyperlink
 	link.onclick = function ()

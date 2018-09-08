@@ -7,7 +7,7 @@ HashOver.prototype.uncollapseCommentsLink = function ()
 	// Check whether there are more than the collapse limit
 	if (this.instance['total-count'] > this.setup['collapse-limit']) {
 		// If so, create "More Comments" hyperlink
-		this.instance['more-link'] = this.elements.create ('a', {
+		this.instance['more-link'] = this.createElement ('a', {
 			href: '#',
 			className: 'hashover-more-link',
 			title: this.instance['more-link-text'],

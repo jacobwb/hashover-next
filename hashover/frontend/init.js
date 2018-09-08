@@ -22,9 +22,9 @@ HashOver.prototype.init = function ()
 	// Scrolls to a specified element
 	function scrollToElement (id)
 	{
-		hashover.elements.exists (id, function (element) {
+		hashover.elementExists (id, function (element) {
 			element.scrollIntoView ({ behavior: 'smooth' });
-		}, false);
+		}, true);
 	}
 
 	// Callback for scrolling a comment into view on page load
@@ -33,7 +33,7 @@ HashOver.prototype.init = function ()
 		// Check if the comments are collapsed
 		if (hashover.setup['collapses-comments'] !== false) {
 			// Check if comment exists on the page
-			var linkedHidden = hashover.elements.exists (pageHash, function (comment) {
+			var linkedHidden = hashover.elementExists (pageHash, function (comment) {
 				// Check if the comment is visible
 				if (hashover.classes.contains (comment, 'hashover-hidden') === false) {
 					// If so, scroll to the comment
@@ -42,7 +42,7 @@ HashOver.prototype.init = function ()
 				}
 
 				return false;
-			}, false);
+			}, true);
 
 			// Check if the linked comment is hidden
 			if (linkedHidden === false) {
@@ -78,7 +78,7 @@ HashOver.prototype.init = function ()
 		}
 
 		// Open the message element if there's a message
-		if (hashover.elements.get('message').textContent !== '') {
+		if (hashover.getElement('message').textContent !== '') {
 			hashover.messages.show ();
 		}
 	}
@@ -94,7 +94,7 @@ HashOver.prototype.init = function ()
 
 	// Put number of comments into "hashover-comment-count" identified HTML element
 	if (this.instance['total-count'] !== 0) {
-		this.elements.exists ('comment-count', function (countElement) {
+		this.elementExists ('comment-count', function (countElement) {
 			countElement.textContent = hashover.instance['total-count'];
 		});
 
@@ -121,13 +121,13 @@ HashOver.prototype.init = function ()
 	}
 
 	// Get the sort section
-	var sortSection = this.elements.get ('sort-section');
+	var sortSection = this.getElement ('sort-section');
 
 	// Get sort div element
 	this.instance['sort-section'] = sortSection;
 
 	// Display most popular comments
-	this.elements.exists ('top-comments', function (topComments) {
+	this.elementExists ('top-comments', function (topComments) {
 		if (hashover.instance.comments.popular[0] !== undefined) {
 			hashover.parseAll (hashover.instance.comments.popular, topComments, false, true);
 		}
@@ -154,11 +154,11 @@ HashOver.prototype.init = function ()
 	this.formattingOnclick ('main');
 
 	// Get some various form elements
-	var postButton = this.elements.get ('post-button');
-	var formElement = this.elements.get ('form');
+	var postButton = this.getElement ('post-button');
+	var formElement = this.getElement ('form');
 
 	// Set onclick and onsubmit event handlers
-	this.elements.duplicateProperties (postButton, formEvents, function () {
+	this.duplicateProperties (postButton, formEvents, function () {
 		return hashover.postComment (sortSection, formElement, postButton, hashover.AJAXPost);
 	});
 
@@ -167,24 +167,24 @@ HashOver.prototype.init = function ()
 		// If so, check if user is logged in
 		if (this.setup['user-is-logged-in'] !== true) {
 			// If so, get the login button
-			var loginButton = this.elements.get ('login-button');
+			var loginButton = this.getElement ('login-button');
 
 			// Set onclick and onsubmit event handlers
-			this.elements.duplicateProperties (loginButton, formEvents, function () {
+			this.duplicateProperties (loginButton, formEvents, function () {
 				return hashover.validateComment (true, formElement);
 			});
 		}
 	}
 
 	// Check if sort method drop down menu exists
-	this.elements.exists ('sort-select', function (sortSelect) {
+	this.elementExists ('sort-select', function (sortSelect) {
 		// If so, add change event handler
 		sortSelect.onchange = function ()
 		{
 			// Check if the comments are collapsed
 			if (hashover.setup['collapses-comments'] !== false) {
 				// If so, get the select div
-				var sortSelectDiv = hashover.elements.get ('sort');
+				var sortSelectDiv = hashover.getElement ('sort');
 
 				// And uncollapse the comments before sorting
 				hashover.showMoreComments (sortSelectDiv, function () {

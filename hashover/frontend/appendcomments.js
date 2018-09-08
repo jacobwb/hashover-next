@@ -10,7 +10,7 @@ HashOver.prototype.appendComments = function (comments, dest, parent)
 		var comment = comments[i];
 
 		// Attempt to get the comment element
-		var element = this.elements.get (comment.permalink);
+		var element = this.getElement (comment.permalink);
 
 		// Check if comment exists
 		if (element !== null) {

@@ -17,7 +17,7 @@ HashOver.prototype.uncollapseInterfaceLink = function ()
 	}
 
 	// Create hyperlink to uncollapse the interface
-	main.appendChild (this.elements.create ('a', {
+	main.appendChild (this.createElement ('a', {
 		id: 'hashover-uncollapse-interface-link',
 		className: 'hashover-more-link',
 		href: '#',

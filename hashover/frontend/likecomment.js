@@ -5,8 +5,8 @@ HashOver.prototype.likeComment = function (action, permalink)
 	var hashover = this;
 
 	var file = this.permalinkFile (permalink);
-	var actionLink = this.elements.get (action + '-' + permalink);
-	var likesElement = this.elements.get (action + 's-' + permalink);
+	var actionLink = this.getElement (action + '-' + permalink);
+	var likesElement = this.getElement (action + 's-' + permalink);
 	var likePath = this.setup['http-backend'] + '/like.php';
 
 	// Set request queries

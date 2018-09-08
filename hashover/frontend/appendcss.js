@@ -29,7 +29,7 @@ HashOverConstructor.prototype.appendCSS = function (id)
 	}
 
 	// Otherwise, create <link> element for theme StyleSheet
-	var css = this.elements.create ('link', {
+	var css = this.createElement ('link', {
 		rel: 'stylesheet',
 		href: this.setup['theme-css'],
 		type: 'text/css',

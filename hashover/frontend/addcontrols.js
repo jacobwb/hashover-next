@@ -45,7 +45,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 	}
 
 	// Get thread link of comment
-	this.elements.exists ('thread-link-' + permalink, function (threadLink) {
+	this.elementExists ('thread-link-' + permalink, function (threadLink) {
 		// Add onClick event to thread hyperlink
 		threadLink.onclick = function ()
 		{
@@ -56,7 +56,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 				var parentThread = permalink.replace (hashover.regex.thread, '$1');
 
 				// Get the parent comment element
-				var scrollToElement = hashover.elements.get (parentThread);
+				var scrollToElement = hashover.getElement (parentThread);
 
 				// Scroll to the parent comment
 				scrollToElement.scrollIntoView ({ behavior: 'smooth' });
@@ -76,7 +76,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 	});
 
 	// Get reply link of comment
-	this.elements.exists ('reply-link-' + permalink, function (replyLink) {
+	this.elementExists ('reply-link-' + permalink, function (replyLink) {
 		// Add onClick event to "Reply" hyperlink
 		replyLink.onclick = function () {
 			hashover.replyToComment (permalink);
@@ -85,7 +85,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 	});
 
 	// Check if the comment is editable for the user
-	this.elements.exists ('edit-link-' + permalink, function (editLink) {
+	this.elementExists ('edit-link-' + permalink, function (editLink) {
 		// If so, add onClick event to "Edit" hyperlinks
 		editLink.onclick = function () {
 			hashover.editComment (comment);
@@ -98,7 +98,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 		// If so, check if likes are enabled
 		if (this.setup['allows-likes'] !== false) {
 			// If so, check if the like link exists
-			this.elements.exists ('like-' + permalink, function (likeLink) {
+			this.elementExists ('like-' + permalink, function (likeLink) {
 				// Add onClick event to "Like" hyperlinks
 				likeLink.onclick = function () {
 					hashover.likeComment ('like', permalink);
@@ -115,7 +115,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 		// Check if dislikes are enabled
 		if (this.setup['allows-dislikes'] !== false) {
 			// If so, check if the dislike link exists
-			this.elements.exists ('dislike-' + permalink, function (dislikeLink) {
+			this.elementExists ('dislike-' + permalink, function (dislikeLink) {
 				// Add onClick event to "Dislike" hyperlinks
 				dislikeLink.onclick = function () {
 					hashover.likeComment ('dislike', permalink);

@@ -2,7 +2,7 @@
 HashOver.prototype.htmlChildren = function (html)
 {
 	// Create a div to place the HTML into for parsing
-	var div = this.elements.create ('div', {
+	var div = this.createElement ('div', {
 		innerHTML: html
 	});
 

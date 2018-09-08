@@ -2,7 +2,7 @@
 HashOver.prototype.AJAXEdit = function (json, permalink, destination, isReply)
 {
 	// Get old comment element
-	var comment = this.elements.get (permalink);
+	var comment = this.getElement (permalink);
 
 	// Get old comment from primary comments
 	var oldItem = this.permalinkComment (permalink, this.instance.comments.primary);

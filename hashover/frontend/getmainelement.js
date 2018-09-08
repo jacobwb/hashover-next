@@ -13,7 +13,7 @@ HashOverConstructor.prototype.getMainElement = function (id)
 		var script = this.constructor.script;
 
 		// Create div tag for HashOver comments to appear in
-		element = this.elements.create ('div', { id: id });
+		element = this.createElement ('div', { id: id });
 
 		// Place the main HashOver element on the page
 		script.parentNode.insertBefore (element, script);

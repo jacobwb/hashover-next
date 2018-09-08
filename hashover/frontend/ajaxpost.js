@@ -48,7 +48,7 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 
 	// Add class to indicate comment is out of order
 	if (isReply !== true && this.instance['showing-more'] === false) {
-		this.elements.exists (json.comment.permalink, function (comment) {
+		this.elementExists (json.comment.permalink, function (comment) {
 			hashover.classes.add (comment, 'hashover-disjoined');
 		});
 	}
@@ -57,6 +57,6 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 	this.addControls (json.comment);
 
 	// Update comment count
-	this.elements.get('count').textContent = json.count;
+	this.getElement('count').textContent = json.count;
 	this.incrementCounts (isReply);
 };

@@ -18,10 +18,10 @@ HashOver.prototype.hideMoreLink = function (callback)
 		moreLink.parentNode.removeChild (moreLink);
 
 		// Show comment count and sort options
-		hashover.elements.get('count-wrapper').style.display = '';
+		hashover.getElement('count-wrapper').style.display = '';
 
 		// Show popular comments section
-		hashover.elements.exists ('popular-section', function (popularSection) {
+		hashover.elementExists ('popular-section', function (popularSection) {
 			popularSection.style.display = '';
 		});
 
@@ -31,10 +31,10 @@ HashOver.prototype.hideMoreLink = function (callback)
 		};
 
 		// Remove hidden comment class from comments
-		hashover.elements.eachClass (sortSection, 'hashover-hidden', classRemover);
+		hashover.eachClass (sortSection, 'hashover-hidden', classRemover);
 
 		// Remove out of order class from comments
-		hashover.elements.eachClass (sortSection, 'hashover-disjoined', classRemover);
+		hashover.eachClass (sortSection, 'hashover-disjoined', classRemover);
 
 		// Execute callback function
 		if (typeof (callback) === 'function') {

@@ -8,7 +8,7 @@ HashOver.prototype.uncollapseInterface = function (callback)
 	var uncollapseIDs = [ 'form-section', 'comments-section', 'end-links' ];
 
 	// Check if the uncollapse interface link exists
-	this.elements.exists ('uncollapse-interface-link', function (uncollapseLink) {
+	this.elementExists ('uncollapse-interface-link', function (uncollapseLink) {
 		// If so, add class to hide the uncollapse interface hyperlink
 		hashover.classes.add (uncollapseLink, 'hashover-hide-more-link');
 
@@ -19,14 +19,14 @@ HashOver.prototype.uncollapseInterface = function (callback)
 
 			// Show hidden form elements
 			for (var i = 0, il = uncollapseIDs.length; i < il; i++) {
-				hashover.elements.exists (uncollapseIDs[i], function (element) {
+				hashover.elementExists (uncollapseIDs[i], function (element) {
 					element.style.display = '';
 				});
 			}
 
 			// Show popular comments section
 			if (hashover.setup['collapse-limit'] > 0) {
-				hashover.elements.exists ('popular-section', function (popularSection) {
+				hashover.elementExists ('popular-section', function (popularSection) {
 					popularSection.style.display = '';
 				});
 			}
