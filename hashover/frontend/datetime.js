@@ -1,5 +1,5 @@
 // Add date and time regular expressions (datetime.js)
-HashOverConstructor.prototype.regex.dateTime = {
+HashOverConstructor.prototype.rx.dateTime = {
 	offset: /[0-9]{2}/g,
 	dashes: /-/g
 };
@@ -50,7 +50,7 @@ HashOverConstructor.prototype.getDateTime = function (format, date)
 	var offset = ((offsetHours < 1000) ? '0' : '') + offsetHours;
 
 	// Convert timezone offset to time format, -07:00
-	var offsetColon = offset.match (this.regex.dateTime.offset).join (':');
+	var offsetColon = offset.match (this.rx.dateTime.offset).join (':');
 
 	// Timezone offset positivity
 	var offsetPositivity = (offsetHours > 0) ? '-' : '+';
@@ -88,7 +88,7 @@ HashOverConstructor.prototype.getDateTime = function (format, date)
 	};
 
 	// Convert dashes to underscores
-	var dateConstant = format.replace (this.regex.dateTime.dashes, '_');
+	var dateConstant = format.replace (this.rx.dateTime.dashes, '_');
 
 	// Convert constant to uppercase
 	dateConstant = dateConstant.toUpperCase ();

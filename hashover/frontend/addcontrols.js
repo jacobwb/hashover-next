@@ -53,7 +53,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 			var callback = function ()
 			{
 				// Afterwards, get the parent comment permlink
-				var parentThread = permalink.replace (hashover.regex.thread, '$1');
+				var parentThread = permalink.replace (hashover.rx.thread, '$1');
 
 				// Get the parent comment element
 				var scrollToElement = hashover.getElement (parentThread);

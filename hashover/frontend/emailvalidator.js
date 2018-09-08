@@ -19,7 +19,7 @@ HashOver.prototype.emailValidator = function (form, subscribe, type, permalink, 
 		}
 	} else {
 		// If not, check if the e-mail is valid
-		if (this.regex.email.test (form.email.value) === false) {
+		if (this.rx.email.test (form.email.value) === false) {
 			// Return true if user unchecked the subscribe checkbox
 			if (this.getElement(subscribe).checked === false) {
 				form.email.value = '';

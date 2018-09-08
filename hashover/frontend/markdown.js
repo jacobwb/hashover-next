@@ -1,5 +1,5 @@
 // Add markdown regular expressions (markdown.js)
-HashOverConstructor.prototype.regex.md = {
+HashOverConstructor.prototype.rx.md = {
 	// Matches a markdown code block
 	blockCode: /```([\s\S]+?)```/g,
 
@@ -67,7 +67,7 @@ HashOverConstructor.prototype.parseMarkdown = function (string)
 	};
 
 	// Replace code blocks with markers
-	string = string.replace (this.regex.md.blockCode, function (m, code) {
+	string = string.replace (this.rx.md.blockCode, function (m, code) {
 		// Increase block code count
 		var markCount = block.count++;
 
@@ -79,20 +79,20 @@ HashOverConstructor.prototype.parseMarkdown = function (string)
 	});
 
 	// Break string into paragraphs
-	var ps = string.split (this.regex.paragraphs);
+	var ps = string.split (this.rx.paragraphs);
 
 	// Run through each paragraph replacing markdown patterns
 	for (var i = 0, il = ps.length; i < il; i++) {
 		// Replace code tags with marker text
-		ps[i] = ps[i].replace (this.regex.md.inlineCode, inlineReplacer);
+		ps[i] = ps[i].replace (this.rx.md.inlineCode, inlineReplacer);
 
 		// Perform each markdown regular expression on the current paragraph
-		for (var r = 0, rl = this.regex.md.search.length; r < rl; r++) {
-			ps[i] = ps[i].replace (this.regex.md.search[r], this.regex.md.replace[r]);
+		for (var r = 0, rl = this.rx.md.search.length; r < rl; r++) {
+			ps[i] = ps[i].replace (this.rx.md.search[r], this.rx.md.replace[r]);
 		}
 
 		// Return the original markdown code with HTML replacement
-		ps[i] = ps[i].replace (this.regex.md.inlineMarker, function (marker, number) {
+		ps[i] = ps[i].replace (this.rx.md.inlineMarker, function (marker, number) {
 			return '<code class="hashover-inline">' + inline.marks[number] + '</code>';
 		});
 	}
@@ -101,7 +101,7 @@ HashOverConstructor.prototype.parseMarkdown = function (string)
 	string = ps.join (this.parent.setup['server-eol'] + this.parent.setup['server-eol']);
 
 	// Replace code block markers with original markdown code
-	string = string.replace (this.regex.md.blockMarker, function (marker, number) {
+	string = string.replace (this.rx.md.blockMarker, function (marker, number) {
 		return '<code>' + block.marks[number] + '</code>';
 	});
 

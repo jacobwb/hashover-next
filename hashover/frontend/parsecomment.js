@@ -1,5 +1,5 @@
 // Add comment parsing regular expressions (parsecomment.js)
-HashOverConstructor.prototype.regex.html = {
+HashOverConstructor.prototype.rx.html = {
 	// URL replacement for automatic hyperlinks
 	linksReplace: '<a href="$1" rel="noopener noreferrer" target="_blank">$1</a>',
 
@@ -309,10 +309,10 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 		}
 
 		// Add HTML anchor tag to URLs
-		var body = comment.body.replace (this.regex.links, this.regex.linksReplace);
+		var body = comment.body.replace (this.rx.links, this.rx.html.linksReplace);
 
 		// Replace [img] tags with external image placeholder if enabled
-		body = body.replace (hashover.regex.imageTags, function (fullURL, url) {
+		body = body.replace (this.rx.imageTags, function (fullURL, url) {
 			// Check if embedded images are enabled
 			if (hashover.setup['allows-images'] !== false) {
 				return hashover.optionalMethod ('embedImage', [ url ]);
@@ -328,7 +328,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 		}
 
 		// Check if there are code tags in the comment
-		if (this.regex.code.open.test (body) === true) {
+		if (this.rx.html.code.open.test (body) === true) {
 			// If so, define regular expression callback
 			var codeReplacer = function (fullTag, open, html, close) {
 				// Create code marker
@@ -345,11 +345,11 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 			};
 
 			// And replace code tags with marker text
-			body = body.replace (this.regex.code.replace, codeReplacer);
+			body = body.replace (this.rx.html.code.replace, codeReplacer);
 		}
 
 		// Check if there are pre tags in the comment
-		if (this.regex.pre.open.test (body) === true) {
+		if (this.rx.html.pre.open.test (body) === true) {
 			// If so, define regular expression callback
 			var preReplacer = function (fullTag, open, html, close) {
 				// Create pre marker
@@ -366,22 +366,22 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 			};
 
 			// Replace pre tags with marker text
-			body = body.replace (this.regex.pre.replace, preReplacer);
+			body = body.replace (this.rx.html.pre.replace, preReplacer);
 		}
 
 		// Check if comment has whitespace to be trimmed
-		if (this.regex.trimTags.open.test (body) === true) {
+		if (this.rx.html.trimTags.open.test (body) === true) {
 			// If so, define a regular expression callback
 			var tagTrimmer = function (fullTag, open, name, html, close) {
 				return open + hashover.EOLTrim (html) + close;
 			};
 
 			// And trim whitespace from comment
-			body = body.replace (this.regex.trimTags.replace, tagTrimmer);
+			body = body.replace (this.rx.html.trimTags.replace, tagTrimmer);
 		}
 
 		// Break comment into paragraphs
-		var paragraphs = body.split (this.regex.paragraphs);
+		var paragraphs = body.split (this.rx.paragraphs);
 
 		// Initial paragraph'd comment
 		var pdComment = '';
@@ -389,7 +389,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 		// Run through paragraphs
 		for (var i = 0, il = paragraphs.length; i < il; i++) {
 			// Replace single line breaks with break tags
-			var lines = paragraphs[i].replace (this.regex.lines, '<br>');
+			var lines = paragraphs[i].replace (this.rx.html.lines, '<br>');
 
 			// Wrap comment in paragraph tags
 			pdComment += '<p>' + lines + '</p>' + this.setup['server-eol'];
@@ -397,14 +397,14 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 
 		// Replace code tag markers with original code tag HTML
 		if (codeTagCount > 0) {
-			pdComment = pdComment.replace (this.regex.code.marker, function (m, i) {
+			pdComment = pdComment.replace (this.rx.html.code.marker, function (m, i) {
 				return codeTags[i];
 			});
 		}
 
 		// Replace pre tag markers with original pre tag HTML
 		if (preTagCount > 0) {
-			pdComment = pdComment.replace (this.regex.pre.marker, function (m, i) {
+			pdComment = pdComment.replace (this.rx.html.pre.marker, function (m, i) {
 				return preTags[i];
 			});
 		}

@@ -20,7 +20,7 @@ HashOver.prototype.editComment = function (comment)
 	var website = comment.website || '';
 
 	// Get and clean comment body
-	var body = comment.body.replace (this.regex.links, '$1');
+	var body = comment.body.replace (this.rx.links, '$1');
 
 	// Get edit form placeholder
 	var placeholder = this.getElement ('placeholder-edit-form-' + permalink);
