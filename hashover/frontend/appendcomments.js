@@ -27,7 +27,7 @@ HashOver.prototype.appendComments = function (comments, dest, parent)
 		}
 
 		// Parse comment
-		var html = this.comments.parse (comment, parent);
+		var html = this.parseComment (comment, parent);
 
 		// Check if we can insert HTML adjacently
 		if ('insertAdjacentHTML' in dest) {

@@ -1,5 +1,5 @@
 // Convert URL to embed image HTML (embedimage.js)
-HashOverConstructor.prototype.comments.embedImage = function (url)
+HashOverConstructor.prototype.embedImage = function (url)
 {
 	// Reference to the parent object
 	var hashover = this.parent;
@@ -15,17 +15,17 @@ HashOverConstructor.prototype.comments.embedImage = function (url)
 	urlExtension = urlExtension.pop ();
 
 	// Check if the image extension is an allowed type
-	if (hashover.setup['image-extensions'].indexOf (urlExtension) > -1) {
+	if (this.setup['image-extensions'].indexOf (urlExtension) > -1) {
 		// If so, create a wrapper element for the embedded image
-		var embeddedImage = hashover.createElement ('span', {
+		var embeddedImage = this.createElement ('span', {
 			className: 'hashover-embedded-image-wrapper'
 		});
 
 		// Append an image tag to the embedded image wrapper
-		embeddedImage.appendChild (hashover.createElement ('img', {
+		embeddedImage.appendChild (this.createElement ('img', {
 			className: 'hashover-embedded-image',
-			src: hashover.setup['image-placeholder'],
-			title: hashover.locale['external-image-tip'],
+			src: this.setup['image-placeholder'],
+			title: this.locale['external-image-tip'],
 			alt: 'External Image',
 
 			dataset: {

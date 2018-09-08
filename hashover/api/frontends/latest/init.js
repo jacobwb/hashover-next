@@ -22,7 +22,7 @@ HashOverLatest.prototype.init = function ()
 
 	// Parse every comment
 	for (var i = 0, il = comments.length; i < il; i++) {
-		html += this.comments.parse (comments[i]);
+		html += this.parseComment (comments[i]);
 	}
 
 	// Add comments to element's innerHTML

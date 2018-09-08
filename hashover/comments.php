@@ -128,7 +128,7 @@ try {
 	));
 
 	// Register comment parsing methods
-	$javascript->registerFile ('comments.js');
+	$javascript->registerFile ('parsecomment.js');
 
 	// Register element retriever method
 	$javascript->registerFile ('getelement.js');

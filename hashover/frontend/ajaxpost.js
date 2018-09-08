@@ -10,7 +10,7 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 		this.instance.comments.primary[0] = json.comment;
 
 		// And place the comment on the page
-		dest.innerHTML = this.comments.parse (json.comment);
+		dest.innerHTML = this.parseComment (json.comment);
 	} else {
 		// Add comment to comments array
 		this.addComments (json.comment, isReply);
@@ -22,7 +22,7 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 		);
 
 		// Parse comment
-		var comment = this.comments.parse (json.comment, parent);
+		var comment = this.parseComment (json.comment, parent);
 
 		// Get comment child elements
 		var elements = this.htmlChildren (comment);

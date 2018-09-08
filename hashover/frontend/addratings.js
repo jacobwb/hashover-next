@@ -1,9 +1,6 @@
 // Add Like/Dislike link and count to template (addratings.js)
-HashOver.prototype.comments.addRatings = function (comment, template, action, commentKey)
+HashOver.prototype.addRatings = function (comment, template, action, commentKey)
 {
-	// Reference to the parent object
-	var hashover = this.parent;
-
 	// The opposite action
 	var opposite = (action === 'like') ? 'dislike' : 'like';
 
@@ -13,23 +10,23 @@ HashOver.prototype.comments.addRatings = function (comment, template, action, co
 		if (comment[action + 'd'] !== undefined) {
 			// If so, setup indicators that comment was liked/disliked
 			var className = 'hashover-' + action + 'd';
-			var title = hashover.locale[action + 'd-comment'];
-			var text = hashover.locale[action + 'd'];
+			var title = this.locale[action + 'd-comment'];
+			var text = this.locale[action + 'd'];
 		} else {
 			// If not, setup indicators that comment can be liked/disliked
 			var className = 'hashover-' + action;
-			var title = hashover.locale[action + '-comment'];
-			var text = hashover.locale[action][0];
+			var title = this.locale[action + '-comment'];
+			var text = this.locale[action][0];
 		}
 
 		// Append class to indicate dislikes are enabled
-		if (hashover.setup['allows-' + opposite + 's'] === true) {
+		if (this.setup['allows-' + opposite + 's'] === true) {
 			className += ' hashover-' + opposite + 's-enabled';
 		}
 
 		// Add like/dislike link to HTML template
-		template[action + '-link'] = hashover.strings.parseTemplate (
-			hashover.ui[action + '-link'], {
+		template[action + '-link'] = this.strings.parseTemplate (
+			this.ui[action + '-link'], {
 				permalink: commentKey,
 				class: className,
 				title: title,
@@ -45,12 +42,12 @@ HashOver.prototype.comments.addRatings = function (comment, template, action, co
 
 		// Get "X Like/Dislike(s)" locale
 		var plural = (comment[action + 's'] === 1 ? 0 : 1);
-		var count = comment[action + 's'] + ' ' + hashover.locale[action][plural];
+		var count = comment[action + 's'] + ' ' + this.locale[action][plural];
 	}
 
 	// Add like count to HTML template
-	template[action + '-count'] = hashover.strings.parseTemplate (
-		hashover.ui[action + '-count'], {
+	template[action + '-count'] = this.strings.parseTemplate (
+		this.ui[action + '-count'], {
 			permalink: commentKey,
 			text: count || ''
 		}

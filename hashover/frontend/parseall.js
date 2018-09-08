@@ -6,7 +6,7 @@ HashOver.prototype.parseAll = function (comments, element, collapse, popular)
 
 	// Parse every comment
 	for (var i = 0, il = comments.length; i < il; i++) {
-		html += this.comments.parse (comments[i], null, collapse, popular);
+		html += this.parseComment (comments[i], null, collapse, popular);
 	}
 
 	// Add comments to element's innerHTML
