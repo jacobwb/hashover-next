@@ -321,8 +321,8 @@ HashOverConstructor.prototype.comments = {
 			});
 
 			// Parse markdown in comment if enabled
-			if (hashover.markdown !== undefined) {
-				body = hashover.markdown.parse (body);
+			if (hashover.parseMarkdown !== undefined) {
+				body = hashover.parseMarkdown (body);
 			}
 
 			// Check if there are code tags in the comment

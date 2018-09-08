@@ -1,25 +1,19 @@
-// Parses a string as markdown (markdown.js)
-HashOverConstructor.prototype.markdown = {
+// Add markdown regular expressions (markdown.js)
+HashOverConstructor.prototype.regex.md = {
 	// Matches a markdown code block
-	blockCodeRegex: /```([\s\S]+?)```/g,
+	blockCode: /```([\s\S]+?)```/g,
 
 	// Matches markdown inline code
-	inlineCodeRegex: /(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/ig,
+	inlineCode: /(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/ig,
 
 	// Matches temporary code block placeholder
-	blockCodeMarker: /CODE_BLOCK\[([0-9]+)\]/g,
+	blockMarker: /CODE_BLOCK\[([0-9]+)\]/g,
 
 	// Matches temporary inline code placeholder
-	inlineCodeMarker: /CODE_INLINE\[([0-9]+)\]/g,
-
-	// Array for inline code and code block markers
-	codeMarkers: {
-		block: { marks: [], count: 0 },
-		inline: { marks: [], count: 0 }
-	},
+	inlineMarker: /CODE_INLINE\[([0-9]+)\]/g,
 
 	// Markdown patterns to search for
-	markdownSearch: [
+	search: [
 		// Matches **bold** text
 		/\*\*([^ *])([\s\S]+?)([^ *])\*\*/g,
 
@@ -37,77 +31,79 @@ HashOverConstructor.prototype.markdown = {
 	],
 
 	// HTML replacements for markdown patterns
-	markdownReplace: [
+	replace: [
 		'<strong>$1$2$3</strong>',
 		'<em>$1$2$3</em>',
 		'$1<u>$2</u>$3',
 		'<u>$1$2$3</u>',
 		'<s>$1$2$3</s>'
-	],
+	]
+};
 
-	// Replaces markdown for inline code with a marker
-	codeReplace: function (fullTag, first, second, third, display)
+// Parses markdown code (markdown.js)
+HashOverConstructor.prototype.parseMarkdown = function (string)
+{
+	// Reference to this object
+	var hashover = this;
+
+	// Initial marker arrays
+	var block = { marks: [], count: 0 };
+	var inline = { marks: [], count: 0 };
+
+	// Replaces inline code with markers
+	var inlineReplacer = function (m, first, code, third)
 	{
-		var markName = 'CODE_' + display.toUpperCase ();
-		var markCount = this.codeMarkers[display].count++;
+		// Increase inline code count
+		var markCount = inline.count++;
 
-		if (display !== 'block') {
-			var codeMarker = first + markName + '[' + markCount + ']' + third;
-			this.codeMarkers[display].marks[markCount] = this.parent.EOLTrim (second);
-		} else {
-			var codeMarker = markName + '[' + markCount + ']';
-			this.codeMarkers[display].marks[markCount] = this.parent.EOLTrim (first);
+		// Inline code marker
+		var marker = 'CODE_INLINE[' + markCount + ']';
+
+		// Add inline code to marker array
+		inline.marks[markCount] = hashover.EOLTrim (code);
+
+		// And return first match, inline marker, and third match
+		return first + marker + third;
+	};
+
+	// Replace code blocks with markers
+	string = string.replace (this.regex.md.blockCode, function (m, code) {
+		// Increase block code count
+		var markCount = block.count++;
+
+		// Add block code to marker array
+		block.marks[markCount] = hashover.EOLTrim (code);
+
+		// And return block marker
+		return 'CODE_BLOCK[' + markCount + ']';
+	});
+
+	// Break string into paragraphs
+	var ps = string.split (this.regex.paragraphs);
+
+	// Run through each paragraph replacing markdown patterns
+	for (var i = 0, il = ps.length; i < il; i++) {
+		// Replace code tags with marker text
+		ps[i] = ps[i].replace (this.regex.md.inlineCode, inlineReplacer);
+
+		// Perform each markdown regular expression on the current paragraph
+		for (var r = 0, rl = this.regex.md.search.length; r < rl; r++) {
+			ps[i] = ps[i].replace (this.regex.md.search[r], this.regex.md.replace[r]);
 		}
 
-		return codeMarker;
-	},
-
-	parse: function (string)
-	{
-		// Reference to this object
-		var markdown = this;
-
-		// Reset marker arrays
-		this.codeMarkers = {
-			block: { marks: [], count: 0 },
-			inline: { marks: [], count: 0 }
-		};
-
-		// Replace code blocks with markers
-		string = string.replace (this.blockCodeRegex, function (fullTag, first, second, third) {
-			return markdown.codeReplace (fullTag, first, second, third, 'block');
+		// Return the original markdown code with HTML replacement
+		ps[i] = ps[i].replace (this.regex.md.inlineMarker, function (marker, number) {
+			return '<code class="hashover-inline">' + inline.marks[number] + '</code>';
 		});
-
-		// Break string into paragraphs
-		var paragraphs = string.split (this.parent.regex.paragraphs);
-
-		// Run through each paragraph replacing markdown patterns
-		for (var i = 0, il = paragraphs.length; i < il; i++) {
-			// Replace code tags with marker text
-			paragraphs[i] = paragraphs[i].replace (this.inlineCodeRegex, function (fullTag, first, second, third) {
-				return markdown.codeReplace (fullTag, first, second, third, 'inline');
-			});
-
-			// Perform each markdown regular expression on the current paragraph
-			for (var r = 0, rl = this.markdownSearch.length; r < rl; r++) {
-				// Replace markdown patterns
-				paragraphs[i] = paragraphs[i].replace (this.markdownSearch[r], this.markdownReplace[r]);
-			}
-
-			// Return the original markdown code with HTML replacement
-			paragraphs[i] = paragraphs[i].replace (this.inlineCodeMarker, function (marker, number) {
-				return '<code class="hashover-inline">' + markdown.codeMarkers.inline.marks[number] + '</code>';
-			});
-		}
-
-		// Join paragraphs
-		string = paragraphs.join (this.parent.setup['server-eol'] + this.parent.setup['server-eol']);
-
-		// Replace code block markers with original markdown code
-		string = string.replace (this.blockCodeMarker, function (marker, number) {
-			return '<code>' + markdown.codeMarkers.block.marks[number] + '</code>';
-		});
-
-		return string;
 	}
+
+	// Join paragraphs
+	string = ps.join (this.parent.setup['server-eol'] + this.parent.setup['server-eol']);
+
+	// Replace code block markers with original markdown code
+	string = string.replace (this.regex.md.blockMarker, function (marker, number) {
+		return '<code>' + block.marks[number] + '</code>';
+	});
+
+	return string;
 };
