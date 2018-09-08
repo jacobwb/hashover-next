@@ -23,7 +23,7 @@
 "use strict";
 
 // Initial constructor or use loader constructor (constructor.js)
-var HashOver = HashOver || function () {
+var HashOver = HashOver || function HashOver () {
 	this.createThread.apply (this, arguments);
 };
 
