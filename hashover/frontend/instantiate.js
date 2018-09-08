@@ -1,5 +1,5 @@
-// Instantiate after the DOM is parsed (instantiate.js)
-HashOver.onReady (function () {
+// Self-executing function to prevent pollution
+(function () {
 	// Default global instantiation target
 	var instance = 'hashover';
 
@@ -18,4 +18,4 @@ HashOver.onReady (function () {
 
 	// Instantiate globally
 	window[instance] = new HashOver ();
-});
+}) ();

@@ -24,7 +24,7 @@
 
 // Initial constructor or use loader constructor (constructor.js)
 var HashOver = HashOver || function () {
-	this.frontendConstructor.apply (this, arguments);
+	this.createThread.apply (this, arguments);
 };
 
 // Set frontend as ready (constructor.js)
@@ -35,18 +35,6 @@ HashOver.backendReady = false;
 
 // Initial HashOver instance count (constructor.js)
 HashOver.instanceCount = 0;
-
-// Constructor code stored separately for loader
-HashOver.prototype.frontendConstructor = function (options)
-{
-	// Reference to this object
-	var hashover = this;
-
-	// Create the thread when the page is ready
-	HashOver.onReady (function () {
-		hashover.createThread (options);
-	});
-};
 
 // Constructor to add shared methods to (constructor.js)
 var HashOverConstructor = HashOver;

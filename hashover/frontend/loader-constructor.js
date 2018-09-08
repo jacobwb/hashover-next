@@ -25,17 +25,29 @@
 // Initial loader constructor (loader-constructor.js)
 function HashOver (options)
 {
+	// Reference to this object
+	var hashover = this;
+
+	// Arguments to this method
+	var args = arguments;
+
 	// Check if the frontend is ready
 	if (HashOver.frontendReady === true) {
-		// Call frontend constructor
-		this.frontendConstructor (options);
+		// If so, create comment thread
+		this.createThread.apply (this, arguments);
 
 		// And do nothing else
 		return;
 	}
 
-	// Do nothing is frontend is loading
+	// Check if frontend is loading
 	if (HashOver.frontendReady === 'loading') {
+		// If so, loop until frontend is loaded
+		setTimeout (function () {
+			hashover.constructor.apply (hashover, args);
+		}, 10);
+
+		// And do nothing else
 		return;
 	}
 
