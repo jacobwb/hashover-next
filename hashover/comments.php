@@ -208,6 +208,9 @@ try {
 		)
 	));
 
+	// Register file from permalink method
+	$javascript->registerFile ('permalinkfile.js');
+
 	// Register cancel button toggler method
 	$javascript->registerFile ('cancelswitcher.js');
 
