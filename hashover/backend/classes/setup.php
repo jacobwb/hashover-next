@@ -191,12 +191,6 @@ class Setup extends Settings
 	// Checks remote request against allowed domains setting
 	protected function refererCheck ()
 	{
-		// Setup remote access in API usage context
-		if ($this->usage['context'] === 'api') {
-			$this->setupRemoteAccess ();
-			return true;
-		}
-
 		// Return true if no is referer set
 		if (empty ($_SERVER['HTTP_REFERER'])) {
 			return true;
@@ -228,8 +222,22 @@ class Setup extends Settings
 			if (preg_match ($domain_regex, $domain)) {
 				// If so, setup remote access
 				$this->setupRemoteAccess ();
+
+				// Connection origin
+				$origin = $this->scheme . '://' . $domain;
+
+				// And set remote access headers
+				header ('Access-Control-Allow-Origin: ' . $origin);
+				header ('Access-Control-Allow-Credentials: true');
+
 				return true;
 			}
+		}
+
+		// Setup remote access in API usage context
+		if ($this->usage['context'] === 'api') {
+			$this->setupRemoteAccess ();
+			return true;
 		}
 
 		return false;

@@ -58,11 +58,14 @@ class Settings extends SensitiveSettings
 			$http_directory = str_replace ('\\', '/', $http_directory);
 		}
 
-		// Determine HTTP or HTTPS
-		$protocol = ($this->isHTTPS () ? 'https' : 'http') . '://';
+		// Get connection scheme
+		$this->scheme = $this->isHTTPS () ? 'https' : 'http';
 
 		// Domain name for refer checking & notifications
 		$this->domain = Misc::getArrayItem ($_SERVER, 'HTTP_HOST') ?: 'localhost';
+
+		// Connection protocol
+		$protocol = $this->scheme . '://';
 
 		// Technical settings
 		$this->rootDirectory	= $root_directory;		// Root directory for script
