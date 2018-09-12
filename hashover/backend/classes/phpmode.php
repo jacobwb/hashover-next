@@ -430,8 +430,12 @@ class PHPMode
 		// Comment HTML template
 		$comment_wrapper->innerHTML ($theme_html);
 
-		// Recursively parse replies
+		// Check if comment has replies
 		if (!empty ($comment['replies'])) {
+			// If so, append class to indicate comment has replies
+			$comment_wrapper->appendAttribute ('class', 'hashover-has-replies');
+
+			// Recursively parse replies
 			foreach ($comment['replies'] as $reply) {
 				$comment_wrapper->appendInnerHTML ($this->parseComment ($reply, $comment));
 			}
