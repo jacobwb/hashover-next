@@ -428,6 +428,9 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 
 	// Check if comment has replies
 	if (comment.replies !== undefined) {
+		// If so, append class to indicate comment has replies
+		classes += ' hashover-has-replies';
+
 		// Recursively parse replies
 		for (var i = 0, il = comment.replies.length; i < il; i++) {
 			replies += this.parseComment (comment.replies[i], comment, collapse);
