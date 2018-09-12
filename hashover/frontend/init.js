@@ -1,5 +1,5 @@
 // HashOver UI initialization process (init.js)
-HashOver.prototype.init = function ()
+HashOver.prototype.init = function (id)
 {
 	// Store start time
 	this.execStart = Date.now ();
@@ -8,7 +8,7 @@ HashOver.prototype.init = function ()
 	var hashover = this;
 
 	// Get the main HashOver element
-	var mainElement = this.getMainElement ();
+	var mainElement = this.getMainElement (id);
 
 	// Form events that get the same listeners
 	var formEvents = [ 'onclick', 'onsubmit' ];

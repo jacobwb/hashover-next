@@ -20,6 +20,7 @@
 class Setup extends Settings
 {
 	public $usage;
+	public $instanceNumber = 1;
 	public $isMobile = false;
 	public $remoteAccess = false;
 	public $pageURL;
@@ -153,6 +154,26 @@ class Setup extends Settings
 
 		// Otherwise, return default
 		return $default;
+	}
+
+	// Sets instance number
+	public function setInstance ($instance = '')
+	{
+		// Request instance if told to
+		if ($instance === 'request') {
+			$instance = $this->requestData ('instance', '');
+		}
+
+		// Check if given instance is numeric
+		if (is_numeric ($instance)) {
+			// If so, cast it to an actual integer
+			$this->instanceNumber = (int)($instance);
+
+			return true;
+		}
+
+		// Otherwise, throw an exception
+		throw new \Exception ('Instance must be a number.');
 	}
 
 	// Gets a domain with a port from given URL

@@ -23,7 +23,7 @@
 "use strict";
 
 // Initial loader constructor (loader-constructor.js)
-function HashOver (options)
+function HashOver (id, options)
 {
 	// Reference to this object
 	var hashover = this;

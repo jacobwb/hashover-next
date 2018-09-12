@@ -4,6 +4,9 @@ HashOver.prototype.addRatings = function (comment, template, action, commentKey)
 	// The opposite action
 	var opposite = (action === 'like') ? 'dislike' : 'like';
 
+	// Get instantiated prefix
+	var prefix = this.prefix ();
+
 	// Check if the comment doesn't belong to the logged in user
 	if (comment['user-owned'] === undefined) {
 		// Check whether this comment was liked/disliked by the visitor
@@ -27,6 +30,7 @@ HashOver.prototype.addRatings = function (comment, template, action, commentKey)
 		// Add like/dislike link to HTML template
 		template[action + '-link'] = this.strings.parseTemplate (
 			this.ui[action + '-link'], {
+				hashover: prefix,
 				permalink: commentKey,
 				class: className,
 				title: title,
@@ -48,6 +52,7 @@ HashOver.prototype.addRatings = function (comment, template, action, commentKey)
 	// Add like count to HTML template
 	template[action + '-count'] = this.strings.parseTemplate (
 		this.ui[action + '-count'], {
+			hashover: prefix,
 			permalink: commentKey,
 			text: count || ''
 		}

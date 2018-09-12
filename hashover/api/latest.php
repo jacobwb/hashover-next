@@ -63,6 +63,9 @@ try {
 	// Register HashOver ready state detection method
 	$javascript->registerFile ('onready.js');
 
+	// Register instance prefix method
+	$javascript->registerFile ('prefix.js');
+
 	// Register element creation method
 	$javascript->registerFile ('createelement.js');
 

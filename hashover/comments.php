@@ -88,6 +88,9 @@ try {
 	// Register error message handler method
 	$javascript->registerFile ('displayerror.js');
 
+	// Register instance prefix method
+	$javascript->registerFile ('prefix.js');
+
 	// Register pre-compiled regular expressions
 	$javascript->registerFile ('regex.js');
 

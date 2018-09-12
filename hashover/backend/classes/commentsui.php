@@ -28,7 +28,7 @@ class CommentsUI extends FormUI
 	public function commentWrapper ($permalink = '{permalink}')
 	{
 		$comment_wrapper = new HTMLTag ('div', array (
-			'id' => $permalink,
+			'id' => $this->prefix ($permalink),
 			'class' => 'hashover-comment'
 		), false);
 
@@ -62,7 +62,7 @@ class CommentsUI extends FormUI
 				// A hyperlink pointing to the user's input URL
 				$name_link = new HTMLTag ('a', array (
 					'href' => $href,
-					'id' => 'hashover-name-' . $permalink,
+					'id' => $this->prefix ('name-' . $permalink),
 					'rel' => 'noopener noreferrer',
 					'target' => '_blank',
 					'title' => $name,
@@ -75,7 +75,7 @@ class CommentsUI extends FormUI
 			case 'span': {
 				// A plain wrapper element
 				$name_link = new HTMLTag ('span', array (
-					'id' => 'hashover-name-' . $permalink,
+					'id' => $this->prefix ('name-' . $permalink),
 					'innerHTML' => $name
 				), false);
 
@@ -106,7 +106,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates "Top of Thread" hyperlink element
-	public function parentThreadLink ($parent = '{parent}', $permalink = '{permalink}', $name = '{name}')
+	public function parentThreadLink ($href = '{href}', $parent = '{parent}', $permalink = '{permalink}', $name = '{name}')
 	{
 		// Get locale string
 		$thread_locale = $this->locale->text['thread'];
@@ -115,9 +115,12 @@ class CommentsUI extends FormUI
 		$inner_html = sprintf ($thread_locale, $name);
 
 		// Create hyperlink element
-		$thread_link = new HTMLTag ('a', array (
+		$thread_link = $this->queryLink ($href);
+
+		// Create hyperlink element
+		$thread_link->appendAttributes (array (
 			'href' => '#' . $parent,
-			'id' => 'hashover-thread-link-' . $permalink,
+			'id' => $this->prefix ('thread-link-' . $permalink),
 			'class' => 'hashover-thread-link',
 			'title' => $this->locale->text['thread-tip'],
 			'innerHTML' => $inner_html
@@ -146,13 +149,10 @@ class CommentsUI extends FormUI
 	// Creates element to hold a count of likes/dislikes each comment has
 	public function likeCount ($type, $permalink = '{permalink}', $text = '{text}')
 	{
-		// CSS class
-		$class = 'hashover-' . $type;
-
 		// Create element
 		$count = new HTMLTag ('span', array (
-			'id' => $class . '-' . $permalink,
-			'class' => $class,
+			'id' => $this->prefix ($type . '-' . $permalink),
+			'class' => 'hashover-' . $type,
 			'innerHTML' => $text
 		), false);
 
@@ -165,7 +165,7 @@ class CommentsUI extends FormUI
 		// Create hyperlink element
 		$link = new HTMLTag ('a', array (
 			'href' => '#',
-			'id' => 'hashover-' . $type . '-' . $permalink,
+			'id' => $this->prefix ($type . '-' . $permalink),
 			'class' => $class,
 			'title' => $title,
 			'innerHTML' => $text
@@ -188,7 +188,7 @@ class CommentsUI extends FormUI
 
 		// Create more attributes
 		$link->createAttributes (array (
-			'id' => $form. '-link-' . $permalink,
+			'id' => $this->prefix ($type. '-link-' . $permalink),
 			'class' => 'hashover-comment-' . $type,
 			'title' => $this->locale->text[$title_locale]
 		));
@@ -274,15 +274,12 @@ class CommentsUI extends FormUI
 		// Create hyperlink element
 		$cancel_button = $this->queryLink ($this->setup->filePath);
 
-		// Cancel button class
-		$class = 'hashover-' . $type . '-cancel';
-
 		// "Cancel" locale string
 		$cancel_locale = $this->locale->text['cancel'];
 
 		// Add ID attribute with JavaScript variable single quote break out
 		if (!empty ($permalink)) {
-			$cancel_button->createAttribute ('id', $class . '-' . $permalink);
+			$cancel_button->createAttribute ('id', $this->prefix ($type . '-cancel-' . $permalink));
 		}
 
 		// Append href attribute
@@ -290,7 +287,7 @@ class CommentsUI extends FormUI
 
 		// Create more attributes
 		$cancel_button->createAttributes (array (
-			'class' => 'hashover-submit ' . $class,
+			'class' => 'hashover-submit hashover-' . $type . '-cancel',
 			'title' => $cancel_locale,
 			'innerHTML' => $cancel_locale
 		));
@@ -401,7 +398,7 @@ class CommentsUI extends FormUI
 
 		// Add ID attribute with JavaScript variable single quote break out
 		if (!empty ($permalink)) {
-			$reply_post_button->createAttribute ('id', 'hashover-reply-post-' . $permalink);
+			$reply_post_button->createAttribute ('id', $this->prefix ('reply-post-' . $permalink));
 		}
 
 		// Post reply locale
@@ -476,7 +473,7 @@ class CommentsUI extends FormUI
 
 			// Create status dropdown menu element
 			$edit_status_dropdown = new HTMLTag ('select', array (
-				'id' => 'hashover-edit-status-' . $permalink,
+				'id' => $this->prefix ('edit-status-' . $permalink),
 				'name' => 'status',
 				'size' => '1'
 			));
@@ -586,7 +583,7 @@ class CommentsUI extends FormUI
 
 		// Add ID attribute with JavaScript variable single quote break out
 		if (!empty ($permalink)) {
-			$save_edit_button->createAttribute ('id', 'hashover-edit-post-' . $permalink);
+			$save_edit_button->createAttribute ('id', $this->prefix ('edit-post-' . $permalink));
 		}
 
 		// Continue with other attributes
@@ -606,7 +603,7 @@ class CommentsUI extends FormUI
 
 		// Add ID attribute with JavaScript variable single quote break out
 		if (!empty ($permalink)) {
-			$delete_button->createAttribute ('id', 'hashover-edit-delete-' . $permalink);
+			$delete_button->createAttribute ('id', $this->prefix ('edit-delete-' . $permalink));
 		}
 
 		// Continue with other attributes

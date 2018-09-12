@@ -25,26 +25,26 @@ conditions, unless such conditions are required by law.
 }
 
 .hashover .hashover-hidden,
-.hashover #hashover-requiredFields {
+.hashover .hashover-required-fields {
 	display: none ! important;
 }
 
 .hashover,
-#hashover-top-comments,
-#hashover-sort-section,
+.hashover-top-comments,
+.hashover-sort-section,
 .hashover .hashover-inputs {
 	clear: both;
 }
 
-.hashover #hashover-form-section,
-.hashover #hashover-popular-section,
-.hashover #hashover-comments-section {
+.hashover .hashover-form-section,
+.hashover .hashover-popular-section,
+.hashover .hashover-comments-section {
 	margin-bottom: 36px;
 }
 
 .hashover .hashover-dashed-title,
 .hashover .hashover-title,
-.hashover #hashover-count,
+.hashover .hashover-count,
 .hashover .hashover-comment-name {
 	font-size: 16px;
 	display: inline-block;
@@ -58,7 +58,7 @@ conditions, unless such conditions are required by law.
 	width: 100%;
 }
 
-.hashover #hashover-form {
+.hashover .hashover-form {
 	position: relative;
 	overflow: inherit;
 }
@@ -90,7 +90,8 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-avatar *,
 .hashover .hashover-avatar a,
 .hashover .hashover-end-links,
-.hashover .hashover-more-link {
+.hashover .hashover-more-link,
+.hashover .hashover-requires-login-message {
 	text-align: center;
 }
 
@@ -140,7 +141,7 @@ conditions, unless such conditions are required by law.
 	width: 65px;
 }
 
-.hashover #hashover-form .hashover-avatar-image {
+.hashover .hashover-form .hashover-avatar-image {
 	left: -66px;
 	top: -1px;
 }
@@ -194,7 +195,7 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-comment code,
 .hashover .hashover-comment label,
 .hashover .hashover-message,
-.hashover #hashover-more-link {
+.hashover .hashover-more-link {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -205,6 +206,7 @@ conditions, unless such conditions are required by law.
 .hashover form textarea,
 .hashover form .hashover-inputs input,
 .hashover .hashover-balloon,
+.hashover .hashover-requires-login-message,
 .hashover .hashover-comment input.hashover-delete,
 .hashover img,
 .hashover .hashover-comment pre,
@@ -214,7 +216,7 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-comment .hashover-form-buttons a,
 .hashover .hashover-comment label,
 .hashover .hashover-main-message,
-.hashover #hashover-more-link {
+.hashover .hashover-more-link {
 	border-radius: 5px 5px 5px 5px;
 	-moz-border-radius: 5px 5px 5px 5px;
 	-webkit-border-radius: 5px 5px 5px 5px;
@@ -349,11 +351,11 @@ conditions, unless such conditions are required by law.
 	margin-top: -1px;
 }
 
-.hashover #hashover-count {
+.hashover .hashover-count {
 	float: left;
 }
 
-.hashover #hashover-sort {
+.hashover .hashover-select-wrapper {
 	float: right;
 }
 
@@ -495,12 +497,16 @@ conditions, unless such conditions are required by law.
 	margin-left: 52px;
 }
 
-.hashover .hashover-balloon {
-	overflow: hidden;
-	margin-left: 65px;
+.hashover .hashover-balloon,
+.hashover .hashover-requires-login-message {
 	padding: 6px 8px 8px 8px;
 	background-color: #F6F8FF;
 	border: 1px solid #808080 ! important;
+}
+
+.hashover .hashover-balloon {
+	overflow: hidden;
+	margin-left: 65px;
 	min-height: 45px;
 	text-align: left;
 	height: auto;
@@ -555,13 +561,13 @@ conditions, unless such conditions are required by law.
 	padding-right: 0px;
 }
 
-.hashover #hashover-form .hashover-comment-name,
+.hashover .hashover-form .hashover-comment-name,
 .hashover .hashover-comment .hashover-comment-name {
 	font-size: 20px;
 	font-weight: bold;
 }
 
-.hashover #hashover-form .hashover-comment-name {
+.hashover .hashover-form .hashover-comment-name {
 	display: block;
 	margin-bottom: 8px;
 }
@@ -789,13 +795,13 @@ conditions, unless such conditions are required by law.
 	color: #FF0000;
 }
 
-.hashover #hashover-end-links {
+.hashover .hashover-end-links {
 	border-top: 1px solid #AAAAAA;
 	margin-top: -12px;
 	padding: 18px 0px 5px 0px;
 }
 
-.hashover #hashover-more-link {
+.hashover .hashover-more-link {
 	display: block;
 	padding: 12px;
 	margin-bottom: -16px;
@@ -806,11 +812,11 @@ conditions, unless such conditions are required by law.
 	filter: alpha(opacity=100);
 }
 
-.hashover #hashover-more-link:hover {
+.hashover .hashover-more-link:hover {
 	background-color: rgba(210, 210, 255, 0.5);
 }
 
-.hashover #hashover-more-link.hashover-hide-morelink {
+.hashover .hashover-more-link.hashover-hide-morelink {
 	opacity: 0.0;
 	filter: alpha(opacity=0);
 }

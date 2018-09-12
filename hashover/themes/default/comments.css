@@ -31,7 +31,7 @@ conditions, unless such conditions are required by law.
 }
 
 .hashover .hashover-hidden,
-.hashover #hashover-requiredFields,
+.hashover .hashover-required-fields,
 .hashover .hashover-notice > .hashover-balloon > .hashover-footer,
 .hashover .hashover-first .hashover-balloon,
 .hashover .hashover-first .hashover-avatar:before,
@@ -40,20 +40,20 @@ conditions, unless such conditions are required by law.
 }
 
 .hashover,
-#hashover-top-comments,
-#hashover-sort-section,
+.hashover-top-comments,
+.hashover-sort-section,
 .hashover .hashover-inputs {
 	clear: both;
 }
 
-.hashover #hashover-form-section,
-.hashover #hashover-popular-section,
-.hashover #hashover-comments-section {
+.hashover .hashover-form-section,
+.hashover .hashover-popular-section,
+.hashover .hashover-comments-section {
 	margin-bottom: 36px;
 }
 
 .hashover .hashover-title,
-.hashover #hashover-count,
+.hashover .hashover-count,
 .hashover .hashover-comment-name {
 	display: inline-block;
 	font-size: 18px;
@@ -77,6 +77,7 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-reply > .hashover-balloon,
 .hashover .hashover-reply-form,
 .hashover .hashover-reply .hashover-header,
+.hashover .hashover-requires-login-message,
 .hashover .hashover-form-footer {
 	border: 1px solid #AAAAAA;
 }
@@ -126,7 +127,8 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-select-wrapper:before,
 .hashover .hashover-disjoined:before,
 .hashover .hashover-more-link,
-.hashover .hashover-end-links {
+.hashover .hashover-end-links,
+.hashover .hashover-requires-login-message {
 	text-align: center;
 }
 
@@ -184,7 +186,7 @@ conditions, unless such conditions are required by law.
 	margin-bottom: 0px;
 }
 
-.hashover #hashover-form,
+.hashover .hashover-form,
 .hashover .hashover-comment,
 .hashover .hashover-reply-form,
 .hashover .hashover-message,
@@ -266,7 +268,7 @@ conditions, unless such conditions are required by law.
 	position: relative;
 }
 
-.hashover #hashover-form .hashover-avatar-image {
+.hashover .hashover-form .hashover-avatar-image {
 	width: 45px;
 	padding-right: 10px;
 }
@@ -322,7 +324,7 @@ conditions, unless such conditions are required by law.
 
 .hashover .hashover-comment > .hashover-balloon,
 .hashover .hashover-edit-form,
-.hashover #hashover-end-links,
+.hashover .hashover-end-links,
 .hashover .hashover-border-top {
 	border-top: 1px solid #AAAAAA;
 }
@@ -488,7 +490,7 @@ conditions, unless such conditions are required by law.
 	cursor: pointer;
 }
 
-.hashover #hashover-form .hashover-comment-label,
+.hashover .hashover-form .hashover-comment-label,
 .hashover .hashover-comment-label:nth-child(2) {
 	background-color: #FCFCFC;
 }
@@ -550,7 +552,7 @@ conditions, unless such conditions are required by law.
 	margin-top: 3px;
 }
 
-.hashover #hashover-count {
+.hashover .hashover-count {
 	float: left;
 }
 
@@ -614,14 +616,15 @@ conditions, unless such conditions are required by law.
 	font-size: 14px;
 }
 
-.hashover #hashover-form,
+.hashover .hashover-form,
 .hashover .hashover-comment,
 .hashover .hashover-reply-form {
 	background-color: #F5F5F5;
 }
 
-#hashover-form .hashover-inputs,
-.hashover .hashover-comment > .hashover-header {
+.hashover .hashover-form .hashover-inputs,
+.hashover .hashover-comment > .hashover-header,
+.hashover .hashover-requires-login-message {
 	/* Light blue */
 	background-color: #E5F0FF;
 
@@ -645,7 +648,8 @@ conditions, unless such conditions are required by law.
 	margin-bottom: 12px;
 }
 
-.hashover .hashover-comment > .hashover-header {
+.hashover .hashover-comment > .hashover-header,
+.hashover .hashover-requires-login-message {
 	padding: 12px;
 }
 
@@ -1116,7 +1120,7 @@ conditions, unless such conditions are required by law.
 	transition: all 150ms linear 0ms;
 }
 
-.hashover #hashover-end-links {
+.hashover .hashover-end-links {
 	margin-top: -12px;
 	padding: 18px 0px 5px 0px;
 }

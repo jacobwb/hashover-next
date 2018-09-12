@@ -734,6 +734,9 @@ class HashOver
 		// Start UI output with initial HTML
 		$html  = $this->ui->initialHTML ();
 
+		// Increase instance number
+		$this->setup->instanceNumber++;
+
 		// End statistics and add them as code comment
 		$html .= $this->statistics->executionEnd ();
 

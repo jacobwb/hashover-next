@@ -1,5 +1,5 @@
 // Create a new comment thread/section (createthread.js)
-HashOver.prototype.createThread = function (options)
+HashOver.prototype.createThread = function (id, options)
 {
 	// Reference to this object
 	var hashover = this;
@@ -8,7 +8,7 @@ HashOver.prototype.createThread = function (options)
 	var args = arguments;
 
 	// Check if we're on the first instance or if the backend is ready
-	if (HashOver.backendReady === true || HashOver.instanceCount === 0) {
+	if (HashOver.backendReady === true || HashOver.instanceCount === 1) {
 		// If so, create the thread when the page is ready
 		HashOver.onReady (function () {
 			HashOver.instantiator.apply (hashover, args);

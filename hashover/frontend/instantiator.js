@@ -1,14 +1,11 @@
 // Real constructor (instantiator.js)
-HashOver.instantiator = function (options)
+HashOver.instantiator = function (id, options)
 {
 	// Reference to this object
 	var hashover = this;
 
 	// Get backend queries
 	var queries = HashOver.getBackendQueries (options);
-
-	// Increment HashOver instance count
-	HashOver.instanceCount++;
 
 	// Backend request path
 	var requestPath = HashOver.backendPath + '/comments-ajax.php';
@@ -51,13 +48,19 @@ HashOver.instantiator = function (options)
 		// Thread information from backend
 		hashover.instance = json.instance;
 
+		// Initial number of collapsed comments
+		hashover.instance.collapseLimit = 0;
+
 		// Backend execution time and memory usage statistics
 		hashover.statistics = json.statistics;
 
 		// Initiate HashOver
-		hashover.init ();
+		hashover.init (id);
 	}, true);
 
 	// Set instance number to current instance count
 	this.instanceNumber = HashOver.instanceCount;
+
+	// Increment HashOver instance count
+	HashOver.instanceCount++;
 };

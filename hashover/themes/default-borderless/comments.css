@@ -31,7 +31,7 @@ conditions, unless such conditions are required by law.
 }
 
 .hashover .hashover-hidden,
-.hashover #hashover-requiredFields,
+.hashover .hashover-required-fields,
 .hashover .hashover-notice > .hashover-balloon > .hashover-footer,
 .hashover .hashover-first .hashover-balloon,
 .hashover .hashover-first .hashover-avatar:before,
@@ -40,20 +40,20 @@ conditions, unless such conditions are required by law.
 }
 
 .hashover,
-#hashover-top-comments,
-#hashover-sort-section,
+.hashover-top-comments,
+.hashover-sort-section,
 .hashover .hashover-inputs {
 	clear: both;
 }
 
-.hashover #hashover-form-section,
-.hashover #hashover-popular-section,
-.hashover #hashover-comments-section {
+.hashover .hashover-form-section,
+.hashover .hashover-popular-section,
+.hashover .hashover-comments-section {
 	margin-bottom: 36px;
 }
 
 .hashover .hashover-title,
-.hashover #hashover-count,
+.hashover .hashover-count,
 .hashover .hashover-comment-name {
 	display: inline-block;
 	font-size: 18px;
@@ -73,6 +73,7 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-inputs input,
 .hashover .hashover-comment textarea,
 .hashover .hashover-comment .hashover-balloon,
+.hashover .hashover-requires-login-message,
 .hashover .hashover-reply > .hashover-balloon,
 .hashover .hashover-reply-form,
 .hashover .hashover-reply-form .hashover-inputs,
@@ -90,11 +91,11 @@ conditions, unless such conditions are required by law.
 	border-bottom: 1px dashed #AAAAAA;
 }
 
-.hashover #hashover-message {
+.hashover .hashover-main-message {
 	margin-bottom: 24px;
 }
 
-.hashover #hashover-message,
+.hashover .hashover-main-message,
 .hashover .hashover-more-link {
 	-moz-border-radius: 6px 6px 6px 6px;
 	-webkit-border-radius: 6px 6px 6px 6px;
@@ -136,7 +137,8 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-avatar a,
 .hashover .hashover-select-wrapper:before,
 .hashover .hashover-more-link,
-.hashover .hashover-end-links {
+.hashover .hashover-end-links,
+.hashover .hashover-requires-login-message {
 	text-align: center;
 }
 
@@ -194,7 +196,7 @@ conditions, unless such conditions are required by law.
 	margin-bottom: 0px;
 }
 
-.hashover #hashover-form,
+.hashover .hashover-form,
 .hashover .hashover-comment,
 .hashover .hashover-reply-form,
 .hashover .hashover-message,
@@ -288,7 +290,7 @@ conditions, unless such conditions are required by law.
 	position: relative;
 }
 
-.hashover #hashover-form .hashover-avatar-image {
+.hashover .hashover-form .hashover-avatar-image {
 	width: 45px;
 	padding-right: 10px;
 }
@@ -357,12 +359,13 @@ conditions, unless such conditions are required by law.
 
 .hashover .hashover-comment > .hashover-balloon,
 .hashover .hashover-edit-form,
-.hashover #hashover-end-links,
+.hashover .hashover-end-links,
 .hashover .hashover-border-top {
 	border-top: 1px solid #AAAAAA;
 }
 
-.hashover .hashover-comment > .hashover-balloon {
+.hashover .hashover-comment > .hashover-balloon,
+.hashover .hashover-requires-login-message {
 	padding: 12px;
 
 	-moz-border-radius: 6px;
@@ -529,7 +532,7 @@ conditions, unless such conditions are required by law.
 	cursor: pointer;
 }
 
-.hashover #hashover-form .hashover-comment-label,
+.hashover .hashover-form .hashover-comment-label,
 .hashover .hashover-comment-label:nth-child(2) {
 	background-color: #FCFCFC;
 }
@@ -599,7 +602,7 @@ conditions, unless such conditions are required by law.
 	margin-top: 3px;
 }
 
-.hashover #hashover-count {
+.hashover .hashover-count {
 	float: left;
 }
 
@@ -666,7 +669,8 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-avatar-image *,
 .hashover .hashover-avatar *,
 .hashover .hashover-comment > .hashover-balloon,
-.hashover .hashover-reply .hashover-header {
+.hashover .hashover-reply .hashover-header,
+.hashover .hashover-comment .hashover-inputs {
 	background-color: #FCFCFC;
 }
 
@@ -1142,7 +1146,7 @@ conditions, unless such conditions are required by law.
 	transition: all 150ms linear 0ms;
 }
 
-.hashover #hashover-end-links {
+.hashover .hashover-end-links {
 	margin-top: -12px;
 	padding: 18px 0px 5px 0px;
 }

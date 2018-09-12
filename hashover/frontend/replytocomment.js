@@ -12,7 +12,7 @@ HashOver.prototype.replyToComment = function (permalink)
 
 	// Create reply form element
 	var form = this.createElement ('form', {
-		id: 'hashover-reply-' + permalink,
+		id: this.prefix ('reply-' + permalink),
 		className: 'hashover-reply-form',
 		action: this.setup['http-backend'] + '/form-actions.php',
 		method: 'post'
@@ -21,6 +21,7 @@ HashOver.prototype.replyToComment = function (permalink)
 	// Place reply fields into form
 	form.innerHTML = this.strings.parseTemplate (
 		this.ui['reply-form'], {
+			hashover: this.prefix (),
 			permalink: permalink,
 			file: file
 		}

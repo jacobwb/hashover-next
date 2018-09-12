@@ -34,7 +34,7 @@ HashOver.frontendReady = true;
 HashOver.backendReady = false;
 
 // Initial HashOver instance count (constructor.js)
-HashOver.instanceCount = 0;
+HashOver.instanceCount = 1;
 
 // Constructor to add shared methods to (constructor.js)
 var HashOverConstructor = HashOver;

@@ -30,6 +30,9 @@ HashOver.getBackendQueries = function (options)
 		}
 	}
 
+	// Add instance number to data
+	data.instance = this.instanceCount;
+
 	// Use URL and title options if available
 	data.url = options.url || this.getURL (options.canonical);
 	data.title = options.title || this.getTitle ();

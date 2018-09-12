@@ -160,7 +160,7 @@ HashOver.prototype.showMessage = function (messageText, type, permalink, error, 
 	this.openMessage (container);
 
 	// Instantiated permalink as timeout key
-	var key = permalink;
+	var key = this.prefix (permalink);
 
 	// Add the comment to message counts
 	if (this.messageTimeouts[key] === undefined) {

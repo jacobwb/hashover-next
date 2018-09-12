@@ -50,7 +50,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 	var hashover = this;
 
 	var commentKey = comment.permalink;
-	var permalink = 'hashover-' + commentKey;
+	var permalink = this.prefix (commentKey);
 	var nameClass = 'hashover-name-plain';
 	var commentDate = comment.date;
 	var codeTagCount = 0;
@@ -60,8 +60,12 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 	var classes = '';
 	var replies = '';
 
+	// Get instantiated prefix
+	var prefix = this.prefix ();
+
 	// Initial template
 	var template = {
+		hashover: prefix,
 		permalink: commentKey
 	};
 
@@ -89,12 +93,12 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 		// Check if we have comments to collapse
 		if (collapse === true && this.instance['total-count'] > 0) {
 			// If so, check if we've reached the collapse limit
-			if (this.collapseLimit >= this.setup['collapse-limit']) {
+			if (this.instance.collapseLimit >= this.setup['collapse-limit']) {
 				// If so, append class to indicate collapsed comment
 				classes += ' hashover-hidden';
 			} else {
 				// If not, increase collapse limit
-				this.collapseLimit++;
+				this.instance.collapseLimit++;
 			}
 		}
 	}
@@ -149,6 +153,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 			// And set name as a hyperlink
 			var nameElement = this.strings.parseTemplate (
 				this.ui['name-link'], {
+					hashover: prefix,
 					href: website,
 					permalink: commentKey,
 					name: name
@@ -158,6 +163,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 			// If not, set name as plain text
 			var nameElement = this.strings.parseTemplate (
 				this.ui['name-span'], {
+					hashover: prefix,
 					permalink: commentKey,
 					name: name
 				}
@@ -185,6 +191,8 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 			// Add thread parent hyperlink to template
 			template['parent-link'] = this.strings.parseTemplate (
 				this.ui['parent-link'], {
+					hashover: prefix,
+					href: comment.url || this.instance['file-path'],
 					parent: parentThread,
 					permalink: commentKey,
 					name: parentName
@@ -218,6 +226,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 			// If so, add "Edit" hyperlink to template
 			template['edit-link'] = this.strings.parseTemplate (
 				this.ui['edit-link'], {
+					hashover: prefix,
 					href: comment.url || this.instance['file-path'],
 					permalink: commentKey
 				}
@@ -279,8 +288,9 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 		// Add date from comment as permalink hyperlink to template
 		template.date = this.strings.parseTemplate (
 			this.ui['date-link'], {
+				hashover: prefix,
 				href: comment.url || this.instance['file-path'],
-				permalink: permalink,
+				permalink: 'hashover-' + commentKey,
 				date: commentDate
 			}
 		);
@@ -288,6 +298,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 		// Add "Reply" hyperlink to template
 		template['reply-link'] = this.strings.parseTemplate (
 			this.ui['reply-link'], {
+				hashover: prefix,
 				href: comment.url || this.instance['file-path'],
 				permalink: commentKey,
 				class: replyClass,
@@ -440,7 +451,8 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 	// Wrap comment HTML
 	var wrapper = this.strings.parseTemplate (
 		this.ui['comment-wrapper'], {
-			permalink: permalink,
+			hashover: prefix,
+			permalink: commentKey,
 			class: classes,
 			html: html + replies
 		}

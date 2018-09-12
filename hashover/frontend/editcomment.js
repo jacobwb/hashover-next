@@ -30,7 +30,7 @@ HashOver.prototype.editComment = function (comment)
 
 	// Create edit form element
 	var form = this.createElement ('form', {
-		id: 'hashover-edit-' + permalink,
+		id: this.prefix ('edit-' + permalink),
 		className: 'hashover-edit-form',
 		action: this.setup['http-backend'] + '/form-actions.php',
 		method: 'post'
@@ -39,6 +39,7 @@ HashOver.prototype.editComment = function (comment)
 	// Place edit form fields into form
 	form.innerHTML = this.strings.parseTemplate (
 		this.ui['edit-form'], {
+			hashover: this.prefix (),
 			permalink: permalink,
 			file: file,
 			name: name,

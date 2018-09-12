@@ -48,4 +48,4 @@ options.settings = {
 };
 
 // And instantiate HashOver
-var hashover = new HashOver (options);
+var hashover = new HashOver ('hashover', options);

@@ -32,6 +32,7 @@ try {
 	$hashover->setup->setPageURL ('request');
 	$hashover->setup->setPageTitle ('request');
 	$hashover->setup->setThreadName ('request');
+	$hashover->setup->setInstance ('request');
 
 	// User settings passed during instantiation
 	$settings = $hashover->setup->getRequest ('settings');
