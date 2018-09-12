@@ -275,9 +275,30 @@ class WriteComments extends Secrets
 		return true;
 	}
 
+	// Checks login requirements
+	protected function loginRequirements ()
+	{
+		// Check if a login is required
+		if ($this->setup->requiresLogin === true) {
+			// If so, return false if user is not logged in
+			if ($this->login->userIsLoggedIn === false) {
+				return false;
+			}
+		}
+
+		// Otherwise, login requirements are met
+		return true;
+	}
+
 	// Sets cookies
 	public function login ($kickback = true)
 	{
+		// Check login requirements
+		if ($this->loginRequirements () === false) {
+			$this->displayMessage ('Normal login not allowed!', true);
+			return false;
+		}
+
 		try {
 			// Log the user in
 			if ($this->setup->allowsLogin !== false) {
@@ -378,6 +399,12 @@ class WriteComments extends Secrets
 	// Deletes comment
 	public function deleteComment ()
 	{
+		// Check login requirements
+		if ($this->loginRequirements () === false) {
+			$this->displayMessage ('You must be logged in to delete a comment!', true);
+			return false;
+		}
+
 		try {
 			// Authenticate user password
 			$auth = $this->commentAuthentication ();
@@ -648,6 +675,12 @@ class WriteComments extends Secrets
 	// Edits a comment
 	public function editComment ()
 	{
+		// Check login requirements
+		if ($this->loginRequirements () === false) {
+			$this->displayMessage ('You must be logged in to edit a comment!', true);
+			return false;
+		}
+
 		try {
 			// Authenticate user password
 			$auth = $this->commentAuthentication ();
@@ -967,6 +1000,12 @@ class WriteComments extends Secrets
 	{
 		// Initial status
 		$status = false;
+
+		// Check login requirements
+		if ($this->loginRequirements () === false) {
+			$this->displayMessage ('You must be logged in to comment!', true);
+			return $status;
+		}
 
 		try {
 			// Test for necessary comment data

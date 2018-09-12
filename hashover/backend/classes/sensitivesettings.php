@@ -45,6 +45,7 @@ class SensitiveSettings extends SafeSettings
 
 	// Technical settings
 	public $loginMethod		= 'defaultLogin';		// Login method class for handling user login information
+	public $requiresLogin		= false;			// Whether user must be logged in to comment (only for restrictive login methods)
 	public $setsCookies		= true;				// Whether cookies are enabled
 	public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 	public $storesIpAddress		= false;			// Whether to store users' IP addresses

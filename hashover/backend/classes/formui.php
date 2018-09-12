@@ -506,6 +506,25 @@ class FormUI
 		// Create main HashOver element
 		$hashover_element = $this->createMainElement ();
 
+		// Check if a login is required and user is not logged in
+		if ($this->setup->requiresLogin === true
+		    and $this->login->userIsLoggedIn === false)
+		{
+			// If so, create required login message element
+			$hashover_element->appendChild (new HTMLTag ('div', array (
+				'class' => 'hashover-requires-login-message',
+				'innerHTML' => $this->locale->text['login-required']
+			)));
+
+			// Return all HTML with the HashOver wrapper element
+			if ($hashover_wrapper === true) {
+				return $hashover_element->asHTML ();
+			}
+
+			// Return just the HashOver wrapper element's innerHTML
+			return $hashover_element->innerHTML;
+		}
+
 		// Create primary form wrapper element
 		$form_section = new HTMLTag ('div', array (
 			'id' => 'hashover-form-section'
