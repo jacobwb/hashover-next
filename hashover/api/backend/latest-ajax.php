@@ -90,8 +90,8 @@ try {
 		'dislike-count'		=> $hashover->ui->likeCount ('dislikes'),
 		'name-wrapper'		=> $hashover->ui->nameWrapper (),
 		'date-link'		=> $hashover->ui->dateLink (),
-		'comment-wrapper'	=> $hashover->ui->commentWrapper (),
-		'theme'			=> $hashover->templater->parseTheme ('latest.html')
+		'theme'			=> $hashover->templater->parseTheme ('latest.html'),
+		'comment-wrapper'	=> $hashover->ui->commentWrapper ()
 	);
 
 	// Attempt to get comment thread from GET/POST data

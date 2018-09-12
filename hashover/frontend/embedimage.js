@@ -1,7 +1,7 @@
 // Convert URL to embed image HTML (embedimage.js)
 HashOverConstructor.prototype.embedImage = function (m, link, url)
 {
-	// Reference to the parent object
+	// Reference to this object
 	var hashover = this;
 
 	// Remove hash from image URL

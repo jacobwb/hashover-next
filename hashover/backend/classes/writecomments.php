@@ -186,7 +186,7 @@ class WriteComments extends Secrets
 		return htmlentities ($value, ENT_COMPAT, 'UTF-8', false);
 	}
 
-	// Set header to redirect user back to the previous page
+	// Sets header to redirect user back to the previous page
 	protected function kickback ($anchor = 'comments')
 	{
 		if ($this->postData->viaAJAX === false) {
@@ -194,7 +194,7 @@ class WriteComments extends Secrets
 		}
 	}
 
-	// Display message to visitor, via AJAX or redirect
+	// Displays message to visitor, via AJAX or redirect
 	protected function displayMessage ($text, $error = false)
 	{
 		// Message type as string
@@ -216,7 +216,7 @@ class WriteComments extends Secrets
 		}
 	}
 
-	// Confirm that attempted actions are to existing comments
+	// Confirms attempted actions are to existing comments
 	protected function verifyFile ($file)
 	{
 		// Attempt to get file
@@ -242,12 +242,12 @@ class WriteComments extends Secrets
 		throw new \Exception ($this->locale->text['comment-needed']);
 	}
 
+	// Checks user IP against spam databases
 	protected function checkForSpam ()
 	{
-		// Check trap fields
+		// Block user if they fill any trap fields
 		foreach ($this->trapFields as $name) {
 			if ($this->setup->getRequest ($name)) {
-				// Block for filing trap fields
 				throw new \Exception ('You are blocked!');
 			}
 		}
@@ -275,7 +275,7 @@ class WriteComments extends Secrets
 		return true;
 	}
 
-	// Set cookies
+	// Sets cookies
 	public function login ($kickback = true)
 	{
 		try {
@@ -303,7 +303,7 @@ class WriteComments extends Secrets
 		return true;
 	}
 
-	// Expire cookies
+	// Expires cookies
 	public function logout ()
 	{
 		// Log the user out
@@ -315,7 +315,7 @@ class WriteComments extends Secrets
 		return true;
 	}
 
-	// Setup necessary login data
+	// Sets up necessary login data
 	protected function setupLogin ()
 	{
 		$this->name = $this->encodeHTML ($this->login->name);
@@ -375,7 +375,7 @@ class WriteComments extends Secrets
 		return $auth;
 	}
 
-	// Delete comment
+	// Deletes comment
 	public function deleteComment ()
 	{
 		try {
@@ -443,7 +443,7 @@ class WriteComments extends Secrets
 		return $html;
 	}
 
-	// Extract URLs for later injection
+	// Extracts URLs for later injection
 	protected function urlExtractor ($groups)
 	{
 		$link_number = count ($this->urls);
@@ -452,7 +452,7 @@ class WriteComments extends Secrets
 		return 'URL[' . $link_number . ']';
 	}
 
-	// Escape all HTML tags excluding allowed tags
+	// Escapes all HTML tags excluding allowed tags
 	public function htmlSelectiveEscape ($code)
 	{
 		// Escape all HTML tags
@@ -474,7 +474,7 @@ class WriteComments extends Secrets
 		return $groups[1] . htmlspecialchars ($groups[2], null, null, false) . $groups[3];
 	}
 
-	// Setup and test for necessary comment data
+	// Sets up and tests for necessary comment data
 	protected function setupCommentData ($editing = false)
 	{
 		// Post fails when comment is empty
@@ -645,6 +645,7 @@ class WriteComments extends Secrets
 		return 'hashover-c' . str_replace ('-', 'r', $file);
 	}
 
+	// Edits a comment
 	public function editComment ()
 	{
 		try {
@@ -714,7 +715,7 @@ class WriteComments extends Secrets
 		return false;
 	}
 
-	// Wordwrap text after adding indentation
+	// Wordwraps text after adding indentation
 	protected function indentWordwrap ($text)
 	{
 		// Line ending styles to convert
@@ -743,7 +744,7 @@ class WriteComments extends Secrets
 		return $text;
 	}
 
-	// Convert text paragraphs to HTML paragraph tags
+	// Converts text paragraphs to HTML paragraph tags
 	protected function paragraphsTags ($text, $indention = '')
 	{
 		// Initial HTML paragraphs
@@ -916,6 +917,7 @@ class WriteComments extends Secrets
 		}
 	}
 
+	// Writes a comment
 	protected function writeComment ($comment_file)
 	{
 		// Attempt to save comment
@@ -960,6 +962,7 @@ class WriteComments extends Secrets
 		return false;
 	}
 
+	// Posts a comment
 	public function postComment ()
 	{
 		// Initial status

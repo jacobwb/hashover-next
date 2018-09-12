@@ -14,6 +14,16 @@ conditions, unless such conditions are required by law.
 	text-indent: initial;
 }
 
+.hashover > div {
+	display: block;
+}
+
+.hashover :before,
+.hashover :after {
+	position: relative;
+	z-index: 3;
+}
+
 .hashover .hashover-hidden,
 .hashover #hashover-requiredFields {
 	display: none ! important;
@@ -72,8 +82,16 @@ conditions, unless such conditions are required by law.
 	width: 100%;
 	max-height: 0px;
 	padding: 0px 12px;
-	text-align: center;
 	overflow: hidden;
+}
+
+.hashover .hashover-message,
+.hashover .hashover-avatar-image *,
+.hashover .hashover-avatar *,
+.hashover .hashover-avatar a,
+.hashover .hashover-end-links,
+.hashover .hashover-more-link {
+	text-align: center;
 }
 
 .hashover .hashover-message.hashover-message-open {
@@ -195,7 +213,7 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-avatar *,
 .hashover .hashover-comment .hashover-form-buttons a,
 .hashover .hashover-comment label,
-.hashover .hashover-message,
+.hashover .hashover-main-message,
 .hashover #hashover-more-link {
 	border-radius: 5px 5px 5px 5px;
 	-moz-border-radius: 5px 5px 5px 5px;
@@ -590,7 +608,6 @@ conditions, unless such conditions are required by law.
 	vertical-align: top;
 	background-color: rgba(255, 255, 255, 0.8);
 	font-size: 18px;
-	text-align: center;
 	line-height: 45px;
 	font-weight: bold;
 	color: #808080;
@@ -776,7 +793,6 @@ conditions, unless such conditions are required by law.
 	border-top: 1px solid #AAAAAA;
 	margin-top: -12px;
 	padding: 18px 0px 5px 0px;
-	text-align: center;
 }
 
 .hashover #hashover-more-link {
@@ -785,7 +801,6 @@ conditions, unless such conditions are required by law.
 	margin-bottom: -16px;
 	background-color: rgba(210, 210, 255, 0.2);
 	border: 1px dashed #AAAAFF;
-	text-align: center;
 	color: #404040;
 	opacity: 1.0;
 	filter: alpha(opacity=100);

@@ -102,11 +102,14 @@ class Setup extends Settings
 			}
 		}
 
-		// Check if visitor is on mobile device
+		// Check if we have a user agent
 		if (!empty ($_SERVER['HTTP_USER_AGENT'])) {
+			// If so, check if visitor is on mobile device
 			if (preg_match ('/(android|blackberry|phone|mobile|tablet)/i', $_SERVER['HTTP_USER_AGENT'])) {
-				// Adjust settings to accommodate
+				// If so, set mobile indicator to true
 				$this->isMobile = true;
+
+				// And set image format to vector
 				$this->imageFormat = 'svg';
 			}
 		}
@@ -150,11 +153,13 @@ class Setup extends Settings
 		return urldecode ($request);
 	}
 
+	// Gets a domain with a port from given URL
 	protected function getDomainWithPort ($url = '')
 	{
 		// Parse URL
 		$url = parse_url ($url);
 
+		// Throw exception if URL or host is empty
 		if ($url === false or empty ($url['host'])) {
 			throw new \Exception ('Failed to obtain domain name.');
 		}
@@ -171,8 +176,13 @@ class Setup extends Settings
 	// Enables and sets up remote access
 	protected function setupRemoteAccess ()
 	{
+		// Set remote access indicator
 		$this->remoteAccess = true;
+
+		// Make HTTP root path absolute
 		$this->httpRoot = $this->absolutePath . $this->httpRoot;
+
+		// Synchronize settings
 		$this->syncSettings ();
 	}
 
@@ -193,16 +203,23 @@ class Setup extends Settings
 		// Get HTTP referer domain with port
 		$domain = $this->getDomainWithPort ($_SERVER['HTTP_REFERER']);
 
-		// Check if script was requested by this server
+		// Return true if script was requested by this server
 		if ($domain === $this->domain) {
 			return true;
 		}
 
+		// Otherwise, escape wildcard for regular expression
+		$sub_regex = '/^' . preg_quote ('\*\.') . '/S';
+
 		// Run through allowed domains
 		foreach ($this->allowedDomains as $allowed_domain) {
-			$sub_regex = '/^' . preg_quote ('\*\.') . '/S';
+			// Escape allowed domain for regular expression
 			$safe_domain = preg_quote ($allowed_domain);
+
+			// Replace subdomain wildcard with proper regular expression
 			$domain_regex = preg_replace ($sub_regex, '(?:.*?\.)*', $safe_domain);
+
+			// Final domain regular expression
 			$domain_regex = '/^' . $domain_regex . '$/iS';
 
 			// Check if script was requested from an allowed domain

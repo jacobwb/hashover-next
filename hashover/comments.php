@@ -133,7 +133,7 @@ try {
 	// Register element retriever method
 	$javascript->registerFile ('getelement.js');
 
-	// Register element class processer method
+	// Register element class processor method
 	$javascript->registerFile ('eachclass.js');
 
 	// Register parse all comments method

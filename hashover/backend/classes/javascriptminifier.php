@@ -44,7 +44,7 @@ class JavaScriptMinifier
 		}
 
 		if ($level >= 2) {
-			// Remove whitespace
+			// Remove leading whitespace
 			$js = preg_replace ('/^\s*/m', '', $js);
 
 			// Replace multiple tabs with a single space

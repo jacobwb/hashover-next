@@ -116,8 +116,18 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-message > * {
 	padding: 0px 12px;
 	margin-bottom: 12px;
-	text-align: center;
 	border: 1px solid #AAAAAA;
+}
+
+.hashover .hashover-message > *,
+.hashover .hashover-avatar-image *,
+.hashover .hashover-avatar *,
+.hashover .hashover-avatar a,
+.hashover .hashover-select-wrapper:before,
+.hashover .hashover-disjoined:before,
+.hashover .hashover-more-link,
+.hashover .hashover-end-links {
+	text-align: center;
 }
 
 .hashover .hashover-message.hashover-message-open > *,
@@ -544,7 +554,7 @@ conditions, unless such conditions are required by law.
 	float: left;
 }
 
-.hashover #hashover-sort,
+.hashover .hashover-sort-select,
 .hashover .hashover-edit-status,
 .hashover .hashover-comment .hashover-footer .hashover-buttons,
 .hashover .hashover-form-buttons,
@@ -671,7 +681,6 @@ conditions, unless such conditions are required by law.
 	width: 45px;
 	height: 45px;
 	font-size: 18px;
-	text-align: center;
 	line-height: 45px;
 	color: #808080;
 	background-position: center center;
@@ -818,6 +827,10 @@ conditions, unless such conditions are required by law.
 	cursor: pointer;
 }
 
+.hashover .hashover-edit-status .hashover-select-wrapper {
+	margin-top: -3px;
+}
+
 .hashover .hashover-select-wrapper:before {
 	content: "\25BC";
 	position: absolute;
@@ -831,7 +844,6 @@ conditions, unless such conditions are required by law.
 	font-size: 12px;
 	line-height: 12px;
 	font-family: monospace;
-	text-align: center;
 	pointer-events: none;
 	background-color: #F0F0F0;
 	border-left: 1px solid #AAAAAA;
@@ -1023,7 +1035,6 @@ conditions, unless such conditions are required by law.
 	content: "===";
 	display: block;
 	padding: 6px;
-	text-align: center;
 }
 
 .hashover .hashover-disjoined .hashover-header {
@@ -1036,7 +1047,6 @@ conditions, unless such conditions are required by law.
 	margin-bottom: 24px;
 	background-color: rgba(230, 237, 250, 0.6);
 	border: 1px dashed #AAAAFF;
-	text-align: center;
 	opacity: 1.0;
 	filter: alpha(opacity=100);
 }
@@ -1109,7 +1119,6 @@ conditions, unless such conditions are required by law.
 .hashover #hashover-end-links {
 	margin-top: -12px;
 	padding: 18px 0px 5px 0px;
-	text-align: center;
 }
 
 /* Handle HDPI */

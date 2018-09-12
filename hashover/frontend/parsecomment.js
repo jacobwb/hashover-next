@@ -175,7 +175,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 		}
 
 		// Check if comment has a parent
-		if (parent !== null) {
+		if (parent !== null && this.ui['parent-link'] !== undefined) {
 			// If so, create the parent thread permalink
 			var parentThread = 'hashover-' + parent.permalink;
 
@@ -214,7 +214,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 		}
 
 		// Check if the comment is editable for the user
-		if (comment['editable'] !== undefined) {
+		if ((comment['editable'] && this.ui['edit-link']) !== undefined) {
 			// If so, add "Edit" hyperlink to template
 			template['edit-link'] = this.strings.parseTemplate (
 				this.ui['edit-link'], {
@@ -426,8 +426,9 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 	// Comment HTML template
 	var html = this.strings.parseTemplate (this.ui['theme'], template);
 
-	// Recursively parse replies
+	// Check if comment has replies
 	if (comment.replies !== undefined) {
+		// Recursively parse replies
 		for (var i = 0, il = comment.replies.length; i < il; i++) {
 			replies += this.parseComment (comment.replies[i], comment, collapse);
 		}

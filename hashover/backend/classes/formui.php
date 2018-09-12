@@ -199,6 +199,7 @@ class FormUI
 		return $login_inputs;
 	}
 
+	// Creates avatar element
 	protected function avatar ($text)
 	{
 		// If avatars set to images
@@ -227,6 +228,7 @@ class FormUI
 		return $avatar;
 	}
 
+	// Creates "Notify me of replies" checkbox
 	protected function subscribeLabel ($id = '', $type = 'main', $checked = true)
 	{
 		// Create subscribe checkbox label element
@@ -265,20 +267,29 @@ class FormUI
 		return $subscribe_label;
 	}
 
+	// Creates a table-like cell for the accepted HTML/markdown panel
 	protected function acceptedFormatCell ($format, $locale_key)
 	{
+		// Create cell title
 		$title = new HTMLTag ('p', array ('class' => 'hashover-title'));
-		$accepted_format = sprintf ($this->locale->text['accepted-format'], $format);
-		$title->innerHTML ($accepted_format);
 
-		$paragraph = new HTMLTag ('p');
-		$paragraph->innerHTML ($this->locale->text[$locale_key]);
+		// "Accepted HTML/Markdown" locale string
+		$title->innerHTML (sprintf (
+			$this->locale->text['accepted-format'], $format
+		));
 
+		// Create accepted HTML/markdown text paragraph
+		$paragraph = new HTMLTag ('p', array (
+			'innerHTML' => $this->locale->text[$locale_key])
+		);
+
+		// And return both elements in a <div> tag
 		return new HTMLTag ('div', array (
 			'children' => array ($title, $paragraph)
 		));
 	}
 
+	// Creats a comment form, ie. main/reply/edit
 	protected function commentForm (HTMLTag $form, $type, $placeholder, $text, $permalink = '')
 	{
 		// Prepend dash to permalink if present
@@ -374,6 +385,7 @@ class FormUI
 		$form->appendChild ($accepted_formatting_message);
 	}
 
+	// Creates hidden page info fields, ie. page URL, title, reply comment
 	protected function pageInfoFields (HTMLTag $form)
 	{
 		// Create hidden comment thread input element
@@ -420,6 +432,7 @@ class FormUI
 		}
 	}
 
+	// Creates "Formatting" link to open the accepted HTML/markdown panel
 	protected function acceptedFormatting ($type, $permalink = '')
 	{
 		// Prepend dash to permalink if present
@@ -446,33 +459,34 @@ class FormUI
 		return urlencode (urldecode ($url));
 	}
 
-	public function initialHTML ($hashover_wrapper = true)
+	// Creates the main HashOver element
+	protected function createMainElement ()
 	{
 		// Create element that HashOver comments will appear in
-		$hashover_element = new HTMLTag ('div', array (
+		$main = new HTMLTag ('div', array (
 			'id' => 'hashover',
 			'class' => 'hashover'
 		), false);
 
 		// Add class indictating desktop and mobile styling
 		if ($this->setup->isMobile === true) {
-			$hashover_element->appendAttribute ('class', 'hashover-mobile');
+			$main->appendAttribute ('class', 'hashover-mobile');
 		} else {
-			$hashover_element->appendAttribute ('class', 'hashover-desktop');
+			$main->appendAttribute ('class', 'hashover-desktop');
 		}
 
 		// Add class for raster or vector images
 		if ($this->setup->imageFormat === 'svg') {
-			$hashover_element->appendAttribute ('class', 'hashover-vector');
+			$main->appendAttribute ('class', 'hashover-vector');
 		} else {
-			$hashover_element->appendAttribute ('class', 'hashover-raster');
+			$main->appendAttribute ('class', 'hashover-raster');
 		}
 
 		// Add class to indicate user login status
 		if ($this->login->userIsLoggedIn === true) {
-			$hashover_element->appendAttribute ('class', 'hashover-logged-in');
+			$main->appendAttribute ('class', 'hashover-logged-in');
 		} else {
-			$hashover_element->appendAttribute ('class', 'hashover-logged-out');
+			$main->appendAttribute ('class', 'hashover-logged-out');
 		}
 
 		// Create element for jump anchor
@@ -481,7 +495,16 @@ class FormUI
 		));
 
 		// Add jump anchor to HashOver element
-		$hashover_element->appendChild ($jump_anchor);
+		$main->appendChild ($jump_anchor);
+
+		return $main;
+	}
+
+	// Creates initial HTML elements, such as comment form and end links
+	public function initialHTML ($hashover_wrapper = true)
+	{
+		// Create main HashOver element
+		$hashover_element = $this->createMainElement ();
 
 		// Create primary form wrapper element
 		$form_section = new HTMLTag ('div', array (
@@ -901,11 +924,12 @@ class FormUI
 				$count_sort_wrapper->createAttribute ('style', 'display: none;');
 			}
 
+			// Check if there is more than one comment
 			if ($this->commentCounts['total'] > 2) {
-				// Create wrapper element for sort dropdown menu
+				// If so, create wrapper element for sort dropdown menu
 				$sort_wrapper = new HTMLTag ('span', array (
 					'id' => 'hashover-sort',
-					'class' => 'hashover-select-wrapper'
+					'class' => 'hashover-select-wrapper hashover-sort-select'
 				));
 
 				// Create sort dropdown menu element
