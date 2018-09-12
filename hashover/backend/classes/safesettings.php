@@ -80,5 +80,5 @@ class SafeSettings
 	public $gravatarDefault		= 'custom';			// Gravatar theme to use ('custom', 'identicon', 'monsterid', 'wavatar', or 'retro')
 	public $gravatarForce		= false;			// Whether to force the themed Gravatar images instead of an avatar image
 	public $minifiesJavascript	= false;			// Whether JavaScript output should be minified
-	public $minifyLevel		= 4;				// How much to minify JavaScript code, options: 1, 2, 3, 4
+	public $minifyLevel		= 1;				// How much to minify JavaScript code, options: 1, 2, 3, 4
 }
