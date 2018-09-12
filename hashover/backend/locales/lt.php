@@ -35,6 +35,7 @@ $locale = array (
 	'deleted-name'		=> 'Ištrintas...',
 	'error-name'		=> 'Klaida...',
 	'be-first-note'		=> 'Jokių komentarų apie šį žmogų nėra. Būk pirmas!',
+	'login-required'	=> 'Jūs turite būti prisijungęs norėdami komentuoti!',
 	'pending-note'		=> 'Šis komentaras laukia patvirtinimo.',
 	'deleted-note'		=> 'Šis komentaras buvo ištrintas.',
 	'error-note'		=> 'Klaida parsiunčiant komentarus..',

@@ -26,6 +26,7 @@ $locale = array (
 	'deleted-name'		=> 'Verwijderd...',
 	'error-name'		=> 'Fout...',
 	'be-first-note'		=> 'Wees de eerste om te reactie!',
+	'login-required'	=> 'Je moet zijn aangemeld om te reageren!',
 	'pending-note'		=> 'Dit reactie wacht op goedkeuring.',
 	'deleted-note'		=> 'Dit reactie is verwijderd.',
 	'error-note'		=> 'Er ging iets mis. Kon niet halen deze reactie.',

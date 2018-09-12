@@ -26,6 +26,7 @@ $locale = array (
 	'deleted-name'		=> '삭제됨...',
 	'error-name'		=> '오류...',
 	'be-first-note'		=> '첫번째 댓글을 남겨주세요!',
+	'login-required'	=> '댓글을 남기려면 로그인해야합니다!',
 	'pending-note'		=> '이 댓글은 승인을 기다리고 있습니다.',
 	'deleted-note'		=> '이 댓글은 삭제되었습니다.',
 	'error-note'		=> '무엇인가 잘못되었습니다. 댓글을 표시할 수 없습니다.',

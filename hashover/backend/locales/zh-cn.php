@@ -26,6 +26,7 @@ $locale = array (
 	'deleted-name'		=> '已删除…',
 	'error-name'		=> '出错了…',
 	'be-first-note'		=> '写下第一个评论！',
+	'login-required'	=> '你必须登录后才能发表评论！',
 	'pending-note'		=> '此评论正在等待批准。',
 	'deleted-note'		=> '此评论已经被删除了。',
 	'error-note'		=> '出了些问题。无法查看此评论。',

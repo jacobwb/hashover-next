@@ -26,6 +26,7 @@ $locale = array (
 	'deleted-name'		=> 'Eliminado...',
 	'error-name'		=> 'Error...',
 	'be-first-note'		=> '¡Sé el primero en comentar!',
+	'login-required'	=> '¡Debes iniciar sesión para comentar!',
 	'pending-note'		=> 'Este comentario está a la espera de ser aprobado.',
 	'deleted-note'		=> 'Este comentario ha sido eliminado.',
 	'error-note'		=> 'Algo salió mal. No se pudo recuperar este comentario.',

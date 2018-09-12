@@ -26,6 +26,7 @@ $locale = array (
 	'deleted-name'		=> 'は削除…',
 	'error-name'		=> 'エラー…',
 	'be-first-note'		=> 'ぜひ最初のコメントを！',
+	'login-required'	=> 'コメントするにはログインしている必要があります！',
 	'pending-note'		=> 'このコメントは承認が保留されています。',
 	'deleted-note'		=> 'このコメントは削除されました。',
 	'error-note'		=> '何かが間違っていました。このコメントを取得できませんでした。',

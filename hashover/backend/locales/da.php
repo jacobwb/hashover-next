@@ -26,6 +26,7 @@ $locale = array (
 	'deleted-name'		=> 'Slettet...',
 	'error-name'		=> 'Fejl...',
 	'be-first-note'		=> 'Vær den første til at kommentere!',
+	'login-required'	=> 'Du skal være logget ind for at kommentere!',
 	'pending-note'		=> 'Denne kommentar venter på godkendelse.',
 	'deleted-note'		=> 'Denne kommentar er slettet.',
 	'error-note'		=> 'Et eller andet gik galt. Kunne ikke hente kommentaren.',

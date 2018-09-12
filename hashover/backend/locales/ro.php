@@ -26,6 +26,7 @@ $locale = array (
 	'deleted-name'		=> 'Sters...',
 	'error-name'		=> 'Eroare...',
 	'be-first-note'		=> 'Fii primul care comenteaza!',
+	'login-required'	=> 'Trebuie să fii logat pentru a comenta!',
 	'pending-note'		=> 'Acest comentariu este în curs de aprobare.',
 	'deleted-note'		=> 'Acest comentariu a fost șters.',
 	'error-note'		=> 'Ceva n-a mers bine. Nu a putut prelua acest comentariu.',

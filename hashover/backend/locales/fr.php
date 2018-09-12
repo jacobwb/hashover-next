@@ -33,6 +33,7 @@ $locale = array (
 	'deleted-name'		=> 'Supprimé...',
 	'error-name'		=> 'Erreur...',
 	'be-first-note'		=> 'Soyez le premier à commenter !',
+	'login-required'	=> 'Vous devez être connecté pour commenter!',
 	'pending-note'		=> 'Ce commentaire est en attente d\'approbation.',
 	'deleted-note'		=> 'Ce commentaire a été supprimé.',
 	'error-note'		=> 'Quelque chose a mal tourné. Impossible de récupérer ce commentaire.',

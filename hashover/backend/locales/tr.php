@@ -26,6 +26,7 @@ $locale = array (
 	'deleted-name'		=> 'Silindi...',
 	'error-name'		=> 'Hata...',
 	'be-first-note'		=> 'İlk yorumu siz yapın!',
+	'login-required'	=> 'Yorum yapmak için giriş yapmalısınız!',
 	'pending-note'		=> 'Bu yorum onayı bekliyor.',
 	'deleted-note'		=> 'Bu yorum silindi.',
 	'error-note'		=> 'Bir şeyler yanlış gitti. Bu yorumu alınamadı.',
