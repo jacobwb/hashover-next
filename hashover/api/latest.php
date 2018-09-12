@@ -104,7 +104,7 @@ try {
 	$javascript->registerFile ('optionalmethod.js');
 
 	// Register comment parsing methods
-	$javascript->registerFile ('comments.js');
+	$javascript->registerFile ('parsecomment.js');
 
 	// Register embedded image method
 	$javascript->registerFile ('embedimage.js', array (

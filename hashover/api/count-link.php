@@ -67,7 +67,11 @@ try {
 	$javascript->registerFile ('onready.js');
 
 	// Register AJAX-related methods
-	$javascript->registerFile ('ajax.js');
+	$javascript->registerFile ('ajax.js', array (
+		'dependencies' => array (
+			'createelement.js'
+		)
+	));
 
 	// Change back to count link frontend directory
 	$javascript->changeDirectory ('api/frontends/count-link');
