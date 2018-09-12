@@ -130,11 +130,6 @@ class Setup extends Settings
 	// Gets value from POST or GET data
 	public function getRequest ($key, $default = false)
 	{
-		// Return default value if POST and GET are empty
-		if (empty ($_GET[$key]) and empty ($_POST[$key])) {
-			return urldecode ($default);
-		}
-
 		// Attempt to obtain GET data
 		if (!empty ($_GET[$key])) {
 			$request = $_GET[$key];
@@ -145,12 +140,19 @@ class Setup extends Settings
 			$request = $_POST[$key];
 		}
 
-		// Strip escape slashes from POST or GET
-		if (get_magic_quotes_gpc ()) {
-			$request = stripslashes ($request);
+		// Check if we got a value from POST or GET
+		if (!empty ($request)) {
+			// If so, strip escape slashes if enabled
+			if (get_magic_quotes_gpc ()) {
+				$request = stripslashes ($request);
+			}
+
+			// And return URL decoded value
+			return urldecode ($request);
 		}
 
-		return urldecode ($request);
+		// Otherwise, return default
+		return $default;
 	}
 
 	// Gets a domain with a port from given URL
