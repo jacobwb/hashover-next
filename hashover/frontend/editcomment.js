@@ -15,10 +15,6 @@ HashOver.prototype.editComment = function (comment)
 	// Get file
 	var file = this.permalinkFile (permalink);
 
-	// Get name and website
-	var name = comment.name || '';
-	var website = comment.website || '';
-
 	// Get and clean comment body
 	var body = comment.body.replace (this.rx.links, '$1');
 
@@ -42,8 +38,8 @@ HashOver.prototype.editComment = function (comment)
 			hashover: this.prefix (),
 			permalink: permalink,
 			file: file,
-			name: name,
-			website: website,
+			name: comment.name || '',
+			website: comment.website || '',
 			body: body
 		}
 	);

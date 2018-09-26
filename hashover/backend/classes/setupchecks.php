@@ -22,9 +22,26 @@ class SetupChecks extends Secrets
 {
 	public function __construct (Setup $setup)
 	{
+		// Check if PHP version is too old
+		if (version_compare (PHP_VERSION, '5.3.3') < 0) {
+			// If so, split the PHP version by dashes
+			$version_parts = explode ('-', PHP_VERSION);
+
+			// And throw exception
+			throw new \Exception (sprintf (
+				// The exception message
+				'PHP %s is too old. Must be at least PHP 5.3.3.',
+
+				// The first part of the version
+				$version_parts[0]
+			));
+		}
+
 		// Throw exception if for Blowfish hashing support isn't detected
 		if ((defined ('CRYPT_BLOWFISH') and CRYPT_BLOWFISH) === false) {
-			throw new \Exception ('Failed to find CRYPT_BLOWFISH. Blowfish hashing support is required.');
+			throw new \Exception (
+				'Failed to find CRYPT_BLOWFISH. Blowfish hashing support is required.'
+			);
 		}
 
 		// Throw exception if administrative password is set to the default

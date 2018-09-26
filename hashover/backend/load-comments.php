@@ -32,11 +32,7 @@ try {
 	$hashover->setup->setPageURL ('request');
 	$hashover->setup->setPageTitle ('request');
 	$hashover->setup->setThreadName ('request');
-	$hashover->setup->collapsesComments = false;
 	$hashover->initiate ();
-
-	// Setup where to start reading comments
-	$start = $hashover->setup->getRequest ('start', 0);
 
 	// Check for comments
 	if ($hashover->thread->totalCount > 1) {

@@ -150,14 +150,16 @@ class Login extends Secrets
 	// Checks if required fields have values
 	public function validateFields ()
 	{
-		// Check required fields, throw error if any are empty
+		// Run through login field options
 		foreach ($this->setup->fieldOptions as $field => $status) {
+			// Check if current field is required and is empty
 			if ($status === 'required' and empty ($this->$field)) {
-				// Don't set cookies if the request is via AJAX
+				// If so, set cookies if request is not AJAX
 				if ($this->postData->viaAJAX !== true) {
 					$this->cookies->setFailedOn ($field, $this->postData->replyTo);
 				}
 
+				// And throw exception
 				throw new \Exception (sprintf (
 					$this->fieldNeeded, $this->locale->text[$field]
 				));
@@ -183,7 +185,7 @@ class Login extends Secrets
 	}
 
 	// Weak verification of an admin login
-	public function adminLogin ()
+	public function isAdmin ()
 	{
 		// Create login hash
 		$hash = hash ('ripemd160', $this->adminName . $this->adminPassword);
@@ -218,7 +220,7 @@ class Login extends Secrets
 			$this->userIsLoggedIn = true;
 
 			// Check if user is logged in as admin
-			if ($this->adminLogin () === true) {
+			if ($this->isAdmin () === true) {
 				$this->userIsAdmin = true;
 			}
 		}

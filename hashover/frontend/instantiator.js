@@ -4,11 +4,11 @@ HashOver.instantiator = function (id, options)
 	// Reference to this object
 	var hashover = this;
 
-	// Get backend queries
-	var queries = HashOver.getBackendQueries (options);
-
 	// Backend request path
 	var requestPath = HashOver.backendPath + '/comments-ajax.php';
+
+	// Get backend queries
+	var queries = HashOver.getBackendQueries (options);
 
 	// Handle backend request
 	this.ajax ('POST', requestPath, queries, function (json) {
@@ -58,7 +58,7 @@ HashOver.instantiator = function (id, options)
 		hashover.init (id);
 	}, true);
 
-	// Set instance number to current instance count
+	// Set instance number
 	this.instanceNumber = HashOver.instanceCount;
 
 	// Increment HashOver instance count

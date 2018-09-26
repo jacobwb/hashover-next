@@ -89,18 +89,21 @@ class CommentsUI extends FormUI
 	// Creates hyperlink with URL queries to link reference
 	protected function queryLink ($href = false, array $queries = array ())
 	{
-		// Create hyperlink with relative local or absolute remote path
-		$link = new HTMLTag ('a', array (
-			'href' => $href ?: $this->setup->filePath
-		), false);
+		// Given hyperlink URL or default file path
+		$href = $href ?: $this->setup->filePath;
 
 		// Merge given URL queries with existing page URL queries
 		$queries = array_merge ($this->setup->URLQueryList, $queries);
 
-		// Add URL queries to link path
+		// Add URL queries to path if URL has queries
 		if (!empty ($queries)) {
-			$link->appendAttribute ('href', '?' . implode ('&', $queries), false);
+			$href .= '?' . implode ('&', $queries);
 		}
+
+		// And create hyperlink
+		$link = new HTMLTag ('a', array (
+			'href' => $href
+		), false);
 
 		return $link;
 	}
@@ -236,6 +239,7 @@ class CommentsUI extends FormUI
 		return $cancel_link->asHTML ();
 	}
 
+	// Creates a user avatar image or comment number
 	public function userAvatar ($src = '{src}', $href = '{href}', $text = '{text}')
 	{
 		// If avatars set to images
@@ -269,6 +273,7 @@ class CommentsUI extends FormUI
 		return '';
 	}
 
+	// Creates a cancel button hyperlink
 	public function cancelButton ($type, $permalink)
 	{
 		// Create hyperlink element
@@ -295,6 +300,7 @@ class CommentsUI extends FormUI
 		return $cancel_button;
 	}
 
+	// Creates a comment reply form
 	public function replyForm ($permalink = '{permalink}', $file = '{file}', $subscribed = true)
 	{
 		// Create HashOver reply form
@@ -322,8 +328,9 @@ class CommentsUI extends FormUI
 			$reply_form->appendChild ($reply_login_inputs);
 		}
 
-		// Create label element for comment textarea
+		// Check if form labels are enabled
 		if ($this->setup->usesLabels === true) {
+			// If so, create label element for comment textarea
 			$reply_comment_label = new HTMLTag ('label', array (
 				'for' => 'hashover-reply-comment-' . $permalink,
 				'class' => 'hashover-comment-label',
@@ -425,6 +432,7 @@ class CommentsUI extends FormUI
 		return $reply_form->asHTML ();
 	}
 
+	// Creates a comment edit form
 	public function editForm ($permalink = '{permalink}', $file = '{file}', $name = '{name}', $website = '{website}', $body = '{body}', $status = '', $subscribed = true)
 	{
 		// "Edit Comment" locale string
@@ -452,8 +460,9 @@ class CommentsUI extends FormUI
 			'innerHTML' => $edit_comment
 		), false);
 
+		// Check if user is admin
 		if ($this->login->userIsAdmin === true) {
-			// Create status dropdown wrapper element
+			// If so, create status dropdown wrapper element
 			$edit_status_wrapper = new HTMLTag ('span', array (
 				'class' => 'hashover-edit-status',
 				'innerHTML' => $this->locale->text['status']
@@ -478,6 +487,7 @@ class CommentsUI extends FormUI
 				'size' => '1'
 			));
 
+			// Run through status options
 			foreach ($status_options as $value => $inner_html) {
 				// Create status dropdown menu option element
 				$edit_status_option = new HTMLTag ('option', array (
@@ -511,15 +521,16 @@ class CommentsUI extends FormUI
 		$edit_login_inputs = $this->loginInputs ($permalink, true, $name, $website);
 		$edit_form->appendChild ($edit_login_inputs);
 
-		// Create label element for comment textarea
+		// Check if form labels are enabled
 		if ($this->setup->usesLabels === true) {
+			// If so, create label element for comment textarea
 			$edit_comment_label = new HTMLTag ('label', array (
 				'for' => 'hashover-edit-comment-' . $permalink,
 				'class' => 'hashover-comment-label',
 				'innerHTML' => $this->locale->text['edit-your-comment']
 			), false);
 
-			// Add comment label to form element
+			// And add comment label to form element
 			$edit_form->appendChild ($edit_comment_label);
 		}
 

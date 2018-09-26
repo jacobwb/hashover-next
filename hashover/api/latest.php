@@ -32,7 +32,9 @@ try {
 
 	// Throw exception if the "Latest Comments" API is disabled
 	if ($setup->apiStatus ('latest') === 'disabled') {
-		throw new \Exception ('This API is not enabled.');
+		throw new \Exception (
+			'This API is not enabled.'
+		);
 	}
 
 	// Instantiate HashOver statistics class

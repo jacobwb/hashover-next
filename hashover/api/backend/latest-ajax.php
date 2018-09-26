@@ -38,7 +38,9 @@ try {
 
 	// Throw exception if the "Latest Comments" API is disabled
 	if ($hashover->setup->apiStatus ('latest') === 'disabled') {
-		throw new \Exception ('This API is not enabled.');
+		throw new \Exception (
+			'This API is not enabled.'
+		);
 	}
 
 	// Comments and statistics response array
@@ -122,6 +124,8 @@ try {
 	foreach ($latest as $item) {
 		// Get comment key
 		$key = basename ($item);
+
+		// Split comment key by dashes
 		$key_parts = explode ('-', $key);
 
 		// Decide proper thread

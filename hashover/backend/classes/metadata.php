@@ -31,6 +31,7 @@ class Metadata
 		$this->data = $thread->data;
 	}
 
+	// Prepends a comment to latest comments metadata file
 	protected function prependLatestComments ($file, $global = false)
 	{
 		// Add thread to file if metadata is global
@@ -44,9 +45,8 @@ class Metadata
 		// Attempt to read existing latest comments metadata
 		$metadata = $this->data->readMeta ('latest-comments', 'auto', $global);
 
-		// Check if latest comments metadata read successfully
+		// Merge existing comments with initial array
 		if ($metadata !== false) {
-			// If so, merge existing comments with initial array
 			$latest = array_merge ($latest, $metadata);
 		}
 
@@ -60,6 +60,7 @@ class Metadata
 		$this->data->saveMeta ('latest-comments', $latest, 'auto', $global);
 	}
 
+	// Removes a comment from latest comments metadata file
 	protected function spliceLatestComments ($file, $global = false)
 	{
 		// Add thread to file if metadata is global
@@ -72,11 +73,11 @@ class Metadata
 
 		// Check if latest comments metadata read successfully
 		if ($latest !== false) {
+			// If so, get index of file in array
 			$index = array_search ($file, $latest);
 
-			// Check if the comment is in the latest array
+			// Remove comment from latest array
 			if ($index !== false) {
-				// If so, remove it from the array
 				array_splice ($latest, $index, 1);
 			}
 
@@ -85,6 +86,7 @@ class Metadata
 		}
 	}
 
+	// Adds a comment to latest comments metadata file
 	public function addLatestComment ($file)
 	{
 		// Add comment to thread-specific latest comments metadata
@@ -94,6 +96,7 @@ class Metadata
 		$this->prependLatestComments ($file, true);
 	}
 
+	// Removes a comment from latest comments metadata file
 	public function removeFromLatest ($file)
 	{
 		// Add comment to thread-specific latest comments metadata

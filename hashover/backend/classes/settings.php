@@ -28,18 +28,18 @@
 // Automated settings
 class Settings extends SensitiveSettings
 {
+	public $themePath;
 	public $rootDirectory;
 	public $httpRoot;
 	public $httpBackend;
 	public $httpImages;
 	public $cookieExpiration;
+	public $scheme;
 	public $domain;
+	public $absolutePath;
 
 	public function __construct ()
 	{
-		// Theme path
-		$this->themePath = 'themes/' . $this->theme;
-
 		// Set server timezone
 		date_default_timezone_set ($this->serverTimezone);
 
@@ -58,22 +58,32 @@ class Settings extends SensitiveSettings
 			$http_directory = str_replace ('\\', '/', $http_directory);
 		}
 
+		// Theme path
+		$this->themePath = 'themes/' . $this->theme;
+
+		// Root directory for script
+		$this->rootDirectory = $root_directory;
+
+		// Root directory for HTTP
+		$this->httpRoot = $http_directory;
+
+		// Backend directory for HTTP
+		$this->httpBackend = $http_directory . '/backend';
+
+		// Image directory for HTTP
+		$this->httpImages = $http_directory . '/images';
+
+		// Cookie expiration date
+		$this->cookieExpiration = time () + 60 * 60 * 24 * 30;
+
 		// Get connection scheme
 		$this->scheme = $this->isHTTPS () ? 'https' : 'http';
 
 		// Domain name for refer checking & notifications
 		$this->domain = Misc::getArrayItem ($_SERVER, 'HTTP_HOST') ?: 'localhost';
 
-		// Connection protocol
-		$protocol = $this->scheme . '://';
-
-		// Technical settings
-		$this->rootDirectory	= $root_directory;		// Root directory for script
-		$this->httpRoot		= $http_directory;		// Root directory for HTTP
-		$this->httpBackend	= $http_directory . '/backend';	// Backend directory for HTTP
-		$this->httpImages	= $http_directory . '/images';	// Image directory for HTTP
-		$this->cookieExpiration	= time () + 60 * 60 * 24 * 30;	// Cookie expiration date
-		$this->absolutePath	= $protocol . $this->domain;	// Absolute path or remote access
+		// Absolute path or remote access
+		$this->absolutePath = $this->scheme . '://' . $this->domain;
 
 		// Load JSON settings
 		$this->loadSettingsFile ();
@@ -82,6 +92,7 @@ class Settings extends SensitiveSettings
 		$this->syncSettings ();
 	}
 
+	// Checks if connection is on HTTPS/SSL
 	public function isHTTPS ()
 	{
 		// The connection is HTTPS if server says so

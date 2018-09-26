@@ -40,7 +40,9 @@ class Templater
 			return trim ($content);
 		} else {
 			// If not, throw exception
-			throw new \Exception ('Failed to load template file.');
+			throw new \Exception (
+				'Failed to load template file.'
+			);
 		}
 	}
 

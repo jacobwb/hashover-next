@@ -35,8 +35,10 @@ class Thread
 		// Store parameters as properties
 		$this->setup = $setup;
 
-		// Instantiate necessary class data format class
+		// Name of data format class to instantiate
 		$data_class = 'HashOver\\Parse' . strtoupper ($setup->dataFormat);
+
+		// Instantiate data format class
 		$this->data = new $data_class ($setup);
 	}
 
@@ -46,9 +48,12 @@ class Thread
 		// Query a list of comments
 		$comment_list = $this->data->query ();
 
-		// Organize comments if comments could be queried
-		if ($comment_list !== false) {
+		// Check if comments could be queried
+		if (!empty ($comment_list)) {
+			// If so, set comments as comment list
 			$this->commentList = $comment_list;
+
+			// And organize comments
 			$this->organizeComments ();
 		}
 	}
@@ -56,38 +61,50 @@ class Thread
 	// Counts a comment
 	public function countComment ($comment)
 	{
-		// Count replies
+		// Check if comment has replies
 		if (strpos ($comment, '-') !== false) {
+			// If so, split comment by dashes
 			$file_parts = explode ('-', $comment);
+
+			// Get parent comment
 			$thread = basename ($comment, '-' . end ($file_parts));
 
+			// Check if parent comment reply count exists
 			if (isset ($this->threadCount[$thread])) {
+				// If so, increase parent comment reply count
 				$this->threadCount[$thread]++;
 			} else {
+				// If not, create parent comment reply count
 				$this->threadCount[$thread] = 1;
 			}
 		} else {
-			// Count top level comments
+			// If not, increase primary comment count
 			$this->primaryCount++;
 		}
 
-		// Count replies
+		// Check if thread comment count exists
 		if (isset ($this->threadCount[$comment])) {
+			// If so, increase thread comment count
 			$this->threadCount[$comment]++;
 		} else {
+			// If not, create thread comment count
 			$this->threadCount[$comment] = 1;
 		}
 
-		// Count all other comments
+		// Increase total comment count
 		$this->totalCount++;
 	}
 
 	// Explode a string, cast substrings to integers
 	protected function intExplode ($delimiter, $string)
 	{
-		$parts = explode ($delimiter, $string);
+		// Initial integers
 		$ints = array ();
 
+		// Split string by delimiter
+		$parts = explode ($delimiter, $string);
+
+		// Cast all parts of string to integers
 		for ($i = 0, $il = count ($parts); $i < $il; $i++) {
 			$ints[] = (int)($parts[$i]);
 		}
@@ -159,6 +176,7 @@ class Thread
 	// Organize comments
 	protected function organizeComments ()
 	{
+		// Run through comment list
 		foreach ($this->commentList as $key) {
 			// Check for missing comments
 			$this->findMissingComments ($key);
@@ -217,7 +235,7 @@ class Thread
 		return $comments;
 	}
 
-	// Queries a list of comment threads
+	// Queries an array of comment threads
 	public function queryThreads ()
 	{
 		return $this->data->queryThreads ();

@@ -313,7 +313,6 @@ try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('rss', 'api');
 	$hashover->setup->setPageURL ('request');
-	$hashover->setup->collapsesComments = false;
 	$hashover->initiate ();
 	$hashover->parsePrimary ();
 

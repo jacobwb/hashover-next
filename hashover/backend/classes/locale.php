@@ -100,10 +100,10 @@ class Locale
 			$this->text = $locale;
 		} else {
 			// If not, throw exception
-			$language = mb_strtoupper ($this->setup->language);
-			$exception = $language . ' locale file could not be included!';
-
-			throw new \Exception ($exception);
+			throw new \Exception (sprintf (
+				'%s locale file could not be included!',
+				mb_strtoupper ($this->setup->language)
+			));
 		}
 	}
 

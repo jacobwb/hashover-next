@@ -82,7 +82,7 @@ class Statistics
 		$statistics .= PHP_EOL . PHP_EOL;
 
 		// Return statistics as JavaScript comment
-		if ($this->mode !== 'php') {
+		if ($this->mode === 'javascript') {
 			return PHP_EOL . '/*' . $statistics . '*/';
 		}
 

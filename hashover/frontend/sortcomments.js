@@ -209,9 +209,6 @@ HashOver.prototype.sortPrimary = function (method)
 	// Sort the primary comments
 	var sorted = this.sortComments (this.instance.comments.primary, method);
 
-	// Remove all content at the destination
-	dest.textContent = '';
-
 	// Parse the sorted comments
 	this.parseAll (sorted, dest);
 };

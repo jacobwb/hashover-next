@@ -9,10 +9,15 @@ HashOver.prototype.parseAll = function (comments, element, collapse, popular)
 		html += this.parseComment (comments[i], null, collapse, popular);
 	}
 
-	// Add comments to element's innerHTML
+	// Check if we can insert HTML adjacently
 	if ('insertAdjacentHTML' in element) {
+		// If so, remove all existing content
+		element.textContent = '';
+
+		// And insert HTML adjacently
 		element.insertAdjacentHTML ('beforeend', html);
 	} else {
+		// If not, add comments as element's innerHTML
 		element.innerHTML = html;
 	}
 

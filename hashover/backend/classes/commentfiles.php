@@ -24,44 +24,144 @@ class CommentFiles extends DataFiles
 
 	public function __construct (Setup $setup)
 	{
-		// Construst parent class
+		// Construct parent class
 		parent::__construct ($setup);
 
 		// Store parameters as properties
 		$this->setup = $setup;
 	}
 
+	// Gets the appropriate thread directory path
+	protected function getMetaRoot ($thread)
+	{
+		// Using the automatically setup thread if told to
+		if ($thread === 'auto') {
+			return $this->setup->threadDirectory;
+		}
+
+		// Otherwise construct thread directory path
+		return $this->setup->pagesDirectory . '/' . $thread;
+	}
+
 	// Returns a comment file path for a given file and thread
 	protected function getCommentPath ($file, $extension, $thread = 'auto')
 	{
-		$default = $this->setup->threadDirectory;
-		$path = $this->setup->pagesDirectory;
-		$thread = ($thread !== 'auto') ? $path . '/' . $thread : $default;
+		// Get thread root
+		$thread = $this->getThreadRoot ($thread);
+
+		// Construct full file path
 		$path = $thread . '/' . $file . '.' . $extension;
 
 		return $path;
 	}
 
 	// Read directory contents, put filenames in array, count files
-	protected function loadFiles ($extension, array $files = array (), $auto = true)
+	protected function loadFiles ($extension)
 	{
-		if ($auto === true) {
-			$pattern = $this->setup->threadDirectory . '/*.' . $extension;
-			$files = glob ($pattern, GLOB_NOSORT);
+		// Initial comments to return
+		$comments = array ();
+
+		// File pattern to match against
+		$pattern = $this->setup->threadDirectory . '/*.' . $extension;
+
+		// Find files matching the pattern, with no sorting
+		$files = glob ($pattern, GLOB_NOSORT);
+
+		// Run through comments
+		foreach ($files as $file) {
+			// Get file name without extension
+			$key = basename ($file, '.' . $extension);
+
+			// Add file name to comments
+			$comments[$key] = (string)($key);
 		}
 
-		if (!empty ($files)) {
-			$comments = array ();
+		return $comments;
+	}
 
-			foreach ($files as $file) {
-				$key = basename ($file, '.' . $extension);
-				$comments[$key] = (string)($key);
+	// Gets the appropriate metadata directory path
+	protected function getMetaDirectory ($thread, $global)
+	{
+		// Check if we're getting metadata for a specific thread
+		if ($global !== true) {
+			// If so, use the thread's path
+			$directory = $this->getMetaRoot ($thread) . '/metadata';
+		} else {
+			// If not, use the global metadata path
+			$directory = $this->setup->commentsDirectory . '/metadata';
+		}
+
+		// Return metadata directory path
+		return $directory;
+	}
+
+	// Gets the appropriate metadata file path
+	protected function getMetaPath ($name, $thread, $global)
+	{
+		// Metadata directory path
+		$directory = $this->getMetaDirectory ($thread, $global);
+
+		// Metadata file path
+		$path = $directory . '/' . $name . '.json';
+
+		// Return metadata file path
+		return $path;
+	}
+
+	// Creates metadata directory if it doesn't exist
+	protected function setupMeta ($thread, $global)
+	{
+		// Metadata directory path
+		$metadata = $this->getMetaDirectory ($thread, $global);
+
+		// Check if metadata root directory exists
+		if (file_exists ($this->getMetaRoot ($thread))) {
+			// If so, attempt to create metadata directory
+			if (file_exists ($metadata) or @mkdir ($metadata, 0755, true)) {
+				// If successful, set permissions to 0755 again
+				@chmod ($metadata, 0755);
+				return true;
 			}
 
-			return $comments;
+			// Otherwise throw exception
+			throw new \Exception (sprintf (
+				'Failed to create metadata directory at: %s',
+				$metadata
+			));
+		}
+	}
+
+	// Read and return specific metadata from JSON file
+	public function readMeta ($name, $thread = 'auto', $global = false)
+	{
+		// Metadata JSON file path
+		$path = $this->getMetaPath ($name, $thread, $global);
+
+		// Return metadata if read successfully
+		return $this->readJSON ($path);
+	}
+
+	// Save metadata to specific metadata JSON file
+	public function saveMeta ($name, array $data, $thread = 'auto', $global = false)
+	{
+		// Metadata JSON file path
+		$metadata_path = $this->getMetaPath ($name, $thread, $global);
+
+		// Create metadata directory if it doesn't exist
+		$this->setupMeta ($thread, $global);
+
+		// Check if metadata root directory exists
+		if (file_exists ($this->getMetaRoot ($thread))) {
+			// If so, attempt to save data to metadata JSON file
+			if ($this->saveJSON ($metadata_path, $data) === false) {
+				// Throw exception on failure
+				throw new \Exception (
+					'Failed to save metadata!'
+				);
+			}
 		}
 
-		return false;
+		return true;
 	}
 
 	// Check if comment thread directory exists
@@ -87,20 +187,25 @@ class CommentFiles extends DataFiles
 				$this->setup->threadDirectory
 			));
 		}
-
-		return true;
 	}
 
-	// Queries a list of comment threads
-	public function queryThreads ()
+	// Queries an array of directory names
+	protected function queryDirs ($path)
 	{
-		$pages = $this->setup->pagesDirectory;
-		$directories = glob ($pages . '/*', GLOB_ONLYDIR);
+		// Get comment directories
+		$dirs = glob ($path . '/*', GLOB_ONLYDIR);
 
-		foreach ($directories as &$directory) {
-			$directory = basename ($directory);
+		// Convert directories paths to just their names
+		foreach ($dirs as $key => $name) {
+			$dirs[$key] = basename ($name);
 		}
 
-		return $directories;
+		return $dirs;
+	}
+
+	// Queries an array of comment threads
+	public function queryThreads ()
+	{
+		return $this->queryDirs ($this->setup->pagesDirectory);
 	}
 }

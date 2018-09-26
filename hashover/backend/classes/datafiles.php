@@ -27,6 +27,7 @@ class DataFiles
 		$this->setup = $setup;
 	}
 
+	// Reads a given JSON file
 	public function readJSON ($file)
 	{
 		// Read JSON comment file
@@ -49,6 +50,7 @@ class DataFiles
 		return preg_replace ('/\r\n|\r|\n/', PHP_EOL, $string);
 	}
 
+	// Writes an array of data to a JSON file
 	public function saveJSON ($file, array $contents = array ())
 	{
 		// Check if we have pretty print support
@@ -66,106 +68,12 @@ class DataFiles
 		// Convert line endings to OS specific style
 		$json = $this->osLineEndings ($json);
 
-		// Save the JSON data to the comment file
+		// Return true if file writes successfully (0 counts as failure)
 		if (@file_put_contents ($file, $json)) {
 			return true;
 		}
 
+		// Otherwise, return false
 		return false;
-	}
-
-	// Gets the appropriate thread directory path
-	protected function getMetaRoot ($thread)
-	{
-		// Using the automatically setup thread if told to
-		if ($thread === 'auto') {
-			return $this->setup->threadDirectory;
-		}
-
-		// Otherwise construct thread directory path
-		return $this->setup->pagesDirectory . '/' . $thread;
-	}
-
-	// Gets the appropriate metadata directory path
-	protected function getMetaDirectory ($thread, $global)
-	{
-		// Check if we're getting metadata for a specific thread
-		if ($global !== true) {
-			// If so, use the thread's path
-			$directory = $this->getMetaRoot ($thread) . '/metadata';
-		} else {
-			// If not, use the global metadata path
-			$directory = $this->setup->commentsDirectory . '/metadata';
-		}
-
-		// Return metadata directory path
-		return $directory;
-	}
-
-	// Gets the appropriate metadata file path
-	protected function getMetaPath ($name, $thread, $global)
-	{
-		// Metadata directory path
-		$directory = $this->getMetaDirectory ($thread, $global);
-
-		// Metadata file path
-		$path = $directory . '/' . $name . '.json';
-
-		// Return metadata file path
-		return $path;
-	}
-
-	// Creates metadata directory if it doesn't exist
-	protected function setupMeta ($thread, $global)
-	{
-		// Metadata directory path
-		$metadata = $this->getMetaDirectory ($thread, $global);
-
-		// Check if metadata root directory exists
-		if (file_exists ($this->getMetaRoot ($thread))) {
-			// If so, attempt to create metadata directory
-			if (file_exists ($metadata) or @mkdir ($metadata, 0755, true)) {
-				// If successful, set permissions to 0755 again
-				@chmod ($metadata, 0755);
-				return true;
-			}
-
-			// Otherwise throw exception
-			throw new \Exception (sprintf (
-				'Failed to create metadata directory at: %s',
-				$metadata
-			));
-		}
-	}
-
-	// Read and return specific metadata from JSON file
-	public function readMeta ($name, $thread = 'auto', $global = false)
-	{
-		// Metadata JSON file path
-		$metadata_path = $this->getMetaPath ($name, $thread, $global);
-
-		// Return metadata if read successfully
-		return $this->readJSON ($metadata_path);
-	}
-
-	// Save metadata to specific metadata JSON file
-	public function saveMeta ($name, array $data, $thread = 'auto', $global = false)
-	{
-		// Metadata JSON file path
-		$metadata_path = $this->getMetaPath ($name, $thread, $global);
-
-		// Create metadata directory if it doesn't exist
-		$this->setupMeta ($thread, $global);
-
-		// Check if metadata root directory exists
-		if (file_exists ($this->getMetaRoot ($thread))) {
-			// If so, attempt to save data to metadata JSON file
-			if ($this->saveJSON ($metadata_path, $data) === false) {
-				// Throw exception on failure
-				throw new \Exception ('Failed to save metadata!');
-			}
-		}
-
-		return true;
 	}
 }

@@ -80,35 +80,33 @@ try {
 		// Use URL query pairs from file or blank
 		$query = Misc::getArrayItem ($ignored_queries, $i) ?: '';
 
-		// Split query pair into name and value
+		// Split query pair by equals sign
 		$query_parts = explode ('=', $query);
-		$query_name = $query_parts[0];
-		$query_value = Misc::getArrayItem ($query_parts, 1) ?: '';
 
-		// Create input tag
-		$input = new HTMLTag ('div', array (
-			'children' => array (
-				new HTMLTag ('input', array (
-					'class' => 'name',
-					'type' => 'text',
-					'name' => 'names[]',
-					'value' => $query_name,
-					'size' => '15',
-					'placeholder' => $hashover->locale->text['name'],
-					'title' => $hashover->locale->text['url-queries-name-tip']
-				), false, true),
+		// Create div tag for name and value inputs
+		$input = new HTMLTag ('div');
 
-				new HTMLTag ('input', array (
-					'class' => 'value',
-					'type' => 'text',
-					'name' => 'values[]',
-					'value' => $query_value,
-					'size' => '25',
-					'placeholder' => $hashover->locale->text['value'],
-					'title' => $hashover->locale->text['url-queries-value-tip']
-				), false, true)
-			)
-		));
+		// Add input for query name to input div
+		$input->appendChild (new HTMLTag ('input', array (
+			'class'		=> 'name',
+			'type'		=> 'text',
+			'name'		=> 'names[]',
+			'value'		=> $query_parts[0],
+			'size'		=> '15',
+			'placeholder'	=> $hashover->locale->text['name'],
+			'title'		=> $hashover->locale->text['url-queries-name-tip']
+		), false, true));
+
+		// Add input for query value to input div
+		$input->appendChild (new HTMLTag ('input', array (
+			'class'		=> 'value',
+			'type'		=> 'text',
+			'name'		=> 'values[]',
+			'value'		=> Misc::getArrayItem ($query_parts, 1) ?: '',
+			'size'		=> '25',
+			'placeholder'	=> $hashover->locale->text['value'],
+			'title'		=> $hashover->locale->text['url-queries-value-tip']
+		), false, true));
 
 		// Add input to inputs container
 		$inputs->appendChild ($input);

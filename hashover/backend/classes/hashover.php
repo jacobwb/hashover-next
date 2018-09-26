@@ -32,9 +32,9 @@ class HashOver
 	public $thread;
 	public $locale;
 	public $commentParser;
-	public $markdown;
-	public $cookies;
 	public $login;
+	public $cookies;
+	public $markdown;
 	public $comments = array ();
 	public $ui;
 	public $templater;
@@ -123,14 +123,14 @@ class HashOver
 		// Instantiate locales class
 		$this->locale = new HashOver\Locale ($this->setup);
 
-		// Instantiate cookies class
-		$this->cookies = new HashOver\Cookies ($this->setup);
+		// Instantiate comment parser class
+		$this->commentParser = new HashOver\CommentParser ($this->setup);
 
 		// Instantiate login class
 		$this->login = new HashOver\Login ($this->setup);
 
-		// Instantiate comment parser class
-		$this->commentParser = new HashOver\CommentParser ($this->setup);
+		// Instantiate cookies class
+		$this->cookies = new HashOver\Cookies ($this->setup);
 
 		// Generate comment count
 		$this->commentCount = $this->getCommentCount ();
@@ -142,18 +142,18 @@ class HashOver
 	// Save various metadata about the page
 	public function defaultMetadata ()
 	{
-		// "localhost" equivalent addresses
-		$addresses = array ('127.0.0.1', '::1', 'localhost');
-
 		// Check if local metadata is disabled
 		if ($this->setup->allowLocalMetadata !== true) {
-			// If so, do nothing if we're on localhost
-			if (in_array ($_SERVER['REMOTE_ADDR'], $addresses, true)) {
+			// If so, get remote address
+			$address = HashOver\Misc::getArrayItem ($_SERVER, 'REMOTE_ADDR');
+
+			// Do nothing on if we're on localhost
+			if ($this->setup->isLocalhost ($address) === true) {
 				return;
 			}
 		}
 
-		// Attempt to save default page metadata
+		// Otherwise, attempt to save default page metadata
 		$this->thread->data->saveMeta ('page-info', array (
 			'url' => $this->setup->pageURL,
 			'title' => $this->setup->pageTitle

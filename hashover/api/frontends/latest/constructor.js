@@ -31,9 +31,12 @@ function HashOverLatest (options)
 	// Initial backend queries
 	var queries = [];
 
-	// Add thread to queries if present
-	if (options && options.thread !== undefined) {
-		queries.push ('thread=' + encodeURIComponent (options.thread));
+	// Check if options is an object
+	if (options && options.constructor === Object) {
+		// If so, add thread to queries if present
+		if (options.thread !== undefined) {
+			queries.push ('thread=' + encodeURIComponent (options.thread));
+		}
 	}
 
 	// Backend request path

@@ -1,6 +1,9 @@
 // Get supported HashOver backend queries from options (getbackendqueries.js)
 HashOver.getBackendQueries = function (options)
 {
+	// Ensure options is an object
+	options = options || {};
+
 	// URL query data object
 	var data = {};
 
@@ -9,11 +12,6 @@ HashOver.getBackendQueries = function (options)
 
 	// URL queries array
 	var queries = [];
-
-	// Ensure options is an object
-	if (!options || options.constructor !== Object) {
-		options = {};
-	}
 
 	// Check for carryover options from loader constructor
 	if (loaderOptions && loaderOptions.constructor === Object) {
@@ -37,7 +35,7 @@ HashOver.getBackendQueries = function (options)
 	data.url = options.url || this.getURL (options.canonical);
 	data.title = options.title || this.getTitle ();
 
-	// And add thread to request if told to
+	// Add thread to request if told to
 	if (typeof (options.thread) === 'string') {
 		data.thread = options.thread;
 	}

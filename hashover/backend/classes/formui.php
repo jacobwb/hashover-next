@@ -176,8 +176,9 @@ class FormUI
 				'class' => 'hashover-input-cell'
 			));
 
+			// Check if form labels are enabled
 			if ($this->setup->usesLabels === true) {
-				// Create label element for input
+				// If so, create label element for input
 				$label = new HTMLTag ('label', array (
 					'for' => $attributes['input-id'],
 					'class' => $attributes['label-class'],
@@ -422,16 +423,6 @@ class FormUI
 	// Creates hidden page info fields, ie. page URL, title, reply comment
 	protected function pageInfoFields (HTMLTag $form)
 	{
-		// Create hidden comment thread input element
-		$thread_input = new HTMLTag ('input', array (
-			'type' => 'hidden',
-			'name' => 'thread',
-			'value' => $this->setup->threadName
-		), false, true);
-
-		// Add hidden comments thread input element to form element
-		$form->appendChild ($thread_input);
-
 		// Create hidden page URL input element
 		$url_input = new HTMLTag ('input', array (
 			'type' => 'hidden',
@@ -441,6 +432,16 @@ class FormUI
 
 		// Add hidden page URL input element to form element
 		$form->appendChild ($url_input);
+
+		// Create hidden comment thread input element
+		$thread_input = new HTMLTag ('input', array (
+			'type' => 'hidden',
+			'name' => 'thread',
+			'value' => $this->setup->threadName
+		), false, true);
+
+		// Add hidden comments thread input element to form element
+		$form->appendChild ($thread_input);
 
 		// Create hidden page title input element
 		$title_input = new HTMLTag ('input', array (
@@ -761,8 +762,9 @@ class FormUI
 		// Post button locale
 		$post_button = $this->locale->text['post-button'];
 
-		// Create label element for comment textarea
+		// Check if form labels are enabled
 		if ($this->setup->usesLabels === true) {
+			// If so, create label element for comment textarea
 			$main_comment_label = new HTMLTag ('label', array (
 				'for' => 'hashover-main-comment',
 				'class' => 'hashover-comment-label',

@@ -30,7 +30,10 @@ class SpamCheck
 		$this->blocklist = $setup->getAbsolutePath ('config/blocklist.json');
 
 		// CSV spam database file
-		$this->database = $setup->getAbsolutePath ('spam-database.csv');
+		$this->database = $setup->getAbsolutePath ('config/spam-database.csv');
+
+		// Visitor IP address or 127.0.0.1
+		$this->ip = Misc::getArrayItem ($_SERVER, 'REMOTE_ADDR') ?: '127.0.0.1';
 	}
 
 	// Compare array of IP addresses to user's IP
@@ -44,7 +47,7 @@ class SpamCheck
 		// Run through each IP
 		for ($ip = count ($ips) - 1; $ip >= 0; $ip--) {
 			// Return true if they match
-			if ($ips[$ip] === $_SERVER['REMOTE_ADDR']) {
+			if ($ips[$ip] === $this->ip) {
 				return true;
 			}
 		}
@@ -79,7 +82,7 @@ class SpamCheck
 	protected function getStopForumSpamJSON ()
 	{
 		// Stop Forum Spam API URL
-		$url = 'https://www.stopforumspam.com/api?ip=' . $_SERVER['REMOTE_ADDR'] . '&f=json';
+		$url = 'https://www.stopforumspam.com/api?ip=' . $this->ip . '&f=json';
 
 		// Check if we have cURL
 		if (function_exists ('curl_init')) {

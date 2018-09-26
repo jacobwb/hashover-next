@@ -23,24 +23,53 @@ class Database extends Secrets
 	protected $setup;
 	protected $database;
 
+	// Initial comment data
+	protected $commentsTable = array (
+		'domain' => '',
+		'thread' => '',
+		'comment' => '',
+		'body' => '',
+		'status' => '',
+		'date' => '',
+		'name' => '',
+		'password' => '',
+		'login_id' => '',
+		'email' => '',
+		'encryption' => '',
+		'email_hash' => '',
+		'notifications' => '',
+		'website' => '',
+		'ipaddr' => '',
+		'likes' => 0,
+		'dislikes' => 0
+	);
+
 	public function __construct (Setup $setup)
 	{
 		// Store parameters as properties
 		$this->setup = $setup;
 
 		try {
+			// Check if database type is SQLite
 			if ($this->databaseType === 'sqlite') {
-				$sqlite_file = $setup->commentsDirectory . '/' . $this->databaseName . '.sqlite';
-				$this->database = new \PDO ('sqlite:' . $sqlite_file);
+				// If so, construct SQLite file name
+				$file = sprintf ('%s/%s.sqlite',
+					$setup->commentsDirectory, $this->databaseName
+				);
+
+				// Instantiate an SQLite data object
+				$this->database = new \PDO ('sqlite:' . $file);
 			} else {
-				$sql_connection = implode (';', array (
+				// If not, create SQL server connection statement
+				$connection = implode (';', array (
 					'host=' . $this->databaseHost,
 					'dbname=' . $this->databaseName,
 					'charset=' . $this->databaseCharset
 				));
 
+				// And create SQL server data object
 				$this->database = new \PDO (
-					$this->databaseType . ':' . $sql_connection,
+					$this->databaseType . ':' . $connection,
 					$this->databaseUser,
 					$this->databasePassword
 				);
@@ -50,9 +79,58 @@ class Database extends Secrets
 		}
 	}
 
+	// Prepares and executes an SQL statement
+	protected function executeStatement ($statement, $data = null)
+	{
+		try {
+			// Prepare statement
+			$prepare = $this->database->prepare ($statement);
+
+			// Attempt to execute statement
+			if ($prepare !== false) {
+				return $prepare->execute ($data);
+			}
+		} catch (\PDOException $error) {
+			throw new \Exception ($error->getMessage ());
+		}
+
+		return false;
+	}
+
+	// Returns a given thread or thread from setup
 	protected function getCommentThread ($thread)
 	{
-		return ($thread !== 'auto') ? $thread : $this->setup->threadName;
+		// Return thread from setup if thread is auto
+		if ($thread === 'auto') {
+			return $this->setup->threadName;
+		}
+
+		// Otherwise, return given thread
+		return $thread;
+	}
+
+	// Creates table creation statement from array
+	protected function creationArray (array $columns)
+	{
+		// Initial statement
+		$statement = array ();
+
+		// Check if the array is associative
+		if (array_keys ($columns) !== range (0, count ($columns) - 1)) {
+			// If so, create a statement using specific columns
+			foreach ($columns as $name => $value) {
+				// Decide type based on value type
+				$type = is_numeric ($value) ? 'INTEGER' : 'TEXT';
+
+				// And add column to statement
+				$statement[] = sprintf ('`%s` %s', $name, $type);
+			}
+		} else {
+			// If not, create statement using generic "items" column
+			$statement[] = '`items` TEXT';
+		}
+
+		return $statement;
 	}
 
 	// Gets the appropriate metadata table name
@@ -77,7 +155,7 @@ class Database extends Secrets
 		return $table;
 	}
 
-	// Get items column entries as array
+	// Gets items column entries as array
 	protected function getItems (array $rows)
 	{
 		// Initial items to return
@@ -91,7 +169,7 @@ class Database extends Secrets
 		return $items;
 	}
 
-	// Read and return specific metadata from JSON file
+	// Reads and returns specific metadata from database
 	public function readMeta ($name, $thread = 'auto', $global = false)
 	{
 		// Metadata table
@@ -123,51 +201,14 @@ class Database extends Secrets
 		return false;
 	}
 
-	// Create table creation statement from array
-	protected function creationStatement (array $columns)
-	{
-		$statement = array ();
-
-		// Check if the array is associative
-		if (array_keys ($columns) !== range (0, count ($columns) - 1)) {
-			// If so, create a statement using specific columns
-			foreach ($columns as $name => $value) {
-				$type = is_numeric ($value) ? 'INTEGER' : 'TEXT';
-				$statement[] = sprintf ('`%s` %s', $name, $type);
-			}
-		} else {
-			// If not, create statement using generic "items" column
-			$statement[] = '`items` TEXT';
-		}
-
-		return $statement;
-	}
-
-	// Prepare and execute an SQL statement
-	protected function executeStatement ($statement, $data = null)
-	{
-		try {
-			// Prepare statement
-			$prepare = $this->database->prepare ($statement);
-
-			// Attempt to execute statement
-			if ($prepare !== false) {
-				return $prepare->execute ($data);
-			}
-
-			return $prepare;
-
-		} catch (\PDOException $error) {
-			throw new \Exception ($error->getMessage ());
-		}
-	}
-
-	// Create comment table if it doesn't exist
+	// Creates comment table if it doesn't exist
 	protected function createTable ($name, array $columns)
 	{
-		// Statement for creating initial comment thread table
-		$statement  = 'CREATE TABLE IF NOT EXISTS `' . $name . '` ';
-		$statement .= '(' . implode (', ', $columns) . ')';
+		// Statement for creating an initial table
+		$statement = implode (' ', array (
+			'CREATE TABLE IF NOT EXISTS `' . $name . '`',
+			'(' . implode (', ', $columns) . ')'
+		));
 
 		// Execute statement
 		$created = $this->executeStatement ($statement);
@@ -175,19 +216,18 @@ class Database extends Secrets
 		// Throw exception on failure
 		if ($created === false) {
 			throw new \Exception (sprintf (
-				'Failed to create "%s" table!',
-				$this->setup->threadName
+				'Failed to create "%s" table!', $name
 			));
 		}
-
-		return true;
 	}
 
-	// Create table query statement from array
-	protected function queryStatement (array $columns)
+	// Creates table query statement from array
+	protected function prepareArray (array $columns)
 	{
+		// Initial query statement
 		$statement = array ();
 
+		// Add each column to statement
 		foreach ($columns as $name => $value) {
 			$statement[] = ':' . $name;
 		}
@@ -195,7 +235,7 @@ class Database extends Secrets
 		return $statement;
 	}
 
-	// Delete all rows from a given table
+	// Deletes all rows from a given table
 	protected function deleteAllRows ($table)
 	{
 		// Deletion statement
@@ -206,18 +246,20 @@ class Database extends Secrets
 
 		// Throw exception on failure
 		if ($deleted === false) {
-			throw new \Exception ('Failed to delete existing metadata!');
+			throw new \Exception (
+				'Failed to delete existing metadata!'
+			);
 		}
 	}
 
-	// Save metadata to specific metadata JSON file
+	// Saves metadata to specific metadata JSON file
 	public function saveMeta ($name, array $data, $thread = 'auto', $global = false)
 	{
 		// Metadata table
 		$metadata_table = $this->getMetaTable ($name, $thread, $global);
 
 		// Create metadata table creation statement
-		$creation_statement = $this->creationStatement ($data);
+		$creation_statement = $this->creationArray ($data);
 
 		// Attempt to create metadata table
 		$this->createTable ($metadata_table, $creation_statement);
@@ -228,7 +270,7 @@ class Database extends Secrets
 		// Check if the array is associative
 		if (array_keys ($data) !== range (0, count ($data) - 1)) {
 			// If so, create metadata columns insertion statement array
-			$columns = $this->queryStatement ($data);
+			$columns = $this->prepareArray ($data);
 
 			// Insert data into specific columns
 			$save  = 'INSERT INTO `' . $metadata_table . '` ';
@@ -257,43 +299,37 @@ class Database extends Secrets
 
 		// Throw exception on failure
 		if ($saved === false) {
-			throw new \Exception ('Failed to save metadata!');
+			throw new \Exception (
+				'Failed to save metadata!'
+			);
 		}
 	}
 
-	public function write ($action, $thread, array $array, $alt = false)
+	// Writes new or changed content to database
+	public function write ($action, $thread, array $data, $alt = false)
 	{
+		// Get thread
 		$thread = $this->getCommentThread ($thread);
 
+		// Decide on an action
 		switch ($action) {
 			// Action for posting a comment
 			case 'insert': {
-				$columns = implode (', ', array (
-					':id',
-					':body',
-					':status',
-					':date',
-					':name',
-					':password',
-					':login_id',
-					':email',
-					':encryption',
-					':email_hash',
-					':notifications',
-					':website',
-					':ipaddr',
-					':likes',
-					':dislikes'
-				));
+				// Get comments table columns as query array
+				$columns = $this->prepareArray ($this->commentsTable);
 
-				$query  = 'INSERT INTO `' . $thread . '` ';
-				$query .= 'VALUES (' . $columns . ')';
+				// Construct SQL statement
+				$query = sprintf (
+					'INSERT INTO `%s` VALUES (%s)',
+					$thread, implode (', ', $columns)
+				);
 
 				break;
 			}
 
 			// Action for editing a comment
 			case 'update': {
+				// Columns to query
 				$columns = implode (', ', array (
 					'body=:body',
 					'status=:status',
@@ -308,9 +344,12 @@ class Database extends Secrets
 					'dislikes=:dislikes'
 				));
 
-				$query  = 'UPDATE `' . $thread . '` ';
-				$query .= 'SET ' . $columns . ' ';
-				$query .= 'WHERE id=:id';
+				// Construct SQL statement
+				$query = implode (' ', array (
+					'UPDATE `' . $thread . '`',
+					'SET ' . $columns,
+					'WHERE id=:id'
+				));
 
 				break;
 			}
@@ -320,13 +359,17 @@ class Database extends Secrets
 				// Check if we're actually deleting the comment
 				if ($alt === true) {
 					// If so, use delete statement
-					$query  = 'DELETE FROM `' . $thread . '` ';
-					$query .= 'WHERE id=:id';
+					$query = implode (' ', array (
+						'DELETE FROM `' . $thread . '`',
+						'WHERE id=:id'
+					));
 				} else {
 					// If not, use status update statement
-					$query  = 'UPDATE `' . $thread . '` ';
-					$query .= 'SET status=:status ';
-					$query .= 'WHERE id=:id';
+					$query = implode (' ', array (
+						'UPDATE `' . $thread . '`',
+						'SET status=:status',
+						'WHERE id=:id'
+					));
 				}
 
 				break;
@@ -334,38 +377,29 @@ class Database extends Secrets
 		}
 
 		// Execute statement
-		$queried = $this->executeStatement ($query, $array);
+		$queried = $this->executeStatement ($query, $data);
 
 		// Throw exception on failure
 		if ($queried === false) {
-			throw new \Exception ('Failed to write to database!');
+			throw new \Exception (
+				'Failed to write to database!'
+			);
 		}
 
 		return true;
 	}
 
-	// Create comment thread if it doesn't exist
+	// Check if comments table exists
 	public function checkThread ()
 	{
+		// Get thread
 		$thread = $this->setup->threadName;
 
-		return $this->createTable ($thread, array (
-			'`id` TEXT',
-			'`body` TEXT',
-			'`status` TEXT',
-			'`date` TEXT',
-			'`name` TEXT',
-			'`password` TEXT',
-			'`login_id` TEXT',
-			'`email` TEXT',
-			'`encryption` TEXT',
-			'`email_hash` TEXT',
-			'`notifications` TEXT',
-			'`website` TEXT',
-			'`ipaddr` TEXT',
-			'`likes` INTEGER',
-			'`dislikes` INTEGER'
-		));
+		// Create comments table creation statements
+		$statement = $this->creationArray ($this->commentsTable);
+
+		// Create initial comments if it doesn't exist
+		$this->createTable ($thread, $statement);
 	}
 
 	// Queries a list of comment threads
@@ -386,19 +420,16 @@ class Database extends Secrets
 			$statement .= 'AND TABLE_SCHEMA=\'' . $name . '\'';
 		}
 
-		// Query statement
+		// Execute statement
 		$results = $this->database->query ($statement);
 
-		// Return threads if successful
+		// Check if query was successful
 		if ($results !== false) {
+			// If so, fetch all threads
 			$fetch_all = $results->fetchAll (\PDO::FETCH_ASSOC);
-			$threads = array ();
 
-			foreach ($fetch_all as $table) {
-				$threads[] = $table['name'];
-			}
-
-			return $threads;
+			// Return threads column
+			return array_column ($fetch_all, 'name'));
 		}
 
 		return false;

@@ -1,11 +1,11 @@
 // HashOver UI initialization process (init.js)
 HashOver.prototype.init = function (id)
 {
-	// Store start time
-	this.execStart = Date.now ();
-
 	// Reference to this object
 	var hashover = this;
+
+	// Execution start time
+	this.execStart = Date.now ();
 
 	// Get the main HashOver element
 	var mainElement = this.getMainElement (id);
@@ -246,7 +246,7 @@ HashOver.prototype.init = function (id)
 		}
 	}
 
-	// Store end time
+	// Execution end time
 	this.execEnd = Date.now ();
 
 	// Store execution time

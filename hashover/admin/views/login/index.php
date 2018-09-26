@@ -27,7 +27,7 @@ try {
 		$hashover->login->setLogin ();
 
 		// Check if the user is not admin
-		if ($hashover->login->adminLogin () === false) {
+		if ($hashover->login->isAdmin () === false) {
 			// If so, logout
 			$hashover->login->clearLogin ();
 

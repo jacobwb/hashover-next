@@ -29,19 +29,17 @@ try {
 
 	// Display error if the API is disabled
 	if ($hashover->setup->apiStatus ('json') === 'disabled') {
-		throw new \Exception ('<b>HashOver</b>: This API is not enabled.');
+		throw new \Exception (
+			'<b>HashOver</b>: This API is not enabled.'
+		);
 	}
 
 	// Configure HashOver and load comments
 	$hashover->setup->setPageURL ('request');
-	$hashover->setup->collapsesComments = false;
 	$hashover->initiate ();
 
 	// Comments and statistics response array
 	$data = array ();
-
-	// Setup where to start reading comments
-	$start = $hashover->setup->getRequest ('start', 0);
 
 	// Check for comments
 	if ($hashover->thread->totalCount > 1) {

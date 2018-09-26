@@ -67,14 +67,14 @@ try {
 	for ($i = 0, $il = max (3, count ($blocklist)); $i < $il; $i++) {
 		// Create input tag
 		$input = new HTMLTag ('input', array (
-			'class' => 'addresses',
-			'type' => 'text',
-			'name' => 'addresses[]',
-			'value' => Misc::getArrayItem ($blocklist, $i) ?: '',
-			'size' => '15',
-			'maxlength' => '15',
-			'placeholder' => '127.0.0.1',
-			'title' => $hashover->locale->text['blocklist-ip-tip']
+			'class'		=> 'addresses',
+			'type'		=> 'text',
+			'name'		=> 'addresses[]',
+			'value'		=> Misc::getArrayItem ($blocklist, $i) ?: '',
+			'size'		=> '15',
+			'maxlength'	=> '15',
+			'placeholder'	=> '127.0.0.1',
+			'title'		=> $hashover->locale->text['blocklist-ip-tip']
 		), false, true);
 
 		// Add input to inputs container

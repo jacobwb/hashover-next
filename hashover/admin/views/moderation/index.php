@@ -17,27 +17,40 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
+// Adds a row to a table
+function add_table_row (HTMLTag $table, HTMLTag $child)
+{
+	// Create table row and column
+	$tr = new HTMLTag ('tr');
+	$td = new HTMLTag ('td');
+
+	// Append child element to column
+	$td->appendChild ($child);
+
+	// Append column to row
+	$tr->appendChild ($td);
+
+	// Append row to table
+	$table->appendChild ($tr);
+}
+
 try {
 	// View setup
 	require (realpath ('../view-setup.php'));
 
+	// Attempt to get array of comment threads
+	$threads = $hashover->thread->queryThreads ();
+
 	// Create comment thread table
-	$table = new HTMLTag ('table', array (
+	$threads_table = new HTMLTag ('table', array (
 		'id' => 'threads',
 		'class' => 'striped-rows-odd',
 		'cellspacing' => '0',
 		'cellpadding' => '4'
 	));
 
-	// Get comment threads
-	$threads = $hashover->thread->queryThreads ();
-
 	// Run through comment threads
 	foreach ($threads as $thread) {
-		// Create table row and cell
-		$tr = new HTMLTag ('tr');
-		$td = new HTMLTag ('td');
-
 		// Read and parse JSON metadata file
 		$data = $hashover->thread->data->readMeta ('page-info', $thread);
 
@@ -46,8 +59,11 @@ try {
 			continue;
 		}
 
-		// Create thread hyperlink
-		$thread_link = new HTMLTag ('a', array (
+		// Create row div
+		$div = new HTMLTag ('div');
+
+		// Add thread hyperlink to row div
+		$div->appendChild (new HTMLTag ('a', array (
 			'href' => 'threads.php?' . implode ('&', array (
 				'thread=' . urlencode ($thread),
 				'title=' . urlencode ($data['title']),
@@ -55,22 +71,15 @@ try {
 			)),
 
 			'innerHTML' => $data['title']
-		));
+		)));
 
-		// Append thread hyperlink to cell
-		$td->appendChild ($thread_link);
+		// Add thread URL line to row div
+		$div->appendChild (new HTMLTag ('p', array (
+			'children' => array (new HTMLTag ('small', $data['url'], false))
+		)));
 
-		// Thread URL line
-		$url = new HTMLTag ('p', new HTMLTag ('small', $data['url']));
-
-		// Append page URL to row
-		$td->appendChild ($url);
-
-		// Append cell to row
-		$tr->appendChild ($td);
-
-		// Append row to table
-		$table->appendChild ($tr);
+		// And row div to table
+		add_table_row ($threads_table, $div);
 	}
 
 	// Template data
@@ -78,7 +87,7 @@ try {
 		'title'		=> $hashover->locale->text['moderation'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
 		'sub-title'	=> $hashover->locale->text['moderation-sub'],
-		'threads'	=> $table->asHTML ("\t\t")
+		'threads'	=> $threads_table->asHTML ("\t\t")
 	);
 
 	// Load and parse HTML template

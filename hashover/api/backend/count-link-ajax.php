@@ -38,7 +38,9 @@ try {
 
 	// Throw exception if the "Latest Comments" API is disabled
 	if ($hashover->setup->apiStatus ('count-link') === 'disabled') {
-		throw new \Exception ('This API is not enabled.');
+		throw new \Exception (
+			'This API is not enabled.'
+		);
 	}
 
 	// Count response array

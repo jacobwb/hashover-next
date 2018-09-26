@@ -164,7 +164,7 @@ class WriteComments extends Secrets
 			// If so, use it as the kickback URL
 			$this->referer = $_SERVER['HTTP_REFERER'];
 		} else {
-			// Check if posting from remote domain
+			// If not, check if posting from remote domain
 			if ($this->postData->remoteAccess === true) {
 				// If so, use absolute path
 				$this->referer = $setup->pageURL;
@@ -239,7 +239,9 @@ class WriteComments extends Secrets
 		}
 
 		// Throw exception as error message
-		throw new \Exception ($this->locale->text['comment-needed']);
+		throw new \Exception (
+			$this->locale->text['comment-needed']
+		);
 	}
 
 	// Checks user IP against spam databases
@@ -309,7 +311,6 @@ class WriteComments extends Secrets
 			if ($kickback !== false) {
 				$this->displayMessage ($this->locale->text['logged-in']);
 			}
-
 		} catch (\Exception $error) {
 			// Kick visitor back with exception if told to
 			if ($kickback !== false) {
@@ -411,16 +412,16 @@ class WriteComments extends Secrets
 
 			// Check if user is authorized
 			if ($auth['authorized'] === true) {
-				// Strict verification of an admin login
+				// If so, strictly verify admin login
 				$user_is_admin = $this->login->verifyAdmin ($this->password);
 
 				// Unlink comment file indicator
 				$user_deletions_unlink = ($this->setup->userDeletionsUnlink === true);
 				$unlink_comment = ($user_deletions_unlink or $user_is_admin);
 
-				// If so, delete the comment file
+				// Attempt to delete comment file
 				if ($this->thread->data->delete ($this->postData->file, $unlink_comment)) {
-					// Remove comment from latest comments metadata
+					// If successful, remove comment from latest comments metadata
 					$this->metadata->removeFromLatest ($this->postData->file);
 
 					// And kick visitor back with comment deletion message
@@ -513,11 +514,15 @@ class WriteComments extends Secrets
 
 			// Throw exception about reply requirement
 			if (!empty ($this->postData->replyTo)) {
-				throw new \Exception ($this->locale->text['reply-needed']);
+				throw new \Exception (
+					$this->locale->text['reply-needed']
+				);
 			}
 
 			// Throw exception about comment requirement
-			throw new \Exception ($this->locale->text['comment-needed']);
+			throw new \Exception (
+				$this->locale->text['comment-needed']
+			);
 		}
 
 		// Strictly verify if the user is logged in as admin

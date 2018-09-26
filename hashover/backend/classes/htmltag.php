@@ -91,7 +91,9 @@ class HTMLTag
 		$backtrace = debug_backtrace ();
 		$line = $backtrace[1]['line'];
 
-		throw new \Exception ('Error on line ' . $line . ': ' . $error);
+		throw new \Exception (
+			'Error on line ' . $line . ': ' . $error
+		);
 	}
 
 	public function getInnerHTML ($indention = '')
