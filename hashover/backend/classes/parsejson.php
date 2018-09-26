@@ -20,10 +20,10 @@
 // Functions for reading and writing JSON files
 class ParseJSON extends CommentFiles
 {
-	public function __construct (Setup $setup)
+	public function __construct (Setup $setup, Thread $thread)
 	{
 		// Construct parent class
-		parent::__construct ($setup);
+		parent::__construct ($setup, $thread);
 
 		// Throw exception if the JSON extension isn't loaded
 		$setup->extensionsLoaded (array ('json'));

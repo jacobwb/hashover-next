@@ -121,29 +121,18 @@ try {
 	$comments = array ();
 
 	// Run through the latest comments
-	foreach ($latest as $item) {
+	foreach ($latest as $raw) {
 		// Get comment key
-		$key = basename ($item);
+		$key = $raw['comment'];
 
 		// Split comment key by dashes
 		$key_parts = explode ('-', $key);
 
-		// Decide proper thread
-		$thread = ($get_thread === 'auto') ? dirname ($item) : $get_thread;
-
 		// Attempt to read page information metadata
-		$page_info = $hashover->thread->data->readMeta ('page-info', $thread);
-
-		// Attempt to read comment
-		$raw = $hashover->thread->data->read ($key, $thread);
+		$page_info = $hashover->thread->data->readMeta ('page-info', $raw['thread']);
 
 		// Skip if we're missing metadata
-		if ($page_info === false or $raw === false) {
-			continue;
-		}
-
-		// Skip failed or unapproved comments
-		if (!empty ($raw['status']) and $raw['status'] !== 'approved') {
+		if ($page_info === false) {
 			continue;
 		}
 

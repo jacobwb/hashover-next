@@ -23,10 +23,10 @@ class ParseXML extends CommentFiles
 	// LibXML flags
 	protected $flags = LIBXML_COMPACT | LIBXML_NOCDATA;
 
-	public function __construct (Setup $setup)
+	public function __construct (Setup $setup, Thread $thread)
 	{
 		// Construct parent class
-		parent::__construct ($setup);
+		parent::__construct ($setup, $thread);
 
 		// Enable XML user error handling
 		libxml_use_internal_errors (true);

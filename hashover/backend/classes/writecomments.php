@@ -421,7 +421,9 @@ class WriteComments extends Secrets
 				// Attempt to delete comment file
 				if ($this->thread->data->delete ($this->postData->file, $unlink_comment)) {
 					// If successful, remove comment from latest comments metadata
-					$this->thread->data->removeFromLatest ($this->postData->file);
+					if ($unlink_comment === true) {
+						$this->thread->data->removeFromLatest ($this->postData->file);
+					}
 
 					// And kick visitor back with comment deletion message
 					$this->displayMessage ($this->locale->text['comment-deleted']);

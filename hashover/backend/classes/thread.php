@@ -39,7 +39,7 @@ class Thread
 		$data_class = 'HashOver\\Parse' . strtoupper ($setup->dataFormat);
 
 		// Instantiate data format class
-		$this->data = new $data_class ($setup);
+		$this->data = new $data_class ($setup, $this);
 	}
 
 	// Queries a list of comments

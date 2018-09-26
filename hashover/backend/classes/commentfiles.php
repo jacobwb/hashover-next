@@ -21,14 +21,16 @@
 class CommentFiles extends DataFiles
 {
 	protected $setup;
+	protected $thread;
 
-	public function __construct (Setup $setup)
+	public function __construct (Setup $setup, Thread $thread)
 	{
 		// Construct parent class
 		parent::__construct ($setup);
 
 		// Store parameters as properties
 		$this->setup = $setup;
+		$this->thread = $thread;
 	}
 
 	// Gets the appropriate thread directory path
@@ -131,14 +133,67 @@ class CommentFiles extends DataFiles
 		}
 	}
 
+	// Gets and returns latest comments from metadata files
+	protected function getLatestComments ($path, $thread, $global)
+	{
+		// Latest comments
+		$comments = array ();
+
+		// Attempt to read metadata
+		$latest = $this->readJSON ($path);
+
+		// Do nothing if JSON could not be read
+		if ($latest === false) {
+			return $comments;
+		}
+
+		// Run through the latest comments
+		foreach ($latest as $item) {
+			// Get comment key
+			$key = basename ($item);
+
+			// Decide proper thread
+			$thread = $global ? dirname ($item) : $thread;
+
+			// Initial comment data
+			$data = array ('comment' => $key, 'thread' => $thread);
+
+			// Attempt to read comment
+			$comment = $this->thread->data->read ($key, $thread);
+
+			// Check if comment read successfully
+			if ($comment !== false) {
+				// If so, get comment status
+				$status = Misc::getArrayItem ($comment, 'status') ?: 'approved';
+
+				// Add comment to array if it is approved
+				if ($status === 'approved') {
+					$comments[] = array_merge ($data, $comment);
+				}
+			}
+		}
+
+		return $comments;
+	}
+
 	// Read and return specific metadata from JSON file
 	public function readMeta ($name, $thread = 'auto', $global = false)
 	{
 		// Metadata JSON file path
 		$path = $this->getMetaPath ($name, $thread, $global);
 
-		// Return metadata if read successfully
-		return $this->readJSON ($path);
+		// Choose statement for supported metadata
+		switch ($name) {
+			// Latest comments
+			case 'latest-comments': {
+				return $this->getLatestComments ($path, $thread, $global);
+			}
+
+			// All others, just try to read as-is
+			default: {
+				return $this->readJSON ($path);
+			}
+		}
 	}
 
 	// Save metadata to specific metadata JSON file
@@ -220,8 +275,11 @@ class CommentFiles extends DataFiles
 		// Initial latest comments metadata array
 		$latest = array ($file);
 
+		// Get metadata file path
+		$path = $this->getMetaPath ('latest-comments', 'auto', $global);
+
 		// Attempt to read existing latest comments metadata
-		$metadata = $this->readMeta ('latest-comments', 'auto', $global);
+		$metadata = $this->readJSON ($path);
 
 		// Merge existing comments with initial array
 		if ($metadata !== false) {
@@ -246,8 +304,11 @@ class CommentFiles extends DataFiles
 			$file = $this->setup->threadName . '/' . $file;
 		}
 
+		// Get metadata file path
+		$path = $this->getMetaPath ('latest-comments', 'auto', $global);
+
 		// Attempt to read existing latest comments metadata
-		$latest = $this->readMeta ('latest-comments', 'auto', $global);
+		$latest = $this->readJSON ($path);
 
 		// Check if latest comments metadata read successfully
 		if ($latest !== false) {
