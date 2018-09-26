@@ -20,7 +20,6 @@
 class Setup extends Settings
 {
 	public $usage;
-	public $commentsPath;
 	public $threadsPath;
 	public $isMobile = false;
 	public $remoteAccess = false;
@@ -61,9 +60,6 @@ class Setup extends Settings
 
 		// Check for required extensions
 		$this->extensionsLoaded ($this->extensions);
-
-		// Comments directory path
-		$this->commentsPath = $this->getAbsolutePath ('comments');
 
 		// Comment threads directory path
 		$this->threadsPath = $this->commentsPath . '/threads';

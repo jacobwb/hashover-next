@@ -30,6 +30,8 @@ class Settings extends SensitiveSettings
 {
 	public $themePath;
 	public $rootDirectory;
+	public $commentsRoot;
+	public $commentsPath;
 	public $httpRoot;
 	public $httpBackend;
 	public $httpImages;
@@ -63,6 +65,10 @@ class Settings extends SensitiveSettings
 
 		// Root directory for script
 		$this->rootDirectory = $root_directory;
+
+		// Comments directory path
+		$this->commentsRoot = $root_directory . '/comments';
+		$this->commentsPath = $this->commentsRoot;
 
 		// Root directory for HTTP
 		$this->httpRoot = $http_directory;
