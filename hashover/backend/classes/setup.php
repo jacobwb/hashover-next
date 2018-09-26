@@ -20,14 +20,14 @@
 class Setup extends Settings
 {
 	public $usage;
-	public $commentsDirectory;
-	public $pagesDirectory;
+	public $commentsPath;
+	public $threadsPath;
 	public $isMobile = false;
 	public $remoteAccess = false;
 	public $filePath;
-	public $URLQueryList = array ();
-	public $URLQueries;
-	public $threadDirectory;
+	public $urlQueryList = array ();
+	public $urlQueries;
+	public $threadPath;
 	public $threadName;
 	public $pageURL;
 	public $pageTitle;
@@ -45,7 +45,7 @@ class Setup extends Settings
 	);
 
 	// HashOver-specific URL queries to be ignored
-	protected $ignoredQueries = array (
+	protected $hashoverQueries = array (
 		'hashover-reply', 'hashover-edit'
 	);
 
@@ -61,10 +61,10 @@ class Setup extends Settings
 		$this->extensionsLoaded ($this->extensions);
 
 		// Comments directory path
-		$this->commentsDirectory = $this->getAbsolutePath ('comments');
+		$this->commentsPath = $this->getAbsolutePath ('comments');
 
 		// Comment threads directory path
-		$this->pagesDirectory = $this->commentsDirectory . '/threads';
+		$this->threadsPath = $this->commentsPath . '/threads';
 
 		// Throw exception if script wasn't requested by this server
 		if ($this->usage['mode'] !== 'php') {
@@ -261,7 +261,7 @@ class Setup extends Settings
 	protected function getIgnoredQueries ()
 	{
 		// Initial ignored URL queries
-		$queries = $this->ignoredQueries;
+		$queries = $this->hashoverQueries;
 
 		// Ignored URL queries file
 		$ignored_queries = $this->getAbsolutePath ('config/ignored-queries.json');
@@ -321,7 +321,7 @@ class Setup extends Settings
 		$name = $this->getSafeThreadName ($name);
 
 		// Set thread directory path
-		$this->threadDirectory = $this->pagesDirectory . '/' . $name;
+		$this->threadPath = $this->threadsPath . '/' . $name;
 
 		// And set thread name
 		$this->threadName = $name;
@@ -383,15 +383,15 @@ class Setup extends Settings
 
 				// And add query if its name is not to be ignored
 				if (!in_array ($equals[0], $ignored_queries, true)) {
-					$this->URLQueryList[] = $url_queries[$q];
+					$this->urlQueryList[] = $url_queries[$q];
 				}
 			}
 
 			// Store a string version of queries
-			$this->URLQueries = implode ('&', $this->URLQueryList);
+			$this->urlQueries = implode ('&', $this->urlQueryList);
 
 			// And add queries to thread name
-			$thread_name .= '-' . $this->URLQueries;
+			$thread_name .= '-' . $this->urlQueries;
 		}
 
 		// Encode HTML characters in page URL
@@ -409,8 +409,8 @@ class Setup extends Settings
 		$url .= $this->filePath;
 
 		// Add optional queries to URL
-		if (!empty ($this->URLQueries)) {
-			$url .= '?' . $this->URLQueries;
+		if (!empty ($this->urlQueries)) {
+			$url .= '?' . $this->urlQueries;
 		}
 
 		// Set thread directory name to page URL

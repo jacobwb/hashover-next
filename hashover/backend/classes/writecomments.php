@@ -173,8 +173,8 @@ class WriteComments extends Secrets
 			}
 
 			// Add URL queries to kickback URL
-			if (!empty ($setup->URLQueries)) {
-				$this->referer .= '?' . $setup->URLQueries;
+			if (!empty ($setup->urlQueries)) {
+				$this->referer .= '?' . $setup->urlQueries;
 			}
 		}
 	}

@@ -32,15 +32,15 @@ class CommentFiles extends DataFiles
 	}
 
 	// Gets the appropriate thread directory path
-	protected function getMetaRoot ($thread)
+	protected function getThreadRoot ($thread)
 	{
-		// Using the automatically setup thread if told to
-		if ($thread === 'auto') {
-			return $this->setup->threadDirectory;
+		// Use thread directory path if told to
+		if ($thread !== 'auto') {
+			return $this->setup->threadsPath . '/' . $thread;
 		}
 
-		// Otherwise construct thread directory path
-		return $this->setup->pagesDirectory . '/' . $thread;
+		// Otherwise, use thread from setup
+		return $this->setup->threadPath;
 	}
 
 	// Returns a comment file path for a given file and thread
@@ -62,7 +62,7 @@ class CommentFiles extends DataFiles
 		$comments = array ();
 
 		// File pattern to match against
-		$pattern = $this->setup->threadDirectory . '/*.' . $extension;
+		$pattern = $this->setup->threadPath . '/*.' . $extension;
 
 		// Find files matching the pattern, with no sorting
 		$files = glob ($pattern, GLOB_NOSORT);
@@ -85,10 +85,10 @@ class CommentFiles extends DataFiles
 		// Check if we're getting metadata for a specific thread
 		if ($global !== true) {
 			// If so, use the thread's path
-			$directory = $this->getMetaRoot ($thread) . '/metadata';
+			$directory = $this->getThreadRoot ($thread) . '/metadata';
 		} else {
 			// If not, use the global metadata path
-			$directory = $this->setup->commentsDirectory . '/metadata';
+			$directory = $this->setup->commentsPath . '/metadata';
 		}
 
 		// Return metadata directory path
@@ -115,7 +115,7 @@ class CommentFiles extends DataFiles
 		$metadata = $this->getMetaDirectory ($thread, $global);
 
 		// Check if metadata root directory exists
-		if (file_exists ($this->getMetaRoot ($thread))) {
+		if (file_exists ($this->getThreadRoot ($thread))) {
 			// If so, attempt to create metadata directory
 			if (file_exists ($metadata) or @mkdir ($metadata, 0755, true)) {
 				// If successful, set permissions to 0755 again
@@ -151,7 +151,7 @@ class CommentFiles extends DataFiles
 		$this->setupMeta ($thread, $global);
 
 		// Check if metadata root directory exists
-		if (file_exists ($this->getMetaRoot ($thread))) {
+		if (file_exists ($this->getThreadRoot ($thread))) {
 			// If so, attempt to save data to metadata JSON file
 			if ($this->saveJSON ($metadata_path, $data) === false) {
 				// Throw exception on failure
@@ -168,23 +168,23 @@ class CommentFiles extends DataFiles
 	public function checkThread ()
 	{
 		// Attempt to create the directory
-		if (!file_exists ($this->setup->threadDirectory)
-		    and !@mkdir ($this->setup->threadDirectory, 0755, true)
-		    and !@chmod ($this->setup->threadDirectory, 0755))
+		if (!file_exists ($this->setup->threadPath)
+		    and !@mkdir ($this->setup->threadPath, 0755, true)
+		    and !@chmod ($this->setup->threadPath, 0755))
 		{
 			throw new \Exception (sprintf (
 				'Failed to create comment thread directory at: %s',
-				$this->setup->threadDirectory
+				$this->setup->threadPath
 			));
 		}
 
 		// If yes, check if it is or can be made to be writable
-		if (!is_writable ($this->setup->threadDirectory)
-		    and !@chmod ($this->setup->threadDirectory, 0755))
+		if (!is_writable ($this->setup->threadPath)
+		    and !@chmod ($this->setup->threadPath, 0755))
 		{
 			throw new \Exception (sprintf (
 				'Comment thread directory at %s is not writable.',
-				$this->setup->threadDirectory
+				$this->setup->threadPath
 			));
 		}
 	}
@@ -206,7 +206,7 @@ class CommentFiles extends DataFiles
 	// Queries an array of comment threads
 	public function queryThreads ()
 	{
-		return $this->queryDirs ($this->setup->pagesDirectory);
+		return $this->queryDirs ($this->setup->threadsPath);
 	}
 
 	// Prepends a comment to latest comments metadata file

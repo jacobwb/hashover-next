@@ -93,7 +93,7 @@ class CommentsUI extends FormUI
 		$href = $href ?: $this->setup->filePath;
 
 		// Merge given URL queries with existing page URL queries
-		$queries = array_merge ($this->setup->URLQueryList, $queries);
+		$queries = array_merge ($this->setup->urlQueryList, $queries);
 
 		// Add URL queries to path if URL has queries
 		if (!empty ($queries)) {

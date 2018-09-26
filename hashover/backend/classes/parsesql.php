@@ -116,7 +116,7 @@ class ParseSQL extends Database
 	}
 
 	// Reads a comment from database
-	public function read ($id, $thread = 'auto')
+	public function read ($comment, $thread = 'auto')
 	{
 		// Get thread
 		$thread = $this->getCommentThread ($thread);
@@ -143,7 +143,7 @@ class ParseSQL extends Database
 		$statement = implode (' ', array (
 			'SELECT ' . implode (', ', $columns),
 			'FROM `' . $thread . '`',
-			'WHERE id=\'' . $id . '\''
+			'WHERE id=\'' . $comment . '\''
 		));
 
 		// Query columns using statement
@@ -158,11 +158,11 @@ class ParseSQL extends Database
 	}
 
 	// Prepares a query statement
-	protected function prepareQuery ($id, array $contents, array $defaults)
+	protected function prepareQuery ($comment, array $contents, array $defaults)
 	{
 		// Merge ID into default statement
 		$query = array_merge ($defaults, array (
-			'id' => $id
+			'comment' => $comment
 		));
 
 		// Merge selective contents into default statement
@@ -176,7 +176,7 @@ class ParseSQL extends Database
 	}
 
 	// Saves a comment into database
-	public function save ($id, array $contents, $editing = false, $thread = 'auto')
+	public function save ($comment, array $contents, $editing = false, $thread = 'auto')
 	{
 		// Get thread
 		$thread = $this->getCommentThread ($thread);
@@ -185,7 +185,7 @@ class ParseSQL extends Database
 		$action = ($editing === true) ? 'update' : 'insert';
 
 		// Prepare a query statement
-		$query = $this->prepareQuery ($id, $contents, $this->$action);
+		$query = $this->prepareQuery ($comment, $contents, $this->$action);
 
 		// Attempt to write comment to database
 		$status = $this->write ($action, $thread, $query);
@@ -194,10 +194,10 @@ class ParseSQL extends Database
 	}
 
 	// Deletes a comment from database
-	public function delete ($id, $delete = false)
+	public function delete ($comment, $delete = false)
 	{
 		// Initial query statement is comment ID
-		$query = array ('id' => $id);
+		$query = array ('comment' => $comment);
 
 		// Only change status to deleted if told to
 		if ($delete !== true) {

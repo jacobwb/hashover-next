@@ -54,7 +54,7 @@ class Database extends Secrets
 			if ($this->databaseType === 'sqlite') {
 				// If so, construct SQLite file name
 				$file = sprintf ('%s/%s.sqlite',
-					$setup->commentsDirectory, $this->databaseName
+					$setup->commentsPath, $this->databaseName
 				);
 
 				// Instantiate an SQLite data object
