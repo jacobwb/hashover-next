@@ -26,7 +26,9 @@ class Setup extends Settings
 	public $remoteAccess = false;
 	public $filePath;
 	public $urlQueryList = array ();
+	public $threadQueryList = array ();
 	public $urlQueries;
+	public $threadQueries;
 	public $threadPath;
 	public $threadName;
 	public $pageURL;
@@ -287,7 +289,7 @@ class Setup extends Settings
 	protected function getIgnoredQueries ()
 	{
 		// Initial ignored URL queries
-		$queries = $this->hashoverQueries;
+		$queries = array ();
 
 		// Ignored URL queries file
 		$ignored_queries = $this->getAbsolutePath ('config/ignored-queries.json');
@@ -307,6 +309,49 @@ class Setup extends Settings
 		}
 
 		return $queries;
+	}
+
+	// Filters URL queries for URLs and thread name usage
+	protected function filterURLQueries ($queries)
+	{
+		// Split queries by ampersand
+		$url_queries = explode ('&', $queries);
+
+		// Get configured queries to be ignored
+		$ignored_queries = $this->getIgnoredQueries ();
+
+		// Run through queries
+		for ($q = 0, $ql = count ($url_queries); $q < $ql; $q++) {
+			// Current URL query
+			$current = $url_queries[$q];
+
+			// Split current URL query by equals sign
+			$query_parts = explode ('=', $current);
+
+			// Current URL query name
+			$query = $query_parts[0];
+
+			// Skip default HashOver-specific URL queries
+			if (in_array ($query, $this->hashoverQueries, true)) {
+				continue;
+			}
+
+			// Store query for usage in URLs
+			$this->urlQueryList[] = $current;
+
+			// Skip name=value queries to be ignored in thread name
+			if (in_array ($current, $ignored_queries, true)) {
+				continue;
+			}
+
+			// Skip query names to be ignored entirely in thread name
+			if (in_array ($query, $ignored_queries, true)) {
+				continue;
+			}
+
+			// Store query thread name
+			$this->threadQueryList[] = $current;
+		}
 	}
 
 	// Reduces dashes to one per removed character
@@ -391,33 +436,17 @@ class Setup extends Settings
 
 		// Check if URL has queries
 		if (!empty ($parts['query'])) {
-			// If so, split queries by ampersand
-			$url_queries = explode ('&', $parts['query']);
+			// If so, filter queries in page URL
+			$this->filterURLQueries ($parts['query']);
 
-			// Get configured queries to be ignored
-			$ignored_queries = $this->getIgnoredQueries ();
-
-			// Run through queries
-			for ($q = 0, $ql = count ($url_queries); $q < $ql; $q++) {
-				// Skip configured name=value queries to be ignored
-				if (in_array ($url_queries[$q], $ignored_queries, true)) {
-					continue;
-				}
-
-				// Split current query by equals sign
-				$equals = explode ('=', $url_queries[$q]);
-
-				// And add query if its name is not to be ignored
-				if (!in_array ($equals[0], $ignored_queries, true)) {
-					$this->urlQueryList[] = $url_queries[$q];
-				}
-			}
-
-			// Store a string version of queries
+			// Store a string version of page URL queries
 			$this->urlQueries = implode ('&', $this->urlQueryList);
 
+			// Store a string version of thread name URL queries
+			$this->threadQueries = implode ('&', $this->threadQueryList);
+
 			// And add queries to thread name
-			$thread_name .= '-' . $this->urlQueries;
+			$thread_name .= '-' . $this->threadQueries;
 		}
 
 		// Encode HTML characters in page URL
