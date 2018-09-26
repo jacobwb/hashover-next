@@ -6,10 +6,10 @@ body {
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	padding: 15px;
-	margin: -133px 0px 0px -150px;
-	width: 300px;
-	border: 2px solid #CCCCCC;
+	text-align: center;
+	margin: -103px 0px 0px -128px;
+	width: 256px;
+	border: 1px solid #CCCCCC;
 	background-color: #FFFFFF;
 	overflow: hidden;
 }
@@ -18,10 +18,18 @@ body {
 	width: 100%;
 }
 
-input[name="name"], input[name="password"] {
-	font-weight: bold;
+#login.red {
+	outline: 1px solid #FF0000;
+	border-color: #FF0000;
 }
 
-#login.red {
-	border-color: #FF0000;
+#padding {
+	padding: 15px;
+}
+
+input[type="submit"], input[type="submit"]:hover {
+	padding: 10px;
+	border-left: none;
+	border-bottom: none;
+	border-right: none;
 }

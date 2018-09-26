@@ -62,13 +62,17 @@ input[type="submit"] {
 	padding: 5px 15px 5px 15px;
 	color: #FFFFFF;
 	border: 1px solid #326BAC;
-	background-color: #41A7FA;
+	background-color: #3B96E0;
 }
 
 input[type="submit"]:hover {
 	text-decoration: none;
 	border: 1px solid #004799;
-	background-color: #3B96E0;
+	background-color: #41A7FA;
+}
+
+input[type="submit"]:active {
+	background-color: #007DFA;
 }
 
 input[type="submit"],

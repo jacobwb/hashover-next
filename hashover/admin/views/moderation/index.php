@@ -46,7 +46,7 @@ try {
 		'id' => 'threads',
 		'class' => 'striped-rows-odd',
 		'cellspacing' => '0',
-		'cellpadding' => '4'
+		'cellpadding' => '8'
 	));
 
 	// Run through comment threads
