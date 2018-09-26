@@ -34,8 +34,10 @@ try {
 		);
 	}
 
-	// Configure HashOver and load comments
+	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');
+
+	// Initiate comment processing
 	$hashover->initiate ();
 
 	// Comments and statistics response array

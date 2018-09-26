@@ -29,9 +29,17 @@ if (isset ($_GET['jsonp'])) {
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json');
+
+	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');
+
+	// Set page title from POST/GET data
 	$hashover->setup->setPageTitle ('request');
+
+	// Set thread name from POST/GET data
 	$hashover->setup->setThreadName ('request');
+
+	// Set instance from POST/GET data
 	$hashover->setup->setInstance ('request');
 
 	// User settings passed during instantiation
@@ -40,7 +48,7 @@ try {
 	// Load user settings
 	$hashover->setup->loadUserSettings ($settings);
 
-	// Initialize HashOver and get comments
+	// Initiate, parse, and finalize comment processing
 	$hashover->initiate ();
 	$hashover->parsePrimary ();
 	$hashover->parsePopular ();

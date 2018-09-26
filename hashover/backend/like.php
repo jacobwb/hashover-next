@@ -148,9 +148,13 @@ try {
 	// Instanciate HashOver class
 	$hashover = new \HashOver ('json');
 
-	// Get required POST/GET data
+	// Get page URL from POST/GET data
 	$url = $hashover->setup->getRequest ('url', null);
+
+	// Get comment from POST/GET data
 	$key = $hashover->setup->getRequest ('comment', null);
+
+	// Get action from POST/GET data
 	$action = $hashover->setup->getRequest ('action', null);
 
 	// Return error if we're missing necessary post data
@@ -158,8 +162,10 @@ try {
 		return array ('error' => 'No action.');
 	}
 
-	// Continue HashOver setup
+	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ($url);
+
+	// Initiate comment processing
 	$hashover->initiate ();
 
 	// Display JSON response

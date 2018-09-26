@@ -312,8 +312,14 @@ function create_rss (&$hashover)
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('rss', 'api');
+
+	// Set page URL from GET data
 	$hashover->setup->setPageURL ('request');
+
+	// Initiate comment processing
 	$hashover->initiate ();
+
+	// Parse primary comments into usable data
 	$hashover->parsePrimary ();
 
 	// Create RSS feed

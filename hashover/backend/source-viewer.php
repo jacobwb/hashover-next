@@ -34,6 +34,8 @@ try {
 	} else {
 		// Instantiate HashOver class
 		$hashover = new \HashOver ();
+
+		// Initiate and finalize comment processing
 		$hashover->initiate ();
 		$hashover->finalize ();
 
