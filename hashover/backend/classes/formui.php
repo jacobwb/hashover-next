@@ -421,13 +421,13 @@ class FormUI
 	}
 
 	// Creates hidden page info fields, ie. page URL, title, reply comment
-	protected function pageInfoFields (HTMLTag $form)
+	protected function pageInfoFields (HTMLTag $form, $url = '{url}', $thread = '{thread}', $title = '{title}')
 	{
 		// Create hidden page URL input element
 		$url_input = new HTMLTag ('input', array (
 			'type' => 'hidden',
 			'name' => 'url',
-			'value' => $this->pageURL
+			'value' => $url
 		), false, true);
 
 		// Add hidden page URL input element to form element
@@ -437,7 +437,7 @@ class FormUI
 		$thread_input = new HTMLTag ('input', array (
 			'type' => 'hidden',
 			'name' => 'thread',
-			'value' => $this->setup->threadName
+			'value' => $thread
 		), false, true);
 
 		// Add hidden comments thread input element to form element
@@ -447,7 +447,7 @@ class FormUI
 		$title_input = new HTMLTag ('input', array (
 			'type' => 'hidden',
 			'name' => 'title',
-			'value' => $this->pageTitle
+			'value' => $title
 		), false, true);
 
 		// Add hidden page title input element to form element
@@ -785,7 +785,7 @@ class FormUI
 		$this->commentForm ($main_form, 'main', $comment_form, $comment_text);
 
 		// Add page info fields to main form
-		$this->pageInfoFields ($main_form);
+		$this->pageInfoFields ($main_form, $this->setup->pageURL, $this->setup->threadName, $this->setup->pageTitle);
 
 		// Check if comment is a failed reply
 		if ($this->cookies->getValue ('replied') !== null) {

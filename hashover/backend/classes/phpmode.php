@@ -78,7 +78,7 @@ class PHPMode
 				'action' => $this->setup->getBackendPath ('form-actions.php')
 			));
 
-			$form->innerHTML ($this->ui->replyForm ($permalink, $file));
+			$form->innerHTML ($this->ui->replyForm ($permalink, $this->setup->pageURL, $this->setup->threadName, $this->setup->pageTitle, $file));
 
 			return $form->asHTML ();
 		}
@@ -109,7 +109,7 @@ class PHPMode
 				'action' => $this->setup->getBackendPath ('form-actions.php')
 			), false);
 
-			$edit_form = $this->ui->editForm ($permalink, $file, $name, $website, $body, $status, $subscribed);
+			$edit_form = $this->ui->editForm ($permalink, $this->setup->pageURL, $this->setup->threadName, $this->setup->pageTitle, $file, $name, $website, $body, $status, $subscribed);
 
 			$form->innerHTML ($edit_form);
 

@@ -23,6 +23,9 @@ HashOver.prototype.replyToComment = function (permalink)
 		this.ui['reply-form'], {
 			hashover: this.prefix (),
 			permalink: permalink,
+			url: this.instance['page-url'],
+			thread: this.instance['thread-name'],
+			title: this.instance['page-title'],
 			file: file
 		}
 	);

@@ -37,6 +37,9 @@ HashOver.prototype.editComment = function (comment)
 		this.ui['edit-form'], {
 			hashover: this.prefix (),
 			permalink: permalink,
+			url: this.instance['page-url'],
+			thread: this.instance['thread-name'],
+			title: this.instance['page-title'],
 			file: file,
 			name: comment.name || '',
 			website: comment.website || '',

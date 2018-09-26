@@ -301,7 +301,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates a comment reply form
-	public function replyForm ($permalink = '{permalink}', $file = '{file}', $subscribed = true)
+	public function replyForm ($permalink = '{permalink}', $url = '{url}', $thread = '{thread}', $title = '{title}', $file = '{file}', $subscribed = true)
 	{
 		// Create HashOver reply form
 		$reply_form = new HTMLTag ('div', array (
@@ -348,7 +348,7 @@ class CommentsUI extends FormUI
 		$this->commentForm ($reply_form, 'reply', $reply_form_placeholder, '', $permalink);
 
 		// Add page info fields to reply form
-		$this->pageInfoFields ($reply_form);
+		$this->pageInfoFields ($reply_form, $url, $thread, $title);
 
 		// Create hidden reply to input element
 		if (!empty ($file)) {
@@ -433,7 +433,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates a comment edit form
-	public function editForm ($permalink = '{permalink}', $file = '{file}', $name = '{name}', $website = '{website}', $body = '{body}', $status = '', $subscribed = true)
+	public function editForm ($permalink = '{permalink}', $url = '{url}', $thread = '{thread}', $title = '{title}', $file = '{file}', $name = '{name}', $website = '{website}', $body = '{body}', $status = '', $subscribed = true)
 	{
 		// "Edit Comment" locale string
 		$edit_comment = $this->locale->text['edit-comment'];
@@ -541,7 +541,7 @@ class CommentsUI extends FormUI
 		$this->commentForm ($edit_form, 'edit', $edit_placeholder, $body, $permalink);
 
 		// Add page info fields to edit form
-		$this->pageInfoFields ($edit_form);
+		$this->pageInfoFields ($edit_form, $url, $thread, $title);
 
 		// Create hidden comment file input element
 		$edit_file_input = new HTMLTag ('input', array (
