@@ -322,6 +322,12 @@ try {
 	// Parse primary comments into usable data
 	$hashover->parsePrimary ();
 
+	// Attempt to get sorting method
+	$method = $hashover->setup->getRequest ('sorting', 'by-date');
+
+	// Sort comments by sorting method
+	$hashover->sortPrimary ($method);
+
 	// Create RSS feed
 	create_rss ($hashover);
 
