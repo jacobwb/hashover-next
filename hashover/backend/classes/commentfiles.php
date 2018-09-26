@@ -208,4 +208,79 @@ class CommentFiles extends DataFiles
 	{
 		return $this->queryDirs ($this->setup->pagesDirectory);
 	}
+
+	// Prepends a comment to latest comments metadata file
+	protected function prependLatestComments ($file, $global = false)
+	{
+		// Add thread to file if metadata is global
+		if ($global === true) {
+			$file = $this->setup->threadName . '/' . $file;
+		}
+
+		// Initial latest comments metadata array
+		$latest = array ($file);
+
+		// Attempt to read existing latest comments metadata
+		$metadata = $this->readMeta ('latest-comments', 'auto', $global);
+
+		// Merge existing comments with initial array
+		if ($metadata !== false) {
+			$latest = array_merge ($latest, $metadata);
+		}
+
+		// Maximum number of latest comments to store
+		$latest_max = max (10, $this->setup->latestMax);
+
+		// Limit latest comments metadata array to configurable size
+		$latest = array_slice ($latest, 0, $latest_max);
+
+		// Attempt to save latest comments metadata
+		$this->saveMeta ('latest-comments', $latest, 'auto', $global);
+	}
+
+	// Removes a comment from latest comments metadata file
+	protected function spliceLatestComments ($file, $global = false)
+	{
+		// Add thread to file if metadata is global
+		if ($global === true) {
+			$file = $this->setup->threadName . '/' . $file;
+		}
+
+		// Attempt to read existing latest comments metadata
+		$latest = $this->readMeta ('latest-comments', 'auto', $global);
+
+		// Check if latest comments metadata read successfully
+		if ($latest !== false) {
+			// If so, get index of file in array
+			$index = array_search ($file, $latest);
+
+			// Remove comment from latest array
+			if ($index !== false) {
+				array_splice ($latest, $index, 1);
+			}
+
+			// Attempt to save latest comments metadata
+			$this->saveMeta ('latest-comments', $latest, 'auto', $global);
+		}
+	}
+
+	// Adds a comment to latest comments metadata file
+	public function addLatestComment ($file)
+	{
+		// Add comment to thread-specific latest comments metadata
+		$this->prependLatestComments ($file);
+
+		// Add comment to global latest comments metadata
+		$this->prependLatestComments ($file, true);
+	}
+
+	// Removes a comment from latest comments metadata file
+	public function removeFromLatest ($file)
+	{
+		// Add comment to thread-specific latest comments metadata
+		$this->spliceLatestComments ($file);
+
+		// Add comment to global latest comments metadata
+		$this->spliceLatestComments ($file, true);
+	}
 }

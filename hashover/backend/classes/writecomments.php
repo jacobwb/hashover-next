@@ -150,7 +150,6 @@ class WriteComments extends Secrets
 		$this->cookies = new Cookies ($setup);
 		$this->login = new Login ($setup);
 		$this->spamCheck = new SpamCheck ($setup);
-		$this->metadata = new Metadata ($setup, $thread);
 		$this->crypto = new Crypto ();
 		$this->avatars = new Avatars ($setup);
 		$this->templater = new Templater ($setup);
@@ -422,7 +421,7 @@ class WriteComments extends Secrets
 				// Attempt to delete comment file
 				if ($this->thread->data->delete ($this->postData->file, $unlink_comment)) {
 					// If successful, remove comment from latest comments metadata
-					$this->metadata->removeFromLatest ($this->postData->file);
+					$this->thread->data->removeFromLatest ($this->postData->file);
 
 					// And kick visitor back with comment deletion message
 					$this->displayMessage ($this->locale->text['comment-deleted']);
@@ -964,7 +963,7 @@ class WriteComments extends Secrets
 		// Check if the comment was saved successfully
 		if ($saved === true) {
 			// If so, add it to latest comments metadata
-			$this->metadata->addLatestComment ($comment_file);
+			$this->thread->data->addLatestComment ($comment_file);
 
 			// Send notification e-mails
 			$this->sendNotifications ($comment_file);

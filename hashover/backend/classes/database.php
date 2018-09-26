@@ -434,4 +434,8 @@ class Database extends Secrets
 
 		return false;
 	}
+
+	// These methods are not necessary in SQL
+	public function addLatestComment () {}
+	public function removeFromLatest () {}
 }
