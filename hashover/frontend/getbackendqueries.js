@@ -1,5 +1,5 @@
 // Get supported HashOver backend queries from options (getbackendqueries.js)
-HashOver.getBackendQueries = function (options)
+HashOver.getBackendQueries = function (options, instance)
 {
 	// Ensure options is an object
 	options = options || {};
@@ -29,11 +29,16 @@ HashOver.getBackendQueries = function (options)
 	}
 
 	// Add instance number to data
-	data.instance = this.instanceCount;
+	data.instance = instance;
 
 	// Use URL and title options if available
 	data.url = options.url || this.getURL (options.canonical);
 	data.title = options.title || this.getTitle ();
+
+	// Add website to request if told to
+	if (typeof (options.website) === 'string') {
+		data.website = options.website;
+	}
 
 	// Add thread to request if told to
 	if (typeof (options.thread) === 'string') {

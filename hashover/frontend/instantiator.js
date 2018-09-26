@@ -1,14 +1,20 @@
 // Real constructor (instantiator.js)
-HashOver.instantiator = function (id, options)
+HashOver.instantiator = function (id, options, instance)
 {
 	// Reference to this object
 	var hashover = this;
+
+	// Check if we are instantiating a specific instance
+	var specific = this.rx.integer.test (instance);
+
+	// Use given instance or instance count
+	var instance = specific ? instance : HashOver.instanceCount;
 
 	// Backend request path
 	var requestPath = HashOver.backendPath + '/comments-ajax.php';
 
 	// Get backend queries
-	var queries = HashOver.getBackendQueries (options);
+	var queries = HashOver.getBackendQueries (options, instance);
 
 	// Handle backend request
 	this.ajax ('POST', requestPath, queries, function (json) {
@@ -47,12 +53,14 @@ HashOver.instantiator = function (id, options)
 	}, true);
 
 	// Set instance number
-	this.instanceNumber = HashOver.instanceCount;
+	this.instanceNumber = instance;
 
 	// Store options and queries
 	this.options = options;
 	this.queries = queries;
 
-	// And increment instance count
-	HashOver.instanceCount++;
+	// And increment instance count where appropriate
+	if (specific === false) {
+		HashOver.instanceCount++;
+	}
 };

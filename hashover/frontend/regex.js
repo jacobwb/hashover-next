@@ -6,5 +6,6 @@ HashOverConstructor.prototype.rx = new (function () {
 	this.imageTags		= new RegExp ('\\[img\\](<a.*?>' + this.urls + '</a>)\\[/img\\]', 'ig'),
 	this.EOLTrim		= /^[\r\n]+|[\r\n]+$/g,
 	this.paragraphs		= /(?:\r\n|\r|\n){2}/g,
-	this.email		= /\S+@\S+/
+	this.email		= /\S+@\S+/,
+	this.integer		= /^\d+$/
 }) ();

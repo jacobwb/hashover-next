@@ -1,5 +1,5 @@
 // Create a new comment thread/section (createthread.js)
-HashOver.prototype.createThread = function (id, options)
+HashOver.prototype.createThread = function (id, options, instance)
 {
 	// Reference to this object
 	var hashover = this;
