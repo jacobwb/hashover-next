@@ -117,6 +117,32 @@ class Setup extends Settings
 		return $is_localhost;
 	}
 
+	// Sanitizes given data for HTML use
+	protected function sanitizeData ($data = '')
+	{
+		// Strip HTML tags from data
+		$data = strip_tags (html_entity_decode ($data, false, 'UTF-8'));
+
+		// Encode HTML characters in data
+		$data = htmlspecialchars ($data, false, 'UTF-8', false);
+
+		return $data;
+	}
+
+	// Gets sanitized data from POST or GET data
+	protected function requestData ($data = '', $default = false)
+	{
+		// Attempt to obtain data via GET or POST
+		$request = $this->getRequest ($data, $default);
+
+		// Return on success
+		if ($request !== $default) {
+			$request = $this->sanitizeData ($request);
+		}
+
+		return $request;
+	}
+
 	// Gets a domain with a port from given URL
 	protected function getDomainWithPort ($url = '')
 	{
@@ -420,32 +446,6 @@ class Setup extends Settings
 		$this->pageURL = $url;
 	}
 
-	// Sanitizes given data for HTML use
-	protected function sanitizeData ($data = '')
-	{
-		// Strip HTML tags from data
-		$data = strip_tags (html_entity_decode ($data, false, 'UTF-8'));
-
-		// Encode HTML characters in data
-		$data = htmlspecialchars ($data, false, 'UTF-8', false);
-
-		return $data;
-	}
-
-	// Gets sanitized data from POST or GET data
-	protected function requestData ($data = '', $default = false)
-	{
-		// Attempt to obtain data via GET or POST
-		$request = $this->getRequest ($data, $default);
-
-		// Return on success
-		if ($request !== $default) {
-			$request = $this->sanitizeData ($request);
-		}
-
-		return $request;
-	}
-
 	// Sets page title
 	public function setPageTitle ($title = 'request')
 	{
@@ -453,10 +453,10 @@ class Setup extends Settings
 		if ($title === 'request') {
 			// If so, get sanitized POST/GET data
 			$title = $this->requestData ('title', '');
+		} else {
+			// If not, sanitize given title
+			$title = $this->sanitizeData ($title);
 		}
-
-		// Sanitize page title
-		$title = $this->sanitizeData ($title);
 
 		// And set page title
 		$this->pageTitle = $title;
@@ -467,7 +467,7 @@ class Setup extends Settings
 	{
 		// Request instance if told to
 		if ($instance === 'request') {
-			$instance = $this->requestData ('instance', '');
+			$instance = $this->getRequest ('instance', '');
 		}
 
 		// Throw exception if given instance is not numeric
