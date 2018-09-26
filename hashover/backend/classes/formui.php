@@ -142,7 +142,7 @@ class FormUI
 			'website' => array (
 				'wrapper-class'		=> 'hashover-website-input',
 				'label-class'		=> 'hashover-website-label',
-				'placeholder'		=> $this->locale->text['website'],
+				'placeholder'		=> $this->locale->text['website'][0],
 				'input-id'		=> $this->prefix ('main-website' . $permalink, $is_form),
 				'input-type'		=> 'url',
 				'input-name'		=> 'website',

@@ -96,7 +96,7 @@ try {
 			'email'			=> $hashover->locale->text['email'],
 			'name'			=> $hashover->locale->text['name'],
 			'password'		=> $hashover->locale->text['password'],
-			'website'		=> $hashover->locale->text['website'],
+			'website'		=> $hashover->locale->text['website'][0],
 			'day-names'		=> $hashover->locale->text['date-day-names'],
 			'month-names'		=> $hashover->locale->text['date-month-names']
 		);
