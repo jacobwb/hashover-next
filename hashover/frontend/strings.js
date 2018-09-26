@@ -54,7 +54,7 @@ HashOverConstructor.prototype.strings = {
 	},
 
 	// Converts a string containing {curly} variables into an array
-	templatify: function (text)
+	templatifier: function (text)
 	{
 		// Split string by curly variables
 		var template = text.split (this.curlyBraces);
@@ -91,6 +91,22 @@ HashOverConstructor.prototype.strings = {
 			template: template,
 			indexes: indexes
 		}
+	},
+
+	// Templatify UI HTML from backend
+	templatify: function (ui)
+	{
+		// Initial template
+		var template = {};
+
+		// Templatify each UI HTML string
+		for (var name in ui) {
+			if (ui.hasOwnProperty (name) === true) {
+				template[name] = this.templatifier (ui[name]);
+			}
+		}
+
+		return template;
 	},
 
 	// Parses an HTML template

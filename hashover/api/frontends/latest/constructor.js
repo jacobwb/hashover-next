@@ -56,20 +56,8 @@ function HashOverLatest (options)
 		// Setup information from HashOver back-end
 		HashOverLatest.prototype.setup = json.setup;
 
-		// Initial UI HTML
-		HashOverLatest.prototype.ui = {};
-
 		// Templatify UI HTML from backend
-		for (var name in json.ui) {
-			// Check if property wasn't inherited
-			if (json.ui.hasOwnProperty (name) === true) {
-				// If so, templatify current string
-				var template = hashover.strings.templatify (json.ui[name]);
-
-				// And store the template
-				HashOverLatest.prototype.ui[name] = template;
-			}
-		}
+		HashOverLatest.prototype.ui = hashover.strings.templatify (json.ui);
 
 		// Thread information from HashOver back-end
 		hashover.instance = json.instance;
