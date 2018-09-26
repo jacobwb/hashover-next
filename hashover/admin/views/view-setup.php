@@ -33,8 +33,6 @@ spl_autoload_register (function ($uri) {
 
 // Instantiate HashOver class
 $hashover = new \HashOver ();
-$hashover->initiate ();
-$hashover->finalize ();
 
 // Instantiate FileWriter class
 $data_files = new DataFiles ($hashover->setup);

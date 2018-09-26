@@ -92,6 +92,7 @@ class Locale
 		return $locales_directory . '/en.php';
 	}
 
+	// Includes a locale file
 	protected function includeLocaleFile ($file)
 	{
 		// Check if the locale file can be included

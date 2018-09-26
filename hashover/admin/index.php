@@ -34,8 +34,6 @@ spl_autoload_register (function ($uri) {
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ();
-	$hashover->initiate ();
-	$hashover->finalize ();
 
 	// Template data
 	$template = array (

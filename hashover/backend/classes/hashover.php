@@ -30,15 +30,15 @@ class HashOver
 
 	public $statistics;
 	public $setup;
-	public $thread;
 	public $locale;
-	public $commentParser;
 	public $login;
+	public $thread;
+	public $templater;
+	public $commentParser;
 	public $cookies;
 	public $markdown;
 	public $comments = array ();
 	public $ui;
-	public $templater;
 
 	public function __construct ($mode = 'php', $context = 'normal')
 	{
@@ -56,8 +56,17 @@ class HashOver
 		//Instantiate setup checks class
 		$this->setupChecks = new HashOver\SetupChecks ($this->setup);
 
+		// Instantiate locales class
+		$this->locale = new HashOver\Locale ($this->setup);
+
+		// Instantiate login class
+		$this->login = new HashOver\Login ($this->setup);
+
 		// Instantiate class for reading comments
 		$this->thread = new HashOver\Thread ($this->setup);
+
+		// Instantiate comment theme templater class
+		$this->templater = new HashOver\Templater ($this->setup);
 	}
 
 	// Returns a localized comment count
@@ -121,17 +130,11 @@ class HashOver
 		// Read all comments
 		$this->rawComments = $this->thread->read ();
 
-		// Instantiate locales class
-		$this->locale = new HashOver\Locale ($this->setup);
-
 		// Instantiate comment parser class
 		$this->commentParser = new HashOver\CommentParser ($this->setup);
 
 		// Instantiate comment sorting class
 		$this->sortComments = new HashOver\SortComments ($this->setup);
-
-		// Instantiate login class
-		$this->login = new HashOver\Login ($this->setup);
 
 		// Instantiate cookies class
 		$this->cookies = new HashOver\Cookies ($this->setup);
@@ -431,11 +434,6 @@ class HashOver
 		$this->ui = new HashOver\CommentsUI (
 			$this->setup,
 			$commentCounts
-		);
-
-		// Instantiate comment theme templater class
-		$this->templater = new HashOver\Templater (
-			$this->setup
 		);
 	}
 
