@@ -158,8 +158,14 @@ class WriteComments extends Secrets
 		// Setup initial login data
 		$this->setupLogin ();
 
-		// Check if we have an HTTP referer
-		if (!empty ($_SERVER['HTTP_REFERER'])) {
+		// Get regular expression escaped admin path
+		$admin_path = preg_quote ($this->setup->getHttpPath ('admin'), '/');
+
+		// Attempt to get referer
+		$referer = Misc::getArrayItem ($_SERVER, 'HTTP_REFERER');
+
+		// Check if we're coming from an admin page
+		if (preg_match ('/' . $admin_path . '/i', $referer)) {
 			// If so, use it as the kickback URL
 			$this->referer = $_SERVER['HTTP_REFERER'];
 		} else {
