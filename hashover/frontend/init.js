@@ -5,7 +5,7 @@ HashOver.prototype.init = function (id)
 	var hashover = this;
 
 	// Execution start time
-	this.execStart = Date.now ();
+	var execStart = Date.now ();
 
 	// Get the main HashOver element
 	var mainElement = this.getMainElement (id);
@@ -135,7 +135,7 @@ HashOver.prototype.init = function (id)
 	}
 
 	// Parse all of the initial comments
-	this.parseAll (comments, sortSection, this.setup['collapses-comments']);
+	this.htmlTime = this.parseAll (comments, sortSection, this.setup['collapses-comments']);
 
 	// Create uncollapse UI hyperlink if enabled
 	this.optionalMethod ('uncollapseInterfaceLink');
@@ -247,16 +247,14 @@ HashOver.prototype.init = function (id)
 	}
 
 	// Execution end time
-	this.execEnd = Date.now ();
-
-	// Store execution time
-	this.execTime = this.execEnd - this.execStart;
+	this.execTime = Math.abs (Date.now () - execStart - this.htmlTime);
 
 	// Log execution time and memory usage in JavaScript console
 	if (window.console) {
 		console.log (this.strings.sprintf (
-			'HashOver: front-end %d ms, backend %d ms, %s', [
+			'HashOver: front-end %d ms, HTML %d ms, backend %d ms, %s', [
 				this.execTime,
+				this.htmlTime,
 				this.statistics['execution-time'],
 				this.statistics['script-memory']
 			]

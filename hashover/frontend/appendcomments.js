@@ -4,6 +4,9 @@ HashOver.prototype.appendComments = function (comments, dest, parent)
 	// Set append element to more section
 	dest = dest || this.instance['sort-section'];
 
+	// HTML parsing time
+	var htmlTime = 0;
+
 	// Run through each comment
 	for (var i = 0, il = comments.length; i < il; i++) {
 		// Current comment
@@ -29,6 +32,9 @@ HashOver.prototype.appendComments = function (comments, dest, parent)
 		// Parse comment
 		var html = this.parseComment (comment, parent);
 
+		// HTML parsing start time
+		var htmlStart = Date.now ();
+
 		// Check if we can insert HTML adjacently
 		if ('insertAdjacentHTML' in dest) {
 			// If so, just do so
@@ -41,7 +47,15 @@ HashOver.prototype.appendComments = function (comments, dest, parent)
 			dest.appendChild (element[0]);
 		}
 
+		// HTML parsing end time
+		var htmlEnd = Date.now ();
+
+		// Add to HTML parsing time
+		htmlTime += htmlEnd - htmlStart;
+
 		// Add controls to the comment
 		this.addControls (comment);
 	}
+
+	return htmlTime;
 };

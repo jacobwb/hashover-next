@@ -206,9 +206,25 @@ HashOver.prototype.sortPrimary = function (method)
 	// Sorted comment destination
 	var dest = this.instance['sort-section'];
 
+	// Comment sorting start time
+	var sortStart = Date.now ();
+
 	// Sort the primary comments
 	var sorted = this.sortComments (this.instance.comments.primary, method);
 
+	// Get comment sorting time
+	var sortTime = Date.now () - sortStart;
+
 	// Parse the sorted comments
-	this.parseAll (sorted, dest);
+	var htmlTime = this.parseAll (sorted, dest);
+
+	// Log execution time and memory usage in JavaScript console
+	if (window.console) {
+		console.log (this.strings.sprintf (
+			'HashOver: sorting %d ms, HTML %d ms', [
+				sortTime,
+				htmlTime
+			]
+		));
+	}
 };

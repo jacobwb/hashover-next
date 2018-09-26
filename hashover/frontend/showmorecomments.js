@@ -41,6 +41,9 @@ HashOver.prototype.showMoreComments = function (element, callback, append)
 			// Afterwards, store start time
 			var execStart = Date.now ();
 
+			// Initial HTML parsing start time
+			var htmlTime = 0;
+
 			// Replace initial comments
 			hashover.instance.comments.primary = json.primary;
 
@@ -50,7 +53,7 @@ HashOver.prototype.showMoreComments = function (element, callback, append)
 				var sorted = hashover.sortComments (json.primary);
 
 				// And append the sorted comments
-				hashover.appendComments (sorted);
+				htmlTime = hashover.appendComments (sorted);
 			}
 
 			// Execute callback function
@@ -59,13 +62,14 @@ HashOver.prototype.showMoreComments = function (element, callback, append)
 			}
 
 			// Store execution time
-			var execTime = Date.now () - execStart;
+			var execTime = Math.abs (Date.now () - execStart - htmlTime);
 
 			// And log execution time and memory usage in JavaScript console
 			if (window.console) {
 				console.log (hashover.strings.sprintf (
-					'HashOver: front-end %d ms, backend %d ms, %s', [
+					'HashOver: front-end %d ms, HTML %d ms, backend %d ms, %s', [
 						execTime,
+						htmlTime,
 						json.statistics['execution-time'],
 						json.statistics['script-memory']
 					]

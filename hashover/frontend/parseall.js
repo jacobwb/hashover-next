@@ -9,6 +9,9 @@ HashOver.prototype.parseAll = function (comments, element, collapse, popular)
 		html += this.parseComment (comments[i], null, collapse, popular);
 	}
 
+	// HTML parsing start time
+	var htmlStart = Date.now ();
+
 	// Check if we can insert HTML adjacently
 	if ('insertAdjacentHTML' in element) {
 		// If so, remove all existing content
@@ -21,8 +24,13 @@ HashOver.prototype.parseAll = function (comments, element, collapse, popular)
 		element.innerHTML = html;
 	}
 
+	// Get HTML parsing time
+	var htmlTime = Date.now () - htmlStart;
+
 	// Add control events
 	for (var i = 0, il = comments.length; i < il; i++) {
 		this.addControls (comments[i]);
 	}
+
+	return htmlTime;
 };
