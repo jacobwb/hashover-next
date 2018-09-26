@@ -26,9 +26,12 @@ try {
 		// If so, attempt to log them in
 		$hashover->login->setLogin ();
 
-		// Check if the user is not admin
-		if ($hashover->login->isAdmin () === false) {
-			// If so, logout
+		// Check if user is admin
+		if ($hashover->login->isAdmin () === true) {
+			// If so, login as admin
+			$hashover->login->adminLogin ();
+		} else {
+			// If not, logout
 			$hashover->login->clearLogin ();
 
 			// Sleep 5 seconds
@@ -55,8 +58,6 @@ try {
 		'sub-title'	=> $hashover->locale->text['admin-required'],
 		'name'		=> $hashover->locale->text['name'],
 		'password'	=> $hashover->locale->text['password'],
-		'email'		=> $hashover->locale->optionalize ('email'),
-		'website'	=> $hashover->locale->optionalize ('website'),
 		'login'		=> $hashover->locale->text['login']
 	);
 

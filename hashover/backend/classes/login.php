@@ -184,6 +184,33 @@ class Login extends Secrets
 		}
 	}
 
+	// Logs user in as admin
+	public function adminLogin ()
+	{
+		// Do nothing if login isn't admin
+		if ($this->isAdmin () === false) {
+			return;
+		}
+
+		// Set e-mail to admin e-mail address
+		$this->loginMethod->email = $this->notificationEmail;
+
+		// Set website to current domain
+		$this->loginMethod->website = $this->setup->scheme . '://' . $this->setup->domain;
+
+		// Set login method credentials
+		$this->loginMethod->setCredentials ();
+
+		// Update login credentials
+		$this->updateCredentials ();
+
+		// Check if required fields have values
+		$this->validateFields ();
+
+		// And login method's setLogin
+		$this->loginMethod->setLogin ();
+	}
+
 	// Weak verification of an admin login
 	public function isAdmin ()
 	{

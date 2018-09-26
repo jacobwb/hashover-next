@@ -19,19 +19,15 @@
 	</head>
 
 	<body>
-		<div id="login" class="red animate-all">
+		<form id="login" class="red animate-all" method="post">
 			<h1 class="underlined">{title}</h1>
 
-			<form method="post">
-				<div><input type="text" name="name" placeholder="{name}"></div>
-				<div><input type="password" name="password" placeholder="{password}"></div>
-				<div><input type="text" name="email" placeholder="{email}"></div>
-				<div><input type="text" name="website" placeholder="{website}"></div>
+			<div><input type="text" name="name" placeholder="{name}"></div>
+			<div><input type="password" name="password" placeholder="{password}"></div>
 
-				<p>
-					<input type="submit" value="{login}">
-				</p>
-			</form>
-		</div>
+			<p>
+				<input type="submit" value="{login}">
+			</p>
+		</form>
 	</body>
 </html>
