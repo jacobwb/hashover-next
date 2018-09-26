@@ -49,6 +49,10 @@ HashOver.instantiator = function (id, options)
 	// Set instance number
 	this.instanceNumber = HashOver.instanceCount;
 
-	// Increment HashOver instance count
+	// Store options and queries
+	this.options = options;
+	this.queries = queries;
+
+	// And increment instance count
 	HashOver.instanceCount++;
 };
