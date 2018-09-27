@@ -53,7 +53,6 @@ class Settings extends SensitiveSettings
 
 		// Get HTTP parent directory
 		$http_directory = dirname (dirname ($_SERVER['PHP_SELF']));
-		$http_directory = substr ($http_directory, 1);
 
 		// Replace backslashes with forward slashes on Windows
 		if (DIRECTORY_SEPARATOR === '\\') {
