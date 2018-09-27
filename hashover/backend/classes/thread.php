@@ -235,6 +235,12 @@ class Thread
 		return $comments;
 	}
 
+	// Queries an array of websites
+	public function queryWebsites ()
+	{
+		return $this->data->queryWebsites ();
+	}
+
 	// Queries an array of comment threads
 	public function queryThreads ()
 	{

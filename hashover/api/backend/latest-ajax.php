@@ -36,6 +36,9 @@ try {
 	// Set thread name from POST/GET data
 	$hashover->setup->setThreadName ('request');
 
+	// Set website from POST/GET data
+	$hashover->setup->setWebsite ('request');
+
 	// Initiate and finalize comment processing
 	$hashover->initiate ();
 	$hashover->finalize ();

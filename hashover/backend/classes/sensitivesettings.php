@@ -57,6 +57,9 @@ class SensitiveSettings extends SafeSettings
 	public $userDeletionsUnlink	= false;			// Whether user deleted files are actually unlinked from the filesystem
 	public $allowLocalMetadata	= false;			// Whether default metadata should be collected while running on a local server
 
+	// Whether multiple website support is enabled
+	public $supportsMultisites = false;
+
 	// External domains allowed to remotely load HashOver scripts
 	public $allowedDomains = array (
 		// '*.example.com',

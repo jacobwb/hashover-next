@@ -21,6 +21,7 @@ class Setup extends Settings
 {
 	public $usage;
 	public $threadsPath;
+	public $website;
 	public $isMobile = false;
 	public $remoteAccess = false;
 	public $filePath;
@@ -45,6 +46,12 @@ class Setup extends Settings
 		'&', '!', '*', '.', '=', '_', '+', ' '
 	);
 
+	// Characters to convert to dashes in domain names
+	protected $dashFromDomains = array (
+		'<', '>', ':', '"', '/', '\\', '|', '?',
+		'&', '!', '*', '=', '_', '+', ' '
+	);
+
 	// HashOver-specific URL queries to be ignored
 	protected $hashoverQueries = array (
 		'hashover-reply', 'hashover-edit'
@@ -61,9 +68,6 @@ class Setup extends Settings
 		// Check for required extensions
 		$this->extensionsLoaded ($this->extensions);
 
-		// Comment threads directory path
-		$this->threadsPath = $this->commentsPath . '/threads';
-
 		// Throw exception if script wasn't requested by this server
 		if ($this->usage['mode'] !== 'php') {
 			if ($this->refererCheck () === false) {
@@ -71,6 +75,18 @@ class Setup extends Settings
 					'External use not allowed.'
 				);
 			}
+		}
+
+		// Check if multisite support is enabled
+		if ($this->supportsMultisites === true) {
+			// If so, set website based on domain
+			$this->setWebsite ($this->domain);
+		} else {
+			// If not, set threads directory path
+			$this->threadsPath = $this->commentsRoot . '/threads';
+
+			// And set website to "all"
+			$this->website = 'all';
 		}
 
 		// Check if we have a user agent
@@ -139,6 +155,41 @@ class Setup extends Settings
 		}
 
 		return $request;
+	}
+
+	// Sets path to website-specific threads directory
+	public function setWebsite ($host = 'request')
+	{
+		// Attempt to obtain website via POST or GET if told to
+		if ($host === 'request') {
+			$host = $this->requestData ('website');
+		}
+
+		// No nothing if host is false or multisites is disabled
+		if ($host === false or $this->supportsMultisites === false) {
+			return;
+		}
+
+		// Remove "www." from URL host
+		$host = str_replace ('www.', '', $host);
+
+		// Get directory safe name of host
+		$host = $this->getSafeDomainName ($host);
+
+		// Set host as "localhost" on local addresses
+		$host = $this->isLocalhost ($host) ? 'localhost' : $host;
+
+		// Append website host to comments directory path
+		$this->commentsPath = $this->commentsRoot . '/' . $host;
+
+		// Set threads directory path
+		$this->threadsPath = $this->commentsPath . '/threads';
+
+		// Set thread directory path
+		$this->threadPath = $this->threadsPath . '/' . $this->threadName;
+
+		// And set website
+		$this->website = $host;
 	}
 
 	// Gets a domain with a port from given URL
@@ -376,6 +427,21 @@ class Setup extends Settings
 		return $name;
 	}
 
+	// Gets an OS-agnostic safe directory name
+	protected function getSafeDomainName ($name)
+	{
+		// Replace reserved characters with dashes
+		$name = str_replace ($this->dashFromDomains, '-', $name);
+
+		// Remove multiple/leading/trailing dashes
+		$name = $this->reduceDashes ($name);
+
+		// Remove leading periods to prevent hiding in UNIX
+		$name = ltrim ($name, '.');
+
+		return $name;
+	}
+
 	// Sets comment thread to read comments from
 	public function setThreadName ($name = 'request')
 	{
@@ -414,6 +480,9 @@ class Setup extends Settings
 				'URL needs a hostname and scheme.'
 			);
 		}
+
+		// Set various paths to be website-specific
+		$this->setWebsite ($parts['host']);
 
 		// Check if URL has a path and is not the index
 		if (!empty ($parts['path']) and $parts['path'] !== '/') {

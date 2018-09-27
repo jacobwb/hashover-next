@@ -33,7 +33,12 @@ function HashOverLatest (options)
 
 	// Check if options is an object
 	if (options && options.constructor === Object) {
-		// If so, add thread to queries if present
+		// If so, add website to queries if present
+		if (options.website !== undefined) {
+			queries.push ('website=' + encodeURIComponent (options.website));
+		}
+
+		// And add thread to queries if present
 		if (options.thread !== undefined) {
 			queries.push ('thread=' + encodeURIComponent (options.thread));
 		}

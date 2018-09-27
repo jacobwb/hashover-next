@@ -16,6 +16,10 @@ table b {
 	font-weight: bold;
 }
 
+#websites-column {
+	padding-left: 10px;
+}
+
 #threads small {
 	color: #5AB3FA;
 }

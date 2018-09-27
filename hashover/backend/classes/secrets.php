@@ -47,7 +47,7 @@ class Secrets
 	protected $databaseType = 'sqlite';
 
 	// Database name (prefixed with "hashover-" in MySQL)
-	protected $databaseName = 'hashover-threads';
+	protected $databaseName = 'comments';
 
 	// SQL database host name
 	protected $databaseHost = 'localhost';

@@ -21,7 +21,9 @@ class ParseSQL extends Database
 {
 	// Database statement for adding a new comment
 	protected $insert = array (
-		'id' => null,
+		'domain' => null,
+		'thread' => null,
+		'comment' => null,
 		'body' => null,
 		'status' => null,
 		'date' => null,
@@ -40,7 +42,9 @@ class ParseSQL extends Database
 
 	// Database statement for updating an existing comment
 	protected $update = array (
-		'id' => null,
+		'domain' => null,
+		'thread' => null,
+		'comment' => null,
 		'body' => null,
 		'status' => null,
 		'name' => null,
@@ -91,11 +95,16 @@ class ParseSQL extends Database
 
 		// SQL statement to query comments by
 		$statement = implode (' ', array (
-			'SELECT `id` FROM `' . $this->setup->threadName
-		);
+			'SELECT `comment` FROM `comments`',
+			'WHERE domain=:domain',
+			'AND thread=:thread'
+		));
 
 		// Query comments using the statement
-		$results = $this->database->query ($statement);
+		$results = $this->executeStatement ($statement, array (
+			'domain' => $this->setup->website,
+			'thread' => $this->setup->threadName
+		));
 
 		// Check if we received any comments
 		if ($results !== false) {
@@ -118,9 +127,6 @@ class ParseSQL extends Database
 	// Reads a comment from database
 	public function read ($comment, $thread = 'auto')
 	{
-		// Get thread
-		$thread = $this->getCommentThread ($thread);
-
 		// Construct column portion of SQL statement
 		$columns = array (
 			'`body`',
@@ -142,16 +148,28 @@ class ParseSQL extends Database
 		// SQL statement to get columns from database
 		$statement = implode (' ', array (
 			'SELECT ' . implode (', ', $columns),
-			'FROM `' . $thread . '`',
-			'WHERE id=\'' . $comment . '\''
+			'FROM `comments`',
+			'WHERE domain=:domain',
+			'AND thread=:thread',
+			'AND comment=:comment'
 		));
 
 		// Query columns using statement
-		$result = $this->database->query ($statement);
+		$result = $this->executeStatement ($statement, array (
+			'domain' => $this->setup->website,
+			'thread' => $this->setup->threadName,
+			'comment' => $comment
+		));
 
 		// Return columns as array if successful
 		if ($result !== false) {
-			return (array) $result->fetch (\PDO::FETCH_ASSOC);
+			// Fetch all comments
+			$fetch_all = $result->fetch (\PDO::FETCH_ASSOC);
+
+			// Return as array if comments exist
+			if (!empty ($fetch_all)) {
+				return (array) $fetch_all;
+			}
 		}
 
 		return false;
@@ -178,9 +196,6 @@ class ParseSQL extends Database
 	// Saves a comment into database
 	public function save ($comment, array $contents, $editing = false, $thread = 'auto')
 	{
-		// Get thread
-		$thread = $this->getCommentThread ($thread);
-
 		// Decide action based on if comment is being edited
 		$action = ($editing === true) ? 'update' : 'insert';
 

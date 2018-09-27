@@ -245,17 +245,40 @@ class CommentFiles extends DataFiles
 	}
 
 	// Queries an array of directory names
-	protected function queryDirs ($path)
+	protected function queryDirs ($path, $callback = false)
 	{
+		// Directory names output
+		$names = array ();
+
 		// Get comment directories
 		$dirs = glob ($path . '/*', GLOB_ONLYDIR);
 
 		// Convert directories paths to just their names
-		foreach ($dirs as $key => $name) {
-			$dirs[$key] = basename ($name);
+		foreach ($dirs as $name) {
+			// Check callback conditions
+			$match = $callback ? $callback ($name) : true;
+
+			// And add directory if callback returns true
+			if ($match === true) {
+				$names[] = basename ($name);
+			}
 		}
 
-		return $dirs;
+		return $names;
+	}
+
+	// Queries an array of websites
+	public function queryWebsites ()
+	{
+		// Path to get website directories from
+		$path = $this->setup->commentsRoot;
+
+		// Get website directories
+		$websites = $this->queryDirs ($path, function ($name) {
+			return file_exists ($name . '/threads');
+		});
+
+		return $websites;
 	}
 
 	// Queries an array of comment threads

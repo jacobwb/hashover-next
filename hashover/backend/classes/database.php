@@ -54,16 +54,19 @@ class Database extends Secrets
 			if ($this->databaseType === 'sqlite') {
 				// If so, construct SQLite file name
 				$file = sprintf ('%s/%s.sqlite',
-					$setup->commentsPath, $this->databaseName
+					$setup->commentsRoot, $this->getDatabaseName ()
 				);
 
 				// Instantiate an SQLite data object
 				$this->database = new \PDO ('sqlite:' . $file);
+
+				// And change file permissions
+				@chmod ($file, 0600);
 			} else {
 				// If not, create SQL server connection statement
 				$connection = implode (';', array (
 					'host=' . $this->databaseHost,
-					'dbname=' . $this->databaseName,
+					'dbname=' . $this->getDatabaseName (),
 					'charset=' . $this->databaseCharset
 				));
 
@@ -79,6 +82,18 @@ class Database extends Secrets
 		}
 	}
 
+	// Returns appropriate database name as configured
+	protected function getDatabaseName ()
+	{
+		// Prefix name with "hashover-" for non-SQLite drivers
+		if ($this->databaseType !== 'sqlite') {
+			return 'hashover-' . $this->databaseName;
+		}
+
+		// Otherwise, return database name as-is in SQLite
+		return $this->databaseName;
+	}
+
 	// Prepares and executes an SQL statement
 	protected function executeStatement ($statement, $data = null)
 	{
@@ -86,9 +101,15 @@ class Database extends Secrets
 			// Prepare statement
 			$prepare = $this->database->prepare ($statement);
 
-			// Attempt to execute statement
+			// Check if prepare was successful
 			if ($prepare !== false) {
-				return $prepare->execute ($data);
+				// If so, attempt to execute statement
+				$execute = $prepare->execute ($data);
+
+				// And return statement object if execute was successful
+				if ($execute !== false) {
+					return $prepare;
+				}
 			}
 		} catch (\PDOException $error) {
 			throw new \Exception ($error->getMessage ());
@@ -115,86 +136,99 @@ class Database extends Secrets
 		// Initial statement
 		$statement = array ();
 
-		// Check if the array is associative
-		if (array_keys ($columns) !== range (0, count ($columns) - 1)) {
-			// If so, create a statement using specific columns
-			foreach ($columns as $name => $value) {
-				// Decide type based on value type
-				$type = is_numeric ($value) ? 'INTEGER' : 'TEXT';
+		// Create a statement using specific columns
+		foreach ($columns as $name => $value) {
+			// Decide type based on value type
+			$type = is_numeric ($value) ? 'INTEGER' : 'TEXT';
 
-				// And add column to statement
-				$statement[] = sprintf ('`%s` %s', $name, $type);
-			}
-		} else {
-			// If not, create statement using generic "items" column
-			$statement[] = '`items` TEXT';
+			// And add column to statement
+			$statement[] = sprintf ('`%s` %s', $name, $type);
 		}
 
 		return $statement;
 	}
 
-	// Gets the appropriate metadata table name
-	protected function getMetaTable ($name, $thread, $global)
-	{
-		// Check if we're getting metadata for a specific thread
-		if ($global !== true) {
-			// If so, use the thread's table
-			if ($thread === 'auto') {
-				$table = $this->setup->threadName . '/metadata';
-			} else {
-				$table = $thread . '/metadata';
-			}
-		} else {
-			// If not, use the global metadata table
-			$table = 'hashover-metadata';
-		}
-
-		// Final table name
-		$table .= '/' . $name;
-
-		return $table;
-	}
-
-	// Gets items column entries as array
-	protected function getItems (array $rows)
-	{
-		// Initial items to return
-		$items = array ();
-
-		// Run through each item row
-		foreach ($rows as $row) {
-			$items[] = $row['items'];
-		}
-
-		return $items;
-	}
-
 	// Reads and returns specific metadata from database
 	public function readMeta ($name, $thread = 'auto', $global = false)
 	{
-		// Metadata table
-		$metadata_table = $this->getMetaTable ($name, $thread, $global);
+		// Get thread
+		$thread = $this->getCommentThread ($thread);
 
-		// Query statement array
-		$statement = 'SELECT * FROM `' . $metadata_table . '`';
+		// Prepared data for statement execution
+		$prepared = array (
+			'domain' => $this->setup->website
+		);
+
+		// Choose statement for supported metadata
+		switch ($name) {
+			// Latest comments
+			case 'latest-comments': {
+				// Initial statement
+				$statements = array (
+					'SELECT * FROM `comments`',
+					'WHERE (status IS NULL OR status="approved")',
+					'AND domain=:domain'
+				);
+
+				// Check if we are getting metadata from multiple threads
+				if ($global === false) {
+					// If so, add thread condition to statement
+					$statements[] = 'AND thread=:thread';
+
+					// And add thread to prepared data
+					$prepared['thread'] = $thread;
+				}
+
+				// Sort comments by date
+				$statements[] = 'ORDER BY `date` DESC';
+
+				// Limit comments to configured maximum
+				$statements[] = 'LIMIT ' . $this->setup->latestMax;
+
+				break;
+			}
+
+			// All others, just try to read as-is
+			default: {
+				// Initial statement
+				$statements = array (
+					sprintf ('SELECT * FROM `%s`', $name),
+					'WHERE domain=:domain'
+				);
+
+				// Check if we are getting metadata from multiple threads
+				if ($global === false) {
+					// Add thread condition to statement
+					$statements[] = 'AND thread=:thread';
+
+					// And add thread to prepared data
+					$prepared['thread'] = $thread;
+				}
+
+				break;
+			}
+		}
+
+		// Convert statements array into string
+		$statement = implode (' ', $statements);
 
 		// Query statement
-		$results = $this->database->query ($statement);
+		$results = $this->executeStatement ($statement, $prepared);
 
 		// Check if the query was successful
 		if ($results !== false) {
 			// If so, attempt to get all metadata
 			$fetch_all = $results->fetchAll (\PDO::FETCH_ASSOC);
 
-			// Check if we got the metadata
-			if ($fetch_all !== false and isset ($fetch_all[0])) {
-				// Return only the items column if present
-				if (isset ($fetch_all[0]['items'])) {
-					return $this->getItems ($fetch_all);
+			// Check if metadata read successfully
+			if (!empty ($fetch_all)) {
+				// If so, return first for if metadata is page info
+				if ($name === 'page-info') {
+					return $fetch_all[0];
 				}
 
-				// Otherwise return the first row
-				return $fetch_all[0];
+				// Otherwise, return all metadata
+				return $fetch_all;
 			}
 		}
 
@@ -205,10 +239,10 @@ class Database extends Secrets
 	protected function createTable ($name, array $columns)
 	{
 		// Statement for creating an initial table
-		$statement = implode (' ', array (
-			'CREATE TABLE IF NOT EXISTS `' . $name . '`',
-			'(' . implode (', ', $columns) . ')'
-		));
+		$statement = sprintf (
+			'CREATE TABLE IF NOT EXISTS `%s` (%s)',
+			$name, implode (', ', $columns)
+		);
 
 		// Execute statement
 		$created = $this->executeStatement ($statement);
@@ -235,67 +269,55 @@ class Database extends Secrets
 		return $statement;
 	}
 
-	// Deletes all rows from a given table
-	protected function deleteAllRows ($table)
+	// Get `tick` quoted string of array keys
+	protected function getTickKeys (array $data)
 	{
-		// Deletion statement
-		$statement = 'DELETE FROM `' . $table . '`';
+		// Initial tick quoted keys
+		$ticks = array ();
 
-		// Execute statement
-		$deleted = $this->executeStatement ($statement);
-
-		// Throw exception on failure
-		if ($deleted === false) {
-			throw new \Exception (
-				'Failed to delete existing metadata!'
-			);
+		// Add each array key wrapped in tick quotes
+		foreach (array_keys ($data) as $key) {
+			$ticks[] = "`$key`";
 		}
+
+		// And convert tick quoted key array to string
+		$statement = implode (', ', $ticks);
+
+		return $statement;
 	}
 
 	// Saves metadata to specific metadata JSON file
-	public function saveMeta ($name, array $data, $thread = 'auto', $global = false)
+	public function saveMeta ($name, array $data, $thread = 'auto')
 	{
-		// Metadata table
-		$metadata_table = $this->getMetaTable ($name, $thread, $global);
+		// Get thread
+		$thread = $this->getCommentThread ($thread);
 
-		// Create metadata table creation statement
+		// Add website domain and thread to data
+		$data = array_merge (array (
+			'domain' => $this->setup->website,
+			'thread' => $thread,
+			'name' => $name
+		), $data);
+
+		// Get metadata table creation statements
 		$creation_statement = $this->creationArray ($data);
 
+		// Add primary key to columns
+		$creation_statement[] = 'PRIMARY KEY (`domain`, `thread`)';
+
 		// Attempt to create metadata table
-		$this->createTable ($metadata_table, $creation_statement);
+		$this->createTable ($name, $creation_statement);
 
-		// Delete existing data from database
-		$this->deleteAllRows ($metadata_table);
+		// Create metadata columns insertion statement
+		$columns = implode (', ', $this->prepareArray ($data));
 
-		// Check if the array is associative
-		if (array_keys ($data) !== range (0, count ($data) - 1)) {
-			// If so, create metadata columns insertion statement array
-			$columns = $this->prepareArray ($data);
+		// Insert data into specific columns
+		$save = sprintf ('REPLACE INTO `%s` (%s) VALUES (%s)',
+			$name, $this->getTickKeys ($data), $columns
+		);
 
-			// Insert data into specific columns
-			$save  = 'INSERT INTO `' . $metadata_table . '` ';
-			$save .= 'VALUES (' . implode (', ', $columns) . ')';
-
-			// Execute statement
-			$saved = $this->executeStatement ($save, $data);
-		} else {
-			// If not, insert each item individually
-			$save  = 'INSERT INTO `' . $metadata_table . '` ';
-			$save .= 'VALUES (:items)';
-
-			// Insert each item individually
-			for ($i = 0, $il = count ($data); $i < $il; $i++) {
-				// Execute statement
-				$saved = $this->executeStatement ($save, array (
-					'items' => $data[$i]
-				));
-
-				// Stop on any failures
-				if ($saved === false) {
-					break;
-				}
-			}
-		}
+		// Execute statement
+		$saved = $this->executeStatement ($save, $data);
 
 		// Throw exception on failure
 		if ($saved === false) {
@@ -311,6 +333,12 @@ class Database extends Secrets
 		// Get thread
 		$thread = $this->getCommentThread ($thread);
 
+		// Add website domain and thread to data
+		$data = array_merge ($data, array (
+			'domain' => $this->setup->website,
+			'thread' => $thread
+		));
+
 		// Decide on an action
 		switch ($action) {
 			// Action for posting a comment
@@ -320,8 +348,8 @@ class Database extends Secrets
 
 				// Construct SQL statement
 				$query = sprintf (
-					'INSERT INTO `%s` VALUES (%s)',
-					$thread, implode (', ', $columns)
+					'INSERT INTO `comments` VALUES (%s)',
+					implode (', ', $columns)
 				);
 
 				break;
@@ -346,9 +374,11 @@ class Database extends Secrets
 
 				// Construct SQL statement
 				$query = implode (' ', array (
-					'UPDATE `' . $thread . '`',
+					'UPDATE `comments`',
 					'SET ' . $columns,
-					'WHERE id=:id'
+					'WHERE domain=:domain',
+					'AND thread=:thread',
+					'AND comment=:comment'
 				));
 
 				break;
@@ -360,15 +390,19 @@ class Database extends Secrets
 				if ($alt === true) {
 					// If so, use delete statement
 					$query = implode (' ', array (
-						'DELETE FROM `' . $thread . '`',
-						'WHERE id=:id'
+						'DELETE FROM `comments`',
+						'WHERE domain=:domain',
+						'AND thread=:thread',
+						'AND comment=:comment'
 					));
 				} else {
 					// If not, use status update statement
 					$query = implode (' ', array (
-						'UPDATE `' . $thread . '`',
+						'UPDATE `comments`',
 						'SET status=:status',
-						'WHERE id=:id'
+						'WHERE domain=:domain',
+						'AND thread=:thread',
+						'AND comment=:comment'
 					));
 				}
 
@@ -392,47 +426,43 @@ class Database extends Secrets
 	// Check if comments table exists
 	public function checkThread ()
 	{
-		// Get thread
-		$thread = $this->setup->threadName;
-
 		// Create comments table creation statements
 		$statement = $this->creationArray ($this->commentsTable);
 
 		// Create initial comments if it doesn't exist
-		$this->createTable ($thread, $statement);
+		$this->createTable ('comments', $statement);
 	}
 
-	// Queries a list of comment threads
-	public function queryThreads ()
+	// Queries unique rows as of a specific column an array
+	protected function queryColumn ($column)
 	{
-		// Database name
-		$name = $this->databaseName;
-
-		// Check if database type if SQLite
-		if ($this->databaseType === 'sqlite') {
-			// If so, use SQLite statement
-			$statement  = 'SELECT * FROM sqlite_master ';
-			$statement .= 'WHERE type=\'table\'';
-		} else {
-			// If not, use MySQL statement
-			$statement  = 'SELECT * FROM INFORMATION_SCHEMA.TABLES ';
-			$statement .= 'WHERE TABLE_TYPE=\'BASE TABLE\' ';
-			$statement .= 'AND TABLE_SCHEMA=\'' . $name . '\'';
-		}
-
-		// Execute statement
-		$results = $this->database->query ($statement);
+		// Select unique thread names
+		$results = $this->executeStatement (sprintf (
+			'SELECT DISTINCT `%s` FROM `comments`', $column
+		));
 
 		// Check if query was successful
 		if ($results !== false) {
-			// If so, fetch all threads
+			// If so, fetch all rows in column
 			$fetch_all = $results->fetchAll (\PDO::FETCH_ASSOC);
 
-			// Return threads column
-			return array_column ($fetch_all, 'name'));
+			// Return column as array
+			return array_column ($fetch_all, $column);
 		}
 
 		return false;
+	}
+
+	// Queries an array of websites
+	public function queryWebsites ()
+	{
+		return $this->queryColumn ('domain');
+	}
+
+	// Queries an array of comment threads
+	public function queryThreads ()
+	{
+		return $this->queryColumn ('thread');
 	}
 
 	// These methods are not necessary in SQL

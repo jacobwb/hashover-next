@@ -38,6 +38,17 @@ try {
 	// View setup
 	require (realpath ('../view-setup.php'));
 
+	// Get current website
+	$current_website = $hashover->setup->website;
+
+	// Attempt to get website from GET data
+	$website = $hashover->setup->getRequest ('website', $current_website);
+
+	// Set website if GET website is different
+	if ($website !== $current_website) {
+		$hashover->setup->setWebsite ($website);
+	}
+
 	// Attempt to get array of comment threads
 	$threads = $hashover->thread->queryThreads ();
 
@@ -48,6 +59,11 @@ try {
 		'cellspacing' => '0',
 		'cellpadding' => '8'
 	));
+
+	// Add first row as header if multiple website support is enabled
+	if ($hashover->setup->supportsMultisites === true) {
+		add_table_row ($threads_table, new HTMLTag ('b', $website, false));
+	}
 
 	// Run through comment threads
 	foreach ($threads as $thread) {
@@ -65,6 +81,7 @@ try {
 		// Add thread hyperlink to row div
 		$div->appendChild (new HTMLTag ('a', array (
 			'href' => 'threads.php?' . implode ('&', array (
+				'website=' . urlencode ($website),
 				'thread=' . urlencode ($thread),
 				'title=' . urlencode ($data['title']),
 				'url=' . urlencode ($data['url'])
@@ -87,8 +104,54 @@ try {
 		'title'		=> $hashover->locale->text['moderation'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
 		'sub-title'	=> $hashover->locale->text['moderation-sub'],
-		'threads'	=> $threads_table->asHTML ("\t\t")
+		'left-id'	=> 'threads-column',
+		'threads'	=> $threads_table->asHTML ("\t\t\t\t\t"),
 	);
+
+	// Check if multiple website support is enabled
+	if ($hashover->setup->supportsMultisites === true) {
+		// If so, attempt to get array of websites
+		$websites = $hashover->thread->queryWebsites ();
+
+		// Check if other websites exist
+		if (count ($websites) > 1) {
+			// If so, create comment thread table
+			$websites_table = new HTMLTag ('table', array (
+				'id' => 'websites',
+				'class' => 'striped-rows-odd',
+				'cellspacing' => '0',
+				'cellpadding' => '8'
+			));
+
+			// Add first row as header
+			add_table_row ($websites_table, new HTMLTag ('b', array (
+				'innerHTML' => $hashover->locale->text['website'][1],
+			), false));
+
+			// Sort the websites
+			sort ($websites, SORT_NATURAL);
+
+			// Run through website directories
+			foreach ($websites as $name) {
+				// Skip current website
+				if ($name === $website) {
+					continue;
+				}
+
+				// Create website hyperlink
+				add_table_row ($websites_table, new HTMLTag ('a', array (
+					'href' => '?website=' . urlencode ($name),
+					'innerHTML' => $name
+				)));
+			}
+
+			// And add other websites to template
+			$template = array_merge ($template, array (
+				'right-id'	=> 'websites-column',
+				'websites'	=> $websites_table->asHTML ("\t\t\t\t\t")
+			));
+		}
+	}
 
 	// Load and parse HTML template
 	echo $hashover->templater->parseTemplate ('moderation.html', $template);
