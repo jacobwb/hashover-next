@@ -115,56 +115,6 @@ class Settings extends SensitiveSettings
 		return false;
 	}
 
-	// Overrides settings based on JSON data
-	protected function overrideSettings ($json, $class = 'Settings')
-	{
-		// Parse JSON data
-		$settings = @json_decode ($json, true);
-
-		// Return void if data is anything other than an array
-		if (!is_array ($settings)) {
-			return;
-		}
-
-		// Loop through JSON data
-		foreach ($settings as $setting => $value) {
-			// Check if the key contains dashes
-			if (mb_strpos ($setting, '-') !== false) {
-				// If so, convert setting key to lowercase
-				$setting = mb_strtolower ($setting);
-
-				// Then convert dashed-case setting key to camelCase
-				$setting = preg_replace_callback ('/-([a-z])/', function ($grp) {
-					return mb_strtoupper ($grp[1]);
-				}, $setting);
-			}
-
-			// Check if the setting from the JSON data exists
-			if (property_exists ('HashOver\\' . $class, $setting)) {
-				// If so, override the default if the setting types match
-				if (gettype ($value) === gettype ($this->{$setting})) {
-					$this->{$setting} = $value;
-				}
-			}
-		}
-	}
-
-	// Reads JSON settings file and uses it to override default settings
-	protected function loadSettingsFile ()
-	{
-		// JSON settings file path
-		$path = $this->getAbsolutePath ('config/settings.json');
-
-		// Check if JSON settings file exists
-		if (file_exists ($path)) {
-			// If so, read the file
-			$json = @file_get_contents ($path);
-
-			// And override settings
-			$this->overrideSettings ($json);
-		}
-	}
-
 	// Synchronizes specific settings after remote changes
 	public function syncSettings ()
 	{
@@ -217,6 +167,56 @@ class Settings extends SensitiveSettings
 
 		// Image directory for HTTP
 		$this->httpImages = $this->httpRoot . '/images';
+	}
+
+	// Overrides settings based on JSON data
+	protected function overrideSettings ($json, $class = 'Settings')
+	{
+		// Parse JSON data
+		$settings = @json_decode ($json, true);
+
+		// Return void if data is anything other than an array
+		if (!is_array ($settings)) {
+			return;
+		}
+
+		// Loop through JSON data
+		foreach ($settings as $setting => $value) {
+			// Check if the key contains dashes
+			if (mb_strpos ($setting, '-') !== false) {
+				// If so, convert setting key to lowercase
+				$setting = mb_strtolower ($setting);
+
+				// Then convert dashed-case setting key to camelCase
+				$setting = preg_replace_callback ('/-([a-z])/', function ($grp) {
+					return mb_strtoupper ($grp[1]);
+				}, $setting);
+			}
+
+			// Check if the setting from the JSON data exists
+			if (property_exists ('HashOver\\' . $class, $setting)) {
+				// If so, override the default if the setting types match
+				if (gettype ($value) === gettype ($this->{$setting})) {
+					$this->{$setting} = $value;
+				}
+			}
+		}
+	}
+
+	// Reads JSON settings file and uses it to override default settings
+	protected function loadSettingsFile ()
+	{
+		// JSON settings file path
+		$path = $this->getAbsolutePath ('config/settings.json');
+
+		// Check if JSON settings file exists
+		if (file_exists ($path)) {
+			// If so, read the file
+			$json = @file_get_contents ($path);
+
+			// And override settings
+			$this->overrideSettings ($json);
+		}
 	}
 
 	// Accepts JSON data from the frontend to override default settings

@@ -50,7 +50,7 @@ class Locale
 		$language = mb_strtolower ($this->setup->language);
 
 		// Get path to locales directory
-		$locales_directory = $this->setup->getAbsolutePath ('backend/locales');
+		$locales_path = $this->setup->getAbsolutePath ('backend/locales');
 
 		// Check if we are automatically selecting the locale
 		if ($language === 'auto') {
@@ -62,8 +62,7 @@ class Locale
 			$language_parts = explode ('_', $locale_parts[0]);
 
 			// Add locale in 'en-us' format to checklist
-			$full_locale = str_replace ('_', '-', $locale_parts[0]);
-			$locales[] = $full_locale;
+			$locales[] = implode ('-', $language_parts);
 
 			// Add front part of locale ('en') to checklist
 			$locales[] = $language_parts[0];
@@ -77,9 +76,10 @@ class Locale
 			$locales[] = $language;
 		}
 
+		// Run through locale checklist
 		foreach ($locales as $locale) {
 			// Locale file path
-			$locale_file = $locales_directory . '/' . $locale . '.php';
+			$locale_file = $locales_path . '/' . $locale . '.php';
 
 			// Check if a locale file exists for current locale
 			if (file_exists ($locale_file)) {
@@ -88,7 +88,7 @@ class Locale
 			}
 		}
 
-		// Otherwise, default to English
+		// Otherwise, return path to English locale
 		return $locales_directory . '/en.php';
 	}
 
