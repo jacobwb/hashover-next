@@ -396,7 +396,15 @@ try {
 
 				// All other values are strings
 				default: {
-					$settings[$name] = (string)($_POST[$name]);
+					// Check if setting has a value
+					if (!empty ($_POST[$name])) {
+						// If so, cast it to string before setting it
+						$settings[$name] = (string)($_POST[$name]);
+					} else {
+						// If not, remove the setting entirely
+						unset ($settings[$name]);
+					}
+
 					break;
 				}
 			}

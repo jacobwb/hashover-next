@@ -195,8 +195,16 @@ class Settings extends SensitiveSettings
 
 			// Check if the setting from the JSON data exists
 			if (property_exists ('HashOver\\' . $class, $setting)) {
-				// If so, override the default if the setting types match
-				if (gettype ($value) === gettype ($this->{$setting})) {
+				// If so, get default setting type
+				$default_type = gettype ($this->{$setting});
+
+				// Skip setting if its an empty string
+				if ($default_type === 'string' and empty ($value)) {
+					continue;
+				}
+
+				// Otherwise, override default if setting types match
+				if (gettype ($value) === $default_type) {
 					$this->{$setting} = $value;
 				}
 			}
