@@ -39,7 +39,6 @@ function ui_array (Setup $setup, Locale $locale)
 			'value' => $setup->language,
 
 			'options' => array (
-				'auto' => 'auto',
 				'en' => 'English',
 				'da' => 'Danish',
 				'el' => 'Greek',
@@ -187,6 +186,7 @@ function ui_array (Setup $setup, Locale $locale)
 			'value' => $setup->usesMarkdown
 		),
 		'server-timezone' => array (
+			'documentation' => 'https://php.net/manual/en/timezones.php',
 			'type' => 'text',
 			'value' => $setup->serverTimezone
 		),
@@ -199,12 +199,12 @@ function ui_array (Setup $setup, Locale $locale)
 			'value' => $setup->usesShortDates
 		),
 		'time-format' => array (
-			'documentation' => 'http://php.net/manual/en/function.date.php',
+			'documentation' => 'https://php.net/manual/en/function.date.php',
 			'type' => 'text',
 			'value' => $setup->timeFormat
 		),
 		'date-format' => array (
-			'documentation' => 'http://php.net/manual/en/function.date.php',
+			'documentation' => 'https://php.net/manual/en/function.date.php',
 			'type' => 'text',
 			'value' => $setup->dateFormat
 		),

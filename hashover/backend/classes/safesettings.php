@@ -46,7 +46,7 @@ class SafeSettings
 	public $usesMarkdown		= true;				// Whether comments will be parsed for Markdown
 
 	// Date and Time settings
-	public $serverTimezone		= 'America/Los_Angeles';	// Server timezone
+	public $serverTimezone		= 'auto';			// Server timezone
 	public $usesUserTimezone	= true;				// Whether comment dates should use the user's timezone (JavaScript-mode)
 	public $usesShortDates		= true;				// Whether comment dates are shortened, for example "X days ago"
 	public $timeFormat		= 'g:ia';			// Time format, use 'H:i' for 24-hour format (see: http://php.net/manual/en/function.date.php)

@@ -83,13 +83,19 @@ class Locale
 
 			// Check if a locale file exists for current locale
 			if (file_exists ($locale_file)) {
-				// If so, return PHP locale file path
+				// If so, set locale as language setting
+				$this->setup->language = $locale;
+
+				// Return locale file path
 				return $locale_file;
 			}
 		}
 
-		// Otherwise, return path to English locale
-		return $locales_directory . '/en.php';
+		// Otherwise, set language setting to English
+		$this->setup->language = 'en';
+
+		// And return path to English locale
+		return $locales_path . '/en.php';
 	}
 
 	// Includes a locale file

@@ -42,9 +42,6 @@ class Settings extends SensitiveSettings
 
 	public function __construct ()
 	{
-		// Set server timezone
-		date_default_timezone_set ($this->serverTimezone);
-
 		// Set encoding
 		mb_internal_encoding ('UTF-8');
 
@@ -59,9 +56,6 @@ class Settings extends SensitiveSettings
 			$root_directory = str_replace ('\\', '/', $root_directory);
 			$http_directory = str_replace ('\\', '/', $http_directory);
 		}
-
-		// Theme path
-		$this->themePath = 'themes/' . $this->theme;
 
 		// Root directory for script
 		$this->rootDirectory = $root_directory;
@@ -119,6 +113,23 @@ class Settings extends SensitiveSettings
 	{
 		// Theme path
 		$this->themePath = 'themes/' . $this->theme;
+
+		// Check if timezone is set to auto
+		if ($this->serverTimezone === 'auto') {
+			// If so, set timezone setting to current timezone
+			$this->serverTimezone = date_default_timezone_get ();
+		} else {
+			// If not, set timezone to given timezone
+			$tz = @date_default_timezone_set ($this->serverTimezone);
+
+			// And throw exception if timezone ID is invalid
+			if ($tz === false) {
+				throw new \Exception (sprintf (
+					'"%s" is not a valid timezone',
+					$this->serverTimezone
+				));
+			}
+		}
 
 		// Disable likes and dislikes if cookies are disabled
 		if ($this->setsCookies === false) {
