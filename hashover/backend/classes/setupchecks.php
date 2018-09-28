@@ -44,6 +44,13 @@ class SetupChecks extends Secrets
 			);
 		}
 
+		// Throw exception if HTTP root could not be retrieve
+		if (empty ($setup->httpRoot)) {
+			throw new \Exception (
+				'Could not get HTTP root, please configure manually'
+			);
+		}
+
 		// Throw exception if administrative password is set to the default
 		if ($this->adminPassword === 'password') {
 			throw new \Exception (sprintf (

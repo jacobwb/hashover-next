@@ -48,8 +48,9 @@ class Settings extends SensitiveSettings
 		// Get parent directory
 		$root_directory = dirname (dirname (__DIR__));
 
-		// Get HTTP parent directory
-		$http_directory = dirname (dirname ($_SERVER['PHP_SELF']));
+		// Get HTTP root directory
+		$root_position = mb_strlen (realpath ($_SERVER['DOCUMENT_ROOT']));
+		$http_directory = mb_substr ($root_directory, $root_position);
 
 		// Replace backslashes with forward slashes on Windows
 		if (DIRECTORY_SEPARATOR === '\\') {
