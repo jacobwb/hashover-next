@@ -17,7 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Database! Database! Just living in the database! Wow! Wow!
 class Database extends Secrets
 {
 	protected $setup;
