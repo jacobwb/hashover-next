@@ -57,6 +57,9 @@ try {
 	$hashover->parsePopular ();
 	$hashover->finalize ();
 
+	// Set/update default page metadata
+	$hashover->defaultMetadata ();
+
 	// Page, setup, and comment data array
 	$data = array ();
 
@@ -73,10 +76,7 @@ try {
 
 	// Check if we're preparing HashOver
 	if ($hashover->setup->getRequest ('prepare') !== false) {
-		// Set/update default page metadata
-		$hashover->defaultMetadata ();
-
-		// Add locales to data
+		// If so, add locales to data
 		$data['locale'] = array (
 			'cancel'		=> $hashover->locale->text['cancel'],
 			'date-time'		=> $hashover->locale->text['date-time'],
@@ -145,7 +145,7 @@ try {
 			'field-options'		=> $hashover->setup->fieldOptions
 		);
 
-		// Add UI HTML to data
+		// And add UI HTML to data
 		$data['ui'] = array (
 			'user-avatar'		=> $hashover->ui->userAvatar (),
 			'name-link'		=> $hashover->ui->nameElement ('a'),
