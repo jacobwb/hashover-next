@@ -24,18 +24,10 @@ header ('Content-Type: application/json');
 require ('nocache-headers.php');
 require ('standard-setup.php');
 
-// Autoload class files
-spl_autoload_register (function ($uri) {
-	$uri = str_replace ('\\', '/', strtolower ($uri));
-	$class_name = basename ($uri);
-
-	// Check if class file could be included
-	if (!@include ('classes/' . $class_name . '.php')) {
-		// If not, return JSON code to display an error
-		echo json_encode (array (
-			'error' => '"' . $class_name . '.php" file could not be included!'
-		));
-
-		exit;
-	}
+// Setup class autoloader
+setup_autoloader (function ($error) {
+	echo json_encode (array (
+		'message' => $error,
+		'type' => 'error'
+	));
 });

@@ -20,16 +20,8 @@
 // Do some standard HashOver setup work
 require (realpath ('../backend/standard-setup.php'));
 
-// Autoload class files
-spl_autoload_register (function ($uri) {
-	$uri = str_replace ('\\', '/', strtolower ($uri));
-	$class_name = basename ($uri);
-
-	if (!@include (realpath ('../backend/classes/' . $class_name . '.php'))) {
-		echo '"' . $class_name . '.php" file could not be included!';
-		exit;
-	}
-});
+// Setup class autoloader
+setup_autoloader ();
 
 try {
 	// Instantiate HashOver class

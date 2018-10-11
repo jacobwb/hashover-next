@@ -20,14 +20,5 @@
 // Do some standard HashOver setup work
 require ('standard-setup.php');
 
-// Autoload class files
-spl_autoload_register (function ($uri) {
-	$uri = str_replace ('\\', '/', strtolower ($uri));
-	$class_name = basename ($uri);
-
-	// Display error if class file could not be included
-	if (!@include ('classes/' . $class_name . '.php')) {
-		echo '"' . $class_name . '.php" file could not be included!';
-		exit;
-	}
-});
+// Setup class autoloader
+setup_autoloader ();

@@ -27,17 +27,10 @@ chdir (realpath ('../'));
 require ('backend/nocache-headers.php');
 require ('backend/standard-setup.php');
 
-// Autoload class files
-spl_autoload_register (function ($uri) {
-	$uri = str_replace ('\\', '/', strtolower ($uri));
-	$class_name = basename ($uri);
-	$error = '"' . $class_name . '.php" file could not be included!';
-
-	if (!@include ('backend/classes/' . $class_name . '.php')) {
-		echo '<?xml version="1.0" encoding="UTF-8"?>', PHP_EOL;
-		echo '<error>', $error, '</error>';
-		exit;
-	}
+// Setup class autoloader
+setup_autoloader (function ($error) {
+	echo '<?xml version="1.0" encoding="UTF-8"?>', PHP_EOL;
+	echo '<error>', $error, '</error>';
 });
 
 function create_rss (&$hashover)
