@@ -26,7 +26,7 @@ class Markdown
 	protected $paragraphRegex = '/(?:\r\n|\r|\n){2}/S';
 
 	// Matches markdown inline code
-	protected $inlineCodeRegex = '/(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/iS';
+	protected $inlineCodeRegex = '/(^|[^a-z0-9`])`((?!`)[\s\S]+?)`([^a-z0-9`]|$)/iS';
 
 	// Array for inline code and code block markers
 	protected $codeMarkers = array (
@@ -43,7 +43,7 @@ class Markdown
 		'/\*([^ *])([\s\S]+?)([^ *])\*/S',
 
 		// Matches _underlined_ text
-		'/(^|\W)_([^_]+?[\s\S]+?)_(\W|$)/S',
+		'/(^|\W)_((?!_)[\s\S]+?)_(\W|$)/S',
 
 		// Matches forced __underlined__ text
 		'/__([^ _])([\s\S]+?)([^ _])__/S',

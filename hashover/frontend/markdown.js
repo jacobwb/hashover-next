@@ -4,7 +4,7 @@ HashOverConstructor.prototype.rx.md = {
 	blockCode: /```([\s\S]+?)```/g,
 
 	// Matches markdown inline code
-	inlineCode: /(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/ig,
+	inlineCode: /(^|[^a-z0-9`])`((?!`)[\s\S]+?)`([^a-z0-9`]|$)/ig,
 
 	// Matches temporary code block placeholder
 	blockMarker: /CODE_BLOCK\[([0-9]+)\]/g,
@@ -21,7 +21,7 @@ HashOverConstructor.prototype.rx.md = {
 		/\*([^ *])([\s\S]+?)([^ *])\*/g,
 
 		// Matches _underlined_ text
-		/(^|\W)_([^_]+?[\s\S]+?)_(\W|$)/g,
+		/(^|\W)_((?!_)[\s\S]+?)_(\W|$)/g,
 
 		// Matches forced __underlined__ text
 		/__([^ _])([\s\S]+?)([^ _])__/g,
