@@ -19,8 +19,13 @@
 
 class Markdown
 {
+	// Matches a markdown code block
 	protected $blockCodeRegex = '/```([\s\S]+?)```/S';
+
+	// Matches a paragraph/double line break
 	protected $paragraphRegex = '/(?:\r\n|\r|\n){2}/S';
+
+	// Matches markdown inline code
 	protected $inlineCodeRegex = '/(^|[^a-z0-9`])`([^`]+?[\s\S]+?)`([^a-z0-9`]|$)/iS';
 
 	// Array for inline code and code block markers
@@ -31,10 +36,19 @@ class Markdown
 
 	// Markdown patterns to search for
 	protected $search = array (
+		// Matches **bold** text
 		'/\*\*([^ *])([\s\S]+?)([^ *])\*\*/S',
+
+		// Matches *italic* text
 		'/\*([^ *])([\s\S]+?)([^ *])\*/S',
+
+		// Matches _underlined_ text
 		'/(^|\W)_([^_]+?[\s\S]+?)_(\W|$)/S',
+
+		// Matches forced __underlined__ text
 		'/__([^ _])([\s\S]+?)([^ _])__/S',
+
+		// Matches ~~strikethrough~~ text
 		'/~~([^ ~])([\s\S]+?)([^ ~])~~/S'
 	);
 

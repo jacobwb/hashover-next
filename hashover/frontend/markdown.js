@@ -23,7 +23,7 @@ HashOverConstructor.prototype.rx.md = {
 		// Matches _underlined_ text
 		/(^|\W)_([^_]+?[\s\S]+?)_(\W|$)/g,
 
-		// Matches forced __underlined_ text
+		// Matches forced __underlined__ text
 		/__([^ _])([\s\S]+?)([^ _])__/g,
 
 		// Matches ~~strikethrough~~ text

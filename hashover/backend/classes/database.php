@@ -72,8 +72,13 @@ class Database extends Secrets
 
 				// And create SQL server data object
 				$this->database = new \PDO (
+					// PDO driver and connection details
 					$this->databaseType . ':' . $connection,
+
+					// Database user as configured
 					$this->databaseUser,
+
+					// Database password as configured
 					$this->databasePassword
 				);
 			}
@@ -343,13 +348,13 @@ class Database extends Secrets
 		switch ($action) {
 			// Action for posting a comment
 			case 'insert': {
-				// Get comments table columns as query array
-				$columns = $this->prepareArray ($this->commentsTable);
-
 				// Construct SQL statement
 				$query = sprintf (
+					// Insertion statement
 					'INSERT INTO `comments` VALUES (%s)',
-					implode (', ', $columns)
+
+					// Get list of table columns
+					implode (', ', $this->prepareArray ($this->commentsTable))
 				);
 
 				break;

@@ -81,13 +81,14 @@ function create_rss (&$hashover)
 
 	// Display error if the API is disabled
 	if ($hashover->setup->apiStatus ('rss') === 'disabled') {
+		$message = 'This API is not enabled.';
 		$title = $xml->createElement ('title');
-		$title_value = $xml->createTextNode ('HashOver: RSS API is not enabled.');
+		$title_value = $xml->createTextNode ($message);
 		$title->appendChild ($title_value);
 		$rss->appendChild ($title);
 
 		$description = $xml->createElement ('description');
-		$description_value = $xml->createTextNode ('Error!');
+		$description_value = $xml->createTextNode ($message);
 		$description->appendChild ($description_value);
 		$rss->appendChild ($description);
 

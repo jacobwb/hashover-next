@@ -806,10 +806,6 @@ conditions, unless such conditions are required by law.
 	right: -16px;
 }
 
-.hashover.hashover-logged-out .hashover-comment form .hashover-avatar-image:after {
-	border-right-color: #FCFCFC;
-}
-
 .hashover .hashover-select-wrapper select {
 	border: none;
 	background-color: #FCFCFC;

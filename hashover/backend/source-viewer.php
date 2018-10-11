@@ -35,10 +35,6 @@ try {
 		// Instantiate HashOver class
 		$hashover = new \HashOver ();
 
-		// Initiate and finalize comment processing
-		$hashover->initiate ();
-		$hashover->finalize ();
-
 		// Create table for source code files
 		$table = new HTMLTag ('table', array (
 			'id' => 'threads',

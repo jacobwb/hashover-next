@@ -33,19 +33,19 @@ try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json', 'api');
 
-	// Set page URL from POST/GET data
-	$hashover->setup->setPageURL ('request');
-
-	// Initiate and finalize comment processing
-	$hashover->initiate ();
-	$hashover->finalize ();
-
 	// Throw exception if the "Latest Comments" API is disabled
 	if ($hashover->setup->apiStatus ('count-link') === 'disabled') {
 		throw new \Exception (
 			'This API is not enabled.'
 		);
 	}
+
+	// Set page URL from POST/GET data
+	$hashover->setup->setPageURL ('request');
+
+	// Initiate and finalize comment processing
+	$hashover->initiate ();
+	$hashover->finalize ();
 
 	// Count response array
 	$data = array (

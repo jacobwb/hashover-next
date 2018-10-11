@@ -372,7 +372,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 				return preMarker;
 			};
 
-			// Replace pre tags with marker text
+			// And replace pre tags with marker text
 			body = body.replace (this.rx.html.pre.replace, preReplacer);
 		}
 

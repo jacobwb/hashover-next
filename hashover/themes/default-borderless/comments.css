@@ -670,7 +670,8 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-avatar *,
 .hashover .hashover-comment > .hashover-balloon,
 .hashover .hashover-reply .hashover-header,
-.hashover .hashover-comment .hashover-inputs {
+.hashover .hashover-comment .hashover-inputs,
+.hashover .hashover-requires-login-message {
 	background-color: #FCFCFC;
 }
 
