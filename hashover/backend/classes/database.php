@@ -247,37 +247,6 @@ class Database extends Secrets
 		}
 	}
 
-	// Creates table query statement from array
-	protected function prepareArray (array $columns)
-	{
-		// Initial query statement
-		$statement = array ();
-
-		// Add each column to statement
-		foreach ($columns as $name => $value) {
-			$statement[] = ':' . $name;
-		}
-
-		return $statement;
-	}
-
-	// Get `tick` quoted string of array keys
-	protected function getTickKeys (array $data)
-	{
-		// Initial tick quoted keys
-		$ticks = array ();
-
-		// Add each array key wrapped in tick quotes
-		foreach (array_keys ($data) as $key) {
-			$ticks[] = "`$key`";
-		}
-
-		// And convert tick quoted key array to string
-		$statement = implode (', ', $ticks);
-
-		return $statement;
-	}
-
 	// Saves metadata to specific metadata JSON file
 	public function saveMeta ($name, array $data, $thread = 'auto')
 	{
