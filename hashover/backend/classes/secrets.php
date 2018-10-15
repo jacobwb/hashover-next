@@ -46,8 +46,8 @@ class Secrets
 	// Type of database, sqlite or mysql
 	protected $databaseType = 'sqlite';
 
-	// Database name (prefixed with "hashover-" in MySQL)
-	protected $databaseName = 'comments';
+	// Database name
+	protected $databaseName = 'hashover';
 
 	// SQL database host name
 	protected $databaseHost = 'localhost';

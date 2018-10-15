@@ -53,7 +53,7 @@ class Database extends Secrets
 			if ($this->databaseType === 'sqlite') {
 				// If so, construct SQLite file name
 				$file = sprintf ('%s/%s.sqlite',
-					$setup->commentsRoot, $this->getDatabaseName ()
+					$setup->commentsRoot, $this->databaseName
 				);
 
 				// Instantiate an SQLite data object
@@ -65,7 +65,7 @@ class Database extends Secrets
 				// If not, create SQL server connection statement
 				$connection = implode (';', array (
 					'host=' . $this->databaseHost,
-					'dbname=' . $this->getDatabaseName (),
+					'dbname=' . $this->databaseName,
 					'charset=' . $this->databaseCharset
 				));
 
@@ -84,18 +84,6 @@ class Database extends Secrets
 		} catch (\PDOException $error) {
 			throw new \Exception ($error->getMessage ());
 		}
-	}
-
-	// Returns appropriate database name as configured
-	protected function getDatabaseName ()
-	{
-		// Prefix name with "hashover-" for non-SQLite drivers
-		if ($this->databaseType !== 'sqlite') {
-			return 'hashover-' . $this->databaseName;
-		}
-
-		// Otherwise, return database name as-is in SQLite
-		return $this->databaseName;
 	}
 
 	// Prepares and executes an SQL statement
