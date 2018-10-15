@@ -454,7 +454,8 @@ class Database extends Secrets
 			return array_column ($fetch_all, $column);
 		}
 
-		return false;
+		// Otherwise, return an empty array
+		return array ();
 	}
 
 	// Queries an array of websites
