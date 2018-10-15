@@ -31,6 +31,12 @@ for (var i = 0, il = queries.length; i < il; i++) {
 
 // Lastly override some settings
 options.settings = {
+	// Use default theme
+	theme: 'default',
+
+	// Sort comments newest first by default
+	defaultSorting: 'by-date',
+
 	// We always want the theme appended to the page
 	appendsCss: true,
 
