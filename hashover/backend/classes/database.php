@@ -78,7 +78,13 @@ class Database extends Secrets
 					$this->databaseUser,
 
 					// Database password as configured
-					$this->databasePassword
+					$this->databasePassword,
+
+					// We want the number of found (matched) rows,
+					// not the number of changed rows
+					array (
+						\PDO::MYSQL_ATTR_FOUND_ROWS => true
+					)
 				);
 			}
 		} catch (\PDOException $error) {
@@ -247,6 +253,23 @@ class Database extends Secrets
 		}
 	}
 
+	// Get formatted string of array keys
+	protected function formatKeys (array $data, $format, $glue = ', ')
+	{
+		// Initial formatted output
+		$formatted = array ();
+
+		// Add each formatted array key
+		foreach (array_keys ($data) as $key) {
+			$formatted[] = str_replace ('%s', $key, $format);
+		}
+
+		// And convert formatted array to string
+		$statement = implode ($glue, $formatted);
+
+		return $statement;
+	}
+
 	// Saves metadata to specific metadata JSON file
 	public function saveMeta ($name, array $data, $thread = 'auto')
 	{
@@ -256,29 +279,43 @@ class Database extends Secrets
 		// Add website domain and thread to data
 		$data = array_merge (array (
 			'domain' => $this->setup->website,
-			'thread' => $thread,
-			'name' => $name
+			'thread' => $thread
 		), $data);
 
 		// Get metadata table creation statements
 		$creation_statement = $this->creationArray ($data);
 
-		// Add primary key to columns
-		$creation_statement[] = 'PRIMARY KEY (`domain`, `thread`)';
-
 		// Attempt to create metadata table
 		$this->createTable ($name, $creation_statement);
 
-		// Create metadata columns insertion statement
-		$columns = implode (', ', $this->prepareArray ($data));
-
-		// Insert data into specific columns
-		$save = sprintf ('REPLACE INTO `%s` (%s) VALUES (%s)',
-			$name, $this->getTickKeys ($data), $columns
-		);
+		// Update data in specific columns
+		$save = implode (' ', array (
+			sprintf ('UPDATE `%s`', $name),
+			'SET ' . $this->formatKeys ($data, '%s=:%s'),
+			'WHERE domain=:domain',
+			'AND thread=:thread'
+		));
 
 		// Execute statement
 		$saved = $this->executeStatement ($save, $data);
+
+		// Check if we failed to update any rows
+		if ($saved !== false and $saved->rowCount () === 0) {
+			// If so, create metadata column names list
+			$column_names = $this->formatKeys ($data, '`%s`');
+
+			// Create metadata column values list
+			$column_values = $this->formatKeys ($data, ':%s');
+
+			// Insert data into specific columns
+			$save = sprintf (
+				'INSERT INTO `%s` (%s) VALUES (%s)',
+				$name, $column_names, $column_values
+			);
+
+			// Execute statement
+			$saved = $this->executeStatement ($save, $data);
+		}
 
 		// Throw exception on failure
 		if ($saved === false) {
@@ -310,7 +347,7 @@ class Database extends Secrets
 					'INSERT INTO `comments` VALUES (%s)',
 
 					// Get list of table columns
-					implode (', ', $this->prepareArray ($this->commentsTable))
+					$this->formatKeys ($this->commentsTable, ':%s')
 				);
 
 				break;
