@@ -25,159 +25,76 @@
 // the settings, or create/edit the settings JSON file.
 
 
-// Default and advanced HashOver settings
-class Settings extends Secrets
+// Automated settings
+class Settings extends SensitiveSettings
 {
-	// Primary settings
-	public $language		= 'auto';			// UI language, for example 'en', 'de', etc. 'auto' to use system locale
-	public $theme			= 'default';			// Comment Cascading Style Sheet (CSS)
-	public $usesModeration		= false;			// Whether comments must be approved before they appear to other visitors
-	public $pendsUserEdits		= false;			// Whether comments need to be approved again when edited
-	public $dataFormat		= 'xml';			// Format comments will be stored in; options: xml, json, sql
-	public $defaultName		= 'Anonymous';			// Default name to use when one isn't given
-	public $allowsImages		= true;				// Whether external image URLs wrapped in [img] tags are embedded
-	public $allowsLogin		= true;				// Whether users can login and logout (when false form cookies are still set)
-	public $allowsLikes		= true;				// Whether a "Like" link is displayed
-	public $allowsDislikes		= false;			// Whether a "Dislike" link is displayed; allowing Reddit-style voting
-	public $usesAjax		= true;				// Whether AJAX is used for posting, editing, and loading comments
-	public $collapsesInterface	= false;			// Whether the comment form, thread, and end links are all initially hidden
-	public $collapsesComments	= true;				// Whether to hide comments and display a link to show them
-	public $collapseLimit		= 3;				// Number of comments that aren't hidden
-	public $replyMode		= 'thread';			// Whether to display replies as a 'thread' or as a 'stream'
-	public $streamDepth		= 3;				// In stream mode, the number of reply indentions to allow before the thread flattens
-	public $popularityThreshold	= 5;				// Minimum likes a comment needs to be popular
-	public $popularityLimit		= 2;				// Number of comments allowed to become popular
-	public $usesMarkdown		= true;				// Whether comments will be parsed for Markdown
-
-	// Date and Time settings
-	public $serverTimezone		= 'America/Los_Angeles';	// Server timezone
-	public $usesUserTimezone	= true;				// Whether comment dates should use the user's timezone (JavaScript-mode)
-	public $usesShortDates		= true;				// Whether comment dates are shortened, for example "X days ago"
-	public $timeFormat		= 'g:ia';			// Time format, use 'H:i' for 24-hour format (see: http://php.net/manual/en/function.date.php)
-	public $dateFormat		= 'm/d/Y';			// Date format (see: http://php.net/manual/en/function.date.php)
-
-	// Field options, use true/false to enable/disable a field,
-	// use 'required' to require a field be properly filled
-	public $fieldOptions = array (
-		'name'     => true,
-		'password' => true,
-		'email'    => true,
-		'website'  => true
-	);
-
-	// Behavior settings
-	public $displaysTitle		= true;				// Whether page title is shown or not
-	public $formPosition		= 'top';			// Position for primary form; options: 'top' or 'bottom'
-	public $usesAutoLogin		= true;				// Whether a user's first comment automatically logs them in
-	public $showsReplyCount		= true;				// Whether to show reply count separately from total
-	public $countIncludesDeleted	= true;				// Whether comment counts should include deleted comments
-	public $iconMode		= 'image';			// How to display avatar icons (either 'image', 'count' or 'none')
-	public $iconSize		= 45;				// Size of Gravatar icons in pixels
-	public $imageFormat		= 'png';			// Format for icons and other images (use 'svg' for HDPI)
-	public $usesLabels		= false;			// Whether to display labels above inputs
-	public $usesCancelButtons	= true;				// Whether forms have "Cancel" buttons
-	public $appendsCss		= true;				// Whether to automatically add a CSS <link> element to the page <head>
-	public $appendsRss		= true;				// Whether a comment RSS feed link is displayed
-
-	// Technical settings
-	public $loginMethod		= 'defaultLogin';		// Login method class for handling user login information
-	public $setsCookies		= true;				// Whether cookies are enabled
-	public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
-	public $storesIpAddress		= false;			// Whether to store users' IP addresses
-	public $allowsUserReplies	= false;			// Whether given e-mails are sent as reply-to address to users
-	public $noreplyEmail		= 'noreply@example.com';	// E-mail used when no e-mail is given
-	public $spamDatabase		= 'remote';			// Whether to use a remote or local spam database
-	public $spamCheckModes		= 'php';			// Perform IP spam check in 'json' or 'php' mode, or 'both'
-	public $gravatarDefault		= 'custom';			// Gravatar theme to use ('custom', 'identicon', 'monsterid', 'wavatar', or 'retro')
-	public $gravatarForce		= false;			// Whether to force the themed Gravatar images instead of an avatar image
-	public $minifiesJavascript	= false;			// Whether JavaScript output should be minified
-	public $minifyLevel		= 4;				// How much to minify JavaScript code, options: 1, 2, 3, 4
-	public $enabledApi		= array ('all');		// An array of enabled API. 'all' = fully-enabled, empty array = fully disabled
-	public $latestMax		= 10;				// Maximum number of comments to save as latest comments
-	public $latestTrimWidth		= 100;				// Number of characters to trim latest comments to, 0 for no trim
-	public $userDeletionsUnlink	= false;			// Whether user deleted files are actually unlinked from the filesystem
-	public $allowLocalMetadata	= false;			// Whether default metadata should be collected while running on a local server
-
-	// Types of images allowed to be embedded in comments
-	public $imageTypes = array (
-		'jpeg',
-		'jpg',
-		'png',
-		'gif'
-	);
-
-	// External domains allowed to remotely load HashOver scripts
-	public $allowedDomains = array (
-		'127.0.0.1:8000'
-		// '*.example.com',
-		// '*.example.org',
-		// '*.example.net'
-	);
-
-	// General database options
-	public $databaseType		= 'sqlite';			// Type of database, sqlite or mysql
-	public $databaseName		= 'hashover-threads';		// Database name
-
-	// SQL database options
-	public $databaseHost		= 'localhost';			// Database host name
-	public $databaseUser		= 'root';			// Database login user
-	public $databasePassword	= 'password';			// Database login password
-	public $databaseCharset		= 'utf8';			// Database character set
-
-	// Automated settings
-	public $isMobile		= false;
-
-	// Technical settings placeholders
+	public $themePath;
 	public $rootDirectory;
+	public $commentsRoot;
+	public $commentsPath;
 	public $httpRoot;
 	public $httpBackend;
 	public $httpImages;
 	public $cookieExpiration;
+	public $scheme;
 	public $domain;
+	public $absolutePath;
 
 	public function __construct ()
 	{
-		// Theme path
-		$this->themePath = 'themes/' . $this->theme;
-
-		// Set server timezone
-		date_default_timezone_set ($this->serverTimezone);
-
 		// Set encoding
 		mb_internal_encoding ('UTF-8');
 
 		// Get parent directory
 		$root_directory = dirname (dirname (__DIR__));
 
-		// Get HTTP parent directory
-		$document_root = realpath ($_SERVER['DOCUMENT_ROOT']);
-		$http_directory = mb_substr ($root_directory, mb_strlen ($document_root));
+		// Get HTTP root directory
+		$root_position = mb_strlen (realpath ($_SERVER['DOCUMENT_ROOT']));
+		$http_directory = mb_substr ($root_directory, $root_position);
 
 		// Replace backslashes with forward slashes on Windows
 		if (DIRECTORY_SEPARATOR === '\\') {
+			$root_directory = str_replace ('\\', '/', $root_directory);
 			$http_directory = str_replace ('\\', '/', $http_directory);
 		}
 
-		// Determine HTTP or HTTPS
-		$protocol = ($this->isHTTPS () ? 'https' : 'http') . '://';
+		// Root directory for script
+		$this->rootDirectory = $root_directory;
 
-		// Technical settings
-		$this->rootDirectory	= $root_directory;		// Root directory for script
-		$this->httpRoot		= $http_directory;		// Root directory for HTTP
-		$this->httpBackend	= $http_directory . '/backend';	// Backend directory for HTTP
-		$this->httpImages	= $http_directory . '/images';	// Image directory for HTTP
-		$this->cookieExpiration	= time () + 60 * 60 * 24 * 30;	// Cookie expiration date
-		$this->domain		= $_SERVER['HTTP_HOST'];	// Domain name for refer checking & notifications
-		$this->absolutePath	= $protocol . $this->domain;	// Absolute path or remote access
+		// Comments directory path
+		$this->commentsRoot = $root_directory . '/comments';
+		$this->commentsPath = $this->commentsRoot;
+
+		// Root directory for HTTP
+		$this->httpRoot = $http_directory;
+
+		// Backend directory for HTTP
+		$this->httpBackend = $http_directory . '/backend';
+
+		// Image directory for HTTP
+		$this->httpImages = $http_directory . '/images';
+
+		// Cookie expiration date
+		$this->cookieExpiration = time () + 60 * 60 * 24 * 30;
+
+		// Get connection scheme
+		$this->scheme = $this->isHTTPS () ? 'https' : 'http';
+
+		// Domain name for refer checking & notifications
+		$this->domain = Misc::getArrayItem ($_SERVER, 'HTTP_HOST') ?: 'localhost';
+
+		// Absolute path or remote access
+		$this->absolutePath = $this->scheme . '://' . $this->domain;
 
 		// Load JSON settings
-		$this->jsonSettings ();
+		$this->loadSettingsFile ();
 
 		// Synchronize settings
 		$this->syncSettings ();
 	}
 
-	function isHTTPS ()
+	// Checks if connection is on HTTPS/SSL
+	public function isHTTPS ()
 	{
 		// The connection is HTTPS if server says so
 		if (!empty ($_SERVER['HTTPS']) and $_SERVER['HTTPS'] !== 'off') {
@@ -185,17 +102,156 @@ class Settings extends Secrets
 		}
 
 		// Assume the connection is HTTPS on standard SSL port
-		if ($_SERVER['SERVER_PORT'] == 443) {
+		if (Misc::getArrayItem ($_SERVER, 'SERVER_PORT') === 443) {
 			return true;
 		}
 
 		return false;
 	}
 
+	// Synchronizes specific settings after remote changes
+	public function syncSettings ()
+	{
+		// Theme path
+		$this->themePath = 'themes/' . $this->theme;
+
+		// Check if timezone is set to auto
+		if ($this->serverTimezone === 'auto') {
+			// If so, set timezone setting to current timezone
+			$this->serverTimezone = date_default_timezone_get ();
+		} else {
+			// If not, set timezone to given timezone
+			$tz = @date_default_timezone_set ($this->serverTimezone);
+
+			// And throw exception if timezone ID is invalid
+			if ($tz === false) {
+				throw new \Exception (sprintf (
+					'"%s" is not a valid timezone',
+					$this->serverTimezone
+				));
+			}
+		}
+
+		// Disable likes and dislikes if cookies are disabled
+		if ($this->setsCookies === false) {
+			$this->allowsLikes = false;
+			$this->allowsDislikes = false;
+		}
+
+		// Setup default field options
+		foreach (array ('name', 'password', 'email', 'website') as $field) {
+			if (!isset ($this->fieldOptions[$field])) {
+				$this->fieldOptions[$field] = true;
+			}
+		}
+
+		// Disable password if name is disabled
+		if ($this->fieldOptions['name'] === false) {
+			$this->fieldOptions['password'] = false;
+		}
+
+		// Disable login if name or password is disabled
+		if ($this->fieldOptions['name'] === false
+		    or $this->fieldOptions['password'] === false)
+		{
+			$this->allowsLogin = false;
+		}
+
+		// Disable autologin if login is disabled
+		if ($this->allowsLogin === false) {
+			$this->usesAutoLogin = false;
+		}
+
+		// Check if the Gravatar default image name is not custom
+		if ($this->gravatarDefault !== 'custom') {
+			// If so, list Gravatar default image names
+			$gravatar_defaults = array ('identicon', 'monsterid', 'wavatar', 'retro');
+
+			// And set Gravatar default image to custom if its value is invalid
+			if (!in_array ($this->gravatarDefault, $gravatar_defaults, true)) {
+				$this->gravatarDefault = 'custom';
+			}
+		}
+
+		// Backend directory for HTTP
+		$this->httpBackend = $this->httpRoot . '/backend';
+
+		// Image directory for HTTP
+		$this->httpImages = $this->httpRoot . '/images';
+	}
+
+	// Overrides settings based on JSON data
+	protected function overrideSettings ($json, $class = 'Settings')
+	{
+		// Parse JSON data
+		$settings = @json_decode ($json, true);
+
+		// Return void if data is anything other than an array
+		if (!is_array ($settings)) {
+			return;
+		}
+
+		// Loop through JSON data
+		foreach ($settings as $setting => $value) {
+			// Check if the key contains dashes
+			if (mb_strpos ($setting, '-') !== false) {
+				// If so, convert setting key to lowercase
+				$setting = mb_strtolower ($setting);
+
+				// Then convert dashed-case setting key to camelCase
+				$setting = preg_replace_callback ('/-([a-z])/', function ($grp) {
+					return mb_strtoupper ($grp[1]);
+				}, $setting);
+			}
+
+			// Check if the setting from the JSON data exists
+			if (property_exists ('HashOver\\' . $class, $setting)) {
+				// If so, get default setting type
+				$default_type = gettype ($this->{$setting});
+
+				// Skip setting if its an empty string
+				if ($default_type === 'string' and empty ($value)) {
+					continue;
+				}
+
+				// Otherwise, override default if setting types match
+				if (gettype ($value) === $default_type) {
+					$this->{$setting} = $value;
+				}
+			}
+		}
+	}
+
+	// Reads JSON settings file and uses it to override default settings
+	protected function loadSettingsFile ()
+	{
+		// JSON settings file path
+		$path = $this->getAbsolutePath ('config/settings.json');
+
+		// Check if JSON settings file exists
+		if (file_exists ($path)) {
+			// If so, read the file
+			$json = @file_get_contents ($path);
+
+			// And override settings
+			$this->overrideSettings ($json);
+		}
+	}
+
+	// Accepts JSON data from the frontend to override default settings
+	public function loadUserSettings ($json)
+	{
+		// Only override settings safe to expose to the frontend
+		$this->overrideSettings ($json, 'SafeSettings');
+
+		// Synchronize settings
+		$this->syncSettings ();
+	}
+
 	// Returns a server-side absolute file path
 	public function getAbsolutePath ($file)
 	{
-		return realpath ($this->rootDirectory . '/' . trim ($file, '/'));
+		return $this->rootDirectory . '/' . trim ($file, '/');
 	}
 
 	// Returns a client-side path for a file within the HashOver root
@@ -236,87 +292,6 @@ class Settings extends Secrets
 		}
 
 		return $theme_file;
-	}
-
-	public function jsonSettings ()
-	{
-		// JSON settings file path
-		$path = $this->getAbsolutePath ('config/settings.json');
-
-		// Do nothing if the JSON settings file doesn't exist
-		if (!file_exists ($path)) {
-			return;
-		}
-
-		// Get JSON data
-		$data = @file_get_contents ($path);
-
-		// Load and decode JSON settings file
-		$json_settings = @json_decode ($data, true);
-
-		// Return void on failure
-		if ($json_settings === null) {
-			return;
-		}
-
-		// Loop through each setting
-		foreach ($json_settings as $key => $value) {
-			// Convert setting name to camelCase
-			$title_case_key = ucwords (str_replace ('-', ' ', strtolower ($key)));
-			$setting = lcfirst (str_replace (' ', '', $title_case_key));
-
-			// Check if the JSON setting property exists in the defaults
-			if (property_exists ($this, $setting)) {
-				// Check if the JSON value is the same type as the default
-				if (gettype ($value) === gettype ($this->{$setting})) {
-					// Override default setting
-					$this->{$setting} = $value;
-				}
-			}
-		}
-	}
-
-	// Synchronizes specific settings after remote changes
-	public function syncSettings ()
-	{
-		// Theme path
-		$this->themePath = 'themes/' . $this->theme;
-
-		// Disable likes and dislikes if cookies are disabled
-		if ($this->setsCookies === false) {
-			$this->allowsLikes = false;
-			$this->allowsDislikes = false;
-		}
-
-		// Setup default field options
-		foreach (array ('name', 'password', 'email', 'website') as $field) {
-			if (!isset ($this->fieldOptions[$field])) {
-				$this->fieldOptions[$field] = true;
-			}
-		}
-
-		// Disable password if name is disabled
-		if ($this->fieldOptions['name'] === false) {
-			$this->fieldOptions['password'] = false;
-		}
-
-		// Disable login if name or password is disabled
-		if ($this->fieldOptions['name'] === false
-		    or $this->fieldOptions['password'] === false)
-		{
-			$this->allowsLogin = false;
-		}
-
-		// Disable autologin if login is disabled
-		if ($this->allowsLogin === false) {
-			$this->usesAutoLogin = false;
-		}
-
-		// Backend directory for HTTP
-		$this->httpBackend = $this->httpRoot . '/backend';
-
-		// Image directory for HTTP
-		$this->httpImages = $this->httpRoot . '/images';
 	}
 
 	// Check if a given API format is enabled

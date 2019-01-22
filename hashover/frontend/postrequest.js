@@ -1,8 +1,6 @@
 // Posts comments via AJAX (postrequest.js)
 HashOver.prototype.postRequest = function (destination, form, button, callback, type, permalink, close, isReply, isEdit)
 {
-	close = close || null;
-
 	var formElements = form.elements;
 	var elementsLength = formElements.length;
 	var queries = [];
@@ -19,12 +17,12 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 			callback.apply (hashover, [ json, permalink, destination, isReply ]);
 
 			// Execute callback function if one was provided
-			if (close !== null) {
+			if (typeof (close) === 'function') {
 				close ();
 			}
 
 			// Get the comment element by its permalink
-			var scrollToElement = hashover.elements.get (json.comment.permalink, true);
+			var scrollToElement = hashover.getElement (json.comment.permalink);
 
 			// Scroll comment into view
 			scrollToElement.scrollIntoView ({ behavior: 'smooth' });
@@ -33,7 +31,7 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 			form.comment.value = '';
 		} else {
 			// If not, display the message return instead
-			hashover.messages.show (json.message, type, permalink, (json.type === 'error'), isReply, isEdit);
+			hashover.showMessage (json.message, type, permalink, (json.type === 'error'), isReply, isEdit);
 			return false;
 		}
 
@@ -93,10 +91,10 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 		sendRequest ();
 	}
 
-	// Re-enable button after 20 seconds
+	// Re-enable button after 10 seconds
 	setTimeout (function () {
 		button.disabled = false;
-	}, 20000);
+	}, 10000);
 
 	return false;
 };

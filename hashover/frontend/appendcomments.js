@@ -1,50 +1,61 @@
 // For appending new comments to the thread on page (appendcomments.js)
-HashOver.prototype.appendComments = function (comments)
+HashOver.prototype.appendComments = function (comments, dest, parent)
 {
+	// Set append element to more section
+	dest = dest || this.instance['sort-section'];
+
+	// HTML parsing time
+	var htmlTime = 0;
+
 	// Run through each comment
 	for (var i = 0, il = comments.length; i < il; i++) {
-		// Skip existing comments
-		if (this.permalinks.getComment (comments[i].permalink, this.instance.comments.primary) !== null) {
+		// Current comment
+		var comment = comments[i];
+
+		// Attempt to get the comment element
+		var element = this.getElement (comment.permalink);
+
+		// Check if comment exists
+		if (element !== null) {
+			// If so, re-append the comment element
+			element.parentNode.appendChild (element);
+
 			// Check comment's replies
-			if (comments[i].replies !== undefined) {
-				this.appendComments (comments[i].replies);
+			if (comment.replies !== undefined) {
+				this.appendComments (comment.replies, element, comment);
 			}
 
+			// And do nothing else
 			continue;
 		}
 
-		// Check if comment is a reply
-		var isReply = (comments[i].permalink.indexOf ('r') > -1);
-
-		// Add comment to comments array
-		this.addComments (comments[i], isReply, i);
-
-		// Check that comment is not a reply
-		if (isReply !== true) {
-			// If so, append to primary comments
-			var element = this.instance['more-section'];
-		} else {
-			// If not, append to its parent's element
-			var parent = this.permalinks.getParent (comments[i].permalink, true);
-			var element = this.elements.get (parent, true) || this.instance['more-section'];
-		}
-
 		// Parse comment
-		var html = this.comments.parse (comments[i], null, true);
+		var html = this.parseComment (comment, parent);
+
+		// HTML parsing start time
+		var htmlStart = Date.now ();
 
 		// Check if we can insert HTML adjacently
-		if ('insertAdjacentHTML' in element) {
+		if ('insertAdjacentHTML' in dest) {
 			// If so, just do so
-			element.insertAdjacentHTML ('beforeend', html);
+			dest.insertAdjacentHTML ('beforeend', html);
 		} else {
 			// If not, convert HTML to NodeList
-			var comment = this.HTMLToNodeList (html);
+			var element = this.htmlChildren (html);
 
 			// And append the first node
-			element.appendChild (comment[0]);
+			dest.appendChild (element[0]);
 		}
 
+		// HTML parsing end time
+		var htmlEnd = Date.now ();
+
+		// Add to HTML parsing time
+		htmlTime += htmlEnd - htmlStart;
+
 		// Add controls to the comment
-		this.addControls (comments[i]);
+		this.addControls (comment);
 	}
+
+	return htmlTime;
 };

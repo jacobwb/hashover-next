@@ -1,12 +1,5 @@
-.special a,
-.special a:link {
-	display: inline-block;
-	border-bottom: 0.1em solid transparent;
-	margin-bottom: -0.1em;
-}
-
-.special a:hover {
-	border-bottom-color: #266394;
+.special * {
+	line-height: 1.25em;
 }
 
 #loading {

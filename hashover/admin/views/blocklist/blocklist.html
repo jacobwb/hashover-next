@@ -2,11 +2,12 @@
 
 <html lang="en" dir="ltr">
 	<head>
-		<title>HashOver - {hashover:title}</title>
+		<title>HashOver - {title}</title>
 
 		<link type="text/css" href="../../../themes/default/general.css" rel="stylesheet">
 		<link type="text/css" href="../../../themes/default/special.css" rel="stylesheet">
 
+		<script type="text/javascript" src="../shared/update-elements.js"></script>
 		<script type="text/javascript" src="blocklist.js"></script>
 
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -19,21 +20,24 @@
 
 	<body>
 		<h1 class="underlined">
-			{hashover:title}
+			<span id="title">{title}</span>
 
-			{hashover:logout}
+			{logout}
 		</h1>
 
-		<p class="muted-text">{hashover:sub-title}</p>
+		<div class="p-spaced muted-text">
+			{sub-title}
+			{message}
+		</div>
 
 		<form method="post">
 			<p id="ip-list">
-				{hashover:inputs}
+				{inputs}
 			</p>
 
 			<p>
-				<input id="save-button" type="submit" value="{hashover:save-button}">
-				<input id="new-button" type="button" value="{hashover:new-button}">
+				<input id="save-button" type="submit" value="{save-button}">
+				<input id="new-button" type="button" value="+">
 			</p>
 		</form>
 	</body>

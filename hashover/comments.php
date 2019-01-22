@@ -27,6 +27,12 @@ try {
 		'context' => 'normal'
 	));
 
+	// User settings passed during instantiation
+	$settings = $setup->getRequest ('settings');
+
+	// Load user settings
+	$setup->loadUserSettings ($settings);
+
 	// Instantiate HashOver statistics class
 	$statistics = new Statistics ('javascript');
 
@@ -39,11 +45,11 @@ try {
 	// Register initial constructor
 	$javascript->registerFile ('constructor.js');
 
+	// Register HashOver ready state detection method
+	$javascript->registerFile ('onready.js');
+
 	// Register HashOver script tag getter method
 	$javascript->registerFile ('script.js');
-
-	// Register backend path setter
-	$javascript->registerFile ('backendpath.js');
 
 	// Register page URL getter method
 	$javascript->registerFile ('geturl.js');
@@ -51,15 +57,30 @@ try {
 	// Register page title getter method
 	$javascript->registerFile ('gettitle.js');
 
-	// Register real constructor method
-	$javascript->registerFile ('instantiator.js', array (
+	// Register backend URL queries getter method
+	$javascript->registerFile ('getbackendqueries.js');
+
+	// Register AJAX-related methods
+	$javascript->registerFile ('ajax.js');
+
+	// Register backend path setter
+	$javascript->registerFile ('backendpath.js', array (
 		'dependencies' => array (
-			'getbackendqueries.js'
+			'rootpath.js'
 		)
 	));
 
-	// Register element creation methods
-	$javascript->registerFile ('elements.js');
+	// Register real constructor method
+	$javascript->registerFile ('instantiator.js');
+
+	// Register comment thread/section creation method
+	$javascript->registerFile ('createthread.js');
+
+	// Register element creation method
+	$javascript->registerFile ('createelement.js');
+
+	// Register classList polyfill methods
+	$javascript->registerFile ('classes.js');
 
 	// Register main HashOver element getter method
 	$javascript->registerFile ('getmainelement.js');
@@ -67,8 +88,8 @@ try {
 	// Register error message handler method
 	$javascript->registerFile ('displayerror.js');
 
-	// Register AJAX-related methods
-	$javascript->registerFile ('ajax.js');
+	// Register instance prefix method
+	$javascript->registerFile ('prefix.js');
 
 	// Register pre-compiled regular expressions
 	$javascript->registerFile ('regex.js');
@@ -76,27 +97,29 @@ try {
 	// Register end-of-line trimmer method
 	$javascript->registerFile ('eoltrim.js');
 
-	// Register parent permalink getter method
+	// Register search and replace methods
+	$javascript->registerFile ('strings.js');
+
+	// Register permalink methods
 	$javascript->registerFile ('permalinks.js');
 
-	// Register markdown methods
-	$javascript->registerFile ('markdown.js', array (
-		'include' => $setup->usesMarkdown
+	// Register Like/Dislike methods
+	$javascript->registerFile ('addratings.js', array (
+		'include' => ($setup->allowsLikes or $setup->allowsDislikes)
 	));
+
+	// Register optional method handler method
+	$javascript->registerFile ('optionalmethod.js');
 
 	// Register date/time methods
 	$javascript->registerFile ('datetime.js', array (
 		'include' => $setup->usesUserTimezone
 	));
 
-	// Register search and replace methods
-	$javascript->registerFile ('strings.js');
-
-	// Register optional method handler method
-	$javascript->registerFile ('optionalmethod.js');
-
-	// Register comment parsing methods
-	$javascript->registerFile ('comments.js');
+	// Register markdown methods
+	$javascript->registerFile ('markdown.js', array (
+		'include' => $setup->usesMarkdown
+	));
 
 	// Register embedded image method
 	$javascript->registerFile ('embedimage.js', array (
@@ -107,19 +130,43 @@ try {
 		)
 	));
 
-	// Register Like/Dislike methods
-	$javascript->registerFile ('addratings.js', array (
-		'include' => ($setup->allowsLikes or $setup->allowsDislikes)
+	// Register comment parsing methods
+	$javascript->registerFile ('parsecomment.js');
+
+	// Register element retriever method
+	$javascript->registerFile ('getelement.js');
+
+	// Register element class processor method
+	$javascript->registerFile ('eachclass.js');
+
+	// Register parse all comments method
+	$javascript->registerFile ('parseall.js');
+
+	// Register sort comments method
+	$javascript->registerFile ('sortcomments.js', array (
+		'dependencies' => array (
+			'cloneobject.js',
+			'getallcomments.js'
+		)
 	));
 
-	// Register cancel button toggler method
-	$javascript->registerFile ('cancelswitcher.js');
+	// Register append comments method
+	$javascript->registerFile ('appendcomments.js', array (
+		'include' => $setup->collapsesComments and $setup->usesAjax,
 
-	// Register miscellaneous form event handler methods
-	$javascript->registerFile ('formevents.js');
+		'dependencies' => array (
+			'htmlchildren.js'
+		)
+	));
 
-	// Register classList polyfill methods
-	$javascript->registerFile ('classes.js');
+	// Register show more comments method
+	$javascript->registerFile ('showmorecomments.js', array (
+		'include' => $setup->collapsesComments,
+
+		'dependencies' => array (
+			'hidemorelink.js'
+		)
+	));
 
 	// Register message element methods
 	$javascript->registerFile ('messages.js');
@@ -144,16 +191,13 @@ try {
 	// Register comment post method
 	$javascript->registerFile ('postcomment.js');
 
-	// Register control event handler attacher method
-	$javascript->registerFile ('addcontrols.js');
-
 	// Register AJAX post comment event handler method
 	$javascript->registerFile ('ajaxpost.js', array (
 		'include' => $setup->usesAjax,
 
 		'dependencies' => array (
 			'addcomments.js',
-			'htmltonodelist.js',
+			'htmlchildren.js',
 			'incrementcounts.js'
 		)
 	));
@@ -163,32 +207,30 @@ try {
 		'include' => $setup->usesAjax,
 
 		'dependencies' => array (
-			'htmltonodelist.js'
+			'htmlchildren.js'
 		)
 	));
 
+	// Register file from permalink method
+	$javascript->registerFile ('permalinkfile.js');
+
+	// Register cancel button toggler method
+	$javascript->registerFile ('cancelswitcher.js');
+
 	// Register formatting message onclick event handler method
 	$javascript->registerFile ('formattingonclick.js');
+
+	// Register element property duplicator method
+	$javascript->registerFile ('duplicateproperties.js');
+
+	// Register miscellaneous form event handler methods
+	$javascript->registerFile ('formevents.js');
 
 	// Register reply form adder method
 	$javascript->registerFile ('replytocomment.js');
 
 	// Register edit form adder method
 	$javascript->registerFile ('editcomment.js');
-
-	// Register append comments method
-	$javascript->registerFile ('appendcomments.js', array (
-		'include' => $setup->collapsesComments and $setup->usesAjax
-	));
-
-	// Register show more comments method
-	$javascript->registerFile ('showmorecomments.js', array (
-		'include' => $setup->collapsesComments,
-
-		'dependencies' => array (
-			'hidemorelink.js'
-		)
-	));
 
 	// Register like/dislike comment method
 	$javascript->registerFile ('likecomment.js', array (
@@ -199,17 +241,8 @@ try {
 		)
 	));
 
-	// Register clone object method
-	$javascript->registerFile ('cloneobject.js');
-
-	// Register get all comments method
-	$javascript->registerFile ('getallcomments.js');
-
-	// Register parse all comments method
-	$javascript->registerFile ('parseall.js');
-
-	// Register sort comments method
-	$javascript->registerFile ('sortcomments.js');
+	// Register control event handler attacher method
+	$javascript->registerFile ('addcontrols.js');
 
 	// Register theme stylesheet appender method
 	$javascript->registerFile ('appendcss.js', array (
@@ -256,7 +289,5 @@ try {
 	echo $statistics->executionEnd ();
 
 } catch (\Exception $error) {
-	$misc = new Misc ('javascript');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'javascript');
 }

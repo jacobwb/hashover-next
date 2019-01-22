@@ -22,30 +22,19 @@
 
 "use strict";
 
-// Initial HashOver constructor (constructor.js)
-function HashOver (options)
-{
-	// Reference to this HashOver object
-	var hashover = this;
-
-	// Self-executing backend wait loop
-	(function backendWait () {
-		// Check if we're on the first instance or if HashOver is prepared
-		if (HashOver.prepared === true || HashOver.instanceCount === 0) {
-			// If so, execute the real constructor
-			HashOver.instantiator.call (hashover, options);
-		} else {
-			// If not, check again in 100 milliseconds
-			setTimeout (backendWait, 100);
-		}
-	}) ();
+// Initial constructor or use loader constructor (constructor.js)
+var HashOver = HashOver || function HashOver (id, options, instance) {
+	this.createThread.apply (this, arguments);
 };
 
-// Constructor to add HashOver methods to
-var HashOverConstructor = HashOver;
+// Set frontend as ready (constructor.js)
+HashOver.frontendReady = true;
 
 // Indicator that backend information has been received (constructor.js)
-HashOver.prepared = false;
+HashOver.backendReady = false;
 
 // Initial HashOver instance count (constructor.js)
-HashOver.instanceCount = 0;
+HashOver.instanceCount = 1;
+
+// Constructor to add shared methods to (constructor.js)
+var HashOverConstructor = HashOver;

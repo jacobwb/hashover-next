@@ -52,10 +52,10 @@ class JavaScriptBuild
 				$this->addFile ($dependency);
 			} else {
 				// If not, throw exception on failure
-				$exception = '"%s" depends on "%s" but it does not exist.';
-				$exception = sprintf ($exception, $file, $dependency);
-
-				throw new \Exception ($exception);
+				throw new \Exception (sprintf (
+					'"%s" depends on "%s" but it does not exist.',
+					$file, $dependency
+				));
 			}
 		}
 
@@ -105,7 +105,9 @@ class JavaScriptBuild
 			$this->addFile ($file);
 		} else {
 			// If not, throw exception
-			throw new \Exception ('"' . $file . '" does not exist.');
+			throw new \Exception (
+				sprintf ('"%s" does not exist.', $file)
+			);
 		}
 
 		return true;
@@ -125,7 +127,7 @@ class JavaScriptBuild
 		$javascript = implode (PHP_EOL . PHP_EOL, $files);
 
 		// Minify the JavaScript if told to
-		if (!isset ($_GET['hashover-unminified'])) {
+		if (!isset ($_GET['unminified'])) {
 			if ($minify === true and $minify_level > 0) {
 				// Instantiate JavaScript minification class
 				$minifier = new JavaScriptMinifier ();

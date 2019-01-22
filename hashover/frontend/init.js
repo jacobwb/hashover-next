@@ -1,14 +1,14 @@
 // HashOver UI initialization process (init.js)
-HashOver.prototype.init = function ()
+HashOver.prototype.init = function (id)
 {
-	// Store start time
-	this.execStart = Date.now ();
-
 	// Reference to this object
 	var hashover = this;
 
+	// Execution start time
+	var execStart = Date.now ();
+
 	// Get the main HashOver element
-	var mainElement = this.getMainElement ();
+	var mainElement = this.getMainElement (id);
 
 	// Form events that get the same listeners
 	var formEvents = [ 'onclick', 'onsubmit' ];
@@ -22,9 +22,9 @@ HashOver.prototype.init = function ()
 	// Scrolls to a specified element
 	function scrollToElement (id)
 	{
-		hashover.elements.exists (id, function (element) {
+		hashover.elementExists (id, function (element) {
 			element.scrollIntoView ({ behavior: 'smooth', block: 'start', inline: 'nearest' });
-		}, false);
+		}, true);
 	}
 
 	// Callback for scrolling a comment into view on page load
@@ -33,8 +33,8 @@ HashOver.prototype.init = function ()
 		// Check if the comments are collapsed
 		if (hashover.setup['collapses-comments'] !== false) {
 			// Check if comment exists on the page
-			var linkedHidden = hashover.elements.exists (pageHash, function (comment) {
-				// Check if the comment is visable
+			var linkedHidden = hashover.elementExists (pageHash, function (comment) {
+				// Check if the comment is visible
 				if (hashover.classes.contains (comment, 'hashover-hidden') === false) {
 					// If so, scroll to the comment
 					scrollToElement (pageHash);
@@ -42,13 +42,12 @@ HashOver.prototype.init = function ()
 				}
 
 				return false;
-			}, false);
+			}, true);
 
 			// Check if the linked comment is hidden
 			if (linkedHidden === false) {
-				// If not, show more comments
+				// If not, scroll to comment after showing more comments
 				hashover.showMoreComments (hashover.instance['more-link'], function () {
-					// Then scroll to comment
 					scrollToElement (pageHash);
 				});
 			}
@@ -79,8 +78,8 @@ HashOver.prototype.init = function ()
 		}
 
 		// Open the message element if there's a message
-		if (hashover.elements.get ('message').textContent !== '') {
-			hashover.messages.show ();
+		if (hashover.getElement('message').textContent !== '') {
+			hashover.showMessage ();
 		}
 	}
 
@@ -95,7 +94,7 @@ HashOver.prototype.init = function ()
 
 	// Put number of comments into "hashover-comment-count" identified HTML element
 	if (this.instance['total-count'] !== 0) {
-		this.elements.exists ('comment-count', function (countElement) {
+		this.elementExists ('comment-count', function (countElement) {
 			countElement.textContent = hashover.instance['total-count'];
 		});
 
@@ -114,23 +113,29 @@ HashOver.prototype.init = function ()
 	// Add main HashOver element to this HashOver instance
 	this.instance['main-element'] = mainElement;
 
-	// Templatify UI HTML strings
-	for (var element in this.ui) {
-		this.ui[element] = this.strings.templatify (this.ui[element]);
-	}
+	// Get the sort section
+	var sortSection = this.getElement ('sort-section');
 
 	// Get sort div element
-	this.instance['sort-section'] = this.elements.get ('sort-section');
+	this.instance['sort-section'] = sortSection;
 
 	// Display most popular comments
-	this.elements.exists ('top-comments', function (topComments) {
+	this.elementExists ('top-comments', function (topComments) {
 		if (hashover.instance.comments.popular[0] !== undefined) {
 			hashover.parseAll (hashover.instance.comments.popular, topComments, false, true);
 		}
 	});
 
-	// Add initial event handlers
-	this.parseAll (this.instance.comments.primary, this.instance['sort-section'], this.setup['collapses-comments']);
+	// Initial comments
+	var comments = this.instance.comments.primary;
+
+	// Sort the initial comments if they weren't sorted on the backend
+	if (this.setup['collapses-comments'] === false || this.setup['uses-ajax'] === false) {
+		comments = this.sortComments (comments);
+	}
+
+	// Parse all of the initial comments
+	this.htmlTime = this.parseAll (comments, sortSection, this.setup['collapses-comments']);
 
 	// Create uncollapse UI hyperlink if enabled
 	this.optionalMethod ('uncollapseInterfaceLink');
@@ -142,98 +147,118 @@ HashOver.prototype.init = function ()
 	this.formattingOnclick ('main');
 
 	// Get some various form elements
-	var postButton = this.elements.get ('post-button');
-	var formElement = this.elements.get ('form');
+	var postButton = this.getElement ('post-button');
+	var formElement = this.getElement ('form');
 
 	// Set onclick and onsubmit event handlers
-	this.elements.duplicateProperties (postButton, formEvents, function () {
-		return hashover.postComment (hashover.instance['sort-section'], formElement, postButton, hashover.AJAXPost);
+	this.duplicateProperties (postButton, formEvents, function () {
+		return hashover.postComment (sortSection, formElement, postButton, hashover.AJAXPost);
 	});
 
 	// Check if login is enabled
 	if (this.setup['allows-login'] !== false) {
-		// Attach event listeners to "Login" button
+		// If so, check if user is logged in
 		if (this.setup['user-is-logged-in'] !== true) {
-			var loginButton = this.elements.get ('login-button');
+			// If so, get the login button
+			var loginButton = this.getElement ('login-button');
 
 			// Set onclick and onsubmit event handlers
-			this.elements.duplicateProperties (loginButton, formEvents, function () {
+			this.duplicateProperties (loginButton, formEvents, function () {
 				return hashover.validateComment (true, formElement);
 			});
 		}
 	}
 
-	// Five method sort
-	this.elements.exists ('sort-select', function (sortSelect) {
+	// Check if sort method drop down menu exists
+	this.elementExists ('sort-select', function (sortSelect) {
+		// If so, add change event handler
 		sortSelect.onchange = function ()
 		{
 			// Check if the comments are collapsed
 			if (hashover.setup['collapses-comments'] !== false) {
 				// If so, get the select div
-				var sortSelectDiv = hashover.elements.get ('sort');
+				var sortSelectDiv = hashover.getElement ('sort');
 
 				// And uncollapse the comments before sorting
 				hashover.showMoreComments (sortSelectDiv, function () {
-					hashover.instance['sort-section'].textContent = '';
-					hashover.sortComments (sortSelect.value);
-				});
+					hashover.sortPrimary (sortSelect.value);
+				}, false);
 			} else {
-				// If not, sort the comments normally
-				hashover.instance['sort-section'].textContent = '';
-				hashover.sortComments (sortSelect.value);
+				// If not, sort comments immediately
+				hashover.sortPrimary (sortSelect.value);
 			}
 		};
 	});
 
-	// Display reply or edit form when the proper URL queries are set
+	// Check if reply or edit form request URL queries are set
 	if (pageURL.match (/hashover-(reply|edit)=/)) {
+		// If so, get the permalink from form request URL query
 		var permalink = pageURL.replace (/.*?hashover-(edit|reply)=(c[0-9r\-pop]+).*?/, '$2');
 
-		if (!pageURL.match ('hashover-edit=')) {
-			// Check if the comments are collapsed
-			if (hashover.setup['collapses-comments'] !== false) {
-				// If so, show more comments
-				this.showMoreComments (this.instance['more-link'], function () {
-					// Then display and scroll to reply form
-					hashover.replyToComment (permalink);
-					scrollToElement (pageHash);
-				});
-			} else {
-				// If not, display and scroll to reply form
-				this.replyToComment (permalink);
+		// Check if the reply form is requested
+		if (pageURL.match ('hashover-reply=')) {
+			// If so, define a callback to execute after showing comments
+			var callback = function ()
+			{
+				// Open the reply form
+				hashover.replyToComment (permalink);
+
+				// Then scroll to reply form
 				scrollToElement (pageHash);
-			}
-		} else {
-			var isPop = permalink.match ('-pop');
-			var comments = (isPop) ? this.instance.comments.popular : this.instance.comments.primary;
+			};
 
 			// Check if the comments are collapsed
 			if (hashover.setup['collapses-comments'] !== false) {
-				// If so, show more comments
-				this.showMoreComments (this.instance['more-link'], function () {
-					// Then display and scroll to edit form
-					hashover.editComment (hashover.permalinks.getComment (permalink, comments));
-					scrollToElement (pageHash);
-				});
+				// If so, show more comments before executing callback
+				this.showMoreComments (this.instance['more-link'], callback);
 			} else {
-				// If not, display and scroll to edit form
-				this.editComment (this.permalinks.getComment (permalink, comments));
+				// If not, execute callback directly
+				callback ();
+			}
+		} else {
+			// If not, indicate if the comment is popular
+			var isPop = permalink.match ('-pop');
+
+			// Define a callback to execute after showing comments
+			var callback = function ()
+			{
+				// Decide appropriate array to get comment from
+				var comments = hashover.instance.comments[isPop ? 'popular' : 'primary'];
+
+				// Get the comment being edited
+				var edit = hashover.permalinkComment (permalink, comments);
+
+				// Open comment edit form
+				hashover.editComment (edit);
+
+				// Then scroll to edit form
 				scrollToElement (pageHash);
+			};
+
+			// Check if the comments are collapsed
+			if (hashover.setup['collapses-comments'] !== false) {
+				// If so, show more comments before executing callback
+				this.showMoreComments (this.instance['more-link'], callback);
+			} else {
+				// If not, execute callback directly
+				callback ();
 			}
 		}
 	}
 
-	// Store end time
-	this.execEnd = Date.now ();
-
-	// Store execution time
-	this.execTime = this.execEnd - this.execStart;
+	// Execution end time
+	this.execTime = Math.abs (Date.now () - execStart - this.htmlTime);
 
 	// Log execution time and memory usage in JavaScript console
 	if (window.console) {
-		console.log (this.strings.sprintf ('HashOver: front-end %d ms, backend %d ms, %s', [
-			this.execTime, this.statistics['execution-time'], this.statistics['script-memory']
-		]));
+		console.log (this.strings.sprintf (
+			'HashOver: front-end %d ms, HTML %d ms, backend %d ms, %s', [
+				this.execTime,
+				this.htmlTime,
+				this.statistics['execution-time'],
+				this.statistics['script-memory']
+			]
+		));
 	}
 
 	// Page onload compatibility wrapper

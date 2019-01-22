@@ -1,3 +1,4 @@
+// Wait for the page HTML to be parsed
 document.addEventListener ('DOMContentLoaded', function () {
 	// Get the "New Address" and "Save" buttons
 	var newButton = document.getElementById ('new-button');
@@ -7,16 +8,14 @@ document.addEventListener ('DOMContentLoaded', function () {
 	newButton.onclick = function ()
 	{
 		// Create input and indentation
-		var input = document.createElement ('input');
+		var addresses = document.getElementsByClassName ('addresses');
 		var indentation = document.createTextNode ('\n\t\t\t\t');
 
-		// Add attributes
-		input.type = 'text';
-		input.name = 'addresses[]';
-		input.size = '15';
-		input.maxlength = '15';
-		input.placeholder = '127.0.0.1';
-		input.title = 'IP Address or blank to remove';
+		// Clone the first address field
+		var input = addresses[0].cloneNode (true);
+
+		// Remove its value
+		input.value = '';
 
 		// Append indentation and input to IP address list
 		ipList.appendChild (indentation);
@@ -24,8 +23,7 @@ document.addEventListener ('DOMContentLoaded', function () {
 	};
 
 	// Disable the "Save" button when clicked
-	saveButton.onclick = function ()
-	{
+	saveButton.onclick = function () {
 		this.disabled = true;
-	}
+	};
 }, false);

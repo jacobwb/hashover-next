@@ -19,22 +19,26 @@
 
 class HashOver
 {
-	public $usage = array ();
+	protected $usage = array ();
+	protected $setupChecks;
+	protected $commentCount;
+	protected $sortComments;
+	protected $popularList = array ();
+	protected $popularCount = 0;
+	protected $rawComments = array ();
+	protected $collapseCount = 0;
+
 	public $statistics;
-	public $misc;
 	public $setup;
-	public $thread;
 	public $locale;
+	public $login;
+	public $thread;
+	public $templater;
 	public $commentParser;
-	public $markdown;
 	public $cookies;
-	public $commentCount;
-	public $popularList = array ();
-	public $popularCount = 0;
-	public $rawComments = array ();
+	public $markdown;
 	public $comments = array ();
 	public $ui;
-	public $templater;
 
 	public function __construct ($mode = 'php', $context = 'normal')
 	{
@@ -49,13 +53,23 @@ class HashOver
 		// Instantiate general setup class
 		$this->setup = new HashOver\Setup ($this->usage);
 
+		//Instantiate setup checks class
+		$this->setupChecks = new HashOver\SetupChecks ($this->setup);
+
+		// Instantiate locales class
+		$this->locale = new HashOver\Locale ($this->setup);
+
+		// Instantiate login class
+		$this->login = new HashOver\Login ($this->setup);
+
 		// Instantiate class for reading comments
 		$this->thread = new HashOver\Thread ($this->setup);
 
-		// Instantiate class of miscellaneous functions
-		$this->misc = new HashOver\Misc ($mode);
+		// Instantiate comment theme templater class
+		$this->templater = new HashOver\Templater ($this->setup);
 	}
 
+	// Returns a localized comment count
 	public function getCommentCount ($locale_key = 'showing-comments')
 	{
 		// Shorter variables
@@ -113,33 +127,17 @@ class HashOver
 		// Query a list of comments
 		$this->thread->queryComments ();
 
-		// Where to stop reading comments
-		if ($this->usage['mode'] !== 'php'
-		    and $this->setup->collapsesComments !== false
-		    and $this->setup->popularityLimit <= 0
-		    and $this->setup->usesAjax !== false)
-		{
-			// Use collapse limit when collapsing and AJAX is enabled
-			$end = $this->setup->collapseLimit;
-		} else {
-			// Otherwise read all comments
-			$end = null;
-		}
-
-		// TODO: Fix structure when using starting point
-		$this->rawComments = $this->thread->read (0, $end);
-
-		// Instantiate locales class
-		$this->locale = new HashOver\Locale ($this->setup);
-
-		// Instantiate cookies class
-		$this->cookies = new HashOver\Cookies ($this->setup);
-
-		// Instantiate login class
-		$this->login = new HashOver\Login ($this->setup);
+		// Read all comments
+		$this->rawComments = $this->thread->read ();
 
 		// Instantiate comment parser class
 		$this->commentParser = new HashOver\CommentParser ($this->setup);
+
+		// Instantiate comment sorting class
+		$this->sortComments = new HashOver\SortComments ($this->setup);
+
+		// Instantiate cookies class
+		$this->cookies = new HashOver\Cookies ($this->setup);
 
 		// Generate comment count
 		$this->commentCount = $this->getCommentCount ();
@@ -151,18 +149,18 @@ class HashOver
 	// Save various metadata about the page
 	public function defaultMetadata ()
 	{
-		// "localhost" equivalent addresses
-		$addresses = array ('127.0.0.1', '::1', 'localhost');
-
 		// Check if local metadata is disabled
 		if ($this->setup->allowLocalMetadata !== true) {
-			// If so, do nothing if we're on localhost
-			if (in_array ($_SERVER['REMOTE_ADDR'], $addresses, true)) {
+			// If so, get remote address
+			$address = HashOver\Misc::getArrayItem ($_SERVER, 'REMOTE_ADDR');
+
+			// Do nothing on if we're on localhost
+			if ($this->setup->isLocalhost ($address) === true) {
 				return;
 			}
 		}
 
-		// Attempt to save default page metadata
+		// Otherwise, attempt to save default page metadata
 		$this->thread->data->saveMeta ('page-info', array (
 			'url' => $this->setup->pageURL,
 			'title' => $this->setup->pageTitle
@@ -184,6 +182,7 @@ class HashOver
 	// Adds a comment to the popular list if it has enough likes
 	protected function checkPopularity (array $comment, $key, array $key_parts)
 	{
+		// Initial popularity
 		$popularity = 0;
 
 		// Add number of likes to popularity value
@@ -210,7 +209,7 @@ class HashOver
 	}
 
 	// Parse primary comments
-	public function parsePrimary ($start = 0)
+	public function parsePrimary ()
 	{
 		// Initial comments array
 		$this->comments['primary'] = array ();
@@ -231,108 +230,110 @@ class HashOver
 		// Last existing comment date for sorting deleted comments
 		$last_date = 0;
 
-		// Allowed comment count
-		$allowed_count = 0;
-
-		// Where to stop reading comments
-		if ($this->usage['mode'] !== 'php'
-		    and $this->setup->collapsesComments !== false
-		    and $this->setup->usesAjax !== false)
-		{
-			// Use collapse limit when collapsing and AJAX is enabled
-			$end = $this->setup->collapseLimit;
-		} else {
-			// Otherwise read all comments
-			$end = null;
-		}
-
 		// Run all comments through parser
 		foreach ($this->rawComments as $key => $comment) {
+			// Split comment key by dash
 			$key_parts = explode ('-', $key);
+
+			// Count number of reply indention levels
 			$indentions = count ($key_parts);
-			$status = 'approved';
 
 			// Check comment's popularity
 			if ($this->setup->popularityLimit > 0) {
 				$this->checkPopularity ($comment, $key, $key_parts);
 			}
 
-			// Stop parsing after end point
-			if ($end !== null and $allowed_count >= $end) {
-				continue;
-			}
-
+			// Check if the comment has two or more indention levels
 			if ($indentions > 1 and $this->setup->streamDepth > 0) {
+				// If so, set level to first array item reference
 				$level =& $this->comments['primary'][$key_parts[0] - 1];
 
+				// Check if stream mode is enabled and indention goes out of depth
 				if ($this->setup->replyMode === 'stream'
 				    and $indentions > $this->setup->streamDepth)
 				{
+					// If so, set level to reply array item reference within depth
 					$level =& $this->getRepliesLevel ($level, $this->setup->streamDepth, $key_parts);
+
+					// And set level to reply array new item reference
 					$level =& $level['replies'][];
 				} else {
+					// If not, set level to reply array item reference
 					$level =& $this->getRepliesLevel ($level, $indentions, $key_parts);
 				}
 			} else {
+				// If not, set level to new array item reference
 				$level =& $this->comments['primary'][];
 			}
 
 			// Set status to what's stored in the comment
-			if (!empty ($comment['status'])) {
-				$status = $comment['status'];
-			}
+			$status = HashOver\Misc::getArrayItem ($comment, 'status') ?: 'approved';
 
+			// Switch between different statuses
 			switch ($status) {
-				// Parse as pending notice, viewable and editable by owner and admin
+				// Comment is pending
 				case 'pending': {
+					// Parse the comment generally
 					$parsed = $this->commentParser->parse ($comment, $key, $key_parts, false);
 
+					// Check if the comment is editable
 					if (!isset ($parsed['editable'])) {
+						// If so, parse comment as pending notice
 						$level = $this->commentParser->notice ('pending', $key, $last_date);
-						break;
-					}
+					} else {
+						// If not, update last sort date
+						$last_date = $parsed['sort-date'];
 
-					$last_date = $parsed['sort-date'];
-					$level = $parsed;
+						// And set current level to parsed comment
+						$level = $parsed;
+					}
 
 					break;
 				}
 
-				// Parse as deletion notice, viewable and editable by admin
+				// Comment is deleted
 				case 'deleted': {
+					// Check if user is admin
 					if ($this->login->userIsAdmin === true) {
+						// If so, parse the comment generally
 						$level = $this->commentParser->parse ($comment, $key, $key_parts, false);
+
+						// And update the last sort date
 						$last_date = $level['sort-date'];
 					} else {
+						// If not, parse comment as deleted notice
 						$level = $this->commentParser->notice ('deleted', $key, $last_date);
 					}
 
 					break;
 				}
 
-				// Parse as deletion notice, non-existent comment
+				// Comment is missing; parse as deletion notice
 				case 'missing': {
 					$level = $this->commentParser->notice ('deleted', $key, $last_date);
 					break;
 				}
 
-				// Parse as an unknown/error notice
+				// Comment read failure; parse as an error notice
 				case 'read-error': {
 					$level = $this->commentParser->notice ('error', $key, $last_date);
 					break;
 				}
 
-				// Otherwise parse comment normally
+				// Comment is approved or otherwise
 				default: {
+					// Set comment status as approved
 					$comment['status'] = 'approved';
+
+					// Parse comment generally
 					$level = $this->commentParser->parse ($comment, $key, $key_parts);
+
+					// And update last sort date
 					$last_date = $level['sort-date'];
 
 					break;
 				}
 			}
-
-			$allowed_count++;
 		}
 
 		// Reset array keys
@@ -346,9 +347,7 @@ class HashOver
 		$this->comments['popular'] = array ();
 
 		// If no comments or popularity limit is 0, return void
-		if ($this->thread->totalCount <= 1
-		    or $this->setup->popularityLimit <= 0)
-		{
+		if ($this->thread->totalCount <= 1 or $this->setup->popularityLimit <= 0) {
 			return;
 		}
 
@@ -362,16 +361,59 @@ class HashOver
 		$count = count ($this->popularList);
 		$this->popularCount = min ($limit, $count);
 
-		// Run through each popular comment
+		// Parse every popular comment
 		for ($i = 0; $i < $this->popularCount; $i++) {
-			$item =& $this->popularList[$i];
-
-			// Parse comment
-			$parsed = $this->commentParser->parse ($item['comment'], $item['key'], $item['parts'], true);
-
-			// And add it to popular comments
-			$this->comments['popular'][$i] = $parsed;
+			$this->comments['popular'][$i] = $this->commentParser->parse (
+				$this->popularList[$i]['comment'],
+				$this->popularList[$i]['key'],
+				$this->popularList[$i]['parts'],
+				true
+			);
 		}
+	}
+
+	// Sort primary comments
+	public function sortPrimary ($method = false)
+	{
+		// Sort the primary comments
+		$sorted = $this->sortComments->sort ($this->comments['primary'], $method);
+
+		// Update comments
+		$this->comments['primary'] = $sorted;
+	}
+
+	// Collapse a given comment array
+	protected function commentCollapser (array &$comments)
+	{
+		// Trim comments to collapse limit
+		$comments = array_slice ($comments, 0, $this->setup->collapseLimit);
+
+		// Run through remaining comments
+		for ($i = 0, $il = count ($comments); $i < $il; $i++) {
+			// Check if we have reached collapse limit
+			if ($this->collapseCount >= $this->setup->collapseLimit) {
+				// If so, remove the comment
+				unset ($comments[$i]);
+			} else {
+				// If not, increase the collapse count
+				$this->collapseCount++;
+			}
+
+			// Collapse replies if comment has replies
+			if (!empty ($comments[$i]['replies'])) {
+				$this->commentCollapser ($comments[$i]['replies']);
+			}
+		}
+	}
+
+	// Returns limited number of comments
+	public function collapseComments ()
+	{
+		// Numbers of comments added to output
+		$this->collapseCount = 0;
+
+		// Collapse the comments
+		$this->commentCollapser ($this->comments['primary']);
 	}
 
 	// Do final initialization work
@@ -393,12 +435,6 @@ class HashOver
 			$this->setup,
 			$commentCounts
 		);
-
-		// Instantiate comment theme templater class
-		$this->templater = new HashOver\Templater (
-			$this->usage['mode'],
-			$this->setup
-		);
 	}
 
 	// Display all comments as HTML
@@ -414,22 +450,35 @@ class HashOver
 			$this->comments
 		);
 
-		// Run popular comments through parser
+		// Check if we have popular comments
 		if (!empty ($this->comments['popular'])) {
+			// If so, run popular comments through parser
 			foreach ($this->comments['popular'] as $comment) {
-				$this->ui->popularComments .= $phpmode->parseComment ($comment, null, true) . PHP_EOL;
+				// Parse comment
+				$html = $phpmode->parseComment ($comment, null, true);
+
+				// And add comment to popular comments properly
+				$this->ui->popularComments .= $html . PHP_EOL;
 			}
 		}
 
-		// Run primary comments through parser
+		// Check if we have normal comments
 		if (!empty ($this->comments['primary'])) {
+			// If so, run primary comments through parser
 			foreach ($this->comments['primary'] as $comment) {
-				$this->ui->comments .= $phpmode->parseComment ($comment, null) . PHP_EOL;
+				// Parse comment
+				$html = $phpmode->parseComment ($comment, null);
+
+				// And add comment to comments properly
+				$this->ui->comments .= $html . PHP_EOL;
 			}
 		}
 
 		// Start UI output with initial HTML
 		$html  = $this->ui->initialHTML ();
+
+		// Increase instance number
+		$this->setup->instanceNumber++;
 
 		// End statistics and add them as code comment
 		$html .= $this->statistics->executionEnd ();

@@ -3,16 +3,14 @@ HashOver.prototype.validateComment = function (skipComment, form, type, permalin
 {
 	skipComment = skipComment || false;
 	type = type || 'main';
-	permalink = permalink || null;
-	isReply = isReply || false;
-	isEdit = isEdit || false;
+	permalink = permalink || '';
 
 	// Validate comment form
 	var message = this.commentValidator (form, skipComment, isReply);
 
 	// Display the validator's message
 	if (message !== true) {
-		this.messages.show (message, type, permalink, true, isReply, isEdit);
+		this.showMessage (message, type, permalink, true, isReply, isEdit);
 		return false;
 	}
 

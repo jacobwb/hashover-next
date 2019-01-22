@@ -34,15 +34,15 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/ignored-queries/index.php'
-		),
-		array (
-			'type' => 'Script',
 			'path' => 'admin/views/login/index.php'
 		),
 		array (
 			'type' => 'Script',
 			'path' => 'admin/views/moderation/index.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'admin/views/moderation/threads.php'
 		),
 		array (
 			'type' => 'Script',
@@ -54,7 +54,15 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
+			'path' => 'admin/views/url-queries/index.php'
+		),
+		array (
+			'type' => 'Script',
 			'path' => 'admin/views/view-setup.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'admin/index.php'
 		),
 		array (
 			'type' => 'Script',
@@ -107,6 +115,11 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
+			'name' => 'Crypto',
+			'path' => 'backend/classes/crypto.php'
+		),
+		array (
+			'type' => 'Class',
 			'name' => 'Database',
 			'path' => 'backend/classes/database.php'
 		),
@@ -122,8 +135,8 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
-			'name' => 'Encryption',
-			'path' => 'backend/classes/encryption.php'
+			'name' => 'Email',
+			'path' => 'backend/classes/email.php'
 		),
 		array (
 			'type' => 'Class',
@@ -202,8 +215,18 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
-			'name' => 'RegexExtractor',
-			'path' => 'backend/classes/regexextractor.php'
+			'name' => 'SafeSettings',
+			'path' => 'backend/classes/safesettings.php'
+		),
+		array (
+			'type' => 'Class',
+			'name' => 'Sendmail',
+			'path' => 'backend/classes/sendmail.php'
+		),
+		array (
+			'type' => 'Class',
+			'name' => 'SensitiveSettings',
+			'path' => 'backend/classes/sensitivesettings.php'
 		),
 		array (
 			'type' => 'Class',
@@ -214,6 +237,16 @@ class SourceCode
 			'type' => 'Class',
 			'name' => 'Setup',
 			'path' => 'backend/classes/setup.php'
+		),
+		array (
+			'type' => 'Class',
+			'name' => 'SetupChecks',
+			'path' => 'backend/classes/setupchecks.php'
+		),
+		array (
+			'type' => 'Class',
+			'name' => 'SMTP',
+			'path' => 'backend/classes/smtp.php'
 		),
 		array (
 			'type' => 'Class',
@@ -252,6 +285,10 @@ class SourceCode
 		array (
 			'type' => 'Script',
 			'path' => 'backend/locales/de.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'backend/locales/el.php'
 		),
 		array (
 			'type' => 'Script',
@@ -334,6 +371,10 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
+			'path' => 'backend/php-setup.php'
+		),
+		array (
+			'type' => 'Script',
 			'path' => 'backend/source-viewer.php'
 		),
 		array (
@@ -343,6 +384,10 @@ class SourceCode
 		array (
 			'type' => 'Script',
 			'path' => 'comments.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'loader.php'
 		)
 	);
 
@@ -365,7 +410,6 @@ class SourceCode
 	// Sets content type header based on user request
 	protected function setContentType ($file, $type)
 	{
-
 		// Switch between return types
 		switch ($type) {
 			// Display as plain text
@@ -442,13 +486,18 @@ class SourceCode
 	// Display source code
 	public function display ($file, $type = 'text')
 	{
-		// Set content type header
-		$this->setContentType ($file, $type);
-
 		// Check if the given file is a known HashOver file
 		if ($this->isHashOverFile ($file) === true) {
-			// If so, load PHP file
-			$source = @file_get_contents ('../' . $file);
+			// If so, add directory change to file path
+			$file = '../' . $file;
+
+			// Set content type header
+			$this->setContentType ($file, $type);
+
+			// Load PHP file
+			$source = @file_get_contents ($file);
+
+			// File name
 			$name = basename ($file);
 
 			// Check if file read successfully

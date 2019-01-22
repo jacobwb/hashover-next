@@ -2,11 +2,13 @@
 
 <html lang="en" dir="ltr">
 	<head>
-		<title>HashOver - {hashover:title}</title>
+		<title>HashOver - {title}</title>
 
 		<link type="text/css" href="../../../themes/default/general.css" rel="stylesheet">
 		<link type="text/css" href="../../../themes/default/special.css" rel="stylesheet">
 		<link type="text/css" href="settings.css" rel="stylesheet">
+
+		<script type="text/javascript" src="../shared/update-elements.js"></script>
 
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 		<meta http-equiv="Content-Language" content="EN">
@@ -18,18 +20,21 @@
 
 	<body>
 		<h1 class="underlined">
-			{hashover:title}
+			<span id="title">{title}</span>
 
-			{hashover:logout}
+			{logout}
 		</h1>
 
-		<p class="muted-text">{hashover:sub-title}</p>
+		<div class="p-spaced muted-text">
+			{sub-title}
+			{message}
+		</div>
 
 		<form method="post">
-			{hashover:settings}
+			{settings}
 
 			<p>
-				<input id="save-button" type="submit" name="save" value="{hashover:save-button}">
+				<input id="save-button" type="submit" name="save" value="{save-button}">
 			</p>
 		</form>
 	</body>

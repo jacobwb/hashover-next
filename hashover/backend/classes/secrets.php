@@ -27,8 +27,10 @@
 
 class Secrets
 {
+	// REQUIRED SETUP INFORMATION
+
 	// E-mail for notification of new comments
-	public $notificationEmail = 'example@example.com';
+	protected $notificationEmail = 'example@example.com';
 
 	// Unique encryption key (case-sensitive)
 	protected $encryptionKey = '8CharKey';
@@ -38,4 +40,44 @@ class Secrets
 
 	// Login password to gain admin rights (case-sensitive)
 	protected $adminPassword = 'passwd';
+
+	// OPTIONAL SQL INFORMATION
+
+	// Type of database, sqlite or mysql
+	protected $databaseType = 'sqlite';
+
+	// Database name
+	protected $databaseName = 'hashover';
+
+	// SQL database host name
+	protected $databaseHost = 'localhost';
+
+	// SQL database login user
+	protected $databaseUser = 'root';
+
+	// SQL database login password
+	protected $databasePassword = 'password';
+
+	// SQL database character set
+	protected $databaseCharset = 'utf8';
+
+	// OPTIONAL SMTP MAILER SETUP
+
+	// SMTP server host name
+	protected $smtpHost = 'smtp.gmail.com';
+
+	// SMTP server port number
+	protected $smtpPort = 465;
+
+	// SMTP server encryption method
+	protected $smtpCrypto = 'ssl';
+
+	// SMTP server requires login authentication
+	protected $smtpAuth = true;
+
+	// SMTP server user
+	protected $smtpUser = 'user';
+
+	// SMTP server password
+	protected $smtpPassword = 'password';
 }

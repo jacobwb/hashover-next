@@ -12,40 +12,55 @@ HashOverConstructor.prototype.appendCSS = function (id)
 	// Theme CSS regular expression
 	var themeRegex = new RegExp (this.setup['theme-css']);
 
-	// No nothing if theme stylesheet is already in the page head
+	// Get the main HashOver element
+	var mainElement = this.getMainElement (id);
+
+	// Do nothing if the theme StyleSheet is already in the <head>
 	for (var i = 0, il = links.length; i < il; i++) {
 		if (themeRegex.test (links[i].href) === true) {
+			// Hide HashOver if the theme isn't loaded
+			if (links[i].loaded === false) {
+				mainElement.style.display = 'none';
+			}
+
+			// And do nothing else
 			return;
 		}
 	}
 
-	// Create link element for comment stylesheet
-	var css = this.elements.create ('link', {
+	// Otherwise, create <link> element for theme StyleSheet
+	var css = this.createElement ('link', {
 		rel: 'stylesheet',
 		href: this.setup['theme-css'],
-		type: 'text/css'
+		type: 'text/css',
+		loaded: false
 	});
 
-	// Load and error event listener
-	function onLoadError ()
-	{
-		// Show the HashOver main element
-		mainElement.style.display = '';
-	}
-
-	// Check if browser supports CSS load event
+	// Check if the browser supports CSS load events
 	if (css.onload !== undefined) {
-		// If so, get the main HashOver element
-		var mainElement = this.getMainElement (id);
+		// CSS load and error event handler
+		var onLoadError = function ()
+		{
+			// Get all HashOver class elements
+			var hashovers = document.getElementsByClassName ('hashover');
 
-		// Hide the HashOver main element
+			// Show all HashOver class elements
+			for (var i = 0, il = hashovers.length; i < il; i++) {
+				hashovers[i].style.display = '';
+			}
+
+			// Set CSS as loaded
+			css.loaded = true;
+		};
+
+		// Hide HashOver
 		mainElement.style.display = 'none';
 
-		// Add CSS load and error event listeners
+		// And and CSS load and error event listeners
 		css.addEventListener ('load', onLoadError, false);
 		css.addEventListener ('error', onLoadError, false);
 	}
 
-	// Append comment stylesheet link element to page head
+	// Append theme StyleSheet <link> element to page <head>
 	head.appendChild (css);
 };

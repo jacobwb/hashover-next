@@ -19,12 +19,14 @@
 
 class Locale
 {
-	public $setup;
-	public $mode;
+	protected $setup;
+	protected $mode;
+
 	public $text;
 
 	public function __construct (Setup $setup)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
 		$this->mode = $setup->usage['mode'];
 
@@ -48,7 +50,7 @@ class Locale
 		$language = mb_strtolower ($this->setup->language);
 
 		// Get path to locales directory
-		$locales_directory = $this->setup->getAbsolutePath ('backend/locales');
+		$locales_path = $this->setup->getAbsolutePath ('backend/locales');
 
 		// Check if we are automatically selecting the locale
 		if ($language === 'auto') {
@@ -60,8 +62,7 @@ class Locale
 			$language_parts = explode ('_', $locale_parts[0]);
 
 			// Add locale in 'en-us' format to checklist
-			$full_locale = str_replace ('_', '-', $locale_parts[0]);
-			$locales[] = $full_locale;
+			$locales[] = implode ('-', $language_parts);
 
 			// Add front part of locale ('en') to checklist
 			$locales[] = $language_parts[0];
@@ -75,21 +76,29 @@ class Locale
 			$locales[] = $language;
 		}
 
+		// Run through locale checklist
 		foreach ($locales as $locale) {
 			// Locale file path
-			$locale_file = $locales_directory . '/' . $locale . '.php';
+			$locale_file = $locales_path . '/' . $locale . '.php';
 
 			// Check if a locale file exists for current locale
 			if (file_exists ($locale_file)) {
-				// If so, return PHP locale file path
+				// If so, set locale as language setting
+				$this->setup->language = $locale;
+
+				// Return locale file path
 				return $locale_file;
 			}
 		}
 
-		// Otherwise, default to English
-		return $locales_directory . '/en.php';
+		// Otherwise, set language setting to English
+		$this->setup->language = 'en';
+
+		// And return path to English locale
+		return $locales_path . '/en.php';
 	}
 
+	// Includes a locale file
 	protected function includeLocaleFile ($file)
 	{
 		// Check if the locale file can be included
@@ -98,43 +107,79 @@ class Locale
 			$this->text = $locale;
 		} else {
 			// If not, throw exception
-			$language = strtoupper ($this->setup->language);
-			$exception = $language . ' locale file could not be included!';
-
-			throw new \Exception ($exception);
+			throw new \Exception (sprintf (
+				'%s locale file could not be included!',
+				mb_strtoupper ($this->setup->language)
+			));
 		}
 	}
 
-	// Prepares locale by modifying them in various ways
-	public function prepareLocale ()
+	// Injects optionality into a given locale string
+	protected function optionality ($locale, $choice = 'optional')
 	{
+		// Optionality locale key (default to optional)
+		$key = ($choice === 'required') ? 'required' : 'optional';
+
+		// Optionality locale string
+		$optionality = mb_strtolower ($this->text[$key]);
+
+		// Inject optionality into locale string
+		$new_locale = sprintf ($locale, $optionality);
+
+		return $new_locale;
+	}
+
+	// Adds optionality to any given locale string
+	public function optionalize ($key, $choice = 'optional')
+	{
+		return $this->optionality ($this->text[$key] . ' (%s)', $choice);
+	}
+
+	// Prepares locale by modifying them in various ways
+	protected function prepareLocale ()
+	{
+		// Add optionality to form field title locales
+		foreach ($this->setup->fieldOptions as $field => $option) {
+			// Title locale key
+			$tooltip_key = $field . '-tip';
+
+			// Title locale string
+			$tooltip_locale = $this->text[$tooltip_key];
+
+			// Inject optionality into title locale
+			$optionality = $this->optionality ($tooltip_locale, $option);
+
+			// Update the locale
+			$this->text[$tooltip_key] = $optionality;
+		}
+
+		// Run through each locale string
 		foreach ($this->text as $key => $value) {
 			switch ($key) {
-				// Add optionality to form field title locales
-				case 'name-tip':
-				case 'password-tip':
-				case 'email-tip':
-				case 'website-tip': {
-					$field = str_replace ('-tip', '', $key);
-					$option = $this->setup->fieldOptions[$field];
-					$option = ($option === 'required') ? 'required' : 'optional';
-					$option_locale = mb_strtolower ($this->text[$option]);
-
-					$field_tip = sprintf ($this->text[$key], $option_locale);
-					$this->text[$key] = $field_tip;
-					break;
-				}
-
-				// Inject date and time formats into date-time locale
+				// Inject date and time formats into date and time locale
 				case 'date-time': {
-					$date_format = $this->setup->dateFormat;
-					$time_format = $this->setup->timeFormat;
+					$this->text[$key] = sprintf (
+						$value,
+						$this->setup->dateFormat,
+						$this->setup->timeFormat
+					);
 
-					$date_time = sprintf ($value, $date_format, $time_format);
-					$this->text[$key] = $date_time;
 					break;
 				}
 			}
 		}
+	}
+
+	// Return file permissions locale with directory and PHP user
+	public function permissionsInfo ($file)
+	{
+		// PHP user, or www-data
+		$php_user = Misc::getArrayItem ($_SERVER, 'USER') ?: 'www-data';
+
+		return sprintf (
+			$this->text['permissions-info'],
+			$this->setup->getHttpPath ($file),
+			$php_user
+		);
 	}
 }

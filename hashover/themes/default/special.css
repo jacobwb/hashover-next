@@ -1,11 +1,17 @@
-a, a:link {
-	display: inline-block;
-	border-bottom: 0.1em solid transparent;
-	margin-bottom: -0.1em;
-}
+/*-----------------------------------------------------------------------------
 
-a:hover {
-	border-bottom-color: #266394;
+Copyright (C) 2016-2018 Jacob Barkdull
+This file is part of HashOver.
+
+I, Jacob Barkdull, hereby release this work into the public domain.
+This applies worldwide. If this is not legally possible, I grant any
+entity the right to use this work for any purpose, without any
+conditions, unless such conditions are required by law.
+
+-----------------------------------------------------------------------------*/
+
+body * {
+	line-height: 1.25em;
 }
 
 input, textarea {
@@ -20,7 +26,7 @@ input, textarea, .select-wrapper {
 }
 
 input:hover, textarea:hover {
-	border-color: #41A7FA;
+	border-color: #000000;
 }
 
 input[type="text"]:focus,
@@ -35,10 +41,6 @@ textarea:focus {
 	box-shadow: 0px 0px 2px rgba(0, 191, 255, 0.5);
 }
 
-input[type="text"]:focus {
-	border-color: #004799;
-}
-
 input[type="text"]:focus,
 input[type="password"]:focus,
 input[type="number"]:focus,
@@ -48,6 +50,7 @@ textarea:focus {
 }
 
 input[type="button"] {
+	padding: 5px 10px 5px 10px;
 	background-color: #F5F5F5;
 }
 
@@ -56,20 +59,24 @@ input[type="button"]:hover {
 }
 
 input[type="submit"] {
+	padding: 5px 15px 5px 15px;
 	color: #FFFFFF;
 	border: 1px solid #326BAC;
-	background-color: #41A7FA;
+	background-color: #3B96E0;
 }
 
 input[type="submit"]:hover {
 	text-decoration: none;
 	border: 1px solid #004799;
-	background-color: #3B96E0;
+	background-color: #41A7FA;
+}
+
+input[type="submit"]:active {
+	background-color: #007DFA;
 }
 
 input[type="submit"],
 input[type="button"] {
-	padding: 5px 10px 5px 10px;
 	margin: 0px;
 	cursor: pointer;
 }
@@ -107,7 +114,7 @@ input[type="checkbox"] {
 
 .select-wrapper:hover,
 .select-wrapper:hover:before {
-	border-color: #41A7FA;
+	border-color: #000000;
 }
 
 .select-wrapper select {
@@ -115,4 +122,29 @@ input[type="checkbox"] {
 	background-color: #FCFCFC;
 	padding: 1px 20px 1px 1px;
 	cursor: pointer;
+}
+
+#message {
+	position: relative;
+	font-weight: bold;
+	background-color: #FFFFFF;
+	margin-top: -1.25em;
+	z-index: 1;
+
+	-moz-transition: color 500ms linear 0ms, background 500ms linear 500ms;
+	-webkit-transition: color 500ms linear 0ms, background 500ms linear 500ms;
+	transition: color 500ms linear 0ms, background 500ms linear 500ms;
+}
+
+#message.success {
+	color: #00AA00;
+}
+
+#message.error {
+	color: #CC0000;
+}
+
+#message.hide {
+	background-color: transparent;
+	color: transparent;
 }

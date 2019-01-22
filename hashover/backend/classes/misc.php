@@ -19,10 +19,15 @@
 
 class Misc
 {
-	public $mode;
+	// Allowed JavaScript constructors
+	protected static $objects = array (
+		'HashOver',
+		'HashOverCountLink',
+		'HashOverLatest'
+	);
 
 	// XSS-unsafe characters to search for
-	protected $searchXSS = array (
+	protected static $searchXSS = array (
 		'&',
 		'<',
 		'>',
@@ -33,7 +38,7 @@ class Misc
 	);
 
 	// XSS-safe replacement character entities
-	protected $replaceXSS = array (
+	protected static $replaceXSS = array (
 		'&amp;',
 		'&lt;',
 		'&gt;',
@@ -43,58 +48,63 @@ class Misc
 		'&#92;'
 	);
 
-	public function __construct ($mode)
-	{
-		$this->mode = $mode;
-	}
-
 	// Return JSON or JSONP function call
-	public function jsonData ($data, $self_error = false)
+	public static function jsonData ($data, $self_error = false)
 	{
 		// Encode JSON data
 		$json = json_encode ($data);
 
-		// Check if request is for JSONP
-		if (isset ($_GET['jsonp'])) {
-			// If so, make JSONP index XSS safe
-			$index = $this->makeXSSsafe ($_GET['jsonp']);
-
-			// Check if the JSONP index contains a numeric value
-			if (is_numeric ($index) or $self_error === true) {
-				// Cast index to positive integer
-				$index = ($self_error === true) ? 0 : (int)(abs ($index));
-
-				// If so, construct JSONP function call
-				return sprintf (
-					'HashOverConstructor.jsonp[%d] (%s);',
-					$index, $json
-				);
-			}
-
-			// Otherwise return an error
-			return $this->jsonData (array (
-				'message' => 'JSONP index must have a numeric value.',
-				'type' => 'error'
-			), true);
+		// Return JSON as-is if the request isn't for JSONP
+		if (!isset ($_GET['jsonp']) or !isset ($_GET['jsonp_object'])) {
+			return $json;
 		}
 
-		return $json;
+		// Otherwise, make JSONP callback index XSS safe
+		$index = self::makeXSSsafe ($_GET['jsonp']);
+
+		// Make JSONP object constructor name XSS safe
+		$object = self::makeXSSsafe ($_GET['jsonp_object']);
+
+		// Check if constructor is allowed, if not use default
+		$allowed_object = in_array ($object, self::$objects, true);
+		$object = $allowed_object ? $object : 'HashOver';
+
+		// Check if the JSONP index contains a numeric value
+		if (is_numeric ($index) or $self_error === true) {
+			// If so, cast index to positive integer
+			$index = ($self_error === true) ? 0 : (int)(abs ($index));
+
+			// Construct JSONP function call
+			$jsonp = sprintf ('%s.jsonp[%d] (%s);', $object, $index, $json);
+
+			// And return the JSONP script
+			return $jsonp;
+		}
+
+		// Otherwise, return an error
+		return self::jsonData (array (
+			'message' => 'JSONP index must have a numeric value.',
+			'type' => 'error'
+		), true);
 	}
 
 	// Make a string XSS-safe
-	public function makeXSSsafe ($string)
+	public static function makeXSSsafe ($string)
 	{
 		// Return cookie value without harmful characters
-		return str_replace ($this->searchXSS, $this->replaceXSS, $string);
+		return str_replace (self::$searchXSS, self::$replaceXSS, $string);
 	}
 
 	// Returns error in HTML paragraph
-	public function displayError ($error = 'Something went wrong!')
+	public static function displayError ($error = 'Something went wrong!', $mode = 'php')
 	{
-		$xss_safe = $this->makeXSSsafe ($error);
+		// Initial error message data
 		$data = array ();
 
-		switch ($this->mode) {
+		// Make error message XSS safe
+		$xss_safe = self::makeXSSsafe ($error);
+
+		switch ($mode) {
 			// Minimal JavaScript to display error message on page
 			case 'javascript': {
 				$data[] = 'var hashover = document.getElementById (\'hashover\') || document.body;';
@@ -114,7 +124,7 @@ class Misc
 
 			// JSON to indicate error
 			case 'json': {
-				$data[] = $this->jsonData (array (
+				$data[] = self::jsonData (array (
 					'message' => $error,
 					'type' => 'error'
 				));
@@ -129,6 +139,15 @@ class Misc
 			}
 		}
 
-		echo implode (PHP_EOL, $data);
+		// Convert error message data to string
+		$message = implode (PHP_EOL, $data);
+
+		return $message;
+	}
+
+	// Returns an array item or a given default value
+	public static function getArrayItem (array $data, $key)
+	{
+		return !empty ($data[$key]) ? $data[$key] : false;
 	}
 }

@@ -19,22 +19,23 @@
 
 class FormUI
 {
-	public $setup;
-	public $mode;
-	public $locale;
-	public $avatars;
-	public $misc;
-	public $cookies;
-	public $login;
-	public $commentCounts;
-	public $pageTitle;
-	public $pageURL;
-	public $postCommentOn;
-	public $popularComments;
-	public $comments;
+	protected $setup;
+	protected $mode;
+	protected $locale;
+	protected $avatars;
+	protected $misc;
+	protected $cookies;
+	protected $login;
+	protected $commentCounts;
+	protected $pageTitle;
+	protected $pageURL;
 
 	protected $emphasizedField;
 	protected $defaultLoginInputs;
+
+	public $postCommentOn;
+	public $popularComments;
+	public $comments;
 
 	public function __construct (Setup $setup, array $counts)
 	{
@@ -43,7 +44,6 @@ class FormUI
 		$this->locale = new Locale ($setup);
 		$this->login = new Login ($setup);
 		$this->avatars = new Avatars ($setup);
-		$this->misc = new Misc ($this->mode);
 		$this->cookies = new Cookies ($setup);
 		$this->commentCounts = $counts;
 		$this->pageTitle = $this->setup->pageTitle;
@@ -70,61 +70,84 @@ class FormUI
 		$this->defaultLoginInputs = $this->loginInputs ();
 	}
 
-	// Re-encode a URL
-	protected function safeURLEncode ($url)
+	// Returns pseudo-namespace prefixed string
+	public function prefix ($id = '', $template = true)
 	{
-		return urlencode (urldecode ($url));
+		// Return template prefix in JavaScript mode
+		if ($template === true and $this->mode !== 'php') {
+			return '{hashover}-' . $id;
+		}
+
+		// Initial prefix
+		$prefix = 'hashover';
+
+		// Return simple prefix if we're on first instance
+		if ($this->setup->instanceNumber > 1) {
+			$prefix .= '-' . $this->setup->instanceNumber;
+		}
+
+		// Return prefixed ID if one is given
+		if (!empty ($id)) {
+			return $prefix . '-' . $id;
+		}
+
+		// Otherwise, return prefix by itself
+		return $prefix;
 	}
 
 	// Creates input elements for user login information
 	protected function loginInputs ($permalink = '', $edit_form = false, $name = '', $website = '')
 	{
-		$permalink = !empty ($permalink) ? '-' . $permalink : '';
+		// Reply/edit form indicator
+		$is_form = !empty ($permalink);
+
+		// Prepend dash to permalink if present
+		$permalink = $is_form ? '-' . $permalink : '';
 
 		// Login input attribute information
 		$login_input_attributes = array (
 			'name' => array (
-				'wrapper-class' => 'hashover-name-input',
-				'label-class' => 'hashover-name-label',
-				'placeholder' => $this->locale->text['name'],
-				'input-id' => 'hashover-main-name' . $permalink,
-				'input-type' => 'text',
-				'input-name' => 'name',
-				'input-title' => $this->locale->text['name-tip'],
-				'input-value' => $this->misc->makeXSSsafe ($this->login->name)
+				'wrapper-class'		=> 'hashover-name-input',
+				'label-class'		=> 'hashover-name-label',
+				'placeholder'		=> $this->locale->text['name'],
+				'input-id'		=> $this->prefix ('main-name' . $permalink, $is_form),
+				'input-type'		=> 'text',
+				'input-name'		=> 'name',
+				'input-title'		=> $this->locale->text['name-tip'],
+				'input-value'		=> Misc::makeXSSsafe ($this->login->name)
 			),
 
 			'password' => array (
-				'wrapper-class' => 'hashover-password-input',
-				'label-class' => 'hashover-password-label',
-				'placeholder' => $this->locale->text['password'],
-				'input-id' => 'hashover-main-password' . $permalink,
-				'input-type' => 'password',
-				'input-name' => 'password',
-				'input-title' => $this->locale->text['password-tip'],
-				'input-value' => ''
+				'wrapper-class'		=> 'hashover-password-input',
+				'label-class'		=> 'hashover-password-label',
+				'placeholder'		=> $this->locale->text['password'],
+				'input-id'		=> $this->prefix ('main-password' . $permalink, $is_form),
+				'input-type'		=> 'password',
+				'input-name'		=> 'password',
+				'input-title'		=> $this->locale->text['password-tip'],
+				'input-value'		=> ''
 			),
 
 			'email' => array (
-				'wrapper-class' => 'hashover-email-input',
-				'label-class' => 'hashover-email-label',
-				'placeholder' => $this->locale->text['email'],
-				'input-id' => 'hashover-main-email' . $permalink,
-				'input-type' => 'email',
-				'input-name' => 'email',
-				'input-title' => $this->locale->text['email-tip'],
-				'input-value' => $this->misc->makeXSSsafe ($this->login->email)
+				'wrapper-class'		=> 'hashover-email-input',
+				'label-class'		=> 'hashover-email-label',
+				'placeholder'		=> $this->locale->text['email'],
+				'input-id'		=> $this->prefix ('main-email' . $permalink, $is_form),
+				'input-type'		=> 'email',
+				'input-name'		=> 'email',
+				'input-title'		=> $this->locale->text['email-tip'],
+				'input-value'		=> Misc::makeXSSsafe ($this->login->email)
 			),
 
 			'website' => array (
-				'wrapper-class' => 'hashover-website-input',
-				'label-class' => 'hashover-website-label',
-				'placeholder' => $this->locale->text['website'],
-				'input-id' => 'hashover-main-website' . $permalink,
-				'input-type' => 'url',
-				'input-name' => 'website',
-				'input-title' => $this->locale->text['website-tip'],
-				'input-value' => $this->misc->makeXSSsafe ($this->login->website)
+				'wrapper-class'		=> 'hashover-website-input',
+				'label-class'		=> 'hashover-website-label',
+				'placeholder'		=> $this->locale->text['website'][0],
+				'input-id'		=> $this->prefix ('main-website' . $permalink, $is_form),
+				'input-type'		=> 'url',
+				'input-name'		=> 'website',
+				'input-title'		=> $this->locale->text['website-tip'],
+				'input-value'		=> Misc::makeXSSsafe ($this->login->website)
 			)
 		);
 
@@ -153,8 +176,9 @@ class FormUI
 				'class' => 'hashover-input-cell'
 			));
 
+			// Check if form labels are enabled
 			if ($this->setup->usesLabels === true) {
-				// Create label element for input
+				// If so, create label element for input
 				$label = new HTMLTag ('label', array (
 					'for' => $attributes['input-id'],
 					'class' => $attributes['label-class'],
@@ -204,6 +228,7 @@ class FormUI
 		return $login_inputs;
 	}
 
+	// Creates avatar element
 	protected function avatar ($text)
 	{
 		// If avatars set to images
@@ -232,31 +257,35 @@ class FormUI
 		return $avatar;
 	}
 
-	protected function subscribeLabel ($id = '', $type = 'main', $checked = true)
+	// Creates "Notify me of replies" checkbox
+	protected function subscribeLabel ($permalink = '', $type = 'main', $checked = true)
 	{
+		// Reply/edit form indicator
+		$is_form = !empty ($permalink);
+
+		// The checkbox ID
+		$id = $this->prefix ($type . '-subscribe', $is_form);
+
+		// Append permalink to the ID if one was given
+		if ($is_form === true) {
+			$id .= '-' . $permalink;
+		}
+
 		// Create subscribe checkbox label element
 		$subscribe_label = new HTMLTag ('label', array (
-			'for' => 'hashover-' . $type . '-subscribe',
+			'for' => $id,
 			'class' => 'hashover-' . $type . '-label',
 			'title' => $this->locale->text['subscribe-tip']
 		));
 
-		if (!empty ($id)) {
-			$subscribe_label->appendAttribute ('for', '-' . $id, false);
-		}
-
 		// Create subscribe element checkbox
 		$subscribe = new HTMLTag ('input', array (
-			'id' => 'hashover-' . $type . '-subscribe',
+			'id' => $id,
 			'type' => 'checkbox',
 			'name' => 'subscribe'
 		), false, true);
 
-		if (!empty ($id)) {
-			$subscribe->appendAttribute ('id', '-' . $id, false);
-		}
-
-		// Check checkbox
+		// Tick the checkbox
 		if ($checked === true) {
 			$subscribe->createAttribute ('checked', 'true');
 		}
@@ -270,28 +299,43 @@ class FormUI
 		return $subscribe_label;
 	}
 
+	// Creates a table-like cell for the accepted HTML/markdown panel
 	protected function acceptedFormatCell ($format, $locale_key)
 	{
+		// Create cell title
 		$title = new HTMLTag ('p', array ('class' => 'hashover-title'));
-		$accepted_format = sprintf ($this->locale->text['accepted-format'], $format);
-		$title->innerHTML ($accepted_format);
 
-		$paragraph = new HTMLTag ('p');
-		$paragraph->innerHTML ($this->locale->text[$locale_key]);
+		// "Accepted HTML/Markdown" locale string
+		$title->innerHTML (sprintf (
+			$this->locale->text['accepted-format'], $format
+		));
 
+		// Create accepted HTML/markdown text paragraph
+		$paragraph = new HTMLTag ('p', array (
+			'innerHTML' => $this->locale->text[$locale_key])
+		);
+
+		// And return both elements in a <div> tag
 		return new HTMLTag ('div', array (
 			'children' => array ($title, $paragraph)
 		));
 	}
 
+	// Creats a comment form, ie. main/reply/edit
 	protected function commentForm (HTMLTag $form, $type, $placeholder, $text, $permalink = '')
 	{
-		$permalink = !empty ($permalink) ? '-' . $permalink : '';
+		// Reply/edit form indicator
+		$is_form = !empty ($permalink);
+
+		// Prepend dash to permalink if present
+		$permalink = $is_form ? '-' . $permalink : '';
+
+		// Form title locale key
 		$title_locale = ($type === 'reply') ? 'reply-form' : 'comment-form';
 
 		// Create textarea
 		$textarea = new HTMLTag ('textarea', array (
-			'id' => 'hashover-' . $type . '-comment' . $permalink,
+			'id' => $this->prefix ($type . '-comment' . $permalink, $is_form),
 			'class' => 'hashover-textarea hashover-' . $type . '-textarea',
 			'cols' => '63',
 			'name' => 'comment',
@@ -328,12 +372,12 @@ class FormUI
 		// Create element for various messages when needed
 		if ($type !== 'main') {
 			$message = new HTMLTag ('div', array (
-				'id' => 'hashover-' . $type . '-message-container' . $permalink,
+				'id' => $this->prefix ($type . '-message-container' . $permalink, $is_form),
 				'class' => 'hashover-message',
 
 				'children' => array (
 					new HTMLTag ('div', array (
-						'id' => 'hashover-' . $type . '-message' . $permalink
+						'id' => $this->prefix ($type . '-message' . $permalink, $is_form)
 					))
 				)
 			));
@@ -344,7 +388,7 @@ class FormUI
 
 		// Create accepted HTML message element
 		$accepted_formatting_message = new HTMLTag ('div', array (
-			'id' => 'hashover-' . $type . '-formatting-message' . $permalink,
+			'id' => $this->prefix ($type . '-formatting-message' . $permalink, $is_form),
 			'class' => 'hashover-formatting-message'
 		));
 
@@ -376,33 +420,34 @@ class FormUI
 		$form->appendChild ($accepted_formatting_message);
 	}
 
-	protected function pageInfoFields (HTMLTag $form)
+	// Creates hidden page info fields, ie. page URL, title, reply comment
+	protected function pageInfoFields (HTMLTag $form, $url = '{url}', $thread = '{thread}', $title = '{title}')
 	{
-		// Create hidden comment thread input element
-		$thread_input = new HTMLTag ('input', array (
-			'type' => 'hidden',
-			'name' => 'thread',
-			'value' => $this->setup->threadName
-		), false, true);
-
-		// Add hidden comments thread input element to form element
-		$form->appendChild ($thread_input);
-
 		// Create hidden page URL input element
 		$url_input = new HTMLTag ('input', array (
 			'type' => 'hidden',
 			'name' => 'url',
-			'value' => $this->pageURL
+			'value' => $url
 		), false, true);
 
 		// Add hidden page URL input element to form element
 		$form->appendChild ($url_input);
 
+		// Create hidden comment thread input element
+		$thread_input = new HTMLTag ('input', array (
+			'type' => 'hidden',
+			'name' => 'thread',
+			'value' => $thread
+		), false, true);
+
+		// Add hidden comments thread input element to form element
+		$form->appendChild ($thread_input);
+
 		// Create hidden page title input element
 		$title_input = new HTMLTag ('input', array (
 			'type' => 'hidden',
 			'name' => 'title',
-			'value' => $this->pageTitle
+			'value' => $title
 		), false, true);
 
 		// Add hidden page title input element to form element
@@ -422,14 +467,21 @@ class FormUI
 		}
 	}
 
+	// Creates "Formatting" link to open the accepted HTML/markdown panel
 	protected function acceptedFormatting ($type, $permalink = '')
 	{
-		$permalink = !empty ($permalink) ? '-' . $permalink : '';
+		// Reply/edit form indicator
+		$is_form = !empty ($permalink);
+
+		// Prepend dash to permalink if present
+		$permalink = $is_form ? '-' . $permalink : '';
+
+		// "Formatting" hyperlink locale
 		$accepted_format = $this->locale->text['comment-formatting'];
 
 		// Create accepted HTML message revealer hyperlink
 		$accepted_formatting = new HTMLTag ('span', array (
-			'id' => 'hashover-' . $type . '-formatting' . $permalink,
+			'id' => $this->prefix ($type . '-formatting' . $permalink, $is_form),
 			'class' => 'hashover-fake-link hashover-formatting',
 			'title' => $accepted_format,
 			'innerHTML' => $accepted_format
@@ -439,39 +491,84 @@ class FormUI
 		return $accepted_formatting;
 	}
 
-	public function initialHTML ($hashover_wrapper = true)
+	// Re-encode a URL
+	protected function safeURLEncode ($url)
+	{
+		return urlencode (urldecode ($url));
+	}
+
+	// Creates the main HashOver element
+	protected function createMainElement ()
 	{
 		// Create element that HashOver comments will appear in
-		$hashover_element = new HTMLTag ('div', array (
-			'id' => 'hashover',
+		$main = new HTMLTag ('div', array (
+			'id' => $this->prefix (),
 			'class' => 'hashover'
 		), false);
 
-		// Add class for differentiating desktop and mobile styling
+		// Add class indictating desktop and mobile styling
 		if ($this->setup->isMobile === true) {
-			$hashover_element->appendAttribute ('class', 'hashover-mobile');
+			$main->appendAttribute ('class', 'hashover-mobile');
 		} else {
-			$hashover_element->appendAttribute ('class', 'hashover-desktop');
+			$main->appendAttribute ('class', 'hashover-desktop');
+		}
+
+		// Add class for raster or vector images
+		if ($this->setup->imageFormat === 'svg') {
+			$main->appendAttribute ('class', 'hashover-vector');
+		} else {
+			$main->appendAttribute ('class', 'hashover-raster');
 		}
 
 		// Add class to indicate user login status
 		if ($this->login->userIsLoggedIn === true) {
-			$hashover_element->appendAttribute ('class', 'hashover-logged-in');
+			$main->appendAttribute ('class', 'hashover-logged-in');
 		} else {
-			$hashover_element->appendAttribute ('class', 'hashover-logged-out');
+			$main->appendAttribute ('class', 'hashover-logged-out');
 		}
 
 		// Create element for jump anchor
-		$jump_anchor = new HTMLTag ('div', array (
-			'id' => 'comments'
-		));
+		if ($this->setup->instanceNumber === 1) {
+			$jump_anchor = new HTMLTag ('div', array (
+				'id' => 'comments'
+			));
 
-		// Add jump anchor to HashOver element
-		$hashover_element->appendChild ($jump_anchor);
+			// Add jump anchor to HashOver element
+			$main->appendChild ($jump_anchor);
+		}
+
+		return $main;
+	}
+
+	// Creates initial HTML elements, such as comment form and end links
+	public function initialHTML ($hashover_wrapper = true)
+	{
+		// Create main HashOver element
+		$hashover_element = $this->createMainElement ();
+
+		// Check if a login is required and user is not logged in
+		if ($this->setup->requiresLogin === true
+		    and $this->login->userIsLoggedIn === false)
+		{
+			// If so, create required login message element
+			$hashover_element->appendChild (new HTMLTag ('div', array (
+				'class' => 'hashover-requires-login-message',
+				'innerHTML' => $this->locale->text['login-required']
+			)));
+
+			// Return all HTML with the HashOver wrapper element
+			if ($hashover_wrapper === true) {
+				return $hashover_element->asHTML ();
+			}
+
+			// Return just the HashOver wrapper element's innerHTML
+			return $hashover_element->innerHTML;
+		}
 
 		// Create primary form wrapper element
 		$form_section = new HTMLTag ('div', array (
-			'id' => 'hashover-form-section'
+			'id' => $this->prefix ('form-section', false),
+			'class' => 'hashover-form-section'
 		));
 
 		// Hide primary form wrapper if comments are to be initially hidden
@@ -495,13 +592,14 @@ class FormUI
 
 		// Create element for various messages when needed
 		$message_container = new HTMLTag ('div', array (
-			'id' => 'hashover-message-container',
+			'id' => $this->prefix ('message-container', false),
 			'class' => 'hashover-title hashover-message'
 		));
 
 		// Create element for message text
 		$message_element = new HTMLTag ('div', array (
-			'id' => 'hashover-message'
+			'id' => $this->prefix ('message', false),
+			'class' => 'hashover-main-message'
 		));
 
 		// Check if message cookie is set
@@ -519,10 +617,10 @@ class FormUI
 			// Check if the message is a normal message
 			if ($this->cookies->getValue ('message') !== null) {
 				// If so, get an XSS safe version of the message
-				$message = $this->misc->makeXSSsafe ($this->cookies->getValue ('message'));
+				$message = Misc::makeXSSsafe ($this->cookies->getValue ('message'));
 			} else {
 				// If not, get an XSS safe version of the error message
-				$message = $this->misc->makeXSSsafe ($this->cookies->getValue ('error'));
+				$message = Misc::makeXSSsafe ($this->cookies->getValue ('error'));
 
 				// And set a class to the message element indicating an error
 				$message_container->appendAttribute ('class', 'hashover-message-error');
@@ -540,8 +638,8 @@ class FormUI
 
 		// Create main HashOver form
 		$main_form = new HTMLTag ('form', array (
-			'id' => 'hashover-form',
-			'class' => 'hashover-balloon',
+			'id' => $this->prefix ('form', false),
+			'class' => 'hashover-form hashover-balloon',
 			'name' => 'hashover-form',
 			'action' => $this->setup->getBackendPath ('form-actions.php'),
 			'method' => 'post'
@@ -569,12 +667,12 @@ class FormUI
 		// Logged in
 		if ($this->login->userIsLoggedIn === true) {
 			if (!empty ($this->login->name)) {
-				$user_name = $this->misc->makeXSSsafe ($this->login->name);
+				$user_name = Misc::makeXSSsafe ($this->login->name);
 			} else {
 				$user_name = $this->setup->defaultName;
 			}
 
-			$user_website = $this->misc->makeXSSsafe ($this->login->website);
+			$user_website = Misc::makeXSSsafe ($this->login->website);
 			$name_class = 'hashover-name-plain';
 			$is_twitter = false;
 
@@ -587,7 +685,7 @@ class FormUI
 
 				if ($name_length > 1 and $name_length <= 30) {
 					if (empty ($user_website)) {
-						$user_website = 'http://twitter.com/' . $user_name;
+						$user_website = 'https://twitter.com/' . $user_name;
 					}
 				}
 			}
@@ -635,7 +733,7 @@ class FormUI
 
 		// Create fake "required fields" element as a SPAM trap
 		$required_fields = new HTMLTag ('div', array (
-			'id' => 'hashover-requiredFields'
+			'class' => 'hashover-required-fields'
 		));
 
 		$fake_fields = array (
@@ -664,8 +762,9 @@ class FormUI
 		// Post button locale
 		$post_button = $this->locale->text['post-button'];
 
-		// Create label element for comment textarea
+		// Check if form labels are enabled
 		if ($this->setup->usesLabels === true) {
+			// If so, create label element for comment textarea
 			$main_comment_label = new HTMLTag ('label', array (
 				'for' => 'hashover-main-comment',
 				'class' => 'hashover-comment-label',
@@ -677,7 +776,7 @@ class FormUI
 		}
 
 		// Get comment text if a comment cookie is set
-		$comment_text = $this->misc->makeXSSsafe ($this->cookies->getValue ('comment'));
+		$comment_text = Misc::makeXSSsafe ($this->cookies->getValue ('comment'));
 
 		// Comment form placeholder text
 		$comment_form = $this->locale->text['comment-form'];
@@ -686,7 +785,7 @@ class FormUI
 		$this->commentForm ($main_form, 'main', $comment_form, $comment_text);
 
 		// Add page info fields to main form
-		$this->pageInfoFields ($main_form);
+		$this->pageInfoFields ($main_form, $this->setup->pageURL, $this->setup->threadName, $this->setup->pageTitle);
 
 		// Check if comment is a failed reply
 		if ($this->cookies->getValue ('replied') !== null) {
@@ -697,7 +796,7 @@ class FormUI
 			$reply_to_input = new HTMLTag ('input', array (
 				'type' => 'hidden',
 				'name' => 'reply-to',
-				'value' => $this->misc->makeXSSsafe ($replied)
+				'value' => Misc::makeXSSsafe ($replied)
 			), false, true);
 
 			// And add hidden reply to input element to form element
@@ -717,7 +816,9 @@ class FormUI
 		// Add checkbox label element to main form buttons wrapper element
 		if ($this->setup->fieldOptions['email'] !== false) {
 			if ($this->login->userIsLoggedIn === false or !empty ($this->login->email)) {
-				$main_form_links_wrapper->appendChild ($this->subscribeLabel ());
+				$subscribed = ($this->setup->subscribesUser === true);
+				$subscribe_label = $this->subscribeLabel ('', 'main', $subscribed);
+				$main_form_links_wrapper->appendChild ($subscribe_label);
 			}
 		}
 
@@ -737,7 +838,7 @@ class FormUI
 		// Create "Login" / "Logout" button element
 		if ($this->setup->allowsLogin !== false or $this->login->userIsLoggedIn === true) {
 			$login_button = new HTMLTag ('input', array (
-				'id' => 'hashover-login-button',
+				'id' => $this->prefix ('login-button', false),
 				'class' => 'hashover-submit',
 				'type' => 'submit'
 			), false, true);
@@ -772,7 +873,7 @@ class FormUI
 
 		// Create "Post Comment" button element
 		$main_post_button = new HTMLTag ('input', array (
-			'id' => 'hashover-post-button',
+			'id' => $this->prefix ('post-button', false),
 			'class' => 'hashover-submit hashover-post-button',
 			'type' => 'submit',
 			'name' => 'post',
@@ -801,7 +902,8 @@ class FormUI
 		if ($this->commentCounts['popular'] > 0) {
 			// Create wrapper element for popular comments
 			$popular_section = new HTMLTag ('div', array (
-				'id' => 'hashover-popular-section'
+				'id' => $this->prefix ('popular-section', false),
+				'class' => 'hashover-popular-section'
 			), false);
 
 			// Hide popular comments wrapper if comments are to be initially hidden
@@ -834,7 +936,8 @@ class FormUI
 
 			// Create element for popular comments to appear in
 			$popular_comments = new HTMLTag ('div', array (
-				'id' => 'hashover-top-comments'
+				'id' => $this->prefix ('top-comments', false),
+				'class' => 'hashover-top-comments'
 			), false);
 
 			// Add comments to HashOver element
@@ -851,18 +954,20 @@ class FormUI
 
 		// Create wrapper element for comments
 		$comments_section = new HTMLTag ('div', array (
-			'id' => 'hashover-comments-section'
+			'id' => $this->prefix ('comments-section', false),
+			'class' => 'hashover-comments-section'
 		), false);
 
 		// Create wrapper element for comment count and sort dropdown menu
 		$count_sort_wrapper = new HTMLTag ('div', array (
-			'id' => 'hashover-count-wrapper',
+			'id' => $this->prefix ('count-wrapper', false),
 			'class' => 'hashover-count-sort hashover-dashed-title'
 		));
 
 		// Create element for comment count
 		$count_element = new HTMLTag ('span', array (
-			'id' => 'hashover-count'
+			'id' => $this->prefix ('count', false),
+			'class' => 'hashover-count'
 		));
 
 		// Add comment count to comment count element
@@ -885,16 +990,17 @@ class FormUI
 				$count_sort_wrapper->createAttribute ('style', 'display: none;');
 			}
 
+			// Check if there is more than one comment
 			if ($this->commentCounts['total'] > 2) {
-				// Create wrapper element for sort dropdown menu
+				// If so, create wrapper element for sort dropdown menu
 				$sort_wrapper = new HTMLTag ('span', array (
-					'id' => 'hashover-sort',
-					'class' => 'hashover-select-wrapper'
+					'id' => $this->prefix ('sort', false),
+					'class' => 'hashover-select-wrapper hashover-sort-select'
 				));
 
 				// Create sort dropdown menu element
 				$sort_select = new HTMLTag ('select', array (
-					'id' => 'hashover-sort-select',
+					'id' => $this->prefix ('sort-select', false),
 					'name' => 'sort',
 					'size' => '1',
 					'title' => $this->locale->text['sort']
@@ -902,20 +1008,26 @@ class FormUI
 
 				// Array of select tag sort options
 				$sort_options = array (
-					array ('value' => 'ascending', 'innerHTML' => $this->locale->text['sort-ascending']),
-					array ('value' => 'descending', 'innerHTML' => $this->locale->text['sort-descending']),
-					array ('value' => 'by-date', 'innerHTML' => $this->locale->text['sort-by-date']),
-					array ('value' => 'by-likes', 'innerHTML' => $this->locale->text['sort-by-likes']),
-					array ('value' => 'by-replies', 'innerHTML' => $this->locale->text['sort-by-replies']),
-					array ('value' => 'by-name', 'innerHTML' => $this->locale->text['sort-by-name'])
+					'ascending'	=> $this->locale->text['sort-ascending'],
+					'descending'	=> $this->locale->text['sort-descending'],
+					'by-date'	=> $this->locale->text['sort-by-date'],
+					'by-likes'	=> $this->locale->text['sort-by-likes'],
+					'by-replies'	=> $this->locale->text['sort-by-replies'],
+					'by-name'	=> $this->locale->text['sort-by-name']
 				);
 
-				// Create sort options for sort dropdown menu element
-				for ($i = 0, $il = count ($sort_options); $i < $il; $i++) {
+				// Run through each sort option
+				foreach ($sort_options as $value => $html) {
+					// Create option for sort dropdown menu element
 					$option = new HTMLTag ('option', array (
-						'value' => $sort_options[$i]['value'],
-						'innerHTML' => $sort_options[$i]['innerHTML']
+						'value' => $value,
+						'innerHTML' => $html
 					), false);
+
+					// Set option as selected if its the configured default
+					if ($value === $this->setup->defaultSorting) {
+						$option->createAttribute ('selected', 'selected');
+					}
 
 					// Add sort option element to sort dropdown menu
 					$sort_select->appendChild ($option);
@@ -936,20 +1048,26 @@ class FormUI
 
 				// Array of select tag threaded sort options
 				$threaded_sort_options = array (
-					array ('value' => 'threaded-descending', 'innerHTML' => $this->locale->text['sort-descending']),
-					array ('value' => 'threaded-by-date', 'innerHTML' => $this->locale->text['sort-by-date']),
-					array ('value' => 'threaded-by-likes', 'innerHTML' => $this->locale->text['sort-by-likes']),
-					array ('value' => 'by-popularity', 'innerHTML' => $this->locale->text['sort-by-popularity']),
-					array ('value' => 'by-discussion', 'innerHTML' => $this->locale->text['sort-by-discussion']),
-					array ('value' => 'threaded-by-name', 'innerHTML' => $this->locale->text['sort-by-name'])
+					'threaded-descending'	=> $this->locale->text['sort-descending'],
+					'threaded-by-date'	=> $this->locale->text['sort-by-date'],
+					'threaded-by-likes'	=> $this->locale->text['sort-by-likes'],
+					'by-popularity'		=> $this->locale->text['sort-by-popularity'],
+					'by-discussion'		=> $this->locale->text['sort-by-discussion'],
+					'threaded-by-name'	=> $this->locale->text['sort-by-name']
 				);
 
-				// Create sort options for sort dropdown menu element
-				for ($i = 0, $il = count ($threaded_sort_options); $i < $il; $i++) {
+				// Run through each threaded sort option
+				foreach ($threaded_sort_options as $value => $html) {
+					// Create option for sort dropdown menu element
 					$option = new HTMLTag ('option', array (
-						'value' => $threaded_sort_options[$i]['value'],
-						'innerHTML' => $threaded_sort_options[$i]['innerHTML']
+						'value' => $value,
+						'innerHTML' => $html
 					), false);
+
+					// Set option as selected if its the configured default
+					if ($value === $this->setup->defaultSorting) {
+						$option->createAttribute ('selected', 'selected');
+					}
 
 					// Add sort option element to threaded option group
 					$threaded_optgroup->appendChild ($option);
@@ -971,7 +1089,8 @@ class FormUI
 
 		// Create element that will hold the comments
 		$sort_div = new HTMLTag ('div', array (
-			'id' => 'hashover-sort-section'
+			'id' => $this->prefix ('sort-section', false),
+			'class' => 'hashover-sort-section'
 		), false);
 
 		// Add comments to HashOver element
@@ -993,7 +1112,8 @@ class FormUI
 
 		// Create end links wrapper element
 		$end_links_wrapper = new HTMLTag ('div', array (
-			'id' => 'hashover-end-links'
+			'id' => $this->prefix ('end-links', false),
+			'class' => 'hashover-end-links'
 		));
 
 		// Hide end links wrapper if comments are to be initially hidden
@@ -1007,7 +1127,7 @@ class FormUI
 		// Create link back to HashOver homepage (fixme! get a real page!)
 		$homepage_link = new HTMLTag ('a', array (
 			'href' => 'http://tildehash.com/?page=hashover',
-			'id' => 'hashover-home-link',
+			'class' => 'hashover-home-link',
 			'target' => '_blank',
 			'title' => $homepage_link_text,
 			'innerHTML' => $homepage_link_text
@@ -1019,20 +1139,26 @@ class FormUI
 		// End links array
 		$end_links = array ();
 
+		// Check if there is at least one comment
 		if ($this->commentCounts['total'] > 1) {
+			// If so, check if the RSS API is enabled
 			if ($this->setup->appendsRss === true
 			    and $this->setup->apiStatus ('rss') !== 'disabled')
 			{
+				// If so, encode page URL
+				$page_url = $this->safeURLEncode ($this->setup->pageURL);
+
 				// Create RSS feed link
 				$rss_link = new HTMLTag ('a', array (), false);
 				$rss_link->createAttribute ('href', $this->setup->getHttpPath ('api/rss.php'));
-				$rss_link->appendAttribute ('href', '?url=' . $this->safeURLEncode ($this->setup->pageURL), false);
+				$rss_link->appendAttribute ('href', '?url=' . $page_url, false);
 
-				// RSS Feed hyperlink text
+				// "RSS Feed" locale string
 				$rss_link_text = $this->locale->text['rss-feed'];
 
+				// Create RSS feed attributes
 				$rss_link->createAttributes (array (
-					'id' => 'hashover-rss-link',
+					'class' => 'hashover-rss-link',
 					'target' => '_blank',
 					'title' => $rss_link_text,
 					'innerHTML' => $rss_link_text
@@ -1046,10 +1172,10 @@ class FormUI
 		// Source Code hyperlink text
 		$source_link_text = $this->locale->text['source-code'];
 
-		// Create link to HashOver source code (fixme! can be done better)
+		// Create link to HashOver source code
 		$source_link = new HTMLTag ('a', array (
 			'href' => $this->setup->getBackendPath ('source-viewer.php'),
-			'id' => 'hashover-source-link',
+			'class' => 'hashover-source-link',
 			'rel' => 'hashover-source',
 			'target' => '_blank',
 			'title' => $source_link_text,
@@ -1063,7 +1189,7 @@ class FormUI
 			// Create link to HashOver JavaScript source code
 			$javascript_link = new HTMLTag ('a', array (
 				'href' => $this->setup->getHttpPath ('comments.php'),
-				'id' => 'hashover-javascript-link',
+				'class' => 'hashover-javascript-link',
 				'rel' => 'hashover-javascript',
 				'target' => '_blank',
 				'title' => 'JavaScript'

@@ -32,7 +32,9 @@ try {
 
 	// Throw exception if the "Latest Comments" API is disabled
 	if ($setup->apiStatus ('latest') === 'disabled') {
-		throw new \Exception ('This API is not enabled.');
+		throw new \Exception (
+			'This API is not enabled.'
+		);
 	}
 
 	// Instantiate HashOver statistics class
@@ -54,19 +56,23 @@ try {
 	$javascript->registerFile ('script.js');
 
 	// Register backend path setter
-	$javascript->registerFile ('backendpath.js');
+	$javascript->registerFile ('backendpath.js', array (
+		'dependencies' => array (
+			'rootpath.js'
+		)
+	));
 
-	// Register page URL getter method
-	$javascript->registerFile ('geturl.js');
+	// Register HashOver ready state detection method
+	$javascript->registerFile ('onready.js');
 
-	// Register page title getter method
-	$javascript->registerFile ('gettitle.js');
+	// Register instance prefix method
+	$javascript->registerFile ('prefix.js');
 
-	// Register backend queries getter method
-	$javascript->registerFile ('getbackendqueries.js');
+	// Register element creation method
+	$javascript->registerFile ('createelement.js');
 
-	// Register element creation methods
-	$javascript->registerFile ('elements.js');
+	// Register classList polyfill methods
+	$javascript->registerFile ('classes.js');
 
 	// Register main HashOver element getter method
 	$javascript->registerFile ('getmainelement.js');
@@ -103,7 +109,7 @@ try {
 	$javascript->registerFile ('optionalmethod.js');
 
 	// Register comment parsing methods
-	$javascript->registerFile ('comments.js');
+	$javascript->registerFile ('parsecomment.js');
 
 	// Register embedded image method
 	$javascript->registerFile ('embedimage.js', array (
@@ -114,12 +120,6 @@ try {
 		)
 	));
 
-	// Register control event handler attacher method
-	$javascript->registerFile ('addcontrols.js');
-
-	// Register classList polyfill methods
-	$javascript->registerFile ('classes.js');
-
 	// Register theme stylesheet appender method
 	$javascript->registerFile ('appendcss.js', array (
 		'include' => $setup->appendsCss
@@ -127,6 +127,14 @@ try {
 
 	// Change back to latest frontend directory
 	$javascript->changeDirectory ('api/frontends/latest');
+
+	// Register Like/Dislike methods
+	$javascript->registerFile ('addratings.js', array (
+		'include' => ($setup->allowsLikes or $setup->allowsDislikes)
+	));
+
+	// Register control event handler attacher method
+	$javascript->registerFile ('addcontrols.js');
 
 	// Register initialization method
 	$javascript->registerFile ('init.js');
@@ -149,7 +157,5 @@ try {
 	echo $statistics->executionEnd ();
 
 } catch (\Exception $error) {
-	$misc = new Misc ('javascript');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'javascript');
 }

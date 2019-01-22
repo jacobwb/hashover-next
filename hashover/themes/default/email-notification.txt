@@ -1,0 +1,17 @@
+{from}
+
+{text-comment}
+
+{in-reply-to}
+
+{text-reply}
+
+----
+
+{comment}: {permalink}
+
+{page}: {url}
+
+----
+
+{sent-by}

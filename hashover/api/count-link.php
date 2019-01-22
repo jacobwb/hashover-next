@@ -32,7 +32,9 @@ try {
 
 	// Throw exception if the "Latest Comments" API is disabled
 	if ($setup->apiStatus ('count-link') === 'disabled') {
-		throw new \Exception ('This API is not enabled.');
+		throw new \Exception (
+			'This API is not enabled.'
+		);
 	}
 
 	// Instantiate HashOver statistics class
@@ -57,28 +59,24 @@ try {
 	$javascript->registerFile ('script.js');
 
 	// Register backend path setter
-	$javascript->registerFile ('backendpath.js');
+	$javascript->registerFile ('backendpath.js', array (
+		'dependencies' => array (
+			'rootpath.js'
+		)
+	));
 
-	// Register page URL getter method
-	$javascript->registerFile ('geturl.js');
-
-	// Register page title getter method
-	$javascript->registerFile ('gettitle.js');
-
-	// Register backend queries getter method
-	$javascript->registerFile ('getbackendqueries.js');
-
-	// Register element creation methods
-	$javascript->registerFile ('elements.js');
+	// Register HashOver ready state detection method
+	$javascript->registerFile ('onready.js');
 
 	// Register AJAX-related methods
-	$javascript->registerFile ('ajax.js');
+	$javascript->registerFile ('ajax.js', array (
+		'dependencies' => array (
+			'createelement.js'
+		)
+	));
 
 	// Change back to count link frontend directory
 	$javascript->changeDirectory ('api/frontends/count-link');
-
-	// Register initialization
-	$javascript->registerFile ('processlinks.js');
 
 	// Register automatic instantiation code
 	$javascript->registerFile ('instantiate.js', array (
@@ -98,7 +96,5 @@ try {
 	echo $statistics->executionEnd ();
 
 } catch (\Exception $error) {
-	$misc = new Misc ('javascript');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'javascript');
 }

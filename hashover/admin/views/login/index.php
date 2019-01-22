@@ -17,25 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Redirects the user back to where they came from
-function redirect ($url = '')
-{
-	// Check if we're redirecting to a specific URL
-	if (!empty ($url)) {
-		// If so, use it
-		header ('Location: ' . $url);
-	} else {
-		// If not, check if there is a redirect specified
-		if (!empty ($_GET['redirect'])) {
-			// If so, use it
-			header ('Location: ' . $_GET['redirect']);
-		} else {
-			// If not, redirect to moderation
-			header ('Location: ../moderation/');
-		}
-	}
-}
-
 try {
 	// View setup
 	require (realpath ('../view-setup.php'));
@@ -44,6 +25,18 @@ try {
 	if (!empty ($_POST['name']) and !empty ($_POST['password'])) {
 		// If so, attempt to log them in
 		$hashover->login->setLogin ();
+
+		// Check if user is admin
+		if ($hashover->login->isAdmin () === true) {
+			// If so, login as admin
+			$hashover->login->adminLogin ();
+		} else {
+			// If not, logout
+			$hashover->login->clearLogin ();
+
+			// Sleep 5 seconds
+			sleep (5);
+		}
 
 		// And redirect user to desired view
 		redirect ();
@@ -58,19 +51,13 @@ try {
 		redirect ($hashover->setup->getHttpPath ('admin'));
 	}
 
-	// Optional fields locale
-	$optional = mb_strtolower ($hashover->locale->text['optional']);
-	$optional = ' (' .$optional  . ')';
-
 	// Template data
 	$template = array (
 		'title'		=> $hashover->locale->text['login'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
-		'sub-title'	=> 'You must be logged as admin',
+		'sub-title'	=> $hashover->locale->text['admin-required'],
 		'name'		=> $hashover->locale->text['name'],
 		'password'	=> $hashover->locale->text['password'],
-		'email'		=> $hashover->locale->text['email'] . $optional,
-		'website'	=> $hashover->locale->text['website'] . $optional,
 		'login'		=> $hashover->locale->text['login']
 	);
 
@@ -78,7 +65,5 @@ try {
 	echo $hashover->templater->parseTemplate ('login.html', $template);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('php');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage ());
 }

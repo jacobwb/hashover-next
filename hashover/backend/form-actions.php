@@ -33,9 +33,17 @@ if (isset ($_GET['jsonp'])) {
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ($mode);
+
+	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');
+
+	// Set page title from POST/GET data
 	$hashover->setup->setPageTitle ('request');
+
+	// Set thread name from POST/GET data
 	$hashover->setup->setThreadName ('request');
+
+	// Initiate and finalize comment processing
 	$hashover->initiate ();
 	$hashover->finalize ();
 
@@ -102,13 +110,11 @@ try {
 		$parsed = $hashover->commentParser->parse ($comment, $file, $key_parts);
 
 		// Return JSON or JSONP function call
-		echo $hashover->misc->jsonData (array (
+		echo Misc::jsonData (array (
 			'comment' => $parsed,
 			'count' => $hashover->getCommentCount ()
 		));
 	}
 } catch (\Exception $error) {
-	$misc = new Misc ($mode);
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), $mode);
 }

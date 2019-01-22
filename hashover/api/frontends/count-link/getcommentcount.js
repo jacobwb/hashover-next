@@ -5,10 +5,10 @@ HashOverCountLink.prototype.getCommentCount = function (link, options)
 	var hashover = this;
 
 	// Get backend queries
-	var queries = HashOverConstructor.getBackendQueries (options);
+	var queries = ['url=' + options.url];
 
 	// Backend request path
-	var requestPath = HashOverConstructor.backendPath + '/count-link-ajax.php';
+	var requestPath = HashOverCountLink.backendPath + '/count-link-ajax.php';
 
 	// Handle backend request
 	this.ajax ('POST', requestPath, queries, function (json) {

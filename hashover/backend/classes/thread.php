@@ -19,7 +19,8 @@
 
 class Thread
 {
-	public $setup;
+	protected $setup;
+
 	public $data;
 	public $commentList = array ();
 	public $threadCount = array ();
@@ -31,11 +32,14 @@ class Thread
 
 	public function __construct (Setup $setup)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
 
-		// Instantiate necessary class data format class
+		// Name of data format class to instantiate
 		$data_class = 'HashOver\\Parse' . strtoupper ($setup->dataFormat);
-		$this->data = new $data_class ($setup);
+
+		// Instantiate data format class
+		$this->data = new $data_class ($setup, $this);
 	}
 
 	// Queries a list of comments
@@ -44,9 +48,12 @@ class Thread
 		// Query a list of comments
 		$comment_list = $this->data->query ();
 
-		// Organize comments if comments could be queried
-		if ($comment_list !== false) {
+		// Check if comments could be queried
+		if (!empty ($comment_list)) {
+			// If so, set comments as comment list
 			$this->commentList = $comment_list;
+
+			// And organize comments
 			$this->organizeComments ();
 		}
 	}
@@ -54,38 +61,50 @@ class Thread
 	// Counts a comment
 	public function countComment ($comment)
 	{
-		// Count replies
+		// Check if comment has replies
 		if (strpos ($comment, '-') !== false) {
+			// If so, split comment by dashes
 			$file_parts = explode ('-', $comment);
+
+			// Get parent comment
 			$thread = basename ($comment, '-' . end ($file_parts));
 
+			// Check if parent comment reply count exists
 			if (isset ($this->threadCount[$thread])) {
+				// If so, increase parent comment reply count
 				$this->threadCount[$thread]++;
 			} else {
+				// If not, create parent comment reply count
 				$this->threadCount[$thread] = 1;
 			}
 		} else {
-			// Count top level comments
+			// If not, increase primary comment count
 			$this->primaryCount++;
 		}
 
-		// Count replies
+		// Check if thread comment count exists
 		if (isset ($this->threadCount[$comment])) {
+			// If so, increase thread comment count
 			$this->threadCount[$comment]++;
 		} else {
+			// If not, create thread comment count
 			$this->threadCount[$comment] = 1;
 		}
 
-		// Count all other comments
+		// Increase total comment count
 		$this->totalCount++;
 	}
 
 	// Explode a string, cast substrings to integers
 	protected function intExplode ($delimiter, $string)
 	{
-		$parts = explode ($delimiter, $string);
+		// Initial integers
 		$ints = array ();
 
+		// Split string by delimiter
+		$parts = explode ($delimiter, $string);
+
+		// Cast all parts of string to integers
 		for ($i = 0, $il = count ($parts); $i < $il; $i++) {
 			$ints[] = (int)($parts[$i]);
 		}
@@ -94,7 +113,7 @@ class Thread
 	}
 
 	// Counts a deleted comment
-	public function countDeleted ($comment)
+	protected function countDeleted ($comment)
 	{
 		// Count deleted replies
 		if (strpos ($comment, '-') === false) {
@@ -155,8 +174,9 @@ class Thread
 	}
 
 	// Organize comments
-	public function organizeComments ()
+	protected function organizeComments ()
 	{
+		// Run through comment list
 		foreach ($this->commentList as $key) {
 			// Check for missing comments
 			$this->findMissingComments ($key);
@@ -170,21 +190,18 @@ class Thread
 	}
 
 	// Read comments
-	public function read ($start = 0, $end = null)
+	public function read ($end = null)
 	{
+		// Initial data to return
 		$comments = array ();
-		$limit_count = 0;
-		$allowed_count = 0;
 
+		// Number of comments successfully added to return data
+		$added_count = 0;
+
+		// Run through each comment
 		foreach ($this->commentList as $i => $key) {
-			// Skip until starting point is reached
-			if ($limit_count < $start) {
-				$limit_count++;
-				continue;
-			}
-
 			// Stop at end point
-			if ($end !== null and $allowed_count >= $end) {
+			if ($end !== null and $added_count >= $end) {
 				break;
 			}
 
@@ -202,25 +219,29 @@ class Thread
 				// If so, add the comment to output
 				$comments[$i] = $comment;
 
-				// And count deleted status comments
-				if (!empty ($comment['status'])
-				    and $comment['status'] === 'deleted')
-				{
+				// Count deleted status comments
+				if (Misc::getArrayItem ($comment, 'status') === 'deleted') {
 					$this->countDeleted ($key);
 				}
+
+				// And increase added count
+				$added_count++;
 			} else {
 				// If not, set comment status as a read error
 				$comments[$i]['status'] = 'read-error';
-				continue;
 			}
-
-			$allowed_count++;
 		}
 
 		return $comments;
 	}
 
-	// Queries a list of comment threads
+	// Queries an array of websites
+	public function queryWebsites ()
+	{
+		return $this->data->queryWebsites ();
+	}
+
+	// Queries an array of comment threads
 	public function queryThreads ()
 	{
 		return $this->data->queryThreads ();

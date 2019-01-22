@@ -4,10 +4,10 @@ HashOverConstructor.prototype.strings = {
 	specifiers: /%([cdfs])/g,
 
 	// Curly-brace variable regular expression
-	curlyBraces: /(\{\{.+?\}\})/g,
+	curlyBraces: /(\{.+?\})/g,
 
 	// Curly-brace variable name regular expression
-	curlyNames: /\{\{(.+?)\}\}/,
+	curlyNames: /\{(.+?)\}/,
 
 	// Simplistic JavaScript port of sprintf function in C
 	sprintf: function (string, args)
@@ -19,7 +19,7 @@ HashOverConstructor.prototype.strings = {
 		// Replace specifiers with array items
 		return string.replace (this.specifiers, function (match, type)
 		{
-			// Return the original specifier if there isn't an item for it
+			// Return original specifier if there isn't an item for it
 			if (args[count] === undefined) {
 				return match;
 			}
@@ -28,7 +28,7 @@ HashOverConstructor.prototype.strings = {
 			switch (type) {
 				// Single characters
 				case 'c': {
-					// Use only the first character
+					// Use only first character
 					return args[count++][0];
 				}
 
@@ -53,52 +53,87 @@ HashOverConstructor.prototype.strings = {
 		});
 	},
 
-	templatify: function (text)
+	// Converts a string containing {curly} variables into an array
+	templatifier: function (text)
 	{
+		// Split string by curly variables
 		var template = text.split (this.curlyBraces);
+
+		// Initial variable indexes
 		var indexes = {};
 
-		for (var i = 0, il = template.length, curly, name; i < il; i++) {
-			curly = template[i].match (this.curlyNames);
+		// Run through template
+		for (var i = 0, il = template.length; i < il; i++) {
+			// Get curly variable names
+			var curly = template[i].match (this.curlyNames);
 
-			if (curly && curly.length > 0) {
-				name = curly[1];
-				template[i] = '';
+			// Check if any curly variables exist
+			if (curly !== null && curly[1] !== undefined) {
+				// If so, store the name
+				var name = curly[1];
 
+				// Check if variable was previously encountered
 				if (indexes[name] !== undefined) {
+					// If so, add index to existing indexes
 					indexes[name].push (i);
 				} else {
+					// If not, create indexes
 					indexes[name] = [ i ];
 				}
+
+				// And remove curly variable from template
+				template[i] = '';
 			}
 		}
 
+		// Return template and indexes
 		return {
-			text: template,
+			template: template,
 			indexes: indexes
 		}
+	},
+
+	// Templatify UI HTML from backend
+	templatify: function (ui)
+	{
+		// Initial template
+		var template = {};
+
+		// Templatify each UI HTML string
+		for (var name in ui) {
+			if (ui.hasOwnProperty (name) === true) {
+				template[name] = this.templatifier (ui[name]);
+			}
+		}
+
+		return template;
 	},
 
 	// Parses an HTML template
 	parseTemplate: function (template, data)
 	{
-		if (!template || !template.indexes || !template.text) {
-			return;
-		}
+		// Clone template
+		var textClone = template.template.slice ();
 
-		var textClone = template.text.slice ();
-
+		// Run through template data
 		for (var name in data) {
-			if (template.indexes[name] === undefined) {
+			// Store indexes
+			var indexes = template.indexes[name];
+
+			// Do nothing if no indexes exist for data
+			if (indexes === undefined) {
 				continue;
 			}
 
-			for (var i = 0, il = template.indexes[name].length, index; i < il; i++) {
-				index = template.indexes[name][i];
-				textClone[index] = data[name];
+			// Otherwise, add data at each index of template
+			for (var i = 0, il = indexes.length; i < il; i++) {
+				textClone[(indexes[i])] = data[name];
 			}
 		}
 
-		return textClone.join ('');
+		// Merge template clone to string
+		var text = textClone.join ('');
+
+		return text;
 	}
 };

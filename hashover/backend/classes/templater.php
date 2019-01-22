@@ -19,105 +19,82 @@
 
 class Templater
 {
-	public $mode;
-	public $setup;
-	public $template;
+	// Setup information
+	protected $setup;
 
-	protected $curlyRegex = '/\{([a-z]+):([a-z_-]+)\}/i';
-	protected $newlineSearch = array ("\r\n", "\r", "\n");
-	protected $newlineReplace = array ("\n", "\n", PHP_EOL);
-
-	public function __construct ($mode = 'php', Setup $setup)
+	// Store arguments passed during instantiation
+	public function __construct (Setup $setup)
 	{
-		$this->mode = $mode;
 		$this->setup = $setup;
 	}
 
+	// Reads a file
 	public function loadFile ($file)
 	{
 		// Attempt to read template HTML file
-		$theme_html = @file_get_contents ($file);
+		$content = @file_get_contents ($file);
 
 		// Check if template file read successfully
-		if ($theme_html !== false) {
+		if ($content !== false) {
 			// If so, return trimmed HTML template
-			return trim ($theme_html);
+			return trim ($content);
 		} else {
 			// If not, throw exception
-			throw new \Exception ('Failed to load template file.');
+			throw new \Exception (
+				'Failed to load template file.'
+			);
 		}
 	}
 
-	protected function curlyVariable ($key)
-	{
-		return '{{' . $key . '}}';
-	}
-
-	protected function fromTemplate ($key)
-	{
-		if ($this->mode !== 'php') {
-			return $this->curlyVariable ($key);
-		}
-
-		if (!empty ($this->template[$key])) {
-			return $this->template[$key];
-		}
-
-		return '';
-	}
-
-	protected function placeholder ($id)
-	{
-		$span_id  = 'hashover-placeholder-' . $id;
-		$span_id .= '-' . $this->fromTemplate ('permalink');
-
-		$placeholder = new HTMLTag ('span', array (
-			'id' => $span_id
-		), false);
-
-		if (!empty ($this->template[$id])) {
-			$placeholder->innerHTML ($this->template[$id]);
-		}
-
-		return $placeholder->asHTML ();
-	}
-
-	protected function parser ($var)
-	{
-		if (empty ($var[1]) or empty ($var[2])) {
-			return '';
-		}
-
-		switch ($var[1]) {
-			case 'hashover': {
-				return $this->fromTemplate ($var[2]);
-			}
-
-			case 'placeholder': {
-				return $this->placeholder ($var[2]);
-			}
-		}
-	}
-
+	// Parses file from any location
 	public function parseTemplate ($file, array $template = array ())
 	{
-		$this->template = $template;
+		// Read template file
 		$data = $this->loadFile ($file);
-		$template = preg_replace_callback ($this->curlyRegex, 'self::parser', $data);
-		$template = str_replace ($this->newlineSearch, $this->newlineReplace, $template);
+
+		// Local callback for preg_replace
+		$parser = function ($grp) use (&$template)
+		{
+			// Store match for pretty code
+			$key = $grp[1];
+
+			// Return data from template if it exists
+			if (!empty ($template[$key])) {
+				return $template[$key];
+			}
+
+			// Otherwise, return nothing
+			return '';
+		};
+
+		// Curly brace variable regular expression
+		$curly_regex = '/\{([a-z_-]+)\}/i';
+
+		// Convert string to OS-specific line endings
+		$template = preg_replace ('/\r\n|\r|\n/', PHP_EOL, $template);
+
+		// Replace curly brace variable with data from template
+		$template = preg_replace_callback ($curly_regex, $parser, $data);
+
+		// Remove blank lines
+		$template = preg_replace ('/^[\s\n]+$/m', '', $template);
 
 		return $template;
 	}
 
+	// Parses file from the theme directory
 	public function parseTheme ($file, array $template = array ())
 	{
 		// Get the file path for the configured theme
 		$path = $this->setup->getThemePath ($file, false);
 		$path = $this->setup->getAbsolutePath ($path);
 
-		// Parse the theme HTML as template
-		$theme = $this->parseTemplate ($path, $template);
+		// Parse the theme file as template
+		if (!empty ($template)) {
+			return $this->parseTemplate ($path, $template);
+		}
 
-		return $theme;
+		// Otherwise, return theme file as-is
+		return $this->loadFile ($path);
 	}
 }

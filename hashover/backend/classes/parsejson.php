@@ -20,20 +20,22 @@
 // Functions for reading and writing JSON files
 class ParseJSON extends CommentFiles
 {
-	public function __construct (Setup $setup)
+	public function __construct (Setup $setup, Thread $thread)
 	{
-		parent::__construct ($setup);
+		// Construct parent class
+		parent::__construct ($setup, $thread);
 
 		// Throw exception if the JSON extension isn't loaded
 		$setup->extensionsLoaded (array ('json'));
 	}
 
-	public function query (array $files = array (), $auto = true)
+	// Returns an array of comment files
+	public function query ()
 	{
-		// Return array of files
-		return $this->loadFiles ('json', $files, $auto);
+		return $this->loadFiles ('json');
 	}
 
+	// Reads a comment file
 	public function read ($file, $thread = 'auto')
 	{
 		// Get comment file path
@@ -45,6 +47,7 @@ class ParseJSON extends CommentFiles
 		return $json;
 	}
 
+	// Saves a comment file
 	public function save ($file, array $contents, $editing = false, $thread = 'auto')
 	{
 		// Get comment file path
@@ -55,15 +58,19 @@ class ParseJSON extends CommentFiles
 			return false;
 		}
 
-		// Save the JSON data to the comment file
-		if ($this->saveJSON ($file, $contents)) {
+		// Attempt to write file
+		$saved = $this->saveJSON ($file, $contents);
+
+		// Change file permission if file saved successfully
+		if ($saved !== false) {
 			@chmod ($file, 0600);
-			return true;
 		}
 
-		return false;
+		// Return status of file write
+		return $saved;
 	}
 
+	// Deletes a comment file
 	public function delete ($file, $hard_unlink = false)
 	{
 		// Actually delete the comment file

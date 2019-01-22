@@ -95,7 +95,6 @@ function get_json_response ($hashover, $key, $action)
 	$data = array ();
 
 	// Store references to some long variables
-	$storageMode =& $hashover->thread->data->storageMode;
 	$thread = $hashover->setup->threadName;
 
 	// Sanitize file path
@@ -149,28 +148,32 @@ try {
 	// Instanciate HashOver class
 	$hashover = new \HashOver ('json');
 
-	// Get required POST/GET data
+	// Get page URL from POST/GET data
 	$url = $hashover->setup->getRequest ('url', null);
+
+	// Get comment from POST/GET data
 	$key = $hashover->setup->getRequest ('comment', null);
+
+	// Get action from POST/GET data
 	$action = $hashover->setup->getRequest ('action', null);
 
 	// Return error if we're missing necessary post data
-	if (($url and $key and $action) === null) {
+	if ($url === null or $key === null or $action === null) {
 		return array ('error' => 'No action.');
 	}
 
-	// Continue HashOver setup
+	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ($url);
+
+	// Initiate comment processing
 	$hashover->initiate ();
 
 	// Display JSON response
 	$data = get_json_response ($hashover, $key, $action);
 
 	// Return JSON or JSONP function call
-	echo $hashover->misc->jsonData ($data);
+	echo Misc::jsonData ($data);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('json');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'json');
 }

@@ -17,27 +17,28 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class WriteComments extends PostData
+class WriteComments extends Secrets
 {
 	protected $setup;
-	protected $encryption;
 	protected $mode;
 	protected $thread;
+	protected $postData;
 	protected $locale;
 	protected $cookies;
 	protected $login;
-	protected $misc;
 	protected $spamCheck;
 	protected $metadata;
-	protected $headers;
-	protected $userHeaders;
-	protected $kickbackURL;
+	protected $crypto;
+	protected $avatar;
+	protected $templater;
+	protected $mail;
+	protected $referer;
 	protected $name = '';
 	protected $password = '';
 	protected $loginHash = '';
 	protected $email = '';
 	protected $website = '';
-	protected $commentData = array ();
+	protected $data = array ();
 	protected $urls = array ();
 
 	// Fake inputs used as spam trap fields
@@ -94,16 +95,22 @@ class WriteComments extends PostData
 	);
 
 	// HTML tags to automatically close
-	protected $closeTags = array (
+	public $closeTags = array (
 		'b',
-		'i',
-		'u',
-		's',
-		'li',
-		'pre',
+		'big',
 		'blockquote',
-		'ul',
-		'ol'
+		'em',
+		'i',
+		'li',
+		'ol',
+		'pre',
+		's',
+		'small',
+		'strong',
+		'sub',
+		'sup',
+		'u',
+		'ul'
 	);
 
 	// Unprotected fields to update when editing a comment
@@ -132,39 +139,48 @@ class WriteComments extends PostData
 
 	public function __construct (Setup $setup, Thread $thread)
 	{
-		parent::__construct ();
-
+		// Store parameters as properties
 		$this->setup = $setup;
-		$this->encryption = $setup->encryption;
 		$this->mode = $setup->usage['mode'];
 		$this->thread = $thread;
+
+		// Instantiate various classes
+		$this->postData = new PostData ();
 		$this->locale = new Locale ($setup);
 		$this->cookies = new Cookies ($setup);
 		$this->login = new Login ($setup);
-		$this->misc = new Misc ($this->mode);
 		$this->spamCheck = new SpamCheck ($setup);
-		$this->metadata = new Metadata ($setup, $thread);
+		$this->crypto = new Crypto ();
+		$this->avatars = new Avatars ($setup);
+		$this->templater = new Templater ($setup);
+		$this->mail = new Email ($setup);
 
-		// Default email headers
-		$this->setHeaders ($setup->noreplyEmail);
+		// Setup initial login data
+		$this->setupLogin ();
 
-		// Check if we have an HTTP referer
-		if (!empty ($_SERVER['HTTP_REFERER'])) {
+		// Get regular expression escaped admin path
+		$admin_path = preg_quote ($this->setup->getHttpPath ('admin'), '/');
+
+		// Attempt to get referer
+		$referer = Misc::getArrayItem ($_SERVER, 'HTTP_REFERER');
+
+		// Check if we're coming from an admin page
+		if (preg_match ('/' . $admin_path . '/i', $referer)) {
 			// If so, use it as the kickback URL
-			$this->kickbackURL = $_SERVER['HTTP_REFERER'];
+			$this->referer = $_SERVER['HTTP_REFERER'];
 		} else {
-			// Check if posting from remote domain
-			if ($this->remoteAccess === true) {
+			// If not, check if posting from remote domain
+			if ($this->postData->remoteAccess === true) {
 				// If so, use absolute path
-				$this->kickbackURL = $setup->pageURL;
+				$this->referer = $setup->pageURL;
 			} else {
 				// If not, use relative path
-				$this->kickbackURL = $setup->filePath;
+				$this->referer = $setup->filePath;
 			}
 
 			// Add URL queries to kickback URL
-			if (!empty ($setup->URLQueries)) {
-				$this->kickbackURL .= '?' . $setup->URLQueries;
+			if (!empty ($setup->urlQueries)) {
+				$this->referer .= '?' . $setup->urlQueries;
 			}
 		}
 	}
@@ -175,45 +191,37 @@ class WriteComments extends PostData
 		return htmlentities ($value, ENT_COMPAT, 'UTF-8', false);
 	}
 
-	// Set mail headers
-	protected function setHeaders ($email, $user = true)
+	// Sets header to redirect user back to the previous page
+	protected function kickback ($anchor = 'comments')
 	{
-		$this->headers  = 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
-		$this->headers .= 'From: ' . $email . "\r\n";
-		$this->headers .= 'Reply-To: ' . $email;
-
-		// Set commenter's headers to new value as well
-		if ($user === true) {
-			$this->userHeaders = $this->headers;
+		if ($this->postData->viaAJAX === false) {
+			header ('Location: ' . $this->referer . '#' . $anchor);
 		}
 	}
 
-	protected function kickback ($text = '', $error = false, $anchor = 'comments')
+	// Displays message to visitor, via AJAX or redirect
+	protected function displayMessage ($text, $error = false)
 	{
-		$message_type = ($error) ? 'error' : 'message';
+		// Message type as string
+		$message_type = ($error === true) ? 'error' : 'message';
 
-		// Return error as JSON if request is AJAX
-		if ($this->viaAJAX === true) {
-			if (!empty ($text)) {
-				echo $this->misc->jsonData (array (
-					'message' => $text,
-					'type' => $message_type
-				));
-			}
-
-			return;
-		}
-
-		// Set cookie to specified message or error
-		if (!empty ($text)) {
+		// Check if request is AJAX
+		if ($this->postData->viaAJAX === true) {
+			// If so, display JSON for JavaScript frontend
+			echo Misc::jsonData (array (
+				'message' => $text,
+				'type' => $message_type
+			));
+		} else {
+			// If not, set cookie to specified message
 			$this->cookies->set ($message_type, $text);
-		}
 
-		// Set header to redirect user to previous page
-		header ('Location: ' . $this->kickbackURL . '#' . $anchor);
+			// And redirect user to previous page
+			$this->kickback ('hashover-form-section');
+		}
 	}
 
-	// Confirm that attempted actions are to existing comments
+	// Confirms attempted actions are to existing comments
 	protected function verifyFile ($file)
 	{
 		// Attempt to get file
@@ -222,7 +230,7 @@ class WriteComments extends PostData
 		// Check if file is set
 		if ($comment_file !== false) {
 			// Cast file to string
-			$comment_file =(string) ($comment_file);
+			$comment_file = (string)($comment_file);
 
 			// Return true if POST file is in comment list
 			if (in_array ($comment_file, $this->thread->commentList, true)) {
@@ -230,21 +238,23 @@ class WriteComments extends PostData
 			}
 
 			// Set cookies to indicate failure
-			if ($this->viaAJAX !== true) {
-				$this->cookies->setFailedOn ('comment', $this->replyTo, false);
+			if ($this->postData->viaAJAX !== true) {
+				$this->cookies->setFailedOn ('comment', $this->postData->replyTo, false);
 			}
 		}
 
 		// Throw exception as error message
-		throw new \Exception ($this->locale->text['comment-needed']);
+		throw new \Exception (
+			$this->locale->text['comment-needed']
+		);
 	}
 
+	// Checks user IP against spam databases
 	protected function checkForSpam ()
 	{
-		// Check trap fields
+		// Block user if they fill any trap fields
 		foreach ($this->trapFields as $name) {
 			if ($this->setup->getRequest ($name)) {
-				// Block for filing trap fields
 				throw new \Exception ('You are blocked!');
 			}
 		}
@@ -272,9 +282,30 @@ class WriteComments extends PostData
 		return true;
 	}
 
-	// Set cookies
+	// Checks login requirements
+	protected function loginRequirements ()
+	{
+		// Check if a login is required
+		if ($this->setup->requiresLogin === true) {
+			// If so, return false if user is not logged in
+			if ($this->login->userIsLoggedIn === false) {
+				return false;
+			}
+		}
+
+		// Otherwise, login requirements are met
+		return true;
+	}
+
+	// Sets cookies
 	public function login ($kickback = true)
 	{
+		// Check login requirements
+		if ($this->loginRequirements () === false) {
+			$this->displayMessage ('Normal login not allowed!', true);
+			return false;
+		}
+
 		try {
 			// Log the user in
 			if ($this->setup->allowsLogin !== false) {
@@ -283,13 +314,12 @@ class WriteComments extends PostData
 
 			// Kick visitor back if told to
 			if ($kickback !== false) {
-				$this->kickback ($this->locale->text['logged-in']);
+				$this->displayMessage ($this->locale->text['logged-in']);
 			}
-
 		} catch (\Exception $error) {
 			// Kick visitor back with exception if told to
 			if ($kickback !== false) {
-				$this->kickback ($error->getMessage (), true);
+				$this->displayMessage ($error->getMessage (), true);
 				return true;
 			}
 
@@ -300,16 +330,26 @@ class WriteComments extends PostData
 		return true;
 	}
 
-	// Expire cookies
+	// Expires cookies
 	public function logout ()
 	{
 		// Log the user out
 		$this->login->clearLogin ();
 
 		// Kick visitor back
-		$this->kickback ($this->locale->text['logged-out']);
+		$this->displayMessage ($this->locale->text['logged-out']);
 
 		return true;
+	}
+
+	// Sets up necessary login data
+	protected function setupLogin ()
+	{
+		$this->name = $this->encodeHTML ($this->login->name);
+		$this->password = $this->encodeHTML ($this->login->password);
+		$this->loginHash = $this->encodeHTML ($this->login->loginHash);
+		$this->email = $this->encodeHTML ($this->login->email);
+		$this->website = $this->encodeHTML ($this->login->website);
 	}
 
 	// User comment authentication
@@ -318,60 +358,81 @@ class WriteComments extends PostData
 		// Verify file exists
 		$file = $this->verifyFile ('file');
 
+		// Read original comment
+		$comment = $this->thread->data->read ($file);
+
 		// Authentication data
 		$auth = array (
 			// Assume no authorization by default
 			'authorized' => false,
 			'user-owned' => false,
 
-			// Read original comment
-			'comment' => $this->thread->data->read ($file)
+			// Original comment
+			'comment' => $comment
 		);
 
 		// Return authorization data if we fail to get comment
-		if ($auth['comment'] === false) {
+		if ($comment === false) {
 			return $auth;
 		}
 
 		// Check if we have both required passwords
-		if (!empty ($this->postData['password'])
-		    and !empty ($auth['comment']['password']))
-		{
+		if (!empty ($this->postData->data['password']) and !empty ($comment['password'])) {
 			// If so, get the user input password
-			$user_password = $this->encodeHTML ($this->postData['password']);
+			$password = $this->encodeHTML ($this->postData->data['password']);
 
 			// Get the comment password
-			$comment_password = $auth['comment']['password'];
+			$comment_password = $comment['password'];
 
 			// Attempt to compare the two passwords
-			$auth['user-owned'] = $this->encryption->verifyHash ($user_password, $comment_password);
+			$match = $this->crypto->verifyHash ($password, $comment_password);
+
+			// Authenticate if the passwords match
+			if ($match === true) {
+				$auth['user-owned'] = true;
+				$auth['authorized'] = true;
+			}
 		}
 
-		// Set general authorization state
-		$auth['authorized'] = ($auth['user-owned'] or $this->login->userIsAdmin);
+		// Admin is always authorized after strict verification
+		if ($this->login->verifyAdmin ($this->password) === true) {
+			$auth['authorized'] = true;
+		}
 
 		return $auth;
 	}
 
-	// Delete comment
+	// Deletes comment
 	public function deleteComment ()
 	{
+		// Check login requirements
+		if ($this->loginRequirements () === false) {
+			$this->displayMessage ('You must be logged in to delete a comment!', true);
+			return false;
+		}
+
 		try {
 			// Authenticate user password
 			$auth = $this->commentAuthentication ();
 
 			// Check if user is authorized
 			if ($auth['authorized'] === true) {
+				// If so, strictly verify admin login
+				$user_is_admin = $this->login->verifyAdmin ($this->password);
+
+				// Unlink comment file indicator
 				$user_deletions_unlink = ($this->setup->userDeletionsUnlink === true);
-				$user_is_admin = ($this->login->userIsAdmin === true);
 				$unlink_comment = ($user_deletions_unlink or $user_is_admin);
 
-				// If so, delete the comment file
-				if ($this->thread->data->delete ($this->file, $unlink_comment)) {
-					$this->metadata->removeFromLatest ($this->file);
+				// Attempt to delete comment file
+				if ($this->thread->data->delete ($this->postData->file, $unlink_comment)) {
+					// If successful, remove comment from latest comments metadata
+					if ($unlink_comment === true) {
+						$this->thread->data->removeFromLatest ($this->postData->file);
+					}
 
 					// And kick visitor back with comment deletion message
-					$this->kickback ($this->locale->text['comment-deleted']);
+					$this->displayMessage ($this->locale->text['comment-deleted']);
 
 					return true;
 				}
@@ -381,18 +442,17 @@ class WriteComments extends PostData
 			sleep (5);
 
 			// Then kick visitor back with comment posting error
-			$this->kickback ($this->locale->text['post-fail'], true);
+			$this->displayMessage ($this->locale->text['post-fail'], true);
 
 		} catch (\Exception $error) {
-			// On exception kick visitor back with error
-			$this->kickback ($error->getMessage (), true);
+			$this->displayMessage ($error->getMessage (), true);
 		}
 
 		return false;
 	}
 
 	// Closes all allowed HTML tags
-	protected function tagCloser ($tags, $html)
+	public function tagCloser ($tags, $html)
 	{
 		for ($tc = 0, $tcl = count ($tags); $tc < $tcl; $tc++) {
 			// Count opening and closing tags
@@ -418,7 +478,7 @@ class WriteComments extends PostData
 		return $html;
 	}
 
-	// Extract URLs for later injection
+	// Extracts URLs for later injection
 	protected function urlExtractor ($groups)
 	{
 		$link_number = count ($this->urls);
@@ -427,17 +487,74 @@ class WriteComments extends PostData
 		return 'URL[' . $link_number . ']';
 	}
 
+	// Escapes all HTML tags excluding allowed tags
+	public function htmlSelectiveEscape ($code)
+	{
+		// Escape all HTML tags
+		$code = str_ireplace ($this->dataSearch, $this->dataReplace, $code);
+
+		// Unescape allowed HTML tags
+		foreach ($this->htmlTagSearch as $tag) {
+			$escaped_tags = array ('&lt;' . $tag . '&gt;', '&lt;/' . $tag . '&gt;');
+			$text_tags = array ('<' . $tag . '>', '</' . $tag . '>');
+			$code = str_ireplace ($escaped_tags, $text_tags, $code);
+		}
+
+		return $code;
+	}
+
 	// Escapes HTML inside of <code> tags and markdown code blocks
 	protected function codeEscaper ($groups)
 	{
 		return $groups[1] . htmlspecialchars ($groups[2], null, null, false) . $groups[3];
 	}
 
-	// Setup and test for necessary comment data
+	// Sets up and tests for necessary comment data
 	protected function setupCommentData ($editing = false)
 	{
-		// Default status
-		$new_status = 'approved';
+		// Post fails when comment is empty
+		if (empty ($this->postData->data['comment'])) {
+			// Set cookies to indicate failure
+			if ($this->postData->viaAJAX !== true) {
+				$this->cookies->setFailedOn ('comment', $this->postData->replyTo);
+			}
+
+			// Throw exception about reply requirement
+			if (!empty ($this->postData->replyTo)) {
+				throw new \Exception (
+					$this->locale->text['reply-needed']
+				);
+			}
+
+			// Throw exception about comment requirement
+			throw new \Exception (
+				$this->locale->text['comment-needed']
+			);
+		}
+
+		// Strictly verify if the user is logged in as admin
+		if ($this->login->verifyAdmin ($this->password) === true) {
+			// If so, check if status is set in POST data is set
+			if (!empty ($this->postData->data['status'])) {
+				// If so, use status if it is allowed
+				if (in_array ($this->postData->data['status'], $this->statuses, true)) {
+					$this->data['status'] = $this->postData->data['status'];
+				}
+			}
+		} else {
+			// Check if setup is for a comment edit
+			if ($editing === true) {
+				// If so, set status to "pending" if moderation of user edits is enabled
+				if ($this->setup->pendsUserEdits === true) {
+					$this->data['status'] = 'pending';
+				}
+			} else {
+				// If not, set status to "pending" if moderation is enabled
+				if ($this->setup->usesModeration === true) {
+					$this->data['status'] = 'pending';
+				}
+			}
+		}
 
 		// Check if setup is for a comment edit
 		if ($editing === true) {
@@ -451,78 +568,23 @@ class WriteComments extends PostData
 			}
 		}
 
-		// Check if user is admin
-		if ($this->login->userIsAdmin === true) {
-			// If so, check if status is set in POST data is set
-			if (!empty ($this->postData['status'])) {
-				// If so, check if status is allowed
-				if (in_array ($this->postData['status'], $this->statuses, true)) {
-					// If so, use it
-					$this->commentData['status'] = $this->postData['status'];
-				}
-			}
-		} else {
-			// Check if setup is for a comment edit
-			if ($editing === true) {
-				// If so, set status to "pending" if moderation of user edits is enabled
-				if (($this->setup->usesModeration and $this->setup->pendsUserEdits) === true) {
-					$this->commentData['status'] = 'pending';
-				}
-			} else {
-				// If not, set status to "pending" if moderation is enabled
-				if ($this->setup->usesModeration === true) {
-					$this->commentData['status'] = 'pending';
-				}
-			}
-		}
-
 		// Check if required fields have values
 		$this->login->validateFields ();
 
-		// Post fails when comment is empty
-		if (empty ($this->postData['comment'])) {
-			// Set cookies to indicate failure
-			if ($this->viaAJAX !== true) {
-				$this->cookies->setFailedOn ('comment', $this->replyTo);
-			}
-
-			// Set reply cookie
-			if (!empty ($this->replyTo)) {
-				// Throw exception about reply requirement
-				throw new \Exception ($this->locale->text['reply-needed']);
-			}
-
-			// Throw exception about comment requirement
-			throw new \Exception ($this->locale->text['comment-needed']);
-		}
-
-		// Escape disallowed characters in login information
-		$this->name = $this->encodeHTML ($this->login->name);
-		$this->password = $this->encodeHTML ($this->login->password);
-		$this->loginHash = $this->encodeHTML ($this->login->loginHash);
-		$this->email = $this->encodeHTML ($this->login->email);
-		$this->website = $this->encodeHTML ($this->login->website);
-
-		// Set mail headers to user's e-mail address
-		if (!empty ($this->email)) {
-			$this->setHeaders ($this->email, false);
-		}
+		// Setup login data
+		$this->setupLogin ();
 
 		// Trim leading and trailing white space
-		$clean_code = $this->postData['comment'];
+		$clean_code = $this->postData->data['comment'];
+
+		// URL regular expression
+		$url_regex = '/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+)/i';
 
 		// Extract URLs from comment
-		$clean_code = preg_replace_callback ('/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+)/i', 'self::urlExtractor', $clean_code);
+		$clean_code = preg_replace_callback ($url_regex, 'self::urlExtractor', $clean_code);
 
-		// Escape HTML tags
-		$clean_code = str_ireplace ($this->dataSearch, $this->dataReplace, $clean_code);
-
-		// Unescape allowed HTML tags
-		foreach ($this->htmlTagSearch as $tag) {
-			$escaped_tags = array ('&lt;' . $tag . '&gt;', '&lt;/' . $tag . '&gt;');
-			$text_tags = array ('<' . $tag . '>', '</' . $tag . '>');
-			$clean_code = str_ireplace ($escaped_tags, $text_tags, $clean_code);
-		}
+		// Escape all HTML tags excluding allowed tags
+		$clean_code = $this->htmlSelectiveEscape ($clean_code);
 
 		// Collapse multiple newlines to three maximum
 		$clean_code = preg_replace ('/' . PHP_EOL . '{3,}/', str_repeat (PHP_EOL, 3), $clean_code);
@@ -546,63 +608,91 @@ class WriteComments extends PostData
 		}, $clean_code);
 
 		// Store clean code
-		$this->commentData['body'] = $clean_code;
+		$this->data['body'] = $clean_code;
 
 		// Store posting date
-		$this->commentData['date'] = date (DATE_ISO8601);
+		$this->data['date'] = date (DATE_ISO8601);
 
-		// Check if name is enabled and isn't empty
+		// Store name if one is given
 		if ($this->setup->fieldOptions['name'] !== false) {
-			// Store name
 			if (!empty ($this->name)) {
-				$this->commentData['name'] = $this->name;
+				$this->data['name'] = $this->name;
 			}
 		}
 
 		// Store password and login ID if a password is given
 		if ($this->setup->fieldOptions['password'] !== false) {
 			if (!empty ($this->password)) {
-				$this->commentData['password'] = $this->password;
+				$this->data['password'] = $this->password;
 			}
 		}
 
 		// Store login ID if login hash is non-empty
 		if (!empty ($this->loginHash)) {
-			$this->commentData['login_id'] = $this->loginHash;
+			$this->data['login_id'] = $this->loginHash;
 		}
 
-		// Store e-mail if one is given
+		// Check if the e-mail field is enabled
 		if ($this->setup->fieldOptions['email'] !== false) {
+			// Check if we have an e-mail address
 			if (!empty ($this->email)) {
-				$encryption_keys = $this->encryption->encrypt ($this->email);
-				$this->commentData['email'] = $encryption_keys['encrypted'];
-				$this->commentData['encryption'] = $encryption_keys['keys'];
-				$this->commentData['email_hash'] = md5 (mb_strtolower ($this->email));
+				// Get encryption info for e-mail
+				$encryption_keys = $this->crypto->encrypt ($this->email);
 
-				// Set e-mail subscription if one is given
-				$this->commentData['notifications'] = $this->setup->getRequest ('subscribe') ? 'yes' : 'no';
+				// Set encrypted e-mail address
+				$this->data['email'] = $encryption_keys['encrypted'];
+
+				// Set decryption keys
+				$this->data['encryption'] = $encryption_keys['keys'];
+
+				// Set e-mail hash
+				$this->data['email_hash'] = md5 (mb_strtolower ($this->email));
+
+				// Get subscription status
+				$subscribed = $this->setup->getRequest ('subscribe') ? 'yes' : 'no';
+
+				// And set e-mail subscription if one is given
+				$this->data['notifications'] = $subscribed;
 			}
 		}
 
 		// Store website URL if one is given
 		if ($this->setup->fieldOptions['website'] !== false) {
 			if (!empty ($this->website)) {
-				$this->commentData['website'] = $this->website;
+				$this->data['website'] = $this->website;
 			}
 		}
 
 		// Store user IP address if setup to and one is given
 		if ($this->setup->storesIpAddress === true) {
+			// Check if remote IP address exists
 			if (!empty ($_SERVER['REMOTE_ADDR'])) {
-				$this->commentData['ipaddr'] = $this->misc->makeXSSsafe ($_SERVER['REMOTE_ADDR']);
+				// If so, get XSS safe IP address
+				$ip = Misc::makeXSSsafe ($_SERVER['REMOTE_ADDR']);
+
+				// And set the IP address
+				$this->data['ipaddr'] = $ip;
 			}
 		}
 
 		return true;
 	}
 
+	// Converts a file name (1-2) to a permalink (hashover-c1r1)
+	protected function filePermalink ($file)
+	{
+		return 'hashover-c' . str_replace ('-', 'r', $file);
+	}
+
+	// Edits a comment
 	public function editComment ()
 	{
+		// Check login requirements
+		if ($this->loginRequirements () === false) {
+			$this->displayMessage ('You must be logged in to edit a comment!', true);
+			return false;
+		}
+
 		try {
 			// Authenticate user password
 			$auth = $this->commentAuthentication ();
@@ -621,7 +711,7 @@ class WriteComments extends PostData
 				$this->setupCommentData (true);
 
 				// Add status to editable fields if a new status is set
-				if (!empty ($this->commentData['status'])) {
+				if (!empty ($this->data['status'])) {
 					$update_fields[] = 'status';
 				}
 
@@ -632,26 +722,26 @@ class WriteComments extends PostData
 
 				// Update login information and comment
 				foreach ($update_fields as $key) {
-					if (!empty ($this->commentData[$key])) {
-						$auth['comment'][$key] = $this->commentData[$key];
+					if (!empty ($this->data[$key])) {
+						$auth['comment'][$key] = $this->data[$key];
 					} else {
 						unset ($auth['comment'][$key]);
 					}
 				}
 
 				// Attempt to write edited comment
-				if ($this->thread->data->save ($this->file, $auth['comment'], true)) {
+				if ($this->thread->data->save ($this->postData->file, $auth['comment'], true)) {
 					// If successful, check if request is via AJAX
-					if ($this->viaAJAX === true) {
+					if ($this->postData->viaAJAX === true) {
 						// If so, return the comment data
 						return array (
-							'file' => $this->file,
+							'file' => $this->postData->file,
 							'comment' => $auth['comment']
 						);
 					}
 
 					// Otherwise kick visitor back to posted comment
-					$this->kickback ('', false, 'hashover-c' . str_replace ('-', 'r', $this->file));
+					$this->kickback ($this->filePermalink ($this->postData->file));
 
 					return true;
 				}
@@ -661,115 +751,230 @@ class WriteComments extends PostData
 			sleep (5);
 
 			// Then kick visitor back with comment posting error
-			$this->kickback ($this->locale->text['post-fail'], true);
+			$this->displayMessage ($this->locale->text['post-fail'], true);
 
 		} catch (\Exception $error) {
-			// On exception kick visitor back with error
-			$this->kickback ($error->getMessage (), true);
+			$this->displayMessage ($error->getMessage (), true);
 		}
 
 		return false;
 	}
 
-	protected function indentedWordwrap ($text)
+	// Wordwraps text after adding indentation
+	protected function indentWordwrap ($text)
 	{
-		if (PHP_EOL !== "\r\n") {
-			$text = str_replace (PHP_EOL, "\r\n", $text);
-		}
+		// Line ending styles to convert
+		$styles = array ("\r\n", "\r");
 
-		$text = wordwrap ($text, 66, "\r\n", true);
-		$paragraphs = explode ("\r\n\r\n", $text);
-		$paragraphs = str_replace ("\r\n", "\r\n    ", $paragraphs);
+		// Convert line endings to UNIX-style
+		$text = str_replace ($styles, "\n", $text);
 
+		// Wordwrap the text to 64 characters long
+		$text = wordwrap ($text, 64, "\n", true);
+
+		// Split the text by paragraphs
+		$paragraphs = explode ("\n\n", $text);
+
+		// Indent the first line of each paragraph
 		array_walk ($paragraphs, function (&$paragraph) {
 			$paragraph = '    ' . $paragraph;
 		});
 
-		return implode ("\r\n\r\n", $paragraphs);
+		// Indent all other lines of each paragraph
+		$paragraphs = str_replace ("\n", "\r\n    ", $paragraphs);
+
+		// Convert paragraphs back to a string
+		$text = implode ("\r\n\r\n", $paragraphs);
+
+		return $text;
 	}
 
-	protected function sendNotification ($from, $comment, $reply = '', $permalink, $email, $header)
+	// Converts text paragraphs to HTML paragraph tags
+	protected function paragraphsTags ($text, $indention = '')
 	{
-		$subject  = $this->setup->domain . ' - New ';
-		$subject .= !empty ($reply) ? 'Reply' : 'Comment';
+		// Initial HTML paragraphs
+		$paragraphs = array ();
 
-		// Message body to original poster
-		$message  = 'From ' . $from . ":\r\n\r\n";
-		$message .= $comment . "\r\n\r\n";
-		$message .= 'In reply to:' . "\r\n\r\n" . $reply . "\r\n\r\n" . '----' . "\r\n\r\n";
-		$message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n\r\n";
-		$message .= 'Page: ' . $this->setup->pageURL;
+		// Break comment into paragraphs
+		$ps = preg_split ('/(\r\n|\r|\n){2}/S', $text);
 
-		// Send e-mail
-		mail ($email, $subject, $message, $header);
+		// Wrap each paragraph in <p> tags and place <br> tags after each line
+		for ($i = 0, $il = count ($ps); $i < $il; $i++) {
+			// Place <br> tags after each line
+			$paragraph = preg_replace ('/(\r\n|\r|\n)/S', '<br>\\1', $ps[$i]);
+
+			// Create <p> tag
+			$pTag = new HTMLTag ('p', $paragraph);
+
+			// Add paragraph to HTML
+			$paragraphs[] = $pTag->asHTML ($indention);
+		}
+
+		// Convert paragraphs array to string
+		$html = implode ("\r\n\r\n" . $indention, $paragraphs);
+
+		return $html;
 	}
 
+	// Sends a notification e-mail to another commenter
+	protected function sendNotifications ($file)
+	{
+		// Initial comment data
+		$data = array ();
+
+		// Shorthand
+		$default_name = $this->setup->defaultName;
+
+		// Commenter's name
+		$name = $this->name ?: $default_name;
+
+		// Get comment permalink
+		$permalink = $this->filePermalink ($file);
+
+		// "New Comment" locale string
+		$new_comment = $this->locale->text['new-comment'];
+
+		// E-mail hash for Gravatar or empty for default avatar
+		$hash = Misc::getArrayItem ($this->data, 'email_hash') ?: '';
+
+		// Add avatar to data
+		$data['avatar'] = $this->avatars->getGravatar ($hash, true, 128);
+
+		// Add name of commenter or configurable default name to data
+		$data['name'] = $name;
+
+		// Add domain name to data
+		$data['domain'] = $this->setup->domain;
+
+		// Add plain text comment to data
+		$data['text-comment'] = $this->indentWordwrap ($this->data['body']);
+
+		// Add "From <name>" locale string to data
+		$data['from'] = sprintf ($this->locale->text['from'], $name);
+
+		// Add some locale strings to data
+		$data['comment'] = $this->locale->text['comment'];
+		$data['page'] = $this->locale->text['page'];
+		$data['new-comment'] = $new_comment;
+
+		// Add comment permalink to data
+		$data['permalink'] = $this->setup->pageURL . '#' . $permalink;
+
+		// Add page URL to data
+		$data['url'] = $this->setup->pageURL;
+
+		// Add page URL to data
+		$data['title'] = $this->setup->pageTitle;
+
+		// Add message about where the e-mail is coming from to data
+		$data['sent-by'] = sprintf ($this->locale->text['sent-by'], $this->setup->domain);
+
+		// Attempt to read reply comment
+		$reply = $this->thread->data->read ($this->postData->replyTo);
+
+		// Check if the reply comment read successfully
+		if ($reply !== false) {
+			// If so, decide name of recipient
+			$reply_name = Misc::getArrayItem ($reply, 'name') ?: $default_name;
+
+			// Add reply name to data
+			$data['reply-name'] = $reply_name;
+
+			// Add "In reply to" locale string to data
+			$data['in-reply-to'] = sprintf ($this->locale->text['thread'], $reply_name);
+
+			// Add indented body of recipient's comment to data
+			$data['text-reply'] = $this->indentWordwrap ($reply['body']);
+
+			// And add HTML version of the reply comment to data
+			if ($this->setup->mailType !== 'text') {
+				$data['html-reply'] = $this->paragraphsTags ($reply['body'], "\t\t\t\t");
+			}
+		}
+
+		// Get and parse plain text e-mail notification
+		$text_body = $this->templater->parseTheme ('email-notification.txt', $data);
+
+		// Set subject to "New Comment - <domain here>"
+		$this->mail->subject ($new_comment . ' - ' . $this->setup->domain);
+
+		// Set plain text version of the message
+		$this->mail->text ($text_body);
+
+		// Check if e-mail format is anything other than text
+		if ($this->setup->mailType !== 'text') {
+			// If so, add HTML version of the message to data
+			$data['html-comment'] = $this->paragraphsTags ($this->data['body'], "\t\t\t\t");
+
+			// Get and parse HTML e-mail notification
+			$html_body = $this->templater->parseTheme ('email-notification.html', $data);
+
+			// And set HTML version of the message if told to
+			$this->mail->html ($html_body);
+		}
+
+		// Only send admin notification if it's not admin posting
+		if ($this->email !== $this->notificationEmail) {
+			// Set e-mail to be sent to admin
+			$this->mail->to ($this->notificationEmail);
+
+			// Set e-mail as coming from the posting user
+			$this->mail->from ($this->email);
+
+			// And actually send the message
+			$this->mail->send ();
+		}
+
+		// Do nothing else if the reply comment failed to read
+		if ($reply === false) {
+			return;
+		}
+
+		// Do nothing else if the reply comment lacks e-mail and decrypt info
+		if (empty ($reply['email']) or empty ($reply['encryption'])) {
+			return;
+		}
+
+		// Do nothing else if the reply comment poster disabled notifications
+		if (!empty ($reply['notifications']) and $reply['notifications'] === 'no') {
+			return;
+		}
+
+		// Otherwise, decrypt the reply e-mail address
+		$reply_email = $this->crypto->decrypt ($reply['email'], $reply['encryption']);
+
+		// Check if the reply e-mail is different than the one logged in
+		if ($reply_email !== $this->email) {
+			// If not, set message to be sent to reply comment e-mail
+			$this->mail->to ($reply_email);
+
+			// If so, check if users are allowed to reply by email
+			if ($this->setup->allowsUserReplies === true) {
+				// If so, set e-mail as coming from posting user
+				$this->mail->from ($this->email);
+			} else {
+				// If not, set e-mail as coming from noreply e-mail
+				$this->mail->from ($this->setup->noreplyEmail);
+			}
+
+			// And actually send the message
+			$this->mail->send ();
+		}
+	}
+
+	// Writes a comment
 	protected function writeComment ($comment_file)
 	{
-		// Write comment to file
-		if ($this->thread->data->save ($comment_file, $this->commentData)) {
-			$this->metadata->addLatestComment ($comment_file);
+		// Attempt to save comment
+		$saved = $this->thread->data->save ($comment_file, $this->data);
+
+		// Check if the comment was saved successfully
+		if ($saved === true) {
+			// If so, add it to latest comments metadata
+			$this->thread->data->addLatestComment ($comment_file);
 
 			// Send notification e-mails
-			$permalink = 'hashover-c' . str_replace ('-', 'r', $comment_file);
-			$from_line = !empty ($this->name) ? $this->name : $this->setup->defaultName;
-			$mail_comment = html_entity_decode (strip_tags ($this->commentData['body']), ENT_COMPAT, 'UTF-8');
-			$mail_comment = $this->indentedWordwrap ($mail_comment);
-			$webmaster_reply = '';
-
-			// Notify commenter of reply
-			if (!empty ($this->replyTo)) {
-				$reply_comment = $this->thread->data->read ($this->replyTo);
-				$reply_body = html_entity_decode (strip_tags ($reply_comment['body']), ENT_COMPAT, 'UTF-8');
-				$reply_body = $this->indentedWordwrap ($reply_body);
-				$reply_name = !empty ($reply_comment['name']) ? $reply_comment['name'] : $this->setup->defaultName;
-				$webmaster_reply = 'In reply to ' . $reply_name . ':' . "\r\n\r\n" . $reply_body . "\r\n\r\n";
-
-				if (!empty ($reply_comment['email']) and !empty ($reply_comment['encryption'])) {
-					$reply_email = $this->encryption->decrypt ($reply_comment['email'], $reply_comment['encryption']);
-
-					if ($reply_email !== $this->email
-					    and !empty ($reply_comment['notifications'])
-					    and $reply_comment['notifications'] === 'yes')
-					{
-						if ($this->setup->allowsUserReplies === true) {
-							$this->userHeaders = $this->headers;
-
-							// Add user's e-mail address to "From" line
-							if (!empty ($this->email)) {
-								$from_line .= ' <' . $this->email . '>';
-							}
-						}
-
-						// Message body to original poster
-						$reply_message  = 'From ' . $from_line . ":\r\n\r\n";
-						$reply_message .= $mail_comment . "\r\n\r\n";
-						$reply_message .= 'In reply to:' . "\r\n\r\n" . $reply_body . "\r\n\r\n" . '----' . "\r\n\r\n";
-						$reply_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n\r\n";
-						$reply_message .= 'Page: ' . $this->setup->pageURL;
-
-						// Send
-						mail ($reply_email, $this->setup->domain . ' - New Reply', $reply_message, $this->userHeaders);
-					}
-				}
-			}
-
-			// Notify webmaster via e-mail
-			if ($this->email !== $this->setup->notificationEmail) {
-				// Add user's e-mail address to "From" line
-				if (!empty ($this->email)) {
-					$from_line .= ' <' . $this->email . '>';
-				}
-
-				$webmaster_message  = 'From ' . $from_line . ":\r\n\r\n";
-				$webmaster_message .= $mail_comment . "\r\n\r\n";
-				$webmaster_message .= $webmaster_reply . '----' . "\r\n\r\n";
-				$webmaster_message .= 'Permalink: ' . $this->setup->pageURL . '#' . $permalink . "\r\n\r\n";
-				$webmaster_message .= 'Page: ' . $this->setup->pageURL;
-
-				// Send
-				mail ($this->setup->notificationEmail, 'New Comment', $webmaster_message, $this->headers);
-			}
+			$this->sendNotifications ($comment_file);
 
 			// Set/update user login cookie
 			if ($this->setup->usesAutoLogin !== false
@@ -778,41 +983,56 @@ class WriteComments extends PostData
 				$this->login (false);
 			}
 
-			// Return the comment data on success via AJAX
-			if ($this->viaAJAX === true) {
-				// Increase comment count(s)
+			// Check if we're on AJAX
+			if ($this->postData->viaAJAX === true) {
+				// If so, increase comment count(s)
 				$this->thread->countComment ($comment_file);
 
+				// And return the comment data
 				return array (
 					'file' => $comment_file,
-					'comment' => $this->commentData
+					'comment' => $this->data
 				);
 			}
 
-			// Kick visitor back to comment
-			$this->kickback ('', false, $permalink);
+			// Otherwise, kick visitor back to comment
+			$this->kickback ($this->filePermalink ($comment_file));
 
 			return true;
 		}
 
-		// Kick visitor back with an error on failure
-		$this->kickback ($this->locale->text['post-fail'], true);
+		// If not, kick visitor back with an error
+		$this->displayMessage ($this->locale->text['post-fail'], true);
+
 		return false;
 	}
 
+	// Posts a comment
 	public function postComment ()
 	{
+		// Initial status
+		$status = false;
+
+		// Check login requirements
+		if ($this->loginRequirements () === false) {
+			$this->displayMessage ('You must be logged in to comment!', true);
+			return $status;
+		}
+
 		try {
 			// Test for necessary comment data
 			$this->setupCommentData ();
 
 			// Set comment file name
-			if (isset ($this->replyTo)) {
+			if (isset ($this->postData->replyTo)) {
 				// Verify file exists
 				$this->verifyFile ('reply-to');
 
+				// Comment number
+				$comment_number = $this->thread->threadCount[$this->postData->replyTo];
+
 				// Rename file for reply
-				$comment_file = $this->replyTo . '-' . $this->thread->threadCount[$this->replyTo];
+				$comment_file = $this->postData->replyTo . '-' . $comment_number;
 			} else {
 				$comment_file = $this->thread->primaryCount;
 			}
@@ -824,13 +1044,12 @@ class WriteComments extends PostData
 			$this->thread->data->checkThread ();
 
 			// Write the comment file
-			return $this->writeComment ($comment_file);
+			$status = $this->writeComment ($comment_file);
 
 		} catch (\Exception $error) {
-			// On exception kick visitor back with error
-			$this->kickback ($error->getMessage (), true);
+			$this->displayMessage ($error->getMessage (), true);
 		}
 
-		return false;
+		return $status;
 	}
 }

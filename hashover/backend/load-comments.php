@@ -29,20 +29,26 @@ if (isset ($_GET['jsonp'])) {
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json');
-	$hashover->setup->setPageURL ('request');
-	$hashover->setup->setPageTitle ('request');
-	$hashover->setup->setThreadName ('request');
-	$hashover->setup->collapsesComments = false;
-	$hashover->initiate ();
 
-	// Setup where to start reading comments
-	$start = $hashover->setup->getRequest ('start', 0);
+	// Set page URL from POST/GET data
+	$hashover->setup->setPageURL ('request');
+
+	// Set page title from POST/GET data
+	$hashover->setup->setPageTitle ('request');
+
+	// Set thread name from POST/GET data
+	$hashover->setup->setThreadName ('request');
+
+	// Set website from POST/GET data
+	$hashover->setup->setWebsite ('request');
+
+	// Initiate comment processing
+	$hashover->initiate ();
 
 	// Check for comments
 	if ($hashover->thread->totalCount > 1) {
 		// Parse primary comments
-		// TODO: Use starting point
-		$hashover->parsePrimary (0);
+		$hashover->parsePrimary ();
 
 		// Display as JSON data
 		$data = $hashover->comments;
@@ -62,10 +68,8 @@ try {
 	}
 
 	// Return JSON or JSONP function call
-	echo $hashover->misc->jsonData ($data);
+	echo Misc::jsonData ($data);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('json');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'json');
 }

@@ -28,28 +28,41 @@ function HashOverLatest (options)
 	// Reference to this HashOver object
 	var hashover = this;
 
-	// Get backend queries
-	var queries = HashOverConstructor.getBackendQueries (options);
+	// Initial backend queries
+	var queries = [];
+
+	// Check if options is an object
+	if (options && options.constructor === Object) {
+		// If so, add website to queries if present
+		if (options.website !== undefined) {
+			queries.push ('website=' + encodeURIComponent (options.website));
+		}
+
+		// And add thread to queries if present
+		if (options.thread !== undefined) {
+			queries.push ('thread=' + encodeURIComponent (options.thread));
+		}
+	}
 
 	// Backend request path
-	var requestPath = HashOverConstructor.backendPath + '/latest-ajax.php';
+	var requestPath = HashOverLatest.backendPath + '/latest-ajax.php';
 
 	// Handle backend request
 	this.ajax ('POST', requestPath, queries, function (json) {
 		// Handle error messages
 		if (json.message !== undefined) {
-			hashover.displayError (json);
+			hashover.displayError (json, 'hashover-widget');
 			return;
 		}
 
 		// Locales from HashOver backend
-		HashOverConstructor.prototype.locale = json.locale;
+		HashOverLatest.prototype.locale = json.locale;
 
 		// Setup information from HashOver back-end
-		HashOverConstructor.prototype.setup = json.setup;
+		HashOverLatest.prototype.setup = json.setup;
 
-		// UI HTML from HashOver back-end
-		HashOverConstructor.prototype.ui = json.ui;
+		// Templatify UI HTML from backend
+		HashOverLatest.prototype.ui = hashover.strings.templatify (json.ui);
 
 		// Thread information from HashOver back-end
 		hashover.instance = json.instance;
@@ -60,16 +73,7 @@ function HashOverLatest (options)
 		// Initiate HashOver latest comments
 		hashover.init ();
 	}, true);
-
-	// Add parent proterty to all prototype objects
-	for (var name in this) {
-		var value = this[name];
-
-		if (value && value.constructor === Object) {
-			value.parent = this;
-		}
-	}
 };
 
-// Constructor to add HashOver methods to
+// Constructor to add shared methods to (constructor.js)
 var HashOverConstructor = HashOverLatest;

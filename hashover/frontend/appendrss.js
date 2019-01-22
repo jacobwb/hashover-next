@@ -5,7 +5,7 @@ HashOver.prototype.appendRSS = function ()
 	var head = document.head || document.getElementsByTagName ('head')[0];
 
 	// Create link element for comment RSS feed
-	var rss = this.elements.create ('link', {
+	var rss = this.createElement ('link', {
 		rel: 'alternate',
 		href: this.setup['http-root'] + '/api/rss.php?url=' + encodeURIComponent (this.instance['page-url']),
 		type: 'application/rss+xml',

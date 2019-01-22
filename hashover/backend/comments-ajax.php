@@ -29,23 +29,54 @@ if (isset ($_GET['jsonp'])) {
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json');
+
+	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');
+
+	// Set page title from POST/GET data
 	$hashover->setup->setPageTitle ('request');
+
+	// Set thread name from POST/GET data
 	$hashover->setup->setThreadName ('request');
+
+	// Set website from POST/GET data
+	$hashover->setup->setWebsite ('request');
+
+	// Set instance from POST/GET data
+	$hashover->setup->setInstance ('request');
+
+	// User settings passed during instantiation
+	$settings = $hashover->setup->getRequest ('settings');
+
+	// Load user settings
+	$hashover->setup->loadUserSettings ($settings);
+
+	// Initiate, parse, and finalize comment processing
 	$hashover->initiate ();
 	$hashover->parsePrimary ();
 	$hashover->parsePopular ();
 	$hashover->finalize ();
 
+	// Set/update default page metadata
+	$hashover->defaultMetadata ();
+
 	// Page, setup, and comment data array
 	$data = array ();
 
+	// Check if backend sorting and collapsing is enabled
+	if ($hashover->setup->collapsesComments === true
+	    and $hashover->setup->usesAjax === true)
+	{
+		// If so, sort the comments first
+		$hashover->sortPrimary ();
+
+		// Then collapse the comments
+		$hashover->collapseComments ();
+	}
+
 	// Check if we're preparing HashOver
 	if ($hashover->setup->getRequest ('prepare') !== false) {
-		// Set/update default page metadata
-		$hashover->defaultMetadata ();
-
-		// Add locales to data
+		// If so, add locales to data
 		$data['locale'] = array (
 			'cancel'		=> $hashover->locale->text['cancel'],
 			'date-time'		=> $hashover->locale->text['date-time'],
@@ -76,7 +107,7 @@ try {
 			'email'			=> $hashover->locale->text['email'],
 			'name'			=> $hashover->locale->text['name'],
 			'password'		=> $hashover->locale->text['password'],
-			'website'		=> $hashover->locale->text['website'],
+			'website'		=> $hashover->locale->text['website'][0],
 			'day-names'		=> $hashover->locale->text['date-day-names'],
 			'month-names'		=> $hashover->locale->text['date-month-names']
 		);
@@ -85,6 +116,7 @@ try {
 		$data['setup'] = array (
 			'server-eol'		=> PHP_EOL,
 			'collapse-limit'	=> $hashover->setup->collapseLimit,
+			'default-sorting'	=> $hashover->setup->defaultSorting,
 			'default-name'		=> $hashover->setup->defaultName,
 			'user-is-logged-in'	=> $hashover->login->userIsLoggedIn,
 			'user-is-admin'		=> $hashover->login->userIsAdmin,
@@ -98,6 +130,7 @@ try {
 			'stream-mode'		=> ($hashover->setup->replyMode === 'stream'),
 			'stream-depth'		=> $hashover->setup->streamDepth,
 			'theme-css'		=> $hashover->setup->getThemePath ('comments.css'),
+			'image-format'		=> $hashover->setup->imageFormat,
 			'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
 			'collapses-interface'	=> $hashover->setup->collapsesInterface,
 			'collapses-comments'	=> $hashover->setup->collapsesComments,
@@ -112,14 +145,14 @@ try {
 			'field-options'		=> $hashover->setup->fieldOptions
 		);
 
-		// Add UI HTML to data
+		// And add UI HTML to data
 		$data['ui'] = array (
 			'user-avatar'		=> $hashover->ui->userAvatar (),
 			'name-link'		=> $hashover->ui->nameElement ('a'),
 			'name-span'		=> $hashover->ui->nameElement ('span'),
 			'parent-link'		=> $hashover->ui->parentThreadLink (),
-			'edit-link'		=> $hashover->ui->formLink ('{{href}}', 'edit'),
-			'reply-link'		=> $hashover->ui->formLink ('{{href}}', 'reply'),
+			'edit-link'		=> $hashover->ui->formLink ('{href}', 'edit'),
+			'reply-link'		=> $hashover->ui->formLink ('{href}', 'reply'),
 			'like-link'		=> $hashover->ui->likeLink ('like'),
 			'dislike-link'		=> $hashover->ui->likeLink ('dislike'),
 			'like-count'		=> $hashover->ui->likeCount ('likes'),
@@ -199,10 +232,8 @@ try {
 	);
 
 	// Return JSON or JSONP function call
-	echo $hashover->misc->jsonData ($data);
+	echo Misc::jsonData ($data);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('json');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'json');
 }

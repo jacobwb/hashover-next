@@ -32,16 +32,18 @@ HashOverConstructor.prototype.openEmbeddedImage = function (image)
 	// Change title and remove load event handler once image is loaded
 	image.onload = function ()
 	{
+		// Set title to "Click to close" locale
 		image.title = hashover.locale['click-to-close'];
-		image.onload = null;
 
 		// Remove loading class from wrapper
 		hashover.classes.remove (image.parentNode, 'hashover-loading');
+
+		// Remove load event handler
+		image.onload = null;
 	};
 
 	// Close embedded image if any error occurs
-	image.onerror = function ()
-	{
+	image.onerror = function () {
 		hashover.closeEmbeddedImage (this);
 	};
 

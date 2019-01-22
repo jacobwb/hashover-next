@@ -1,29 +1,31 @@
 // For editing comments (ajaxedit.js)
 HashOver.prototype.AJAXEdit = function (json, permalink, destination, isReply)
 {
-	// Get old comment element nodes
-	var comment = this.elements.get (permalink, true);
-	var oldNodes = comment.childNodes;
-	var oldComment = this.permalinks.getComment (permalink, this.instance.comments.primary);
+	// Get old comment element
+	var comment = this.getElement (permalink);
 
-	// Get new comment element nodes
-	var newNodes = this.HTMLToNodeList (this.comments.parse (json.comment));
-	    newNodes = newNodes[0].childNodes;
+	// Get old comment from primary comments
+	var oldItem = this.permalinkComment (permalink, this.instance.comments.primary);
+
+	// Get new comment child elements
+	var newComment = this.htmlChildren (this.parseComment (json.comment));
+
+	// Get old and new comment elements
+	var newElements = newComment[0].children;
+	var oldElements = comment.children;
 
 	// Replace old comment with edited comment
-	for (var i = 0, il = newNodes.length; i < il; i++) {
-		if (typeof (oldNodes[i]) === 'object'
-		    && typeof (newNodes[i]) === 'object')
-		{
-			comment.replaceChild (newNodes[i], oldNodes[i]);
-		}
+	for (var i = newElements.length - 1; i >= 0; i--) {
+		comment.replaceChild (newElements[i], oldElements[i]);
 	}
 
 	// Add controls back to the comment
 	this.addControls (json.comment);
 
-	// Update old in array comment with edited comment
+	// Update primary comments with edited comment
 	for (var attribute in json.comment) {
-		oldComment[attribute] = json.comment[attribute];
+		if (json.comment.hasOwnProperty (attribute) === true) {
+			oldItem[attribute] = json.comment[attribute];
+		}
 	}
 };

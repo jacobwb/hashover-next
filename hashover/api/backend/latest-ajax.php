@@ -32,16 +32,23 @@ if (isset ($_GET['jsonp'])) {
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json', 'api');
-	$hashover->setup->setPageURL ('request');
-	$hashover->setup->setPageTitle ('request');
-	$hashover->setup->setThreadName ('request');
-	$hashover->initiate ();
-	$hashover->finalize ();
 
 	// Throw exception if the "Latest Comments" API is disabled
 	if ($hashover->setup->apiStatus ('latest') === 'disabled') {
-		throw new \Exception ('This API is not enabled.');
+		throw new \Exception (
+			'This API is not enabled.'
+		);
 	}
+
+	// Set thread name from POST/GET data
+	$hashover->setup->setThreadName ('request');
+
+	// Set website from POST/GET data
+	$hashover->setup->setWebsite ('request');
+
+	// Initiate and finalize comment processing
+	$hashover->initiate ();
+	$hashover->finalize ();
 
 	// Comments and statistics response array
 	$data = array ();
@@ -49,7 +56,9 @@ try {
 	// Add locales to data
 	$data['locale'] = array (
 		'date-time'		=> $hashover->locale->text['date-time'],
+		'dislike'		=> $hashover->locale->text['dislike'],
 		'external-image-tip'	=> $hashover->locale->text['external-image-tip'],
+		'like'			=> $hashover->locale->text['like'],
 		'today'			=> $hashover->locale->text['date-today'],
 		'commenter-tip'		=> $hashover->locale->text['commenter-tip'],
 		'subscribed-tip'	=> $hashover->locale->text['subscribed-tip'],
@@ -70,7 +79,8 @@ try {
 		'time-format'		=> $hashover->setup->timeFormat,
 		'image-extensions'	=> $hashover->setup->imageTypes,
 		'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
-		'theme-css'		=> $hashover->setup->getThemePath ('comments.css'),
+		'theme-css'		=> $hashover->setup->getThemePath ('latest.css'),
+		'image-format'		=> $hashover->setup->imageFormat,
 		'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
 		'uses-user-timezone'	=> $hashover->setup->usesUserTimezone,
 		'uses-short-dates'	=> $hashover->setup->usesShortDates,
@@ -84,13 +94,13 @@ try {
 		'name-link'		=> $hashover->ui->nameElement ('a'),
 		'name-span'		=> $hashover->ui->nameElement ('span'),
 		'thread-link'		=> $hashover->ui->threadLink (),
-		'reply-link'		=> $hashover->ui->formLink ('{{href}}', 'reply'),
+		'reply-link'		=> $hashover->ui->formLink ('{href}', 'reply'),
 		'like-count'		=> $hashover->ui->likeCount ('likes'),
 		'dislike-count'		=> $hashover->ui->likeCount ('dislikes'),
 		'name-wrapper'		=> $hashover->ui->nameWrapper (),
 		'date-link'		=> $hashover->ui->dateLink (),
-		'comment-wrapper'	=> $hashover->ui->commentWrapper (),
-		'theme'			=> $hashover->templater->parseTheme ('latest.html')
+		'theme'			=> $hashover->templater->parseTheme ('latest.html'),
+		'comment-wrapper'	=> $hashover->ui->commentWrapper ()
 	);
 
 	// Attempt to get comment thread from GET/POST data
@@ -118,24 +128,18 @@ try {
 	$comments = array ();
 
 	// Run through the latest comments
-	foreach ($latest as $item) {
+	foreach ($latest as $raw) {
 		// Get comment key
-		$key = basename ($item);
+		$key = $raw['comment'];
+
+		// Split comment key by dashes
 		$key_parts = explode ('-', $key);
 
-		// Decide proper thread
-		$thread = ($get_thread === 'auto') ? dirname ($item) : $get_thread;
-
 		// Attempt to read page information metadata
-		$page_info = $hashover->thread->data->readMeta ('page-info', $thread);
+		$page_info = $hashover->thread->data->readMeta ('page-info', $raw['thread']);
 
-		// Attempt to read comment
-		$raw = $hashover->thread->data->read ($key, $thread);
-
-		// Skip failed or unapproved comments or missing metadata
-		if ((!empty ($raw['status']) and $raw['status'] !== 'approved')
-		    or ($raw and $page_info) === false)
-		{
+		// Skip if we're missing metadata
+		if ($page_info === false) {
 			continue;
 		}
 
@@ -147,9 +151,34 @@ try {
 
 		// Trim comment body to configurable length
 		if ($hashover->setup->latestTrimWidth > 0) {
-			$body = $comment['body'];
-			$body = mb_strimwidth ($body, 0, $hashover->setup->latestTrimWidth, '...');
-			$comment['body'] = rtrim ($body);
+			// Instantiate WriteComments
+			//
+			// TODO: Split WriteComments into multiple classes so we
+			// can instantiate only the functionality that we need
+			//
+			$write_comments = new WriteComments (
+				$hashover->setup,
+				$hashover->thread
+			);
+
+			// Shorthands
+			$trim_length = $hashover->setup->latestTrimWidth;
+			$close_tags = $write_comments->closeTags;
+
+			// Add <code> to list of tags to close
+			$write_comments->closeTags[] = 'code';
+
+			// Trim the comment to configurable length
+			$body = rtrim (mb_strimwidth ($comment['body'], 0, $trim_length, '...'));
+
+			// Close any tags that may have had their endings trimmed off
+			$body = $write_comments->tagCloser ($close_tags, $body);
+
+			// Escape any HTML tags that may have been trimmed in half
+			$body = $write_comments->htmlSelectiveEscape ($body);
+
+			// Update the comment
+			$comment['body'] = $body;
 		}
 
 		// Add comment to response array
@@ -173,10 +202,8 @@ try {
 	);
 
 	// Encode JSON data
-	echo $hashover->misc->jsonData ($data);
+	echo Misc::jsonData ($data);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('json');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'json');
 }

@@ -23,3 +23,42 @@ ini_set ('default_charset', 'UTF-8');
 // Enable display of PHP errors
 ini_set ('display_errors', true);
 error_reporting (E_ALL);
+
+// Autoload class files
+function setup_autoloader ($method = 'echo')
+{
+	// Message handler function
+	$callback = function ($file) use ($method)
+	{
+		// Construct an error message
+		$message = 'File "' . $file . '" could not be included!';
+
+		// Check if callback is a function
+		if (is_callable ($method)) {
+			// If so, execute it with message
+			$method ($message);
+		} else {
+			// If not, simply echo message
+			echo $message;
+		}
+
+		exit;
+	};
+
+	// Register a class autoloader
+	spl_autoload_register (function ($uri) use ($callback) {
+		// Convert to lowercase
+		$uri = strtolower ($uri);
+
+		// Convert to UNIX style
+		$uri = str_replace ('\\', '/', $uri);
+
+		// Get class file
+		$file = basename ($uri) . '.php';
+
+		// Check if class file could be included
+		if (!@include (__DIR__ . '/classes/' . $file)) {
+			$callback ($file);
+		}
+	});
+}

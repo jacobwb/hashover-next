@@ -1,5 +1,4 @@
-// Instantiate HashOver count link API (instantiate.js)
-window.hashoverCountLink = new HashOverCountLink ();
-
-// Process all HashOver count links
-window.hashoverCountLink.processLinks ();
+// Instantiate after the DOM is parsed (instantiate.js)
+HashOverCountLink.onReady (function () {
+	window.hashoverCountLink = new HashOverCountLink ();
+});

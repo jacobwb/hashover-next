@@ -32,14 +32,20 @@ if (isset ($_GET['jsonp'])) {
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json', 'api');
-	$hashover->setup->setPageURL ('request');
-	$hashover->initiate ();
-	$hashover->finalize ();
 
 	// Throw exception if the "Latest Comments" API is disabled
 	if ($hashover->setup->apiStatus ('count-link') === 'disabled') {
-		throw new \Exception ('This API is not enabled.');
+		throw new \Exception (
+			'This API is not enabled.'
+		);
 	}
+
+	// Set page URL from POST/GET data
+	$hashover->setup->setPageURL ('request');
+
+	// Initiate and finalize comment processing
+	$hashover->initiate ();
+	$hashover->finalize ();
 
 	// Count response array
 	$data = array (
@@ -67,10 +73,8 @@ try {
 	);
 
 	// Encode JSON data
-	echo $hashover->misc->jsonData ($data);
+	echo Misc::jsonData ($data);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('json');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'json');
 }

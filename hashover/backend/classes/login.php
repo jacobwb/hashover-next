@@ -17,14 +17,16 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class Login extends PostData
+class Login extends Secrets
 {
-	public $setup;
-	public $encryption;
-	public $cookies;
-	public $locale;
-	public $loginMethod;
-	public $fieldNeeded;
+	protected $setup;
+	protected $postData;
+	protected $cookies;
+	protected $locale;
+	protected $crypto;
+	protected $loginMethod;
+	protected $fieldNeeded;
+
 	public $name = '';
 	public $password = '';
 	public $loginHash = '';
@@ -35,15 +37,19 @@ class Login extends PostData
 
 	public function __construct (Setup $setup)
 	{
-		parent::__construct ();
-
+		// Store parameters as properties
 		$this->setup = $setup;
-		$this->encryption = $setup->encryption;
+
+		// Instantiate various classes
+		$this->postData = new PostData ();
 		$this->cookies = new Cookies ($setup);
 		$this->locale = new Locale ($setup);
+		$this->crypto = new Crypto ();
+
+		// Name of login method class to instantiate
+		$login_class = 'HashOver\\' . $setup->loginMethod;
 
 		// Instantiate login method class
-		$login_class = 'HashOver\\' . $this->setup->loginMethod;
 		$this->loginMethod = new $login_class ($setup, $this->cookies, $this->locale);
 
 		// Error message to display to the user
@@ -57,19 +63,19 @@ class Login extends PostData
 	public function prepareCredentials ()
 	{
 		// Set name
-		if (isset ($this->postData['name'])) {
-			$this->loginMethod->name = $this->postData['name'];
+		if (isset ($this->postData->data['name'])) {
+			$this->loginMethod->name = $this->postData->data['name'];
 		}
 
 		// Attempt to get name
 		$name = $this->setup->getRequest ('name');
 
 		// Attempt to get password
-		$password = $this->setup->getRequest ('password', null);
+		$password = $this->setup->getRequest ('password');
 
 		// Set password
-		if ($password !== null) {
-			$this->loginMethod->password = $this->encryption->createHash ($password);
+		if ($password !== false) {
+			$this->loginMethod->password = $this->crypto->createHash ($password);
 		} else {
 			$this->loginMethod->password = '';
 		}
@@ -80,20 +86,20 @@ class Login extends PostData
 			$random_password = bin2hex (openssl_random_pseudo_bytes (16));
 
 			// And use user password or random password
-			$password = $password ? $password : $random_password;
+			$password = $password ?: $random_password;
 		}
 
 		// Generate a RIPEMD-160 hash to indicate user login
 		$this->loginMethod->loginHash = hash ('ripemd160', $name . $password);
 
 		// Set e-mail address
-		if (isset ($this->postData['email'])) {
-			$this->loginMethod->email = $this->postData['email'];
+		if (isset ($this->postData->data['email'])) {
+			$this->loginMethod->email = $this->postData->data['email'];
 		}
 
 		// Set website URL
-		if (isset ($this->postData['website'])) {
-			$this->loginMethod->website = $this->postData['website'];
+		if (isset ($this->postData->data['website'])) {
+			$this->loginMethod->website = $this->postData->data['website'];
 		}
 	}
 
@@ -144,14 +150,16 @@ class Login extends PostData
 	// Checks if required fields have values
 	public function validateFields ()
 	{
-		// Check required fields, throw error if any are empty
+		// Run through login field options
 		foreach ($this->setup->fieldOptions as $field => $status) {
+			// Check if current field is required and is empty
 			if ($status === 'required' and empty ($this->$field)) {
-				// Don't set cookies if the request is via AJAX
-				if ($this->viaAJAX !== true) {
-					$this->cookies->setFailedOn ($field, $this->replyTo);
+				// If so, set cookies if request is not AJAX
+				if ($this->postData->viaAJAX !== true) {
+					$this->cookies->setFailedOn ($field, $this->postData->replyTo);
 				}
 
+				// And throw exception
 				throw new \Exception (sprintf (
 					$this->fieldNeeded, $this->locale->text[$field]
 				));
@@ -176,6 +184,57 @@ class Login extends PostData
 		}
 	}
 
+	// Logs user in as admin
+	public function adminLogin ()
+	{
+		// Do nothing if login isn't admin
+		if ($this->isAdmin () === false) {
+			return;
+		}
+
+		// Set e-mail to admin e-mail address
+		$this->loginMethod->email = $this->notificationEmail;
+
+		// Set website to current domain
+		$this->loginMethod->website = $this->setup->scheme . '://' . $this->setup->domain;
+
+		// Set login method credentials
+		$this->loginMethod->setCredentials ();
+
+		// Update login credentials
+		$this->updateCredentials ();
+
+		// Check if required fields have values
+		$this->validateFields ();
+
+		// And login method's setLogin
+		$this->loginMethod->setLogin ();
+	}
+
+	// Weak verification of an admin login
+	public function isAdmin ()
+	{
+		// Create login hash
+		$hash = hash ('ripemd160', $this->adminName . $this->adminPassword);
+
+		// Check if the hashes match
+		$match = ($this->loginHash === $hash);
+
+		return $match;
+	}
+
+	// Strict verification of an admin login
+	public function verifyAdmin ($password = false)
+	{
+		// If no password was given use the current password
+		$password = ($password === false) ? $this->password : $password;
+
+		// Check if passwords match
+		$match = $this->crypto->verifyHash ($this->adminPassword, $password);
+
+		return $match;
+	}
+
 	// Check if user is logged in
 	public function getLogin ()
 	{
@@ -184,10 +243,11 @@ class Login extends PostData
 
 		// Check if user is logged in
 		if (!empty ($this->loginHash)) {
+			// If so, set login indicator
 			$this->userIsLoggedIn = true;
 
 			// Check if user is logged in as admin
-			if ($this->setup->verifyAdmin ($this->name, $this->password) === true) {
+			if ($this->isAdmin () === true) {
 				$this->userIsAdmin = true;
 			}
 		}

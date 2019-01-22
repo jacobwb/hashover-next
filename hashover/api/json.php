@@ -29,23 +29,23 @@ try {
 
 	// Display error if the API is disabled
 	if ($hashover->setup->apiStatus ('json') === 'disabled') {
-		throw new \Exception ('<b>HashOver</b>: This API is not enabled.');
+		throw new \Exception (
+			'<b>HashOver</b>: This API is not enabled.'
+		);
 	}
 
-	// Configure HashOver and load comments
+	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');
-	$hashover->setup->collapsesComments = false;
+
+	// Initiate comment processing
 	$hashover->initiate ();
 
 	// Comments and statistics response array
 	$data = array ();
 
-	// Setup where to start reading comments
-	$start = $hashover->setup->getRequest ('start', 0);
-
 	// Check for comments
 	if ($hashover->thread->totalCount > 1) {
-		// Parse comments; TODO: Use starting point
+		// Parse comments
 		$hashover->parsePrimary ();
 		$hashover->parsePopular ();
 
@@ -67,10 +67,8 @@ try {
 	);
 
 	// Return JSON or JSONP function call
-	echo $hashover->misc->jsonData ($data);
+	echo Misc::jsonData ($data);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('json');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage (), 'json');
 }

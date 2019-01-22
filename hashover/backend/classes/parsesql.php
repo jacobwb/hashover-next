@@ -17,11 +17,13 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Read and count comments
 class ParseSQL extends Database
 {
+	// Database statement for adding a new comment
 	protected $insert = array (
-		'id' => null,
+		'domain' => null,
+		'thread' => null,
+		'comment' => null,
 		'body' => null,
 		'status' => null,
 		'date' => null,
@@ -38,8 +40,11 @@ class ParseSQL extends Database
 		'dislikes' => null
 	);
 
+	// Database statement for updating an existing comment
 	protected $update = array (
-		'id' => null,
+		'domain' => null,
+		'thread' => null,
+		'comment' => null,
 		'body' => null,
 		'status' => null,
 		'name' => null,
@@ -55,22 +60,26 @@ class ParseSQL extends Database
 
 	public function __construct (Setup $setup)
 	{
+		// Construct parent class
 		parent::__construct ($setup);
 
-		// Throw exception if the SQL extension isn't loaded
-		switch ($setup->databaseType) {
+		// Do different things for different database types
+		switch ($this->databaseType) {
+			// SQLite
 			case 'sqlite': {
+				// Throw exception if SQLite extensions aren't loaded
 				$setup->extensionsLoaded (array (
-					'pdo_sqlite',
-					'sqlite3'
+					'PDO', 'pdo_sqlite', 'sqlite3'
 				));
 
 				break;
 			}
 
+			// MySQL
 			case 'mysql': {
+				// Throw exception if MySQL extensions aren't loaded
 				$setup->extensionsLoaded (array (
-					'pdo_mysql'
+					'PDO', 'pdo_mysql'
 				));
 
 				break;
@@ -78,31 +87,48 @@ class ParseSQL extends Database
 		}
 	}
 
-	public function query (array $files = array (), $auto = true)
+	// Returns an array of comments
+	public function query ()
 	{
-		$statement = 'SELECT `id` FROM `' . $this->setup->threadName . '`';
-		$results = $this->database->query ($statement);
+		// Initial comments to return
+		$comments = array ();
 
+		// SQL statement to query comments by
+		$statement = implode (' ', array (
+			'SELECT `comment` FROM `comments`',
+			'WHERE domain=:domain',
+			'AND thread=:thread'
+		));
+
+		// Query comments using the statement
+		$results = $this->executeStatement ($statement, array (
+			'domain' => $this->setup->website,
+			'thread' => $this->setup->threadName
+		));
+
+		// Check if we received any comments
 		if ($results !== false) {
+			// If so, fetch them all
 			$fetch_all = $results->fetchAll (\PDO::FETCH_NUM);
-			$return_array = array ();
 
+			// Run through comments
 			for ($i = 0, $il = count ($fetch_all); $i < $il; $i++) {
+				// Get comment key
 				$key = $fetch_all[$i][0];
-				$return_array[$key] = (string)($key);
-			}
 
-			return $return_array;
+				// Add key to comments
+				$comments[$key] = (string)($key);
+			}
 		}
 
-		return false;
+		return $comments;
 	}
 
-	public function read ($id, $thread = 'auto')
+	// Reads a comment from database
+	public function read ($comment, $thread = 'auto')
 	{
-		$thread = $this->getCommentThread ($thread);
-
-		$columns = implode (', ', array (
+		// Construct column portion of SQL statement
+		$columns = array (
 			'`body`',
 			'`status`',
 			'`date`',
@@ -117,25 +143,47 @@ class ParseSQL extends Database
 			'`ipaddr`',
 			'`likes`',
 			'`dislikes`'
+		);
+
+		// SQL statement to get columns from database
+		$statement = implode (' ', array (
+			'SELECT ' . implode (', ', $columns),
+			'FROM `comments`',
+			'WHERE domain=:domain',
+			'AND thread=:thread',
+			'AND comment=:comment'
 		));
 
-		$statement  = 'SELECT ' . $columns . ' ';
-		$statement .= 'FROM `' . $thread . '` ';
-		$statement .= 'WHERE id=\'' . $id . '\'';
+		// Query columns using statement
+		$result = $this->executeStatement ($statement, array (
+			'domain' => $this->setup->website,
+			'thread' => $this->setup->threadName,
+			'comment' => $comment
+		));
 
-		$result = $this->database->query ($statement);
-
+		// Return columns as array if successful
 		if ($result !== false) {
-			return (array) $result->fetch (\PDO::FETCH_ASSOC);
+			// Fetch all comments
+			$fetch_all = $result->fetch (\PDO::FETCH_ASSOC);
+
+			// Return as array if comments exist
+			if (!empty ($fetch_all)) {
+				return (array) $fetch_all;
+			}
 		}
 
 		return false;
 	}
 
-	protected function prepareQuery ($id, array $contents, array $defaults)
+	// Prepares a query statement
+	protected function prepareQuery ($comment, array $contents, array $defaults)
 	{
-		$query = array_merge ($defaults, array ('id' => $id));
+		// Merge ID into default statement
+		$query = array_merge ($defaults, array (
+			'comment' => $comment
+		));
 
+		// Merge selective contents into default statement
 		foreach ($contents as $key => $value) {
 			if (array_key_exists ($key, $defaults)) {
 				$query[$key] = $value;
@@ -145,24 +193,33 @@ class ParseSQL extends Database
 		return $query;
 	}
 
-	public function save ($id, array $contents, $editing = false, $thread = 'auto')
+	// Saves a comment into database
+	public function save ($comment, array $contents, $editing = false, $thread = 'auto')
 	{
-		$thread = $this->getCommentThread ($thread);
+		// Decide action based on if comment is being edited
 		$action = ($editing === true) ? 'update' : 'insert';
-		$query = $this->prepareQuery ($id, $contents, $this->$action);
+
+		// Prepare a query statement
+		$query = $this->prepareQuery ($comment, $contents, $this->$action);
+
+		// Attempt to write comment to database
 		$status = $this->write ($action, $thread, $query);
 
 		return $status;
 	}
 
-	public function delete ($id, $delete = false)
+	// Deletes a comment from database
+	public function delete ($comment, $delete = false)
 	{
-		$query = array ('id' => $id);
+		// Initial query statement is comment ID
+		$query = array ('comment' => $comment);
 
+		// Only change status to deleted if told to
 		if ($delete !== true) {
 			$query['status'] = 'deleted';
 		}
 
+		// Attempt to write comment changes to database
 		$status = $this->write ('delete', 'auto', $query, $delete);
 
 		return $status;

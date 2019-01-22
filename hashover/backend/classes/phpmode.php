@@ -19,12 +19,12 @@
 
 class PHPMode
 {
-	public $setup;
-	public $ui;
-	public $locale;
-	public $templater;
-	public $markdown;
-	public $comments;
+	protected $setup;
+	protected $ui;
+	protected $comments;
+	protected $locale;
+	protected $templater;
+	protected $markdown;
 
 	protected $trimTagRegexes = array (
 		'blockquote' => '/(<blockquote>)([\s\S]*?)(<\/blockquote>)/iS',
@@ -42,12 +42,15 @@ class PHPMode
 
 	public function __construct (Setup $setup, CommentsUI $ui, array $comments)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
 		$this->ui = $ui;
-		$this->locale = new Locale ($setup);
-		$this->templater = new Templater ($setup->usage['mode'], $setup);
-		$this->markdown = new Markdown ();
 		$this->comments = $comments;
+
+		// Instantiate various classes
+		$this->locale = new Locale ($setup);
+		$this->templater = new Templater ($setup);
+		$this->markdown = new Markdown ();
 	}
 
 	protected function fileFromPermalink ($permalink)
@@ -69,13 +72,13 @@ class PHPMode
 			$file = $this->fileFromPermalink ($permalink);
 
 			$form = new HTMLTag ('form', array (
-				'id' => 'hashover-reply-' . $permalink,
+				'id' => $this->ui->prefix ('reply-' . $permalink),
 				'class' => 'hashover-reply-form',
 				'method' => 'post',
 				'action' => $this->setup->getBackendPath ('form-actions.php')
 			));
 
-			$form->innerHTML ($this->ui->replyForm ($permalink, $file));
+			$form->innerHTML ($this->ui->replyForm ($permalink, $this->setup->pageURL, $this->setup->threadName, $this->setup->pageTitle, $file));
 
 			return $form->asHTML ();
 		}
@@ -87,26 +90,26 @@ class PHPMode
 			return;
 		}
 
-		$permalink = !empty ($comment['permalink']) ? $comment['permalink'] : '';
+		$permalink = Misc::getArrayItem ($comment, 'permalink') ?: '';
 
 		if ($_GET['hashover-edit'] === $permalink) {
 			$file = $this->fileFromPermalink ($permalink);
 
 			$body = $comment['body'];
 			$body = preg_replace ($this->linkRegex, '\\1', $body);
-			$status = !empty ($comment['status']) ? $comment['status'] : 'approved';
-			$name = !empty ($comment['name']) ? $comment['name'] : '';
-			$website = !empty ($comment['website']) ? $comment['website'] : '';
+			$status = Misc::getArrayItem ($comment, 'status') ?: 'approved';
+			$name = Misc::getArrayItem ($comment, 'name') ?: '';
+			$website = Misc::getArrayItem ($comment, 'website') ?: '';
 			$subscribed = isset ($comment['subscribed']);
 
 			$form = new HTMLTag ('form', array (
-				'id' => 'hashover-edit-' . $permalink,
+				'id' => $this->ui->prefix ('edit-' . $permalink),
 				'class' => 'hashover-edit-form',
 				'method' => 'post',
 				'action' => $this->setup->getBackendPath ('form-actions.php')
 			), false);
 
-			$edit_form = $this->ui->editForm ($permalink, $file, $name, $website, $body, $status, $subscribed);
+			$edit_form = $this->ui->editForm ($permalink, $this->setup->pageURL, $this->setup->threadName, $this->setup->pageTitle, $file, $name, $website, $body, $status, $subscribed);
 
 			$form->innerHTML ($edit_form);
 
@@ -123,7 +126,8 @@ class PHPMode
 		return $code_placeholder;
 	}
 
-	protected function codeTagReturn ($grp) {
+	protected function codeTagReturn ($grp)
+	{
 		return $this->codeTags[($grp[1])];
 	}
 
@@ -136,7 +140,8 @@ class PHPMode
 		return $pre_placeholder;
 	}
 
-	protected function preTagReturn ($grp) {
+	protected function preTagReturn ($grp)
+	{
 		return $this->preTags[($grp[1])];
 	}
 
@@ -175,40 +180,46 @@ class PHPMode
 
 	public function parseComment (array $comment, $parent = null, $popular = false)
 	{
-		$template = array ();
+		$permalink = $comment['permalink'];
+		$first_instance = 'hashover-' . $permalink;
 		$name_class = 'hashover-name-plain';
-		$comment_key = $comment['permalink'];
-		$permalink = 'hashover-' . $comment['permalink'];
-		$template['permalink'] = $comment_key;
-		$is_reply = ($parent !== null);
 		$this->codeTagCount = 0;
 		$this->codeTags = array ();
 		$this->preTagCount = 0;
 		$this->preTags = array ();
 
+		// Get instantiated prefix
+		$prefix = $this->ui->prefix ();
+
+		// Initial template
+		$template = array (
+			'hashover' => $prefix,
+			'permalink' => $permalink
+		);
+
 		// Text for avatar image alt attribute
-		$permatext = substr ($comment_key, 1);
+		$permatext = substr ($permalink, 1);
 		$permatext = explode ('r', $permatext);
 		$permatext = array_pop ($permatext);
 
 		// Wrapper element for each comment
 		$comment_wrapper = $this->ui->commentWrapper ($permalink);
 
-		// Get parent comment via permalink
-		if ($is_reply === false and strpos ($comment_key, 'r') !== false) {
-			$parent_permalink = $this->getParentPermalink ($comment_key);
-			$parent = $this->findByPermalink ($parent_permalink, $this->comments['primary']);
-			$is_reply = ($parent !== null);
-		}
-
 		// Check if this comment is a popular comment
 		if ($popular === true) {
-			// Remove "-pop" from text for avatar
+			// Attempt to get parent comment permalink
+			$parent = $this->getParentPermalink ($permalink);
+
+			// Get parent comment by its permalink if it exists
+			if ($parent !== null) {
+				$parent = $this->findByPermalink ($parent, $this->comments['primary']);
+			}
+
+			// And remove "-pop" from text for avatar
 			$permatext = str_replace ('-pop', '', $permatext);
 		} else {
-			// Check if comment is a reply
-			if ($is_reply === true) {
-				// Append class to indicate comment is a reply
+			// Append class to indicate comment is a reply when appropriate
+			if ($parent !== null) {
 				$comment_wrapper->appendAttribute ('class', 'hashover-reply');
 			}
 		}
@@ -217,7 +228,7 @@ class PHPMode
 		$template['avatar'] = $this->ui->userAvatar ($comment['avatar'], $permalink, $permatext);
 
 		if (!isset ($comment['notice'])) {
-			$name = !empty ($comment['name']) ? $comment['name'] : $this->setup->defaultName;
+			$name = Misc::getArrayItem ($comment, 'name') ?: $this->setup->defaultName;
 			$is_twitter = false;
 
 			// Check if user's name is a Twitter handle
@@ -231,7 +242,7 @@ class PHPMode
 				if ($name_length > 1 and $name_length <= 30) {
 					// Set website to Twitter profile if a specific website wasn't given
 					if (empty ($comment['website'])) {
-						$comment['website'] = 'http://twitter.com/' . $name;
+						$comment['website'] = 'https://twitter.com/' . $name;
 					}
 				}
 			}
@@ -243,17 +254,22 @@ class PHPMode
 				}
 
 				// If so, display name as a hyperlink
-				$name_link = $this->ui->nameElement ('a', $comment_key, $name, $comment['website']);
+				$name_link = $this->ui->nameElement ('a', $permalink, $name, $comment['website']);
 			} else {
 				// If not, display name as plain text
-				$name_link = $this->ui->nameElement ('span', $comment_key, $name);
+				$name_link = $this->ui->nameElement ('span', $permalink, $name);
 			}
 
-			// Add "Top of Thread" hyperlink to template
-			if ($is_reply === true) {
+			// Check if comment has a parent
+			if ($parent !== null) {
+				// If so, create the parent thread permalink
 				$parent_thread = 'hashover-' . $parent['permalink'];
-				$parent_name = !empty ($parent['name']) ? $parent['name'] : $this->setup->defaultName;
-				$template['parent-link'] = $this->ui->parentThreadLink ($parent_thread, $comment_key, $parent_name);
+
+				// Get the parent's name
+				$parent_name = Misc::getArrayItem ($parent, 'name') ?: $this->setup->defaultName;
+
+				// Add thread parent hyperlink to template
+				$template['parent-link'] = $this->ui->parentThreadLink ($this->setup->filePath, $parent_thread, $permalink, $parent_name);
 			}
 
 			if (isset ($comment['user-owned'])) {
@@ -279,10 +295,10 @@ class PHPMode
 			// Check if the comment is editable for the user
 			if (isset ($comment['editable'])) {
 				// If so, add "Edit" hyperlink to template
-				if (!empty ($_GET['hashover-edit']) and $_GET['hashover-edit'] === $comment_key) {
-					$template['edit-link'] = $this->ui->cancelLink ($permalink, 'edit');
+				if (!empty ($_GET['hashover-edit']) and $_GET['hashover-edit'] === $permalink) {
+					$template['edit-link'] = $this->ui->cancelLink ($first_instance, 'edit');
 				} else {
-					$template['edit-link'] = $this->ui->formLink ('', 'edit', $comment_key);
+					$template['edit-link'] = $this->ui->formLink ($this->setup->filePath, 'edit', $permalink);
 				}
 			}
 
@@ -296,7 +312,7 @@ class PHPMode
 				$like_count = $comment['likes'] . ' ' . $this->locale->text['like'][$plural];
 
 				// Add like count to HTML template
-				$template['like-count'] = $this->ui->likeCount ('likes', $comment_key, $like_count);
+				$template['like-count'] = $this->ui->likeCount ('likes', $permalink, $like_count);
 			}
 
 			// Check if dislikes are enabled and the comment's been disliked
@@ -311,7 +327,7 @@ class PHPMode
 				$dislike_count = $comment['dislikes'] . ' ' . $this->locale->text['dislike'][$plural];
 
 				// Add dislike count to HTML template
-				$template['dislike-count'] = $this->ui->likeCount ('dislikes', $comment_key, $dislike_count);
+				$template['dislike-count'] = $this->ui->likeCount ('dislikes', $permalink, $dislike_count);
 			}
 
 			// Add name HTML to template
@@ -323,13 +339,13 @@ class PHPMode
 			}
 
 			// Add date permalink hyperlink to template
-			$template['date'] = $this->ui->dateLink ($permalink, $comment['date']);
+			$template['date'] = $this->ui->dateLink ($this->setup->filePath, $first_instance, $comment['date']);
 
 			// Add "Reply" hyperlink to template
-			if (!empty ($_GET['hashover-reply']) and $_GET['hashover-reply'] === $comment_key) {
-				$template['reply-link'] = $this->ui->cancelLink ($permalink, 'reply', $reply_class);
+			if (!empty ($_GET['hashover-reply']) and $_GET['hashover-reply'] === $permalink) {
+				$template['reply-link'] = $this->ui->cancelLink ($first_instance, 'reply', $reply_class);
 			} else {
-				$template['reply-link'] = $this->ui->formLink ('', 'reply', $comment_key, $reply_class, $reply_title);
+				$template['reply-link'] = $this->ui->formLink ($this->setup->filePath, 'reply', $permalink, $reply_class, $reply_title);
 			}
 
 			// Add edit form HTML to template
@@ -338,7 +354,7 @@ class PHPMode
 			}
 
 			// Add reply form HTML to template
-			$template['reply-form'] = $this->replyCheck ($comment_key);
+			$template['reply-form'] = $this->replyCheck ($permalink);
 
 			// Add reply count to template
 			if (!empty ($comment['replies'])) {
@@ -367,15 +383,13 @@ class PHPMode
 				$template['comment'] = $this->markdown->parseMarkdown ($template['comment']);
 			}
 
-			// Check for code tags
+			// Replace code tags with placeholder text
 			if (mb_strpos ($template['comment'], '<code>') !== false) {
-				// Replace code tags with placeholder text
 				$template['comment'] = preg_replace_callback ('/(<code>)([\s\S]*?)(<\/code>)/iS', 'self::codeTagReplace', $template['comment']);
 			}
 
-			// Check for pre tags
+			// Replace pre tags with placeholder text
 			if (mb_strpos ($template['comment'], '<pre>') !== false) {
-				// Replace pre tags with placeholder text
 				$template['comment'] = preg_replace_callback ('/(<pre>)([\s\S]*?)(<\/pre>)/iS', 'self::preTagReplace', $template['comment']);
 			}
 
@@ -393,8 +407,8 @@ class PHPMode
 			$paragraphs = preg_split ($this->paragraphRegex, $template['comment']);
 			$pd_comment = '';
 
+			// Wrap each paragraph in <p> tags and place <br> tags after each line
 			for ($i = 0, $il = count ($paragraphs); $i < $il; $i++) {
-				// Wrap comment in paragraph tag, replace single line breaks with break tags
 				$pd_comment .= '<p>' . preg_replace ($this->lineRegex, '<br>', $paragraphs[$i]) . '</p>' . PHP_EOL;
 			}
 
@@ -428,8 +442,12 @@ class PHPMode
 		// Comment HTML template
 		$comment_wrapper->innerHTML ($theme_html);
 
-		// Recursively parse replies
+		// Check if comment has replies
 		if (!empty ($comment['replies'])) {
+			// If so, append class to indicate comment has replies
+			$comment_wrapper->appendAttribute ('class', 'hashover-has-replies');
+
+			// Recursively parse replies
 			foreach ($comment['replies'] as $reply) {
 				$comment_wrapper->appendInnerHTML ($this->parseComment ($reply, $comment));
 			}

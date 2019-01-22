@@ -1,3 +1,25 @@
+table table {
+	border: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+table table td {
+	border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+table table tr:last-child td {
+	border: none;
+}
+
+table b {
+	display: block;
+	text-align: center;
+	font-weight: bold;
+}
+
+#websites-column {
+	padding-left: 10px;
+}
+
 #threads small {
 	color: #5AB3FA;
 }

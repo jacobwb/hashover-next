@@ -1,3 +1,15 @@
+/*-----------------------------------------------------------------------------
+
+Copyright (C) 2016-2018 Jacob Barkdull
+This file is part of HashOver.
+
+I, Jacob Barkdull, hereby release this work into the public domain.
+This applies worldwide. If this is not legally possible, I grant any
+entity the right to use this work for any purpose, without any
+conditions, unless such conditions are required by law.
+
+-----------------------------------------------------------------------------*/
+
 body {
 	margin: 0px;
 	padding: 15px;
@@ -26,7 +38,7 @@ a, a:link {
 	color: #3485C7;
 }
 
-a, a:link, input, textarea, .select-wrapper, .animate-all {
+input:focus, textarea:focus, .animate-all {
 	-moz-transition: all 150ms linear 0s;
 	-webkit-transition: all 150ms linear 0s;
 	-o-transition: all 150ms linear 0s;
@@ -38,6 +50,7 @@ a:visited {
 }
 
 a:hover {
+	text-decoration: underline;
 	color: #266394;
 	cursor: pointer;
 }
@@ -110,4 +123,27 @@ table {
 
 .margin-right-children > * {
 	margin-right: 10px;
+}
+
+.plain-button {
+	padding: 0.65em 1.5em 0.6em 1.5em;
+	font-size: 0.5em;
+	background-color: rgba(200, 200, 255, 0.25);
+	-moz-border-radius: 4px 4px 4px 4px;
+	-webkit-border-radius: 4px 4px 4px 4px;
+	border-radius: 4px 4px 4px 4px;
+}
+
+.plain-button,
+.plain-button * {
+	vertical-align: middle;
+}
+
+.plain-button:hover,
+.plain-button:hover * {
+	text-decoration: none;
+}
+
+.plain-button:hover {
+	background-color: rgba(200, 200, 255, 0.33);
 }

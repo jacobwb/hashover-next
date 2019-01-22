@@ -27,10 +27,6 @@ try {
 	// Blocklist JSON file location
 	$blocklist_file = $hashover->setup->getAbsolutePath ('config/blocklist.json');
 
-	// Submission indicators
-	$title = 'IP Address Blocklist';
-	$submitted = false;
-
 	// Check if the form has been submitted
 	if (!empty ($_POST['addresses']) and is_array ($_POST['addresses'])) {
 		// If so, run through submitted addresses
@@ -41,23 +37,27 @@ try {
 			}
 		}
 
-		// Save the JSON data to the blocklist file
-		if ($data_files->saveJSON ($blocklist_file, $blocklist)) {
-			// Set submission indicators
-			$title = 'Blocklist Saved!';
-			$submitted = true;
-		} else {
-			// Set submission indicators
-			$title = 'Failed to Save Blocklist!';
-		}
-	} else {
-		// Load and parse blocklist file
-		$json = $data_files->readJSON ($blocklist_file);
+		// Check if the user login is admin
+		if ($hashover->login->verifyAdmin () === true) {
+			// If so, attempt to save the JSON data
+			$saved = $data_files->saveJSON ($blocklist_file, $blocklist);
 
-		// Check for JSON parse error
-		if (is_array ($json)) {
-			$blocklist = $json;
+			// If saved successfully, redirect with success indicator
+			if ($saved === true) {
+				redirect ('index.php?status=success');
+			}
 		}
+
+		// Otherwise, redirect with failure indicator
+		redirect ('index.php?status=failure');
+	}
+
+	// Otherwise, load and parse blocklist file
+	$json = $data_files->readJSON ($blocklist_file);
+
+	// Check for JSON parse error
+	if (is_array ($json)) {
+		$blocklist = $json;
 	}
 
 	// IP Address inputs
@@ -65,18 +65,16 @@ try {
 
 	// Create IP address inputs
 	for ($i = 0, $il = max (3, count ($blocklist)); $i < $il; $i++) {
-		// Use IP address from file or blank
-		$address = !empty ($blocklist[$i]) ? $blocklist[$i] : '';
-
 		// Create input tag
 		$input = new HTMLTag ('input', array (
-			'type' => 'text',
-			'name' => 'addresses[]',
-			'value' => $address,
-			'size' => '15',
-			'maxlength' => '15',
-			'placeholder' => '127.0.0.1',
-			'title' => 'IP Address or blank to remove'
+			'class'		=> 'addresses',
+			'type'		=> 'text',
+			'name'		=> 'addresses[]',
+			'value'		=> Misc::getArrayItem ($blocklist, $i) ?: '',
+			'size'		=> '15',
+			'maxlength'	=> '15',
+			'placeholder'	=> '127.0.0.1',
+			'title'		=> $hashover->locale->text['blocklist-ip-tip']
 		), false, true);
 
 		// Add input to inputs container
@@ -85,19 +83,17 @@ try {
 
 	// Template data
 	$template = array (
-		'title'		=> $title,
+		'title'		=> $hashover->locale->text['blocklist-title'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
-		'sub-title'	=> 'Block specific IP addresses',
+		'sub-title'	=> $hashover->locale->text['blocklist-sub'],
+		'message'	=> $form_message,
 		'inputs'	=> $inputs->getInnerHTML ("\t\t\t\t"),
-		'new-button'	=> '+ New Address',
-		'save-button'	=> 'Save Blocklist'
+		'save-button'	=> $hashover->locale->text['save']
 	);
 
 	// Load and parse HTML template
 	echo $hashover->templater->parseTemplate ('blocklist.html', $template);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('php');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage ());
 }

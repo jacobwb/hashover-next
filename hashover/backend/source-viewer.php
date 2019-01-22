@@ -27,15 +27,13 @@ try {
 	// Check if a file is requested
 	if (isset ($_GET['file'])) {
 		// Get return type
-		$type = !empty ($_GET['type']) ? $_GET['type'] : 'text';
+		$type = Misc::getArrayItem ($_GET, 'type') ?: 'text';
 
 		// Display source code
 		$source_code->display ($_GET['file'], $type);
 	} else {
 		// Instantiate HashOver class
 		$hashover = new \HashOver ();
-		$hashover->initiate ();
-		$hashover->finalize ();
 
 		// Create table for source code files
 		$table = new HTMLTag ('table', array (
@@ -48,17 +46,28 @@ try {
 		// Append column headers row
 		$table->appendChild (new HTMLTag ('tr', array (
 			'children' => array (
-				new HTMLTag ('td', new HTMLTag ('b', 'Type', false), false),
-				new HTMLTag ('td', new HTMLTag ('b', 'Name', false), false),
-				new HTMLTag ('td', new HTMLTag ('b', 'Path', false), false),
-				new HTMLTag ('td', new HTMLTag ('b', 'View As', false), false)
+				new HTMLTag ('td', new HTMLTag ('b', array (
+					'innerHTML' => $hashover->locale->text['type']
+				), false), false),
+
+				new HTMLTag ('td', new HTMLTag ('b', array (
+					'innerHTML' => $hashover->locale->text['name']
+				), false), false),
+
+				new HTMLTag ('td', new HTMLTag ('b', array (
+					'innerHTML' => $hashover->locale->text['path']
+				), false), false),
+
+				new HTMLTag ('td', new HTMLTag ('b', array (
+					'innerHTML' => $hashover->locale->text['view-as']
+				), false), false)
 			)
 		)));
 
 		// Run through HashOver files array
 		foreach ($source_code->files as $file) {
 			$path = $hashover->setup->getHttpPath ($file['path']);
-			$name = !empty ($file['name']) ? $file['name'] : basename ($path);
+			$name = Misc::getArrayItem ($file, 'name') ?: basename ($path);
 			$href = '?file=' . $file['path'];
 
 			// Create row and columns
@@ -77,7 +86,7 @@ try {
 				'children' => array (
 					new HTMLTag ('a', array (
 						'href' => $href . '&amp;type=text',
-						'innerHTML' => 'Text'
+						'innerHTML' => $hashover->locale->text['text']
 					), false),
 
 					new HTMLTag ('a', array (
@@ -87,7 +96,7 @@ try {
 
 					new HTMLTag ('a', array (
 						'href' => $href . '&amp;type=download',
-						'innerHTML' => 'Download'
+						'innerHTML' => $hashover->locale->text['download']
 					), false)
 				)
 			)));
@@ -98,13 +107,11 @@ try {
 
 		// Load and parse HTML template
 		echo $hashover->templater->parseTemplate ('source-viewer.html', array (
-			'title' => 'Source Code',
-			'sub-title' => 'HashOver server-side source sode viewer',
+			'title' => $hashover->locale->text['source-code'],
+			'sub-title' => $hashover->locale->text['source-code-sub'],
 			'files' => $table->asHTML ("\t\t")
 		));
 	}
 } catch (\Exception $error) {
-	$misc = new Misc ('php');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage ());
 }

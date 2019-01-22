@@ -1,67 +1,122 @@
-// Storage for JSONP callbacks (ajax.js)
-HashOverConstructor.jsonp = [];
+// Array of JSONP callbacks, starting with default error handler (ajax.js)
+HashOverConstructor.jsonp = [
+	function (json) { alert (json.message); }
+];
 
-// Push error handler function into JSONP callbacks array (ajax.js)
-HashOverConstructor.jsonp.push (function (json) {
-	alert (json.message);
-});
+// Send HTTP requests using JSONP as a fallback (ajax.js)
+HashOverConstructor.prototype.jsonp = function (method, path, data, callback, async)
+{
+	// Get constructor name
+	var source = this.constructor.toString ();
+	var constructor = source.match (/function (\w+)/)[1];
+
+	// Push callback into JSONP array
+	this.constructor.jsonp.push (callback);
+
+	// Add JSONP callback index and constructor to request data
+	data.push ('jsonp=' + (this.constructor.jsonp.length - 1));
+	data.push ('jsonp_object=' + constructor || 'HashOver');
+
+	// Create request script
+	var script = this.createElement ('script', {
+		src: path + '?' + data.join ('&'),
+		async: async
+	});
+
+	// Append request script to page
+	document.body.appendChild (script);
+};
 
 // Send HTTP requests using either XMLHttpRequest or JSONP (ajax.js)
 HashOverConstructor.prototype.ajax = function (method, path, data, callback, async)
 {
-	// Workaround for IE 11
-	if (window.location.origin) {
-		var origin = window.location.origin;
-	} else {
-		var protocol = window.location.protocol;
-		var hostname = window.location.hostname;
-		var port = window.location.port;
+	// Reference to this object
+	var hashover = this;
 
-		// Final origin
-		var origin = protocol + '//' + hostname + (port ? ':' + port : '');
-	}
+	// Arguments to this method
+	var args = arguments;
 
-	// Create origin regular expression
-	var originRegex = new RegExp ('^' + origin + '/', 'i');
+	// Successful request handler
+	var onSuccess = function ()
+	{
+		// Parse JSON response
+		var json = JSON.parse (this.responseText);
 
-	// Check if script is being remotely accessed
-	if (originRegex.test (HashOverConstructor.script.src) === false) {
-		// If so, use JSONP
-		HashOverConstructor.jsonp.push (callback);
+		// And execute callback
+		callback.apply (this, [ json ]);
+	};
 
-		// Add JSONP indicator to request path
-		data.push ('jsonp=' + (HashOverConstructor.jsonp.length - 1));
+	// CORS error handler
+	var onError = function ()
+	{
+		// Call JSONP fallback
+		hashover.jsonp.apply (hashover, args);
 
-		// Create request script
-		var request = this.elements.create ('script', {
-			src: path + '?' + data.join ('&'),
-			async: async
-		});
+		// And set AJAX to use JSONP
+		hashover.ajax = hashover.jsonp;
+	};
 
-		// Append request script to page
-		document.body.appendChild (request);
-	} else {
-		// Create request
-		var request = new XMLHttpRequest ();
+	// Check for XHR with credentials support
+	if ('withCredentials' in new XMLHttpRequest ()) {
+		// If supported, create XHR request
+		var xhr = new XMLHttpRequest ();
 
-		// Set callback as ready state change handler
-		request.onreadystatechange = function ()
+		// Set ready state change handler
+		xhr.onreadystatechange = function ()
 		{
-			// Do nothing if request wasn't successful in a meaningful way
-			if (this.readyState !== 4 || this.status !== 200) {
+			// Do nothing if request isn't ready
+			if (this.readyState !== 4) {
 				return;
 			}
 
-			// Parse response as JSON
-			var json = JSON.parse (this.responseText);
+			// Handle successful request response
+			if (this.status === 200) {
+				return onSuccess.apply (this);
+			}
 
-			// Execute callback
-			callback.apply (this, [ json ]);
+			// Handle failed request response, likely CORS error
+			if (this.status === 0) {
+				return onError ();
+			}
 		};
 
-		// Send request
-		request.open (method, path, async);
-		request.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
-		request.send (data.join ('&'));
+		// Open XHR request
+		xhr.open (method, path, async);
+
+		// Set request headers
+		xhr.setRequestHeader ('Content-type', 'application/x-www-form-urlencoded');
+
+		// Set request to include credentials, mostly cookies
+		xhr.withCredentials = true;
+
+		// Send XHR request
+		xhr.send (data.join ('&'));
+
+		// And do nothing else
+		return;
 	}
+
+	// Try to fallback to XDomainRequest if supported
+	if (typeof (XDomainRequest) !== 'undefined') {
+		// If so, create XDR request
+		var xdr = new XDomainRequest ();
+
+		// Open request
+		xdr.open (method, path);
+
+		// Set successful request response handler
+		xdr.onload = onSuccess;
+
+		// Set failed request response handler
+		xdr.onerror = onError;
+
+		// Send XDR request
+		setTimeout (xdr.send, 0);
+
+		// And do nothing else
+		return;
+	}
+
+	// If all else fails fallback to JSONP
+	onError ();
 };

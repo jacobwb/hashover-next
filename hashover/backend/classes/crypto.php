@@ -18,7 +18,7 @@
 
 
 // Encryption methods
-class Encryption
+class Crypto extends Secrets
 {
 	protected $prefix;
 	protected $cost = '$10$';
@@ -28,11 +28,13 @@ class Encryption
 	protected $options;
 	protected $alphabet = 'aAbBcCdDeEfFgGhHiIjJkKlLmM.nNoOpPqQrRsStTuUvVwWxXyYzZ/0123456789';
 
-	public function __construct ($encryption_key)
+	public function __construct ()
 	{
 		// Throw exception if encryption key isn't at least 8 characters long
-		if (mb_strlen ($encryption_key, '8bit') < 8) {
-			throw new Exception ('Encryption key must by at least 8 characters long.');
+		if (mb_strlen ($this->encryptionKey, '8bit') < 8) {
+			throw new \Exception (
+				'Encryption key must by at least 8 characters long.'
+			);
 		}
 
 		// Blowfish prefix
@@ -42,7 +44,7 @@ class Encryption
 		$this->options = defined ('OPENSSL_RAW_DATA') ? OPENSSL_RAW_DATA : true;
 
 		// SHA-256 hash array
-		$this->encryptionHash = str_split (hash ('sha256', $encryption_key));
+		$this->encryptionHash = str_split (hash ('sha256', $this->encryptionKey));
 
 		// OpenSSL cipher IV
 		$this->ivSize = openssl_cipher_iv_length ($this->cipher);
@@ -76,17 +78,20 @@ class Encryption
 	public function verifyHash ($string, $compare)
 	{
 		// Split string by dollar sign
-		$salt = explode ('$', $compare);
+		$parts = explode ('$', $compare);
+
+		// Hash salt
+		$salt = !empty ($parts[3]) ? $parts[3] : '';
 
 		// Encryption string as Blowfish hash
-		$hash = crypt ($string, $this->prefix . $this->cost . $salt[3] . '$$');
+		$hash = crypt ($string, $this->prefix . $this->cost . $salt . '$$');
 
 		// Returns true if both match
-		return ($hash === $compare) ? true : false;
+		return ($hash === $compare);
 	}
 
 	// Generates a random encryption key
-	public function createKey ($string)
+	protected function createKey ($string)
 	{
 		// Shuffle alphanumeric character array as to randomize it
 		shuffle ($string);

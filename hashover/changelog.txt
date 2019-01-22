@@ -1,4 +1,141 @@
-Changes by Jacob Barkdull 2017-00-00
+Changes by Jacob Barkdull 2017-08-09
+--------------------------------------------------------------------------------
+* Frontend settings have returned!
+
+  HashOver 1.0 had limited frontend control over settings, like how tall the
+  comment box is and which fields are enabled. For technical reasons this
+  feature was removed early in development of HashOver 2.0.
+
+  This feature is now back and better than ever.
+
+  You now have much greater frontend control over settings, limited to settings
+  that are safe to expose to the public, meaning you can't change the
+  notification e-mail address from the frontend, for example, but most settings
+  are available to change from the frontend.
+
+  To use this new feature you need to do the following...
+
+    1. Use the new `hashover/loader.php` script instead of the
+       `hashover/comments.php` script.
+
+    2. You need to use the `?nodefault` URL query. Please keep in mind that this
+       query name might change before official release.
+
+       The resulting script tag should look something like this:
+
+         <script src="/hashover/loader.php?nodefault"></script>
+
+    3. In another script you will need to instantiate HashOver manually, in
+       doing so you may specify the URL, title, thread, and settings.
+
+       Like so:
+
+         var hashover = new HashOver ({
+             url: 'http://example.com/cool-blog-post',
+             title: 'Example Title of My Cool Blog Post',
+
+             settings: {
+                 allowsImages: false,
+                 formPosition: 'bottom',
+
+                 fieldOptions: {
+                     password: false,
+                     email: false
+                 }
+             }
+         });
+
+       The code above disables embedded external images, changes the form
+       position to be on the bottom of the comment thread, and disables the
+       password and e-mail fields. You may also: require a field, change the
+       theme, change the language, collapse the comments, and much more!
+
+       Enjoy! As always, improvements are welcome!
+
+* Fixed: Posting a comment with required fields always threw an exception.
+* Fixed: Page reload when editing a comment when the e-mail field is disabled.
+* Fixed: The public `$imageFormat` setting was not being respected.
+* Improved: Admin comment moderation thread page "Back" button style.
+* Improved: Operating system specific line ending style conversation.
+* JavaScript: Only iterate over non-inherited object properties.
+* Differentiate backend redirect vs intend to display a message.
+* Decouple user edit moderation from overall moderation.
+* Fix/improve minified JavaScript Copyright notice.
+* Other minor CSS changes.
+
+
+Changes by Jacob Barkdull 2017-04-11
+--------------------------------------------------------------------------------
+* "Notify me of replies" checkbox default state is now configurable.
+* Escape HTML tags that get trimmed in half in the latest comments API.
+* Added new CSS file for latest comments API.
+* Added Greek locale by @Soulhub
+* Small CSS changes; removed most transitions.
+* Changed and added CSS Copyright notices.
+* Vertically flipped the paint brush icon.
+* Other minor improvements.
+
+
+Changes by Jacob Barkdull 2017-03-15
+--------------------------------------------------------------------------------
+* Fixed big, em, small, strong, sub, and sup tags are now automatically closed.
+* Automatically close tags that may have had their endings trimmed off.
+* Localized all admin views.
+
+
+Changes by Jacob Barkdull 2017-03-14
+--------------------------------------------------------------------------------
+* Date is now an absolute path in API and remote contexts.
+* Limited event handlers in the latest comments API.
+
+
+Changes by Jacob Barkdull 2017-03-13
+--------------------------------------------------------------------------------
+* Fixed JSONP shared code conflicts.
+
+
+Changes by Jacob Barkdull 2017-03-12
+--------------------------------------------------------------------------------
+* Fixed shared frontend code conflicts
+
+  When either an API was used on the same page as HashOver, or when two
+  API were used on the same page together, the two or more scripts
+  would conflict with each other because the shared prototype methods
+  were being added to the constructor from the previous script.
+
+
+Changes by Jacob Barkdull 2017-03-11
+--------------------------------------------------------------------------------
+* HashOver script tag can now safely be placed anywhere on the page.
+* Page URL and title removed from count link and latest comments API.
+* Improved admin sidebar navigation tracking.
+* Improved performance of admin login.
+* Fixed bug causing nonexistent files to resolve to `false`.
+* Untracked JSON config files.
+
+
+Changes by Jacob Barkdull 2017-03-03
+--------------------------------------------------------------------------------
+* Admin Settings page now only merges settings into `config/settings.json`.
+* Added missing files to Source Code viewer.
+* Made small improvements to admin views.
+* Improved locale optionality.
+
+
+Changes by Jacob Barkdull 2017-03-01
+--------------------------------------------------------------------------------
+* Added new setting to control metadata collection on localhost.
+* Fixed AJAX comment posting.
+* Fixed admin login issue.
+
+
+Changes by Jacob Barkdull 2017-02-28
+--------------------------------------------------------------------------------
+* Fixed the comment thread's automatic placement position on the page.
+* Added new locales to Source Code viewer.
+
+
+Changes by Jacob Barkdull 2017-02-26
 --------------------------------------------------------------------------------
 * MIGRATION INFORMATION
 
@@ -163,6 +300,11 @@ Changes by Jacob Barkdull 2017-00-00
 * Improved latest comments API.
 * Improved comment count link API.
 * Improved SQL(ite) support.
+* Improved Spanish and Chinese locales.
+* Added Lithuanian locale by vKaotik.
+* Added Korean locale by dryoo.
+* Added Persian locale by paradox70.
+* Comments are now uncollapsed when loaded with a permalink.
 * JavaScript/JSON is now the assumed default mode.
 * PHP regular expressions now use the "study" flag.
 * The "Latest Comments" API frontend no longer uses its own stylesheet.
@@ -170,6 +312,7 @@ Changes by Jacob Barkdull 2017-00-00
 * The `ReadComments` class has been renamed to `Thread`.
 * The `JSMinifier` class has been renamed to `JavaScriptMinifier`.
 * The `ReadFiles` class has been renamed to `CommentFiles`.
+* Fixed JavaScript minification.
 * Added centralized source code viewer for all AGPL licensed PHP files.
 * Removed code to display source code from every PHP file.
 * Made some small improvements to the icons images.

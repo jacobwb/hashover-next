@@ -27,17 +27,10 @@ chdir (realpath ('../'));
 require ('backend/nocache-headers.php');
 require ('backend/standard-setup.php');
 
-// Autoload class files
-spl_autoload_register (function ($uri) {
-	$uri = str_replace ('\\', '/', strtolower ($uri));
-	$class_name = basename ($uri);
-	$error = '"' . $class_name . '.php" file could not be included!';
-
-	if (!@include ('backend/classes/' . $class_name . '.php')) {
-		echo '<?xml version="1.0" encoding="UTF-8"?>', PHP_EOL;
-		echo '<error>', $error, '</error>';
-		exit;
-	}
+// Setup class autoloader
+setup_autoloader (function ($error) {
+	echo '<?xml version="1.0" encoding="UTF-8"?>', PHP_EOL;
+	echo '<error>', $error, '</error>';
 });
 
 function create_rss (&$hashover)
@@ -81,13 +74,14 @@ function create_rss (&$hashover)
 
 	// Display error if the API is disabled
 	if ($hashover->setup->apiStatus ('rss') === 'disabled') {
+		$message = 'This API is not enabled.';
 		$title = $xml->createElement ('title');
-		$title_value = $xml->createTextNode ('HashOver: RSS API is not enabled.');
+		$title_value = $xml->createTextNode ($message);
 		$title->appendChild ($title_value);
 		$rss->appendChild ($title);
 
 		$description = $xml->createElement ('description');
-		$description_value = $xml->createTextNode ('Error!');
+		$description_value = $xml->createTextNode ($message);
 		$description->appendChild ($description_value);
 		$rss->appendChild ($description);
 
@@ -130,7 +124,7 @@ function create_rss (&$hashover)
 
 	// Create channel atom link element
 	$atom_link = $xml->createElement ('atom:link');
-	$atom_link->setAttribute ('href', 'http://' . $hashover->setup->domain . $_SERVER['PHP_SELF'] . '?url=' . $metadata['url']);
+	$atom_link->setAttribute ('href', 'http://' . $hashover->setup->domain . $_SERVER['PHP_SELF'] . '?url=' . urlencode ($metadata['url']));
 	$atom_link->setAttribute ('rel', 'self');
 
 	// Add channel atom link to channel element
@@ -179,7 +173,7 @@ function create_rss (&$hashover)
 		$comment['body'] = preg_replace ('/(<|<\/)code>/iS', '\\1pre>', $comment['body']);
 
 		// Get name from comment or use configured default
-		$name = !empty ($comment['name']) ? $comment['name'] : $hashover->setup->defaultName;
+		$name = Misc::getArrayItem ($comment, 'name') ?: $hashover->setup->defaultName;
 
 		// Create item element
 		$item = $xml->createElement ('item');
@@ -226,8 +220,7 @@ function create_rss (&$hashover)
 
 		// Create item avatar element
 		$item_avatar = $xml->createElement ('avatar');
-		$web_root = 'http://' . $hashover->setup->domain . $hashover->setup->httpRoot;
-		$item_avatar_value = $xml->createTextNode ($web_root . $comment['avatar']);
+		$item_avatar_value = $xml->createTextNode ($comment['avatar']);
 		$item_avatar->appendChild ($item_avatar_value);
 
 		// Add item avatar element to item element
@@ -303,7 +296,7 @@ function create_rss (&$hashover)
 
 	// Return RSS XML
 	echo preg_replace_callback ('/^(\s+)/m', function ($spaces) {
-		return str_repeat ("\t", strlen ($spaces[1]) / 2);
+		return str_repeat ("\t", mb_strlen ($spaces[1]) / 2);
 	}, $xml->saveXML ());
 
 	// Return statistics
@@ -312,16 +305,26 @@ function create_rss (&$hashover)
 
 try {
 	// Instantiate HashOver class
-	$hashover = new \HashOver ('php', 'api');
+	$hashover = new \HashOver ('rss', 'api');
+
+	// Set page URL from GET data
 	$hashover->setup->setPageURL ('request');
-	$hashover->setup->collapsesComments = false;
+
+	// Initiate comment processing
 	$hashover->initiate ();
+
+	// Parse primary comments into usable data
 	$hashover->parsePrimary ();
+
+	// Attempt to get sorting method
+	$method = $hashover->setup->getRequest ('sorting', 'by-date');
+
+	// Sort comments by sorting method
+	$hashover->sortPrimary ($method);
 
 	// Create RSS feed
 	create_rss ($hashover);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('rss');
-	$misc->displayError ($error->getMessage ());
+	echo Misc::displayError ($error->getMessage (), 'rss');
 }

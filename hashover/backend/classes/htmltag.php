@@ -91,7 +91,9 @@ class HTMLTag
 		$backtrace = debug_backtrace ();
 		$line = $backtrace[1]['line'];
 
-		throw new \Exception ('Error on line ' . $line . ': ' . $error);
+		throw new \Exception (
+			'Error on line ' . $line . ': ' . $error
+		);
 	}
 
 	public function getInnerHTML ($indention = '')
@@ -100,7 +102,7 @@ class HTMLTag
 
 		foreach ($this->children as $child) {
 			if (is_object ($child)) {
-				$inner_html[] = $child->asHTML ();
+				$inner_html[] = $child->asHTML ($indention);
 				continue;
 			}
 

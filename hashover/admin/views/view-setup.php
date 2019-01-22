@@ -20,24 +20,36 @@
 // Do some standard HashOver setup work
 require (realpath ('../../../backend/standard-setup.php'));
 
-// Autoload class files
-spl_autoload_register (function ($uri) {
-	$uri = str_replace ('\\', '/', strtolower ($uri));
-	$class_name = basename ($uri);
-
-	if (!@include (realpath ('../../../backend/classes/' . $class_name . '.php'))) {
-		echo '"' . $class_name . '.php" file could not be included!';
-		exit;
-	}
-});
+// Setup class autoloader
+setup_autoloader ();
 
 // Instantiate HashOver class
 $hashover = new \HashOver ();
-$hashover->initiate ();
-$hashover->finalize ();
 
 // Instantiate FileWriter class
 $data_files = new DataFiles ($hashover->setup);
+
+// Redirects the user back to where they came from
+function redirect ($url = '')
+{
+	// Check if we're redirecting to a specific URL
+	if (!empty ($url)) {
+		// If so, use it
+		header ('Location: ' . $url);
+	} else {
+		// If not, check if there is a redirect specified
+		if (!empty ($_GET['redirect'])) {
+			// If so, use it
+			header ('Location: ' . $_GET['redirect']);
+		} else {
+			// If not, redirect to moderation
+			header ('Location: ../moderation/');
+		}
+	}
+
+	// Exit after redirect
+	exit;
+}
 
 // Exit if the user isn't logged in as admin
 if ($hashover->login->userIsAdmin !== true) {
@@ -45,20 +57,56 @@ if ($hashover->login->userIsAdmin !== true) {
 	$uri_parts = explode ('?', $uri);
 
 	if (basename ($uri_parts[0]) !== 'login') {
-		header ('Location: ../login/?redirect=' . urlencode ($uri));
-		exit;
+		redirect ('../login/?redirect=' . urlencode ($uri));
 	}
 }
 
 // Create logout hyperlink
-$logout = new HTMLTag ('span', array (
-	'class' => 'right',
-
-	'children' => array (
-		new HTMLTag ('a', array (
-			'href' => '../login/?logout=true',
-			'target' => '_parent',
-			'innerHTML' => 'Logout'
-		))
-	)
+$logout = new HTMLTag ('a', array (
+	'class' => 'plain-button right',
+	'href' => '../login/?logout=true',
+	'target' => '_parent',
+	'innerHTML' => $hashover->locale->text['logout']
 ));
+
+// Check if the form has been submitted
+if (!empty ($_GET['status'])) {
+	// Check if the form submission was successful
+	if ($_GET['status'] === 'success') {
+		// If so, create message element for success message
+		$message = new HTMLTag ('div', array (
+			'id' => 'message',
+			'class' => 'success',
+
+			'children' => array (
+				new HTMLTag ('p', array (
+					'innerHTML' => $hashover->locale->text['successful-save']
+				), false)
+			)
+		));
+	} else {
+		// If so, create message element for error message
+		$message = new HTMLTag ('div', array (
+			'id' => 'message',
+			'class' => 'error',
+
+			'children' => array (
+				// Main error message
+				new HTMLTag ('p', array (
+					'innerHTML' => $hashover->locale->text['failed-to-save']
+				), false),
+
+				// File permissions explanation
+				new HTMLTag ('p', array (
+					'innerHTML' => $hashover->locale->permissionsInfo ('config')
+				), false)
+			)
+		));
+	}
+
+	// Set message as HTML
+	$form_message = $message->asHTML ("\t\t");
+} else {
+	// If not, set the message as an empty string
+	$form_message = '';
+}

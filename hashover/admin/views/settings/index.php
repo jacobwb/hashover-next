@@ -18,7 +18,7 @@
 
 
 // Generates an array of various settings information
-function settings_array (Setup $setup)
+function ui_array (Setup $setup, Locale $locale)
 {
 	// Theme names
 	$themes = array ();
@@ -35,14 +35,13 @@ function settings_array (Setup $setup)
 	// Return array of settings allowed to be changed
 	return array (
 		'language' => array (
-			'description' => 'Language',
 			'type' => 'select',
 			'value' => $setup->language,
 
 			'options' => array (
-				'auto' => 'auto',
 				'en' => 'English',
 				'da' => 'Danish',
+				'el' => 'Greek',
 				'de' => 'German',
 				'es' => 'Spanish',
 				'fa' => 'Persian',
@@ -59,23 +58,41 @@ function settings_array (Setup $setup)
 			)
 		),
 		'theme' => array (
-			'description' => 'Theme',
 			'type' => 'select',
 			'value' => $setup->theme,
 			'options' => $themes
 		),
+		'default-sorting' => array (
+			'type' => 'select',
+			'value' => $setup->defaultSorting,
+
+			'options' => array (
+				'ascending'	=> $locale->text['sort-ascending'],
+				'descending'	=> $locale->text['sort-descending'],
+				'by-date'	=> $locale->text['sort-by-date'],
+				'by-likes'	=> $locale->text['sort-by-likes'],
+				'by-replies'	=> $locale->text['sort-by-replies'],
+				'by-name'	=> $locale->text['sort-by-name'],
+
+				'sort-threads' => array (
+					'threaded-descending'	=> $locale->text['sort-descending'],
+					'threaded-by-date'	=> $locale->text['sort-by-date'],
+					'threaded-by-likes'	=> $locale->text['sort-by-likes'],
+					'by-popularity'		=> $locale->text['sort-by-popularity'],
+					'by-discussion'		=> $locale->text['sort-by-discussion'],
+					'threaded-by-name'	=> $locale->text['sort-by-name']
+				)
+			)
+		),
 		'uses-moderation' => array (
-			'description' => 'Comments posted by normal users require moderation',
 			'type' => 'checkbox',
 			'value' => $setup->usesModeration
 		),
 		'pends-user-edits' => array (
-			'description' => 'Comments edited by normal users require additional moderation',
 			'type' => 'checkbox',
 			'value' => $setup->pendsUserEdits
 		),
 		'data-format' => array (
-			'description' => 'Comment data format',
 			'type' => 'select',
 			'value' => $setup->dataFormat,
 
@@ -85,53 +102,65 @@ function settings_array (Setup $setup)
 				'sql' => 'SQL'
 			)
 		),
+		'mailer' => array (
+			'type' => 'select',
+			'value' => $setup->mailer,
+
+			'options' => array (
+				'sendmail' => 'Sendmail',
+				'smtp' => 'SMTP'
+			)
+		),
+		'mail-type' => array (
+			'type' => 'select',
+			'value' => $setup->mailType,
+
+			'options' => array (
+				'text' => 'Text',
+				'html' => 'HTML'
+			)
+		),
+		'noreply-email' => array (
+			'type' => 'text',
+			'value' => $setup->noreplyEmail
+		),
 		'default-name' => array (
-			'description' => 'Default commenter name',
 			'type' => 'text',
 			'value' => $setup->defaultName
 		),
 		'allows-images' => array (
-			'description' => 'Allow display of images in comments',
 			'type' => 'checkbox',
 			'value' => $setup->allowsImages
 		),
 		'allows-login' => array (
-			'description' => 'Allow users to login',
 			'type' => 'checkbox',
 			'value' => $setup->allowsLogin
 		),
 		'allows-likes' => array (
-			'description' => 'Allow users to like comments',
 			'type' => 'checkbox',
 			'value' => $setup->allowsLikes
 		),
 		'allows-dislikes' => array (
-			'description' => 'Allow users to dislike comments',
 			'type' => 'checkbox',
 			'value' => $setup->allowsDislikes
 		),
 		'uses-ajax' => array (
-			'description' => 'Enable asynchronous JavaScript features',
 			'type' => 'checkbox',
 			'value' => $setup->usesAjax
 		),
 		'collapses-interface' => array (
-			'description' => 'Collapse entire HashOver user interface',
 			'type' => 'checkbox',
 			'value' => $setup->collapsesInterface
 		),
 		'collapses-comments' => array (
-			'description' => 'Collapse a configurable number of comments',
 			'type' => 'checkbox',
 			'value' => $setup->collapsesComments
 		),
 		'collapse-limit' => array (
-			'description' => 'Number of comments to collapse',
 			'type' => 'number',
 			'value' => $setup->collapseLimit
 		),
 		'reply-mode' => array (
-			'description' => 'Display mode of comment threads',
 			'type' => 'select',
 			'value' => $setup->replyMode,
 
@@ -141,59 +170,49 @@ function settings_array (Setup $setup)
 			)
 		),
 		'stream-depth' => array (
-			'description' => 'Number of reply indentions before stream is flattened',
 			'type' => 'number',
 			'value' => $setup->streamDepth
 		),
 		'popularity-threshold' => array (
-			'description' => 'Net number of likes a comment needs to be popular',
 			'type' => 'number',
 			'value' => $setup->popularityThreshold
 		),
 		'popularity-limit' => array (
-			'description' => 'Number of popular comments to display',
 			'type' => 'number',
 			'value' => $setup->popularityLimit
 		),
 		'uses-markdown' => array (
-			'description' => 'Enable Markdown support',
 			'type' => 'checkbox',
 			'value' => $setup->usesMarkdown
 		),
 		'server-timezone' => array (
-			'description' => 'Server timezone',
+			'documentation' => 'https://php.net/manual/en/timezones.php',
 			'type' => 'text',
 			'value' => $setup->serverTimezone
 		),
 		'uses-user-timezone' => array (
-			'description' => 'Display dates/times in user\'s timezone (JavaScript-mode)',
 			'type' => 'checkbox',
 			'value' => $setup->usesUserTimezone
 		),
 		'uses-short-dates' => array (
-			'description' => 'Enable shorter dates/times (example "1 day ago")',
 			'type' => 'checkbox',
 			'value' => $setup->usesShortDates
 		),
 		'time-format' => array (
-			'description' => 'Time format, use "H:i" for 24-hour format',
-			'documentation' => 'http://php.net/manual/en/function.date.php',
+			'documentation' => 'https://php.net/manual/en/function.date.php',
 			'type' => 'text',
 			'value' => $setup->timeFormat
 		),
 		'date-format' => array (
-			'description' => 'Date format',
-			'documentation' => 'http://php.net/manual/en/function.date.php',
+			'documentation' => 'https://php.net/manual/en/function.date.php',
 			'type' => 'text',
 			'value' => $setup->dateFormat
 		),
 		'displays-title' => array (
-			'description' => 'Enable display of page title',
 			'type' => 'checkbox',
 			'value' => $setup->displaysTitle
 		),
 		'form-position' => array (
-			'description' => 'Position for primary comment form',
 			'type' => 'select',
 			'value' => $setup->formPosition,
 
@@ -203,22 +222,18 @@ function settings_array (Setup $setup)
 			)
 		),
 		'uses-auto-login' => array (
-			'description' => 'Automatically log users in when they post comments',
 			'type' => 'checkbox',
 			'value' => $setup->usesAutoLogin
 		),
 		'shows-reply-count' => array (
-			'description' => 'Display reply count separately from total count',
 			'type' => 'checkbox',
 			'value' => $setup->showsReplyCount
 		),
 		'count-includes-deleted' => array (
-			'description' => 'Include deleted comments comment counts',
 			'type' => 'checkbox',
 			'value' => $setup->countIncludesDeleted
 		),
 		'icon-mode' => array (
-			'description' => 'Avatar icon display mode',
 			'type' => 'select',
 			'value' => $setup->iconMode,
 
@@ -229,12 +244,10 @@ function settings_array (Setup $setup)
 			)
 		),
 		'icon-size' => array (
-			'description' => 'Avatar icon size',
 			'type' => 'number',
 			'value' => $setup->iconSize
 		),
 		'image-format' => array (
-			'description' => 'Format for icons and other images',
 			'type' => 'select',
 			'value' => $setup->imageFormat,
 
@@ -244,58 +257,50 @@ function settings_array (Setup $setup)
 			)
 		),
 		'uses-labels' => array (
-			'description' => 'Display labels above inputs',
 			'type' => 'checkbox',
 			'value' => $setup->usesLabels
 		),
 		'uses-cancel-buttons' => array (
-			'description' => 'Whether forms have cancel buttons',
 			'type' => 'checkbox',
 			'value' => $setup->usesCancelButtons
 		),
 		'appends-css' => array (
-			'description' => 'Automatically add HashOver CSS to page',
 			'type' => 'checkbox',
 			'value' => $setup->appendsCss
 		),
 		'appends-rss' => array (
-			'description' => 'Add HashOver RSS Feed links to page',
 			'type' => 'checkbox',
 			'value' => $setup->appendsRss
 		),
 		'login-method' => array (
-			'description' => 'User login system',
 			'type' => 'select',
 			'value' => $setup->loginMethod,
-			'options' => array ('defaultLogin' => 'Default Login')
+
+			'options' => array (
+				'defaultLogin' => 'Default Login'
+			)
 		),
 		'sets-cookies' => array (
-			'description' => 'Enable cookies',
 			'type' => 'checkbox',
 			'value' => $setup->setsCookies
 		),
 		'secure-cookies' => array (
-			'description' => 'Use secure HTTPS-only cookies',
 			'type' => 'checkbox',
 			'value' => $setup->secureCookies
 		),
 		'stores-ip-address' => array (
-			'description' => 'Enable storage of user IP addresses',
 			'type' => 'checkbox',
 			'value' => $setup->storesIpAddress
 		),
+		'subscribes-user' => array (
+			'type' => 'checkbox',
+			'value' => $setup->subscribesUser
+		),
 		'allows-user-replies' => array (
-			'description' => 'Set user e-mail as "Reply-To" in reply notifications',
 			'type' => 'checkbox',
 			'value' => $setup->allowsUserReplies
 		),
-		'noreply-email' => array (
-			'description' => 'E-mail address used when no e-mail is given',
-			'type' => 'text',
-			'value' => $setup->noreplyEmail
-		),
 		'spam-batabase' => array (
-			'description' => 'SPAM database location',
 			'type' => 'select',
 			'value' => $setup->spamDatabase,
 
@@ -305,7 +310,6 @@ function settings_array (Setup $setup)
 			)
 		),
 		'spam-check-modes' => array (
-			'description' => 'Modes to perform SPAM check under',
 			'type' => 'select',
 			'value' => $setup->spamCheckModes,
 
@@ -316,12 +320,10 @@ function settings_array (Setup $setup)
 			)
 		),
 		'gravatar-force' => array (
-			'description' => 'Use themed Gravatar images instead of avatars',
 			'type' => 'checkbox',
 			'value' => $setup->gravatarForce
 		),
 		'gravatar-default' => array (
-			'description' => 'Default Gravatar theme to use',
 			'type' => 'select',
 			'value' => $setup->gravatarDefault,
 
@@ -334,12 +336,10 @@ function settings_array (Setup $setup)
 			)
 		),
 		'minifies-javascript' => array (
-			'description' => 'Enable JavaScript minification',
 			'type' => 'checkbox',
 			'value' => $setup->minifiesJavascript
 		),
 		'minify-level' => array (
-			'description' => 'JavaScript minification level',
 			'type' => 'select',
 			'cast' => 'number',
 			'value' => $setup->minifyLevel,
@@ -352,7 +352,6 @@ function settings_array (Setup $setup)
 			)
 		),
 		'allow-local-metadata' => array (
-			'description' => 'Allow page metadata to be updated from localhost',
 			'type' => 'checkbox',
 			'value' => $setup->allowLocalMetadata
 		)
@@ -363,17 +362,22 @@ try {
 	// View setup
 	require (realpath ('../view-setup.php'));
 
-	// Submission indicators
-	$title = 'Settings';
-	$submitted = false;
+	// Get array of UI elements to create
+	$ui = ui_array ($hashover->setup, $hashover->locale);
 
 	// Check if the form has been submitted
 	if (isset ($_POST['save'])) {
-		// Array for settings JSON data
-		$settings = array ();
+		// Settings JSON file path
+		$settings_file = $hashover->setup->getAbsolutePath ('config/settings.json');
+
+		// Read JSON settings file
+		$json = $data_files->readJSON ($settings_file);
+
+		// Existing JSON settings or an empty array
+		$settings = ($json !== false) ? $json : array ();
 
 		// Run through configurable settings
-		foreach (settings_array ($hashover->setup) as $name => $setting) {
+		foreach ($ui as $name => $setting) {
 			// Use specified type or optional cast
 			$type = !empty ($setting['cast']) ? 'cast' : 'type';
 
@@ -392,30 +396,36 @@ try {
 
 				// All other values are strings
 				default: {
-					$settings[$name] = (string)($_POST[$name]);
+					// Check if setting has a value
+					if (!empty ($_POST[$name])) {
+						// If so, cast it to string before setting it
+						$settings[$name] = (string)($_POST[$name]);
+					} else {
+						// If not, remove the setting entirely
+						unset ($settings[$name]);
+					}
+
 					break;
 				}
 			}
 		}
 
-		// Settings JSON file path
-		$settings_file = $hashover->setup->getAbsolutePath ('config/settings.json');
+		// Check if the user login is admin
+		if ($hashover->login->verifyAdmin () === true) {
+			// If so, attempt to save the settings
+			$saved = $data_files->saveJSON ($settings_file, $settings);
 
-		// Save the JSON data to the settings JSON file
-		if ($data_files->saveJSON ($settings_file, $settings)) {
-			// Sync settings with settings JSON file
-			$hashover->setup->JSONSettings ();
-
-			// Set submission indicators
-			$title = 'Settings Saved!';
-			$submitted = true;
-		} else {
-			// Set submission indicators
-			$title = 'Failed to Settings!';
+			// If saved successfully, redirect with success indicator
+			if ($saved === true) {
+				redirect ('index.php?status=success');
+			}
 		}
+
+		// Otherwise, redirect with failure indicator
+		redirect ('index.php?status=failure');
 	}
 
-	// Create settings table
+	// Otherwise, create settings table
 	$table = new HTMLTag ('table', array (
 		'id' => 'settings',
 		'class' => 'p-spaced',
@@ -424,7 +434,7 @@ try {
 	));
 
 	// Create settings table
-	foreach (settings_array ($hashover->setup) as $name => $setting) {
+	foreach ($ui as $name => $setting) {
 		// Create table row
 		$tr = new HTMLTag ('tr');
 
@@ -434,7 +444,7 @@ try {
 		// Create description label
 		$label = new HTMLTag ('label', array (
 			'for' => $name,
-			'innerHTML' => $setting['description']
+			'innerHTML' => $hashover->locale->text['setting-' . $name]
 		), false);
 
 		// Check for documentation URL
@@ -443,7 +453,7 @@ try {
 			$docs = new HTMLTag ('a', array (
 				'href' => $setting['documentation'],
 				'target' => '_blank',
-				'innerHTML' => 'documentation'
+				'innerHTML' => mb_strtolower ($hashover->locale->text['documentation'])
 			), false);
 
 			// Append documentation in parentheses
@@ -503,20 +513,53 @@ try {
 					'size' => 1
 				));
 
-				foreach ($setting['options'] as $value => $text) {
-					// Create setting option
-					$option = new HTMLTag ('option', array (
-						'value' => $value,
-						'innerHTML' => $text
-					), false);
+				foreach ($setting['options'] as $value => $data) {
+					// Check if the current option is an array
+					if (is_array ($data)) {
+						// If so, add an option group spacer to menu
+						$select->appendChild (new HTMLTag ('optgroup', array (
+							'label' => '&nbsp;'
+						)));
 
-					// Select proper option
-					if ($value === $setting['value']) {
-						$option->createAttribute ('selected', 'true');
+						// Create an option group with localized label
+						$optgroup = new HTMLTag ('optgroup', array (
+							'label' => $hashover->locale->text[$value]
+						));
+
+						// Run through each optgroup option
+						foreach ($data as $opt_value => $opt_text) {
+							// Create setting option
+							$option = new HTMLTag ('option', array (
+								'value' => $opt_value,
+								'innerHTML' => $opt_text
+							), false);
+
+							// Select proper option
+							if ($opt_value === $setting['value']) {
+								$option->createAttribute ('selected', 'true');
+							}
+
+							// Append option to optgroup
+							$optgroup->appendChild ($option);
+						}
+
+						// And append optgroup to menu
+						$select->appendChild ($optgroup);
+					} else {
+						// If not, create setting option
+						$option = new HTMLTag ('option', array (
+							'value' => $value,
+							'innerHTML' => $data
+						), false);
+
+						// Select proper option
+						if ($value === $setting['value']) {
+							$option->createAttribute ('selected', 'true');
+						}
+
+						// Append option to menu
+						$select->appendChild ($option);
 					}
-
-					// Append option to menu
-					$select->appendChild ($option);
 				}
 
 				// Append dropdown menu to wrapper element
@@ -538,18 +581,17 @@ try {
 
 	// Template data
 	$template = array (
-		'title'		=> $title,
+		'title'		=> $hashover->locale->text['settings'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
-		'sub-title'	=> 'Change various settings',
+		'sub-title'	=> $hashover->locale->text['settings-sub'],
+		'message'	=> $form_message,
 		'settings'	=> $table->asHTML ("\t\t\t"),
-		'save-button'	=> 'Save Settings'
+		'save-button'	=> $hashover->locale->text['save']
 	);
 
 	// Load and parse HTML template
 	echo $hashover->templater->parseTemplate ('settings.html', $template);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('php');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage ());
 }

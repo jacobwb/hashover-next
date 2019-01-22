@@ -25,11 +25,7 @@ try {
 	$ignored_queries = array ();
 
 	// Ignored URL queries JSON file location
-	$ignored_queries_file = $hashover->setup->getAbsolutePath ('config/ignored-queries.json');
-
-	// Submission indicators
-	$title = 'Ignored URL Queries';
-	$submitted = false;
+	$queries_file = $hashover->setup->getAbsolutePath ('config/ignored-queries.json');
 
 	// Check if the form has been submitted
 	if (!empty ($_POST['names']) and is_array ($_POST['names'])
@@ -53,23 +49,27 @@ try {
 			}
 		}
 
-		// Save the JSON data to the URL Query Pairs file
-		if ($data_files->saveJSON ($ignored_queries_file, $ignored_queries)) {
-			// Set submission indicators
-			$title = 'Queries Saved!';
-			$submitted = true;
-		} else {
-			// Set submission indicators
-			$title = 'Failed to Save URL Query Filters!';
-		}
-	} else {
-		// Load and parse URL Query Pairs file
-		$json = $data_files->readJSON ($ignored_queries_file);
+		// Check if the user login is admin
+		if ($hashover->login->verifyAdmin () === true) {
+			// If so, attempt to save the JSON data
+			$saved = $data_files->saveJSON ($queries_file, $ignored_queries);
 
-		// Check for JSON parse error
-		if (is_array ($json)) {
-			$ignored_queries = $json;
+			// If saved successfully, redirect with success indicator
+			if ($saved === true) {
+				redirect ('index.php?status=success');
+			}
 		}
+
+		// Otherwise, redirect with failure indicator
+		redirect ('index.php?status=failure');
+	}
+
+	// Otherwise, load and parse URL Query Pairs file
+	$json = $data_files->readJSON ($queries_file);
+
+	// Check for JSON parse error
+	if (is_array ($json)) {
+		$ignored_queries = $json;
 	}
 
 	// URL Query Pair inputs
@@ -78,35 +78,35 @@ try {
 	// Create URL Query Pair inputs
 	for ($i = 0, $il = max (3, count ($ignored_queries)); $i < $il; $i++) {
 		// Use URL query pairs from file or blank
-		$query = !empty ($ignored_queries[$i]) ? $ignored_queries[$i] : '';
+		$query = Misc::getArrayItem ($ignored_queries, $i) ?: '';
 
-		// Split query pair into name and value
+		// Split query pair by equals sign
 		$query_parts = explode ('=', $query);
-		$query_name = $query_parts[0];
-		$query_value = !empty ($query_parts[1]) ? $query_parts[1] : '';
 
-		// Create input tag
-		$input = new HTMLTag ('div', array (
-			'children' => array (
-				new HTMLTag ('input', array (
-					'type' => 'text',
-					'name' => 'names[]',
-					'value' => $query_name,
-					'size' => '15',
-					'placeholder' => 'Name',
-					'title' => 'Query name or blank to remove'
-				), false, true),
+		// Create div tag for name and value inputs
+		$input = new HTMLTag ('div');
 
-				new HTMLTag ('input', array (
-					'type' => 'text',
-					'name' => 'values[]',
-					'value' => $query_value,
-					'size' => '25',
-					'placeholder' => 'Value',
-					'title' => 'Query value or blank for any value'
-				), false, true)
-			)
-		));
+		// Add input for query name to input div
+		$input->appendChild (new HTMLTag ('input', array (
+			'class'		=> 'name',
+			'type'		=> 'text',
+			'name'		=> 'names[]',
+			'value'		=> $query_parts[0],
+			'size'		=> '15',
+			'placeholder'	=> $hashover->locale->text['name'],
+			'title'		=> $hashover->locale->text['url-queries-name-tip']
+		), false, true));
+
+		// Add input for query value to input div
+		$input->appendChild (new HTMLTag ('input', array (
+			'class'		=> 'value',
+			'type'		=> 'text',
+			'name'		=> 'values[]',
+			'value'		=> Misc::getArrayItem ($query_parts, 1) ?: '',
+			'size'		=> '25',
+			'placeholder'	=> $hashover->locale->text['value'],
+			'title'		=> $hashover->locale->text['url-queries-value-tip']
+		), false, true));
 
 		// Add input to inputs container
 		$inputs->appendChild ($input);
@@ -114,19 +114,17 @@ try {
 
 	// Template data
 	$template = array (
-		'title'		=> $title,
+		'title'		=> $hashover->locale->text['url-queries-title'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
-		'sub-title'	=> 'Filter which URL queries should be ignored',
+		'sub-title'	=> $hashover->locale->text['url-queries-sub'],
+		'message'	=> $form_message,
 		'inputs'	=> $inputs->getInnerHTML ("\t\t\t\t"),
-		'new-button'	=> '+ New Query Pair',
-		'save-button'	=> 'Save Queries'
+		'save-button'	=> $hashover->locale->text['save']
 	);
 
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('ignored-queries.html', $template);
+	echo $hashover->templater->parseTemplate ('url-queries.html', $template);
 
 } catch (\Exception $error) {
-	$misc = new Misc ('php');
-	$message = $error->getMessage ();
-	$misc->displayError ($message);
+	echo Misc::displayError ($error->getMessage ());
 }

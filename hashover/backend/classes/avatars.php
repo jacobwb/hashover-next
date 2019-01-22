@@ -19,65 +19,123 @@
 
 class Avatars
 {
-	public $setup;
-	public $isHTTPS = false;
-	public $http;
-	public $subdomain;
-	public $iconSize;
-	public $avatar;
-	public $fallback;
+	protected $setup;
+	protected $isVector;
+	protected $gravatar;
+	protected $iconSize;
+	protected $avatar;
+	protected $png;
+	protected $svg;
+	protected $fallback;
 
+	// Supported icon sizes
+	protected $iconSizes = array (45, 64, 128, 256, 512);
+
+	// Initial setup
 	public function __construct (Setup $setup)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
-		$this->isHTTPS = $setup->isHTTPS ();
 
-		// Get icon size from settings
-		$this->iconSize = ($setup->isMobile === true) ? 256 : $setup->iconSize;
+		// Whether icon is vector based on setting
+		$this->isVector = ($setup->imageFormat === 'svg');
 
-		// Default avatar
-		$avatar = $setup->httpImages . '/avatar';
-		$extension = ($setup->isMobile === true) ? 'svg' : 'png';
-		$this->avatar = $avatar . '.' . $extension;
+		// Get HTTPS status
+		$is_https = $setup->isHTTPS ();
 
 		// Use HTTPS if this file is requested with HTTPS
-		$this->http = ($this->isHTTPS ? 'https' : 'http') . '://';
-		$this->subdomain = $this->isHTTPS ? 'secure' : 'www';
+		$http = ($is_https ? 'https' : 'http') . '://';
+		$subdomain = $is_https ? 'secure' : 'www';
 
-		// If set to custom, direct 404s to local avatar image
-		if ($setup->gravatarDefault === 'custom') {
-			$fallback = $avatar . '.png';
+		// Construct Gravatar icon URL
+		$this->gravatar = $http . $subdomain . '.gravatar.com/avatar/';
 
-			// Check if HashOver is being remotely accessed
-			if ($setup->remoteAccess === false) {
-				// If so, make avatar path absolute
-				$fallback = $setup->absolutePath . $fallback;
+		// Icon setup
+		$this->iconSetup ($setup->iconSize);
+	}
+
+	// Gets default avatar size closest to the given size
+	protected function closestSize ($size = 45)
+	{
+		// Current supported size
+		$closest = $this->iconSizes[0];
+
+		// Find the closest size
+		for ($i = 0, $il = count ($this->iconSizes); $i < $il; $i++) {
+			// Check if the size is too small
+			if ($size > $closest) {
+				// If so, increase closest size
+				$closest = $this->iconSizes[$i];
+			} else {
+				// If not, end the loop
+				break;
 			}
-
-			// URL encode fallback URL
-			$this->fallback = urlencode ($fallback);
-		} else {
-			// If not direct to a themed default
-			$this->fallback = $setup->gravatarDefault;
 		}
 
-		// Gravatar URL
-		$this->gravatar  = $this->http . $this->subdomain;
-		$this->gravatar .= '.gravatar.com/avatar/';
+		return $closest;
+	}
+
+	// Sets up avatar
+	protected function iconSetup ($size = 45)
+	{
+		// Set icon size (256 for vector)
+		$this->iconSize = $this->isVector ? 256 : $size;
+
+		// Set default icon size (256 for vector)
+		$default_size = $this->isVector ? 256 : $this->closestSize ($size);
+
+		// Default avatar file names
+		$avatar = $this->setup->httpImages . '/avatar';
+		$this->png = $avatar . '-' . $default_size . '.png';
+		$this->svg = $avatar . '.svg';
+
+		// Set avatar property to appropriate type
+		$this->avatar = $this->isVector ? $this->svg : $this->png;
+
+		// Check if avatar is set to custom
+		if ($this->setup->gravatarDefault === 'custom') {
+			// If so, direct 404s to local PNG avatar image
+			$fallback = $this->png;
+
+			// Make avatar path absolute when not accessed remotely
+			if ($this->setup->remoteAccess === false) {
+				$fallback = $this->setup->absolutePath . $fallback;
+			}
+
+			// And set final fallback avatar path property
+			$this->fallback = $fallback;
+		} else {
+			// If not, direct 404s to a themed default
+			$this->fallback = $this->setup->gravatarDefault;
+		}
 	}
 
 	// Attempt to get Gravatar avatar image
-	public function getGravatar ($hash)
+	public function getGravatar ($hash, $abs = false, $size = false)
 	{
+		// Decide desired size of icon
+		$size = $size ?: $this->setup->iconSize;
+
+		// Perform setup again if the size doesn't match
+		if ($size !== $this->iconSize) {
+			$this->iconSetup ($size);
+		}
+
 		// If no hash is given, return the default avatar
 		if (empty ($hash)) {
+			// Return absolute path if told to and accessed remotely
+			if ($abs === true and $this->setup->remoteAccess !== true) {
+				return $this->setup->absolutePath . $this->avatar;
+			}
+
+			// Otherwise, return avatar path as-is
 			return $this->avatar;
 		}
 
 		// Gravatar URL
 		$gravatar  = $this->gravatar . $hash . '.png?r=pg';
-		$gravatar .= '&amp;s=' . $this->iconSize;
-		$gravatar .= '&amp;d=' . $this->fallback;
+		$gravatar .= '&amp;s=' . urlencode ($this->iconSize);
+		$gravatar .= '&amp;d=' . urlencode ($this->fallback);
 
 		// Force Gravatar default avatar if enabled
 		if ($this->setup->gravatarForce === true) {

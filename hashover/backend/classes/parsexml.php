@@ -20,23 +20,30 @@
 // Functions for reading and writing XML files
 class ParseXML extends CommentFiles
 {
-	public function __construct (Setup $setup)
+	// LibXML flags
+	protected $flags = LIBXML_COMPACT | LIBXML_NOCDATA;
+
+	public function __construct (Setup $setup, Thread $thread)
 	{
-		parent::__construct ($setup);
+		// Construct parent class
+		parent::__construct ($setup, $thread);
 
 		// Enable XML user error handling
 		libxml_use_internal_errors (true);
 
-		// Throw exception if the XML extension isn't loaded
-		$setup->extensionsLoaded (array ('xml', 'libxml'));
+		// Throw exception if required XML extensions aren't loaded
+		$setup->extensionsLoaded (array (
+			'xml', 'libxml', 'SimpleXML'
+		));
 	}
 
-	public function query (array $files = array (), $auto = true)
+	// Returns an array of comment files
+	public function query ()
 	{
-		// Return array of files
-		return $this->loadFiles ('xml', $files, $auto);
+		return $this->loadFiles ('xml');
 	}
 
+	// Reads and processes a comment file
 	public function read ($file, $thread = 'auto')
 	{
 		// Get comment file path
@@ -48,12 +55,15 @@ class ParseXML extends CommentFiles
 		// Check for file read error
 		if ($data !== false) {
 			// Parse XML comment file
-			$xml = @simplexml_load_string ($data, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOCDATA);
+			$xml = @simplexml_load_string ($data, 'SimpleXMLElement', $this->flags);
 
 			// Check for XML parse error
 			if ($xml !== false) {
-				// Remove first two levels of indentation from comment
-				$xml->body = preg_replace ('/^\t{0,2}/mS', '', trim ($xml->body, "\r\n\t"));
+				// If no error, trim comment
+				$xml->body = trim ($xml->body, "\r\n\t");
+
+				// And remove two levels of indentation from comment
+				$xml->body = preg_replace ('/^\t{0,2}/mS', '', $xml->body);
 
 				return (array) $xml;
 			}
@@ -62,6 +72,7 @@ class ParseXML extends CommentFiles
 		return false;
 	}
 
+	// Saves a comment file
 	public function save ($file, array $contents, $editing = false, $thread = 'auto')
 	{
 		// Get comment file path
@@ -77,50 +88,70 @@ class ParseXML extends CommentFiles
 		$dom->preserveWhiteSpace = false;
 		$dom->formatOutput = true;
 
-		// Create root element "comment"
+		// Create root <comment> element
 		$comment = $dom->createElement ('comment');
 
-		// Add comment data to root "comment" element
+		// Add comment data to root <comment> element
 		foreach ($contents as $key => $value) {
+			// Create element by content key
 			$element = $dom->createElement ($key);
 
+			// Check if element is <body> element
 			if ($key === 'body') {
+				// If so, set initial new body of comment
 				$new_value = '';
 
-				foreach (explode (PHP_EOL, trim ($value, PHP_EOL)) as $line) {
+				// Split body into lines
+				$lines = explode (PHP_EOL, trim ($value, PHP_EOL));
+
+				// Run through lines
+				foreach ($lines as $line) {
+					// Add indentation if line is not empty
 					if (!empty ($line)) {
 						$new_value .= "\t\t";
 					}
 
+					// Add line to new body
 					$new_value .= $line . "\n";
 				}
 
+				// And update body value
 				$value = "\n" . $new_value . "\t";
 			}
 
+			// Create a text node for content value
 			$text_node = $dom->createTextNode ($value);
+
+			// Append content value text node to element
 			$element->appendChild ($text_node);
+
+			// And append content element
 			$comment->appendChild ($element);
 		}
 
-		// Append root element "comment"
+		// Append root <comment> element
 		$dom->appendChild ($comment);
 
 		// Replace double spaces with single tab
 		$tabbed_dom = str_replace ('  ', "\t", $dom->saveXML ());
 
-		// Convert line endings to OS specific style
+		// Convert line endings to OS-specific style
 		$tabbed_dom = $this->osLineEndings ($tabbed_dom);
 
-		// Attempt to write file
+		// Return true if file writes successfully (0 counts as failure)
 		if (@file_put_contents ($file, $tabbed_dom, LOCK_EX)) {
+			// If successful, change file permissions
 			@chmod ($file, 0600);
+
+			// And return true
 			return true;
 		}
 
+		// Otherwise, return false
 		return false;
 	}
 
+	// Deletes a comment file
 	public function delete ($file, $hard_unlink = false)
 	{
 		// Actually delete the comment file

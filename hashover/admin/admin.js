@@ -1,3 +1,4 @@
+// Wait for the page HTML to be parsed
 document.addEventListener ('DOMContentLoaded', function () {
 	// Get view links
 	var viewLinks = document.getElementsByClassName ('view-link');
@@ -21,18 +22,6 @@ document.addEventListener ('DOMContentLoaded', function () {
 		});
 	}
 
-	// Add click event handler to each view link
-	eachViewLink (function (link) {
-		link.onclick = function ()
-		{
-			// Remove active class from all view links
-			clearViewTabs ();
-
-			// Set the active class to the view link being clicked
-			this.className += ' active';
-		};
-	});
-
 	// Automatically select the proper view tab on page load
 	content.onload = function ()
 	{
@@ -44,12 +33,9 @@ document.addEventListener ('DOMContentLoaded', function () {
 			var regex = new RegExp (link.getAttribute ('href'));
 			var frameUrl = content.contentDocument.location.href;
 
-			if (regex.test (frameUrl)) {
+			if (regex.test (decodeURIComponent (frameUrl))) {
 				link.className += ' active';
 			}
 		});
-
-		// Remove this load event handler
-		this.onload = null;
 	};
 }, false);

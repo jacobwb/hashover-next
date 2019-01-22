@@ -8,7 +8,7 @@ HashOver.prototype.emailValidator = function (form, subscribe, type, permalink, 
 	// Whether the e-mail form is empty
 	if (form.email.value === '') {
 		// Return true if user unchecked the subscribe checkbox
-		if (this.elements.get (subscribe, true).checked === false) {
+		if (this.getElement(subscribe).checked === false) {
 			return true;
 		}
 
@@ -19,9 +19,9 @@ HashOver.prototype.emailValidator = function (form, subscribe, type, permalink, 
 		}
 	} else {
 		// If not, check if the e-mail is valid
-		if (this.regex.email.test (form.email.value) === false) {
+		if (this.rx.email.test (form.email.value) === false) {
 			// Return true if user unchecked the subscribe checkbox
-			if (this.elements.get (subscribe, true).checked === false) {
+			if (this.getElement(subscribe).checked === false) {
 				form.email.value = '';
 				return true;
 			}
@@ -30,7 +30,7 @@ HashOver.prototype.emailValidator = function (form, subscribe, type, permalink, 
 			var message = this.locale['invalid-email'];
 
 			// Show the message and focus the e-mail input
-			this.messages.show (message, type, permalink, true, isReply, isEdit);
+			this.showMessage (message, type, permalink, true, isReply, isEdit);
 			form.email.focus ();
 
 			return false;

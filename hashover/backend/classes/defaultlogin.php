@@ -19,10 +19,11 @@
 
 class DefaultLogin
 {
-	public $setup;
-	public $encryption;
-	public $cookies;
-	public $locale;
+	protected $setup;
+	protected $cookies;
+	protected $locale;
+	protected $crypto;
+
 	public $enabled = true;
 	public $name;
 	public $password;
@@ -32,10 +33,13 @@ class DefaultLogin
 
 	public function __construct (Setup $setup, Cookies $cookies, Locale $locale)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
-		$this->encryption = $setup->encryption;
 		$this->cookies = $cookies;
 		$this->locale = $locale;
+
+		// Instantiate Encryption class
+		$this->crypto = new Crypto ();
 
 		// Disable login if cookies are disabled
 		if ($setup->setsCookies === false) {
@@ -56,7 +60,7 @@ class DefaultLogin
 		// Check if an email was given
 		if (!empty ($this->email)) {
 			// If so, generate encrypted string / decryption keys from e-mail
-			$email = $this->encryption->encrypt ($this->email);
+			$email = $this->crypto->encrypt ($this->email);
 
 			// And set e-mail and encryption cookies
 			$this->cookies->set ('email', $email['encrypted']);
@@ -80,7 +84,7 @@ class DefaultLogin
 		// Decrypt email cookie
 		$encrypted_email = $this->cookies->getValue ('email', true);
 		$encryption = $this->cookies->getValue ('encryption', true);
-		$email = $this->encryption->decrypt ($encrypted_email, $encryption);
+		$email = $this->crypto->decrypt ($encrypted_email, $encryption);
 
 		// Validate e-mail address
 		if (filter_var ($email, FILTER_VALIDATE_EMAIL)) {
