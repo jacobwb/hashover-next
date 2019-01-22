@@ -25,7 +25,11 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 			var scrollToElement = hashover.getElement (json.comment.permalink);
 
 			// Scroll comment into view
-			scrollToElement.scrollIntoView ({ behavior: 'smooth' });
+			scrollToElement.scrollIntoView ({
+				behavior: 'smooth',
+				block: 'start',
+				inline: 'start'
+			});
 
 			// And clear the comment form
 			form.comment.value = '';

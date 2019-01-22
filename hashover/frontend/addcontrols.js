@@ -59,7 +59,11 @@ HashOverConstructor.prototype.addControls = function (comment)
 				var scrollToElement = hashover.getElement (parentThread);
 
 				// Scroll to the parent comment
-				scrollToElement.scrollIntoView ({ behavior: 'smooth' });
+				scrollToElement.scrollIntoView ({
+					behavior: 'smooth',
+					block: 'start',
+					inline: 'start'
+				});
 			};
 
 			// Check if collapsed comments are enabled

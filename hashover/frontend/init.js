@@ -23,7 +23,11 @@ HashOver.prototype.init = function (id)
 	function scrollToElement (id)
 	{
 		hashover.elementExists (id, function (element) {
-			element.scrollIntoView ({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+			element.scrollIntoView ({
+				behavior: 'smooth',
+				block: 'start',
+				inline: 'start'
+			});
 		}, true);
 	}
 
