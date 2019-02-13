@@ -87,9 +87,6 @@ class Settings extends SensitiveSettings
 
 		// Load JSON settings
 		$this->loadSettingsFile ();
-
-		// Synchronize settings
-		$this->syncSettings ();
 	}
 
 	// Checks if connection is on HTTPS/SSL
@@ -179,17 +176,9 @@ class Settings extends SensitiveSettings
 		$this->httpImages = $this->httpRoot . '/images';
 	}
 
-	// Overrides settings based on JSON data
-	protected function overrideSettings ($json, $class = 'Settings')
+	// Accepts an array of settings to override default settings
+	protected function overrideSettings (array $settings, $class = 'Settings')
 	{
-		// Parse JSON data
-		$settings = @json_decode ($json, true);
-
-		// Return void if data is anything other than an array
-		if (!is_array ($settings)) {
-			return;
-		}
-
 		// Loop through JSON data
 		foreach ($settings as $setting => $value) {
 			// Check if the key contains dashes
@@ -219,6 +208,21 @@ class Settings extends SensitiveSettings
 				}
 			}
 		}
+
+		// Synchronize settings
+		$this->syncSettings ();
+	}
+
+	// Overrides settings based on JSON data
+	protected function loadJsonSettings ($json, $class = 'Settings')
+	{
+		// Parse JSON data
+		$settings = @json_decode ($json, true);
+
+		// Load setting only if data is an array
+		if (is_array ($settings)) {
+			$this->overrideSettings ($settings, $class);
+		}
 	}
 
 	// Reads JSON settings file and uses it to override default settings
@@ -233,18 +237,15 @@ class Settings extends SensitiveSettings
 			$json = @file_get_contents ($path);
 
 			// And override settings
-			$this->overrideSettings ($json);
+			$this->loadJsonSettings ($json, 'Settings');
 		}
 	}
 
 	// Accepts JSON data from the frontend to override default settings
-	public function loadUserSettings ($json)
+	public function loadFrontendSettings ($json)
 	{
 		// Only override settings safe to expose to the frontend
-		$this->overrideSettings ($json, 'SafeSettings');
-
-		// Synchronize settings
-		$this->syncSettings ();
+		$this->loadJsonSettings ($json, 'SafeSettings');
 	}
 
 	// Returns a server-side absolute file path

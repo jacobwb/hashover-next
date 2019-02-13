@@ -49,7 +49,7 @@ try {
 	$settings = $hashover->setup->getRequest ('settings');
 
 	// Load user settings
-	$hashover->setup->loadUserSettings ($settings);
+	$hashover->setup->loadFrontendSettings ($settings);
 
 	// Initiate, parse, and finalize comment processing
 	$hashover->initiate ();

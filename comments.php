@@ -31,7 +31,7 @@ try {
 	$settings = $setup->getRequest ('settings');
 
 	// Load user settings
-	$setup->loadUserSettings ($settings);
+	$setup->loadFrontendSettings ($settings);
 
 	// Instantiate HashOver statistics class
 	$statistics = new Statistics ('javascript');
