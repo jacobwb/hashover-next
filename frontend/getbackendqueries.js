@@ -21,11 +21,6 @@ HashOver.getBackendQueries = function (options, instance)
 				options[key] = loaderOptions[key];
 			}
 		}
-
-		// And add loader settings object to request if they exist
-		if (options.settings && options.settings.constructor === Object) {
-			data.settings = JSON.stringify (loaderOptions.settings);
-		}
 	}
 
 	// Add instance number to data
@@ -50,6 +45,15 @@ HashOver.getBackendQueries = function (options, instance)
 		if (data.hasOwnProperty (name) === true) {
 			queries.push (name + '=' + encodeURIComponent (data[name]));
 		}
+	}
+
+	// Add loader settings object to request if they exist
+	if (options.settings && options.settings.constructor === Object) {
+		// Get cfg URL queries array
+		var cfgQueries = HashOver.cfgQueries (loaderOptions.settings);
+
+		// And add cfg queries
+		queries = queries.concat (cfgQueries);
 	}
 
 	// Set request backend information for the first instance

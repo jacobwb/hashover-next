@@ -45,6 +45,9 @@ try {
 	// Register backend path setter
 	$javascript->registerFile ('rootpath.js');
 
+	// Register frontend settings URL queries converter method
+	$javascript->registerFile ('cfgqueries.js');
+
 	// Register automatic instantiation code
 	$javascript->registerFile ('instantiate.js', array (
 		'include' => !isset ($_GET['nodefault'])

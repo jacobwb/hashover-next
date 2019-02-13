@@ -46,7 +46,7 @@ try {
 	$hashover->setup->setInstance ('request');
 
 	// User settings passed during instantiation
-	$settings = $hashover->setup->getRequest ('settings');
+	$settings = $hashover->setup->getRequest ('cfg');
 
 	// Load user settings
 	$hashover->setup->loadFrontendSettings ($settings);

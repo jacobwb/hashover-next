@@ -28,7 +28,7 @@ try {
 	));
 
 	// User settings passed during instantiation
-	$settings = $setup->getRequest ('settings');
+	$settings = $setup->getRequest ('cfg');
 
 	// Load user settings
 	$setup->loadFrontendSettings ($settings);
@@ -56,6 +56,9 @@ try {
 
 	// Register page title getter method
 	$javascript->registerFile ('gettitle.js');
+
+	// Register frontend settings URL queries converter method
+	$javascript->registerFile ('cfgqueries.js');
 
 	// Register backend URL queries getter method
 	$javascript->registerFile ('getbackendqueries.js');

@@ -68,9 +68,11 @@ function HashOver (id, options, instance)
 	if (options && options.constructor === Object) {
 		// If so, add settings object to request if they exist
 		if (options.settings && options.settings.constructor === Object) {
-			path += '?settings=' + encodeURIComponent (
-				JSON.stringify (options.settings)
-			);
+			// Get cfg URL queries array
+			var cfgQueries = HashOver.cfgQueries (options.settings);
+
+			// And add cfg queries to frontend script path
+			path += '?' + cfgQueries.join ('&');
 		}
 
 		// And store the options

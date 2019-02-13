@@ -297,13 +297,19 @@ class Setup extends Settings
 
 		// Check if we got a value from POST or GET
 		if (!empty ($request)) {
-			// If so, strip escape slashes if enabled
-			if (get_magic_quotes_gpc ()) {
-				$request = stripslashes ($request);
+			// Check if GET or POST data is type string
+			if (gettype ($request) === 'string') {
+				// If so, strip escape slashes if enabled
+				if (get_magic_quotes_gpc ()) {
+					$request = stripslashes ($request);
+				}
+
+				// URL decode value
+				$request = urldecode ($request);
 			}
 
-			// And return URL decoded value
-			return urldecode ($request);
+			// And return POST or GET data
+			return $request;
 		}
 
 		// Otherwise, return default

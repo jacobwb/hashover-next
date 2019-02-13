@@ -214,14 +214,14 @@ class Settings extends SensitiveSettings
 	}
 
 	// Overrides settings based on JSON data
-	protected function loadJsonSettings ($json, $class = 'Settings')
+	protected function loadJsonSettings ($json)
 	{
 		// Parse JSON data
 		$settings = @json_decode ($json, true);
 
 		// Load setting only if data is an array
 		if (is_array ($settings)) {
-			$this->overrideSettings ($settings, $class);
+			$this->overrideSettings ($settings, 'Settings');
 		}
 	}
 
@@ -237,15 +237,48 @@ class Settings extends SensitiveSettings
 			$json = @file_get_contents ($path);
 
 			// And override settings
-			$this->loadJsonSettings ($json, 'Settings');
+			$this->loadJsonSettings ($json);
 		}
 	}
 
-	// Accepts JSON data from the frontend to override default settings
-	public function loadFrontendSettings ($json)
+	// Type juggle string values of an array
+	protected function juggleStringArray (array $data)
 	{
-		// Only override settings safe to expose to the frontend
-		$this->loadJsonSettings ($json, 'SafeSettings');
+		// Run through array
+		foreach ($data as &$value) {
+			// Cast boolean strings to actual booleans
+			if ($value === 'true' or $value === 'false') {
+				$value = ($value === 'true');
+				continue;
+			}
+
+			// Cast numeric strings to floats
+			if (is_numeric ($value)) {
+				$value = (float)($value);
+				continue;
+			}
+
+			// Type juggle nested arrays
+			if (is_array ($value)) {
+				$value = $this->juggleStringArray ($value);
+				continue;
+			}
+		}
+
+		return $data;
+	}
+
+	// Override default settings by with cfg URL queries
+	public function loadFrontendSettings ($settings)
+	{
+		// Override settings if cfg queries is an array
+		if (is_array ($settings)) {
+			// Type juggle cfg queries
+			$settings = $this->juggleStringArray ($settings);
+
+			// Only override settings safe to expose to the frontend
+			$this->overrideSettings ($settings, 'SafeSettings');
+		}
 	}
 
 	// Returns a server-side absolute file path
