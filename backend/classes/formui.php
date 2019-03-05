@@ -1159,6 +1159,7 @@ class FormUI
 				// Create RSS feed attributes
 				$rss_link->createAttributes (array (
 					'class' => 'hashover-rss-link',
+					'rel' => 'nofollow',
 					'target' => '_blank',
 					'title' => $rss_link_text,
 					'innerHTML' => $rss_link_text
@@ -1176,7 +1177,7 @@ class FormUI
 		$source_link = new HTMLTag ('a', array (
 			'href' => $this->setup->getBackendPath ('source-viewer.php'),
 			'class' => 'hashover-source-link',
-			'rel' => 'hashover-source',
+			'rel' => 'nofollow',
 			'target' => '_blank',
 			'title' => $source_link_text,
 			'innerHTML' => $source_link_text
@@ -1190,7 +1191,6 @@ class FormUI
 			$javascript_link = new HTMLTag ('a', array (
 				'href' => $this->setup->getHttpPath ('comments.php'),
 				'class' => 'hashover-javascript-link',
-				'rel' => 'hashover-javascript',
 				'target' => '_blank',
 				'title' => 'JavaScript'
 			), false);

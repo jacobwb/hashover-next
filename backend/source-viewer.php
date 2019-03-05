@@ -35,6 +35,9 @@ try {
 		// Instantiate HashOver class
 		$hashover = new \HashOver ();
 
+		// Set header for search engines to ignore files
+		header ('X-Robots-Tag: noindex, nofollow');
+
 		// Create table for source code files
 		$table = new HTMLTag ('table', array (
 			'id' => 'threads',

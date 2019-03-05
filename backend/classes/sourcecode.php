@@ -468,6 +468,7 @@ class SourceCode
 					'<html lang="en" dir="ltr">',
 					"\t" . '<head>',
 					"\t\t" . '<title>' . $name . '</title>',
+					"\t\t" . '<meta name="robots" content="noindex">',
 					"\t" . '</head>',
 					"\t" . '<body>',
 					"\t\t" . '<pre>' . $source . '</pre>',
@@ -490,6 +491,9 @@ class SourceCode
 		if ($this->isHashOverFile ($file) === true) {
 			// If so, add directory change to file path
 			$file = '../' . $file;
+
+			// Set header for search engines to ignore file
+			header ('X-Robots-Tag: noindex');
 
 			// Set content type header
 			$this->setContentType ($file, $type);
