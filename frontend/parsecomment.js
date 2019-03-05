@@ -255,37 +255,6 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 			}
 		);
 
-		// Check if user timezones is enabled
-		if (this.setup['uses-user-timezone'] !== false) {
-			// If so, get local comment post date
-			var postDate = new Date (comment['sort-date'] * 1000);
-
-			// Get localized full comment post date
-			var fullDate = this.getDateTime (this.locale['date-time'], postDate);
-
-			// Check if short date format is enabled
-			if (this.setup['uses-short-dates'] !== false) {
-				// If so, get local date
-				var localDate = new Date ();
-
-				// Local comment post date to remove time from
-				var postDateCopy = new Date (postDate.getTime ());
-
-				// And format local time if the comment was posted today
-				if (postDateCopy.setHours (0, 0, 0, 0) === localDate.setHours (0, 0, 0, 0)) {
-					commentDate = this.strings.sprintf (this.locale['today'], [
-						this.getDateTime (this.setup['time-format'], postDate)
-					]);
-				}
-			} else {
-				// If not, use full localized date and time
-				commentDate = fullDate;
-			}
-
-			// And set full date to local timezone
-			comment['full-date'] = fullDate;
-		}
-
 		// Append status text to date
 		if (comment['status-text'] !== undefined) {
 			commentDate += ' (' + comment['status-text'] + ')';

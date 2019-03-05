@@ -26,6 +26,7 @@ class CommentParser
 	protected $avatars;
 	protected $cookies;
 
+	protected $timeModify;
 	protected $currentDate;
 	protected $shortDateLocales;
 	protected $todayLocale;
@@ -42,8 +43,29 @@ class CommentParser
 		$this->avatars = new Avatars ($setup);
 		$this->cookies = new Cookies ($setup);
 
+		// Get current time
+		$current_time = new \DateTime ();
+
+		// Get 24-hour time from client
+		$client_time = new \DateTime ($setup->getRequest ('time'));
+
+		// Server-side hours and minutes as integers
+		$current_hours = (int)($current_time->format ('H'));
+		$current_mins = (int)($current_time->format ('i'));
+
+		// Client hours and minutes as integers
+		$client_hours = (int)($client_time->format ('H'));
+		$client_mins = (int)($client_time->format ('i'));
+
+		// Hours and minutes to adjust posting time by
+		$this->timeModify = sprintf (
+			'%+d hours %+d minutes',
+			$client_hours - $current_hours,
+			$client_mins - $current_mins
+		);
+
 		// Get current date without time
-		$this->currentDate = new \DateTime (date('Y-m-d'));
+		$this->currentDate = new \DateTime (date ('Y-m-d'));
 
 		// Known short date interval locales
 		$this->shortDateLocales = array (
@@ -59,13 +81,13 @@ class CommentParser
 		$this->dateLocale = $this->locale->text['date-time'];
 	}
 
-	// Get localized comment posting date and time from microtime
-	protected function getDateTime ($micro_date)
+	// Get localized comment posting date and time
+	protected function getDateTime (\DateTime $dt)
 	{
-		// Get DateTime from microtime date
-		$datetime = new \DateTime (date ('Y-m-d', $micro_date));
+		// Remove time from datetime
+		$datetime = new \DateTime ($dt->format ('Y-m-d'));
 
-		// Get the difference between today's date and microtime date
+		// Get difference between today's date and timeless date
 		$interval = $datetime->diff ($this->currentDate);
 
 		// Attempt to get a day, month, or year interval
@@ -82,8 +104,8 @@ class CommentParser
 			}
 		}
 
-		// Otherwise, get time from microtime
-		$time = date ($this->setup->timeFormat, $micro_date);
+		// Otherwise, get time from datetime
+		$time = $dt->format ($this->setup->timeFormat);
 
 		// Inject time into today locale string
 		$date = sprintf ($this->todayLocale, $time);
@@ -97,11 +119,16 @@ class CommentParser
 		// Initial parsed comment date output
 		$output = array ();
 
-		// Get micro time of comment post date or zero
-		$micro_date = strtotime (Misc::getArrayItem ($comment, 'date')) ?: 0;
+		// Get post date as-is
+		$date = Misc::getArrayItem ($comment, 'date');
 
-		// Get localized full comment post date
-		$full_date = date ($this->dateLocale, $micro_date);
+		// Get comment post datetime
+		$post_date = new \DateTime ($date);
+
+		// Adjust post date to client timezone if enabled
+		if ($this->setup->usesUserTimezone === true) {
+			$post_date->modify ($this->timeModify);
+		}
 
 		// Generate permalink
 		if (count ($key_parts) > 1) {
@@ -203,10 +230,13 @@ class CommentParser
 			}
 		}
 
+		// Get localized full comment post date
+		$full_date = $post_date->format ($this->dateLocale);
+
 		// Check if short dates are enabled
 		if ($this->setup->usesShortDates === true) {
 			// If so, get localized short date
-			$comment_date = $this->getDateTime ($micro_date);
+			$comment_date = $this->getDateTime ($post_date);
 		} else {
 			// If not, use full localized date and time
 			$comment_date = $full_date;
@@ -234,7 +264,7 @@ class CommentParser
 		}
 
 		// Add comment date as Unix timestamp to output
-		$output['sort-date'] = (int)($micro_date);
+		$output['sort-date'] = $post_date->getTimestamp ();
 
 		// Add comment body to output
 		$output['body'] = (string)($comment['body']);

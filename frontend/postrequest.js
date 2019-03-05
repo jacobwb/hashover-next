@@ -68,12 +68,21 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 			continue;
 		}
 
+		// Otherwise, get encoded input value
+		var value = encodeURIComponent (formElements[i].value);
+
 		// Add query to queries array
-		queries.push (formElements[i].name + '=' + encodeURIComponent (formElements[i].value));
+		queries.push (formElements[i].name + '=' + value);
 	}
 
-	// Add AJAX query to queries array
-	queries.push ('ajax=yes');
+	// Add final queries
+	queries = queries.concat ([
+		// Add client time
+		'time=' + HashOver.clientTime,
+
+		// Add AJAX indicator
+		'ajax=yes'
+	]);
 
 	// Check if autologin is enabled and user isn't admin
 	if (this.setup['user-is-admin'] !== true

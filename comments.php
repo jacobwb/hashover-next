@@ -114,11 +114,6 @@ try {
 	// Register optional method handler method
 	$javascript->registerFile ('optionalmethod.js');
 
-	// Register date/time methods
-	$javascript->registerFile ('datetime.js', array (
-		'include' => $setup->usesUserTimezone
-	));
-
 	// Register markdown methods
 	$javascript->registerFile ('markdown.js', array (
 		'include' => $setup->usesMarkdown

@@ -97,11 +97,6 @@ try {
 		'include' => $setup->usesMarkdown
 	));
 
-	// Register date/time methods
-	$javascript->registerFile ('datetime.js', array (
-		'include' => $setup->usesUserTimezone
-	));
-
 	// Register search and replace methods
 	$javascript->registerFile ('strings.js');
 

@@ -28,8 +28,16 @@ function HashOverLatest (options)
 	// Reference to this HashOver object
 	var hashover = this;
 
-	// Initial backend queries
-	var queries = [];
+	// Get current date and time
+	var datetime = new Date ();
+
+	// Get 24-hour current time
+	var hours = datetime.getHours ();
+	var minutes = datetime.getMinutes ();
+	var time = hours + ':' + minutes;
+
+	// Start queries with client time
+	var queries = ['time=' + time];
 
 	// Check if options is an object
 	if (options && options.constructor === Object) {

@@ -134,8 +134,6 @@ try {
 			'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
 			'collapses-interface'	=> $hashover->setup->collapsesInterface,
 			'collapses-comments'	=> $hashover->setup->collapsesComments,
-			'uses-user-timezone'	=> $hashover->setup->usesUserTimezone,
-			'uses-short-dates'	=> $hashover->setup->usesShortDates,
 			'allows-images'		=> $hashover->setup->allowsImages,
 			'uses-markdown'		=> $hashover->setup->usesMarkdown,
 			'uses-cancel-buttons'	=> $hashover->setup->usesCancelButtons,

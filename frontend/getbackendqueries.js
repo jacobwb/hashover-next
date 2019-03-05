@@ -13,6 +13,14 @@ HashOver.getBackendQueries = function (options, instance)
 	// URL queries array
 	var queries = [];
 
+	// Get current date and time
+	var datetime = new Date ();
+
+	// Get 24-hour current time
+	var hours = datetime.getHours ();
+	var minutes = datetime.getMinutes ();
+	var time = hours + ':' + minutes;
+
 	// Check for carryover options from loader constructor
 	if (loaderOptions && loaderOptions.constructor === Object) {
 		// If present, merge them into given options
@@ -29,6 +37,9 @@ HashOver.getBackendQueries = function (options, instance)
 	// Use URL and title options if available
 	data.url = options.url || this.getURL (options.canonical);
 	data.title = options.title || this.getTitle ();
+
+	// Add current time in 24-hour format to data
+	data.time = time;
 
 	// Add website to request if told to
 	if (typeof (options.website) === 'string') {
@@ -60,6 +71,9 @@ HashOver.getBackendQueries = function (options, instance)
 	if (HashOver.backendReady !== true) {
 		queries.push ('prepare=true');
 	}
+
+	// Store time for later use
+	this.clientTime = time;
 
 	return queries;
 };
