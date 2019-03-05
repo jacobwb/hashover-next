@@ -26,8 +26,9 @@ class CommentParser
 	protected $avatars;
 	protected $cookies;
 
-	protected $dateIntervalLocales;
+	protected $dateLocales;
 	protected $todayLocale;
+	protected $dateTimeLocale;
 	protected $currentDateTime;
 
 	public function __construct (Setup $setup)
@@ -39,7 +40,7 @@ class CommentParser
 		$this->cookies = new Cookies ($setup);
 		$this->currentDateTime = new \DateTime (date('Y-m-d'));
 
-		$this->dateIntervalLocales = array (
+		$this->dateLocales = array (
 			'y' => $this->locale->text['date-years'],
 			'm' => $this->locale->text['date-months'],
 			'd' => $this->locale->text['date-days']
@@ -81,7 +82,7 @@ class CommentParser
 			$interval = $comment_datetime->diff ($this->currentDateTime);
 
 			// And attempt to get a day, month, or year interval
-			foreach ($this->dateIntervalLocales as $i => $date_locale) {
+			foreach ($this->dateLocales as $i => $date_locale) {
 				if ($interval->$i > 0) {
 					$date_plural = ($interval->$i !== 1);
 					$comment_date = sprintf ($date_locale[$date_plural], $interval->$i);
@@ -104,13 +105,17 @@ class CommentParser
 			$output['name'] = $comment['name'];
 		}
 
-		// Get avatar icons
+		// Check if icons are enabled
 		if ($this->setup->iconMode !== 'none') {
+			// If so, check if icons are images
 			if ($this->setup->iconMode === 'image') {
-				// Get MD5 hash for Gravatar
+				// If so, get MD5 hash for Gravatar from comment
 				$hash = Misc::getArrayItem ($comment, 'email_hash') ?: '';
+
+				// Add Gravatar URL to output
 				$output['avatar'] = $this->avatars->getGravatar ($hash);
 			} else {
+				// If not, use comment permalink number
 				$output['avatar'] = end ($key_parts);
 			}
 		}
@@ -141,11 +146,12 @@ class CommentParser
 
 		// Check if the user is logged in
 		if ($this->login->userIsLoggedIn === true and !empty ($comment['login_id'])) {
-			// If so, check this comment belongs to logged in user
+			// If so, check if this comment belongs to logged in user
 			if ($this->login->loginHash === $comment['login_id']) {
+				// If so, set user comment indictor to true
 				$output['user-owned'] = true;
 
-				// Check if the comment is editable
+				// And set editable indictor if comment has a password
 				if (!empty ($comment['password'])) {
 					$output['editable'] = true;
 				}
@@ -163,28 +169,31 @@ class CommentParser
 		// Get like cookie
 		$like_cookie = $this->cookies->getValue ($like_hash);
 
-		// Check if comment has been liked or disliked
-		if ($like_cookie !== null) {
-			switch ($like_cookie) {
-				case 'liked': {
-					$output['liked'] = true;
-					break;
+		// Set liked/disliked indictor
+		switch ($like_cookie) {
+			// Comment was liked
+			case 'liked': {
+				$output['liked'] = true;
+				break;
+			}
+
+			// Comment was disliked
+			case 'disliked': {
+				// Only set indictor if disliked are enabled
+				if ($this->setup->allowsDislikes === true) {
+					$output['disliked'] = true;
 				}
 
-				case 'disliked': {
-					if ($this->setup->allowsDislikes === true) {
-						$output['disliked'] = true;
-					}
-
-					break;
-				}
+				break;
 			}
 		}
 
 		// Add comment date to output
 		$output['date'] = (string)($comment_date);
 
+		// Check if we have a status
 		if (!empty ($comment['status'])) {
+			// If so, get comment status
 			$status = $comment['status'];
 
 			// Check if comment has a status other than approved
