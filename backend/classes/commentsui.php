@@ -142,7 +142,7 @@ class CommentsUI extends FormUI
 		$date_link->appendAttributes (array (
 			'href' => '#' . $permalink,
 			'class' => 'hashover-date-permalink',
-			'title' => $title . ' - Permalink',
+			'title' => 'Permalink - ' . $title,
 			'innerHTML' => $date
 		), false);
 
