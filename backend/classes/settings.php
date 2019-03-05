@@ -49,12 +49,11 @@ class Settings extends SensitiveSettings
 		$root_directory = dirname (dirname (__DIR__));
 
 		// Get HTTP root directory
-		$http_directory = dirname (dirname ($_SERVER['PHP_SELF']));
+		$http_directory = '/' . basename ($root_directory);
 
 		// Replace backslashes with forward slashes on Windows
 		if (DIRECTORY_SEPARATOR === '\\') {
 			$root_directory = str_replace ('\\', '/', $root_directory);
-			$http_directory = str_replace ('\\', '/', $http_directory);
 		}
 
 		// Root directory for script
