@@ -26,40 +26,82 @@ class CommentParser
 	protected $avatars;
 	protected $cookies;
 
-	protected $dateLocales;
+	protected $currentDate;
+	protected $shortDateLocales;
 	protected $todayLocale;
-	protected $dateTimeLocale;
-	protected $currentDateTime;
+	protected $dateLocale;
 
 	public function __construct (Setup $setup)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
+
+		// Instantiate various classes
 		$this->login = new Login ($setup);
 		$this->locale = new Locale ($setup);
 		$this->avatars = new Avatars ($setup);
 		$this->cookies = new Cookies ($setup);
-		$this->currentDateTime = new \DateTime (date('Y-m-d'));
 
-		$this->dateLocales = array (
+		// Get current date without time
+		$this->currentDate = new \DateTime (date('Y-m-d'));
+
+		// Known short date interval locales
+		$this->shortDateLocales = array (
 			'y' => $this->locale->text['date-years'],
 			'm' => $this->locale->text['date-months'],
 			'd' => $this->locale->text['date-days']
 		);
 
+		// Short date when a comment was posted today
 		$this->todayLocale = $this->locale->text['date-today'];
-		$this->dateTimeLocale = $this->locale->text['date-time'];
+
+		// Full configurable date locale
+		$this->dateLocale = $this->locale->text['date-time'];
+	}
+
+	// Get localized comment posting date and time from microtime
+	protected function getDateTime ($micro_date)
+	{
+		// Get DateTime from microtime date
+		$datetime = new \DateTime (date ('Y-m-d', $micro_date));
+
+		// Get the difference between today's date and microtime date
+		$interval = $datetime->diff ($this->currentDate);
+
+		// Attempt to get a day, month, or year interval
+		foreach ($this->shortDateLocales as $i => $locale) {
+			// Check if a desired interval is non-zero
+			if ($interval->$i > 0) {
+				// If so, get plural key
+				$plural = ($interval->$i !== 1) ? 1 : 0;
+
+				// Inject interval into locale string
+				$date = sprintf ($locale[$plural], $interval->$i);
+
+				return $date;
+			}
+		}
+
+		// Otherwise, get time from microtime
+		$time = date ($this->setup->timeFormat, $micro_date);
+
+		// Inject time into today locale string
+		$date = sprintf ($this->todayLocale, $time);
+
+		return $date;
 	}
 
 	// Parse comment files
 	public function parse (array $comment, $key, $key_parts, $popular = false)
 	{
-		$micro_date = 0;
+		// Initial parsed comment date output
 		$output = array ();
 
-		// Get micro time of comment post date
-		if (!empty ($comment['date'])) {
-			$micro_date = strtotime ($comment['date']);
-		}
+		// Get micro time of comment post date or zero
+		$micro_date = strtotime (Misc::getArrayItem ($comment, 'date')) ?: 0;
+
+		// Get localized full comment post date
+		$full_date = date ($this->dateLocale, $micro_date);
 
 		// Generate permalink
 		if (count ($key_parts) > 1) {
@@ -71,33 +113,6 @@ class CommentParser
 		// Append "-pop" to end of permalink if popular comment
 		if ($popular === true) {
 			$output['permalink'] .= '-pop';
-		}
-
-		// Check if short dates are enabled
-		if ($this->setup->usesShortDates === true) {
-			// If so, get DateTime from comment
-			$comment_datetime = new \DateTime (date ('Y-m-d', $micro_date));
-
-			// Get the difference between today's date and the comment post date
-			$interval = $comment_datetime->diff ($this->currentDateTime);
-
-			// And attempt to get a day, month, or year interval
-			foreach ($this->dateLocales as $i => $date_locale) {
-				if ($interval->$i > 0) {
-					$date_plural = ($interval->$i !== 1);
-					$comment_date = sprintf ($date_locale[$date_plural], $interval->$i);
-					break;
-				}
-			}
-
-			// Otherwise, use today locale
-			if (empty ($comment_date)) {
-				$comment_time = date ($this->setup->timeFormat, $micro_date);
-				$comment_date = sprintf ($this->todayLocale, $comment_time);
-			}
-		} else {
-			// If not, use configurable date and time locale
-			$comment_date = date ($this->dateTimeLocale, $micro_date);
 		}
 
 		// Add name to output
@@ -188,8 +203,20 @@ class CommentParser
 			}
 		}
 
+		// Check if short dates are enabled
+		if ($this->setup->usesShortDates === true) {
+			// If so, get localized short date
+			$comment_date = $this->getDateTime ($micro_date);
+		} else {
+			// If not, use full localized date and time
+			$comment_date = $full_date;
+		}
+
 		// Add comment date to output
 		$output['date'] = (string)($comment_date);
+
+		// Set full date and time
+		$output['full-date'] = (string)($full_date);
 
 		// Check if we have a status
 		if (!empty ($comment['status'])) {

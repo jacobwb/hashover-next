@@ -133,7 +133,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates date/permalink hyperlink element
-	public function dateLink ($href = '{href}', $permalink = '{permalink}', $date = '{date}')
+	public function dateLink ($href = '{href}', $permalink = '{permalink}', $title = '{title}', $date = '{date}')
 	{
 		// Create hyperlink element
 		$date_link = $this->queryLink ($href);
@@ -142,7 +142,7 @@ class CommentsUI extends FormUI
 		$date_link->appendAttributes (array (
 			'href' => '#' . $permalink,
 			'class' => 'hashover-date-permalink',
-			'title' => 'Permalink',
+			'title' => $title . ' - Permalink',
 			'innerHTML' => $date
 		), false);
 

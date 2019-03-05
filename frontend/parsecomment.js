@@ -260,6 +260,9 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 			// If so, get local comment post date
 			var postDate = new Date (comment['sort-date'] * 1000);
 
+			// Get localized full comment post date
+			var fullDate = this.getDateTime (this.locale['date-time'], postDate);
+
 			// Check if short date format is enabled
 			if (this.setup['uses-short-dates'] !== false) {
 				// If so, get local date
@@ -275,9 +278,12 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 					]);
 				}
 			} else {
-				// If not, format a long local date/time
-				commentDate = this.getDateTime (this.locale['date-time'], postDate);
+				// If not, use full localized date and time
+				commentDate = fullDate;
 			}
+
+			// And set full date to local timezone
+			comment['full-date'] = fullDate;
 		}
 
 		// Append status text to date
@@ -291,6 +297,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 				hashover: prefix,
 				href: comment.url || this.instance['file-path'],
 				permalink: 'hashover-' + commentKey,
+				title: comment['full-date'],
 				date: commentDate
 			}
 		);
