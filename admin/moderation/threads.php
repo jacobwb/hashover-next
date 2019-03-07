@@ -23,13 +23,14 @@ try {
 
 	// Template data
 	$template = array (
-		'title'		=> $hashover->locale->text['documentation'],
-		'logout'	=> $logout->asHTML ("\t\t\t"),
-		'sub-title'	=> $hashover->locale->text['coming-soon']
+		'sidebar'	=> $sidebar->asHTML ("\t\t"),
+		'title'		=> $hashover->locale->text['moderation'],
+		'back'		=> $hashover->locale->text['back'],
+		'logout'	=> $logout->asHTML ("\t\t\t")
 	);
 
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('documentation.html', $template);
+	echo $hashover->templater->parseTemplate ('threads.html', $template);
 
 } catch (\Exception $error) {
 	echo Misc::displayError ($error->getMessage ());

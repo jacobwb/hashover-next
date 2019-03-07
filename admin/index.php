@@ -18,19 +18,23 @@
 
 
 try {
-	// View setup
-	require (realpath ('../view-setup.php'));
+	// Do some standard HashOver setup work
+	require (realpath ('../backend/standard-setup.php'));
 
-	// Template data
-	$template = array (
-		'title'		=> $hashover->locale->text['check-for-updates'],
-		'logout'	=> $logout->asHTML ("\t\t\t"),
-		'sub-title'	=> $hashover->locale->text['coming-soon']
-	);
+	// Setup class autoloader
+	setup_autoloader ();
 
-	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('updates.html', $template);
+	// Instantiate HashOver class
+	$hashover = new \HashOver ();
 
+	// Check if user is admin
+	if ($hashover->login->isAdmin () === true) {
+		// If so, redirect to moderation page
+		header ('Location: moderation/');
+	} else {
+		// If not, redirect to login page
+		header ('Location: login/');
+	}
 } catch (\Exception $error) {
 	echo Misc::displayError ($error->getMessage ());
 }

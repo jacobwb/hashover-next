@@ -4,18 +4,23 @@
 	<head>
 		<title>HashOver - {title}</title>
 
-		<link type="text/css" href="../../../themes/default/general.css" rel="stylesheet">
+		<link type="text/css" href="../../themes/default/general.css" rel="stylesheet">
+		<link type="text/css" href="../admin.css" rel="stylesheet">
 		<link type="text/css" href="threads.css" rel="stylesheet">
+
+		<script type="text/javascript" src="../admin.js"></script>
 
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 		<meta http-equiv="Content-Language" content="EN">
 
-		<link type="image/x-icon" href="../../../images/favicon.png" rel="shortcut icon">
-		<link type="image/x-icon" href="../../../images/favicon.png" rel="icon">
+		<link type="image/x-icon" href="../../images/favicon.png" rel="shortcut icon">
+		<link type="image/x-icon" href="../../images/favicon.png" rel="icon">
 		<link href="https://www.gnu.org/licenses/agpl" rel="copyright">
 	</head>
 
 	<body>
+		{sidebar}
+
 		<h1 class="underlined special">
 			<a class="plain-button left" href="../moderation/">
 				&#8592; {back}
@@ -26,11 +31,11 @@
 
 		<div id="hashover">
 			<center id="loading">
-				<img src="../../../images/loading-ltr.gif" alt="Loading..." width="90" height="30">
+				<img src="../../images/loading-ltr.gif" alt="Loading..." width="90" height="30">
 			</center>
 		</div>
 
-		<script type="text/javascript" src="../../../loader.php?nodefault"></script>
+		<script type="text/javascript" src="../../loader.php?nodefault"></script>
 		<script type="text/javascript" src="threads.js"></script>
 	</body>
 </html>

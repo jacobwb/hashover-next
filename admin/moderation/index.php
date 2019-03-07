@@ -101,6 +101,7 @@ try {
 
 	// Template data
 	$template = array (
+		'sidebar'	=> $sidebar->asHTML ("\t\t"),
 		'title'		=> $hashover->locale->text['moderation'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
 		'sub-title'	=> $hashover->locale->text['moderation-sub'],

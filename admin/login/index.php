@@ -53,6 +53,7 @@ try {
 
 	// Template data
 	$template = array (
+		'sidebar'	=> $sidebar->asHTML ("\t\t"),
 		'title'		=> $hashover->locale->text['login'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
 		'sub-title'	=> $hashover->locale->text['admin-required'],

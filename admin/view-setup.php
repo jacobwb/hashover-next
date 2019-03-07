@@ -18,7 +18,7 @@
 
 
 // Do some standard HashOver setup work
-require (realpath ('../../../backend/standard-setup.php'));
+require (realpath ('../../backend/standard-setup.php'));
 
 // Setup class autoloader
 setup_autoloader ();
@@ -67,6 +67,66 @@ $logout = new HTMLTag ('a', array (
 	'href' => '../login/?logout=true',
 	'target' => '_parent',
 	'innerHTML' => $hashover->locale->text['logout']
+));
+
+// Hyperlinks to admin pages
+$pages = array (
+	new HTMLTag ('a', array (
+		'class' => 'view-link',
+		'href' => '../moderation/',
+		'innerHTML' => $hashover->locale->text['moderation']
+	)),
+
+	new HTMLTag ('a', array (
+		'class' => 'view-link',
+		'href' => '../blocklist/',
+		'innerHTML' => $hashover->locale->text['block-ip-addresses']
+	)),
+
+	new HTMLTag ('a', array (
+		'class' => 'view-link',
+		'href' => '../url-queries/',
+		'innerHTML' => $hashover->locale->text['filter-url-queries']
+	)),
+
+	new HTMLTag ('a', array (
+		'class' => 'view-link',
+		'href' => '../updates/',
+		'innerHTML' => $hashover->locale->text['check-for-updates']
+	)),
+
+	new HTMLTag ('a', array (
+		'class' => 'view-link',
+		'href' => '../documentation/',
+		'innerHTML' => $hashover->locale->text['documentation']
+	)),
+
+	new HTMLTag ('a', array (
+		'class' => 'view-link',
+		'href' => '../settings/',
+		'innerHTML' => $hashover->locale->text['settings']
+	))
+);
+
+// Create navigation sidebar
+$sidebar = new HTMLTag ('div', array (
+	'id' => 'sidebar',
+	'class' => 'special',
+
+	'children' => array (
+		new HTMLTag ('img', array (
+			'id' => 'logo',
+			'src' => '../../images/hashover-logo.png',
+			'width' => '229',
+			'height' => '229',
+			'alt' => 'HashOver'
+		), false, true),
+
+		new HTMLTag ('div', array (
+			'id' => 'navigation',
+			'children' => $pages
+		))
+	)
 ));
 
 // Check if the form has been submitted

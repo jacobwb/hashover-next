@@ -21,12 +21,17 @@ try {
 	// View setup
 	require (realpath ('../view-setup.php'));
 
+	// Template data
+	$template = array (
+		'sidebar'	=> $sidebar->asHTML ("\t\t"),
+		'title'		=> $hashover->locale->text['documentation'],
+		'logout'	=> $logout->asHTML ("\t\t\t"),
+		'sub-title'	=> $hashover->locale->text['coming-soon']
+	);
+
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('threads.html', array (
-		'title' => $hashover->locale->text['moderation'],
-		'back' => $hashover->locale->text['back'],
-		'logout' => $logout->asHTML ("\t\t\t")
-	));
+	echo $hashover->templater->parseTemplate ('documentation.html', $template);
+
 } catch (\Exception $error) {
 	echo Misc::displayError ($error->getMessage ());
 }

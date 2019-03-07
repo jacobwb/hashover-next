@@ -1,10 +1,10 @@
 // Wait for the page HTML to be parsed
 document.addEventListener ('DOMContentLoaded', function () {
+	// Get logo
+	var logo = document.getElementById ('logo');
+
 	// Get view links
 	var viewLinks = document.getElementsByClassName ('view-link');
-
-	// Get content frame
-	var content = document.getElementById ('content');
 
 	// Execute a given function for each view link
 	function eachViewLink (callback)
@@ -23,15 +23,18 @@ document.addEventListener ('DOMContentLoaded', function () {
 	}
 
 	// Automatically select the proper view tab on page load
-	content.onload = function ()
+	window.onload = function ()
 	{
+		// Set logo height to auto
+		logo.style.height = 'auto';
+
 		// Remove active class from all view links
 		clearViewTabs ();
 
 		// Select active proper tab for currently loaded view
 		eachViewLink (function (link) {
 			var regex = new RegExp (link.getAttribute ('href'));
-			var frameUrl = content.contentDocument.location.href;
+			var frameUrl = window.location.href;
 
 			if (regex.test (decodeURIComponent (frameUrl))) {
 				link.className += ' active';

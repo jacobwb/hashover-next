@@ -1,5 +1,5 @@
 body {
-	background-image: url('../../../images/white-noise.png');
+	background-image: url('../../images/white-noise.png');
 }
 
 #login {
@@ -7,7 +7,7 @@ body {
 	left: 50%;
 	top: 50%;
 	text-align: center;
-	margin: -103px 0px 0px -128px;
+	margin: -102px 0px 0px -14px;
 	width: 256px;
 	border: 1px solid #CCCCCC;
 	background-color: #FFFFFF;

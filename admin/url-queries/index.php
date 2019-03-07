@@ -56,12 +56,12 @@ try {
 
 			// If saved successfully, redirect with success indicator
 			if ($saved === true) {
-				redirect ('index.php?status=success');
+				redirect ('./?status=success');
 			}
 		}
 
 		// Otherwise, redirect with failure indicator
-		redirect ('index.php?status=failure');
+		redirect ('./?status=failure');
 	}
 
 	// Otherwise, load and parse URL Query Pairs file
@@ -114,6 +114,7 @@ try {
 
 	// Template data
 	$template = array (
+		'sidebar'	=> $sidebar->asHTML ("\t\t"),
 		'title'		=> $hashover->locale->text['url-queries-title'],
 		'logout'	=> $logout->asHTML ("\t\t\t"),
 		'sub-title'	=> $hashover->locale->text['url-queries-sub'],
