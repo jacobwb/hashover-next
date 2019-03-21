@@ -109,7 +109,9 @@ class HTMLTag
 			$inner_html[] = $child;
 		}
 
-		return implode (PHP_EOL . $indention, $inner_html);
+		$glue = PHP_EOL . PHP_EOL . $indention;
+
+		return implode ($glue, $inner_html);
 	}
 
 	public function createAttribute ($name = '', $value = '', $spaced = true)

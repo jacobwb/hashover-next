@@ -496,15 +496,15 @@ conditions, unless such conditions are required by law.
 
 .hashover .hashover-inputs label,
 .hashover .hashover-comment-label {
-	padding: 5px;
 	display: inline-block;
+	padding: 5px;
 	background-color: rgba(55, 55, 55, 0.25);
 }
 
 .hashover .hashover-comment-label {
-	width: 100%;
 	display: block;
 	border: 1px solid rgb(170, 10, );
+	width: 100%;
 	margin-bottom: -1px;
 }
 

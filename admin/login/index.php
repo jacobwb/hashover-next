@@ -47,8 +47,11 @@ try {
 		// If so, attempt to log the user out
 		$hashover->login->clearLogin ();
 
+		// Get path to main admin page
+		$admin = $hashover->setup->getHttpPath ('admin');
+
 		// And redirect user to main admin page
-		redirect ($hashover->setup->getHttpPath ('admin'));
+		redirect ($admin . '/');
 	}
 
 	// Template data

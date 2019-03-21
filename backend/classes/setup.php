@@ -160,13 +160,18 @@ class Setup extends Settings
 	// Sets path to website-specific threads directory
 	public function setWebsite ($host = 'request')
 	{
-		// Attempt to obtain website via POST or GET if told to
+		// Do nothing if multisites is disabled
+		if ($this->supportsMultisites === false) {
+			return;
+		}
+
+		// Attempt to obtain website from POST or GET if told to
 		if ($host === 'request') {
 			$host = $this->requestData ('website');
 		}
 
-		// No nothing if host is false or multisites is disabled
-		if ($host === false or $this->supportsMultisites === false) {
+		// Do nothing else if host is false
+		if ($host === false) {
 			return;
 		}
 
@@ -210,7 +215,7 @@ class Setup extends Settings
 			return $url['host'] . ':' . $url['port'];
 		}
 
-		// Otherwise return domain without port
+		// Otherwise, return domain without port
 		return $url['host'];
 	}
 
@@ -230,15 +235,15 @@ class Setup extends Settings
 	// Checks remote request against allowed domains setting
 	protected function refererCheck ()
 	{
-		// Return true if no is referer set
+		// Return true if no referer is set
 		if (empty ($_SERVER['HTTP_REFERER'])) {
 			return true;
 		}
 
-		// Get HTTP referer domain with port
+		// Otherwise, get HTTP referer domain with port
 		$domain = $this->getDomainWithPort ($_SERVER['HTTP_REFERER']);
 
-		// Return true if script was requested by this server
+		// Return true if referer domain is the same server
 		if ($domain === $this->domain) {
 			return true;
 		}
@@ -265,10 +270,11 @@ class Setup extends Settings
 				// Connection origin
 				$origin = $this->scheme . '://' . $domain;
 
-				// And set remote access headers
+				// Set remote access headers
 				header ('Access-Control-Allow-Origin: ' . $origin);
 				header ('Access-Control-Allow-Credentials: true');
 
+				// And return true
 				return true;
 			}
 		}

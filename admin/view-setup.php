@@ -61,51 +61,43 @@ if ($hashover->login->userIsAdmin !== true) {
 	}
 }
 
-// Create logout hyperlink
-$logout = new HTMLTag ('a', array (
-	'class' => 'plain-button right',
-	'href' => '../login/?logout=true',
-	'target' => '_parent',
-	'innerHTML' => $hashover->locale->text['logout']
-));
-
 // Hyperlinks to admin pages
 $pages = array (
 	new HTMLTag ('a', array (
 		'class' => 'view-link',
 		'href' => '../moderation/',
 		'innerHTML' => $hashover->locale->text['moderation']
-	)),
+	), false),
 
 	new HTMLTag ('a', array (
 		'class' => 'view-link',
 		'href' => '../blocklist/',
 		'innerHTML' => $hashover->locale->text['block-ip-addresses']
-	)),
+	), false),
 
 	new HTMLTag ('a', array (
 		'class' => 'view-link',
 		'href' => '../url-queries/',
 		'innerHTML' => $hashover->locale->text['filter-url-queries']
-	)),
+	), false),
 
 	new HTMLTag ('a', array (
 		'class' => 'view-link',
 		'href' => '../updates/',
 		'innerHTML' => $hashover->locale->text['check-for-updates']
-	)),
+	), false),
 
 	new HTMLTag ('a', array (
 		'class' => 'view-link',
 		'href' => '../documentation/',
 		'innerHTML' => $hashover->locale->text['documentation']
-	)),
+	), false),
 
 	new HTMLTag ('a', array (
 		'class' => 'view-link',
 		'href' => '../settings/',
 		'innerHTML' => $hashover->locale->text['settings']
-	))
+	), false)
 );
 
 // Create navigation sidebar
@@ -127,6 +119,14 @@ $sidebar = new HTMLTag ('div', array (
 			'children' => $pages
 		))
 	)
+));
+
+// Create logout hyperlink
+$logout = new HTMLTag ('a', array (
+	'class' => 'plain-button right',
+	'href' => '../login/?logout=true',
+	'target' => '_parent',
+	'innerHTML' => $hashover->locale->text['logout']
 ));
 
 // Check if the form has been submitted

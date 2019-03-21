@@ -265,8 +265,8 @@ class WriteComments extends Secrets
 		}
 
 		// Whether to check for spam in current mode
-		if ($this->setup->spamCheckModes === 'both'
-		    or $this->setup->spamCheckModes === $this->mode)
+		if ($this->setup->spamCheckModes === $this->mode
+		    or $this->setup->spamCheckModes === 'both')
 		{
 			// Check user's IP address against local or remote database
 			if ($this->spamCheck->{$this->setup->spamDatabase}() === true) {

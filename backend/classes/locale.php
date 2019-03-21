@@ -20,7 +20,6 @@
 class Locale
 {
 	protected $setup;
-	protected $mode;
 
 	public $text;
 
@@ -28,7 +27,6 @@ class Locale
 	{
 		// Store parameters as properties
 		$this->setup = $setup;
-		$this->mode = $setup->usage['mode'];
 
 		// Get appropriate locale file
 		$locale_file_path = $this->getLocaleFile ();

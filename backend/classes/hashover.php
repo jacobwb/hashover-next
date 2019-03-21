@@ -46,8 +46,10 @@ class HashOver
 		$this->usage['mode'] = $mode;
 		$this->usage['context'] = $context;
 
-		// Instantiate and start statistics
+		// Instantiate statistics class
 		$this->statistics = new HashOver\Statistics ($mode);
+
+		// Start execution time
 		$this->statistics->executionStart ();
 
 		// Instantiate general setup class

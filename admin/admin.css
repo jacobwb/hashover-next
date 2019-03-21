@@ -20,12 +20,14 @@ body {
 	border-bottom: 1px solid #CCCCCC;
 }
 
-#logo,
-#navigation a {
+#logo, #navigation a {
 	position: relative;
 	display: block;
 	width: 100%;
 	vertical-align: top;
+	padding: 15px;
+	margin: 0px;
+	text-decoration: none;
 	overflow: hidden;
 }
 
@@ -37,15 +39,7 @@ body {
 	border-bottom: none;
 }
 
-#logo,
-#navigation a {
-	padding: 15px;
-	margin: 0px;
-	text-decoration: none;
-}
-
-#navigation a,
-#navigation:hover a.active {
+#navigation a, #navigation:hover a.active {
 	border-right: 4px solid transparent;
 	color: #222222;
 }
@@ -61,25 +55,21 @@ body {
 	background-color: transparent;
 }
 
-#navigation a:hover,
-#navigation a.active:hover {
+#navigation a:hover, #navigation a.active:hover {
 	color: #266394;
 	border-right: 4px solid #3485C7;
 	background-color: #EEEEEE;
 }
 
-div#logo,
-div#logo a {
+div#logo, div#logo a {
 	height: 234px;
 }
 
-div#logo a,
-#navigation:hover div#logo a {
+div#logo a, #navigation:hover div#logo a {
 	border-bottom: 4px solid transparent;
 }
 
-div#logo a:hover,
-div#logo a.active {
+div#logo a:hover, div#logo a.active {
 	border-bottom: 4px solid #5E94FF;
 }
 

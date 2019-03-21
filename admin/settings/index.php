@@ -57,11 +57,23 @@ function ui_array (Setup $setup, Locale $locale)
 				'zh-cn' => 'Simplified Chinese'
 			)
 		),
+
 		'theme' => array (
 			'type' => 'select',
 			'value' => $setup->theme,
 			'options' => $themes
 		),
+
+		'form-position' => array (
+			'type' => 'select',
+			'value' => $setup->formPosition,
+
+			'options' => array (
+				'top' => 'Top',
+				'bottom' => 'Bottom'
+			)
+		),
+
 		'default-sorting' => array (
 			'type' => 'select',
 			'value' => $setup->defaultSorting,
@@ -84,33 +96,57 @@ function ui_array (Setup $setup, Locale $locale)
 				)
 			)
 		),
+
+		'uses-markdown' => array (
+			'type' => 'checkbox',
+			'value' => $setup->usesMarkdown
+		),
+
+		'uses-ajax' => array (
+			'type' => 'checkbox',
+			'value' => $setup->usesAjax
+		),
+
+		'shows-reply-count' => array (
+			'type' => 'checkbox',
+			'value' => $setup->showsReplyCount
+		),
+
+		'allows-images' => array (
+			'type' => 'checkbox',
+			'value' => $setup->allowsImages
+		),
+
+		'allows-likes' => array (
+			'type' => 'checkbox',
+			'value' => $setup->allowsLikes
+		),
+
+		'allows-dislikes' => array (
+			'type' => 'checkbox',
+			'value' => $setup->allowsDislikes
+		),
+
+		'displays-title' => array (
+			'type' => 'checkbox',
+			'value' => $setup->displaysTitle
+		),
+
+		'uses-labels' => array (
+			'type' => 'checkbox',
+			'value' => $setup->usesLabels
+		),
+
 		'uses-moderation' => array (
 			'type' => 'checkbox',
 			'value' => $setup->usesModeration
 		),
+
 		'pends-user-edits' => array (
 			'type' => 'checkbox',
 			'value' => $setup->pendsUserEdits
 		),
-		'data-format' => array (
-			'type' => 'select',
-			'value' => $setup->dataFormat,
 
-			'options' => array (
-				'xml' => 'XML',
-				'json' => 'JSON',
-				'sql' => 'SQL'
-			)
-		),
-		'mailer' => array (
-			'type' => 'select',
-			'value' => $setup->mailer,
-
-			'options' => array (
-				'sendmail' => 'Sendmail',
-				'smtp' => 'SMTP'
-			)
-		),
 		'mail-type' => array (
 			'type' => 'select',
 			'value' => $setup->mailType,
@@ -120,119 +156,88 @@ function ui_array (Setup $setup, Locale $locale)
 				'html' => 'HTML'
 			)
 		),
+
+		'mailer' => array (
+			'type' => 'select',
+			'value' => $setup->mailer,
+
+			'options' => array (
+				'sendmail' => 'Sendmail',
+				'smtp' => 'SMTP'
+			)
+		),
+
 		'noreply-email' => array (
 			'type' => 'text',
 			'value' => $setup->noreplyEmail
 		),
-		'default-name' => array (
-			'type' => 'text',
-			'value' => $setup->defaultName
-		),
-		'allows-images' => array (
+
+		'subscribes-user' => array (
 			'type' => 'checkbox',
-			'value' => $setup->allowsImages
+			'value' => $setup->subscribesUser
 		),
-		'allows-login' => array (
+
+		'allows-user-replies' => array (
 			'type' => 'checkbox',
-			'value' => $setup->allowsLogin
+			'value' => $setup->allowsUserReplies
 		),
-		'allows-likes' => array (
+
+		'sets-cookies' => array (
 			'type' => 'checkbox',
-			'value' => $setup->allowsLikes
+			'value' => $setup->setsCookies
 		),
-		'allows-dislikes' => array (
+
+		'secure-cookies' => array (
 			'type' => 'checkbox',
-			'value' => $setup->allowsDislikes
+			'value' => $setup->secureCookies
 		),
-		'uses-ajax' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesAjax
-		),
+
 		'collapses-interface' => array (
 			'type' => 'checkbox',
 			'value' => $setup->collapsesInterface
 		),
+
 		'collapses-comments' => array (
 			'type' => 'checkbox',
 			'value' => $setup->collapsesComments
 		),
+
 		'collapse-limit' => array (
 			'type' => 'number',
 			'value' => $setup->collapseLimit
 		),
-		'reply-mode' => array (
-			'type' => 'select',
-			'value' => $setup->replyMode,
 
-			'options' => array (
-				'thread' => 'Threaded',
-				'stream' => 'Stream'
-			)
-		),
-		'stream-depth' => array (
-			'type' => 'number',
-			'value' => $setup->streamDepth
-		),
 		'popularity-threshold' => array (
 			'type' => 'number',
 			'value' => $setup->popularityThreshold
 		),
+
 		'popularity-limit' => array (
 			'type' => 'number',
 			'value' => $setup->popularityLimit
 		),
-		'uses-markdown' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesMarkdown
-		),
-		'server-timezone' => array (
-			'documentation' => 'https://php.net/manual/en/timezones.php',
-			'type' => 'text',
-			'value' => $setup->serverTimezone
-		),
-		'uses-user-timezone' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesUserTimezone
-		),
-		'uses-short-dates' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesShortDates
-		),
-		'time-format' => array (
-			'documentation' => 'https://php.net/manual/en/function.date.php',
-			'type' => 'text',
-			'value' => $setup->timeFormat
-		),
-		'date-format' => array (
-			'documentation' => 'https://php.net/manual/en/function.date.php',
-			'type' => 'text',
-			'value' => $setup->dateFormat
-		),
-		'displays-title' => array (
-			'type' => 'checkbox',
-			'value' => $setup->displaysTitle
-		),
-		'form-position' => array (
+
+		'spam-batabase' => array (
 			'type' => 'select',
-			'value' => $setup->formPosition,
+			'value' => $setup->spamDatabase,
 
 			'options' => array (
-				'top' => 'Top',
-				'bottom' => 'Bottom'
+				'remote' => 'StopForumSpam.com',
+				'local' => 'Local CSV file'
 			)
 		),
-		'uses-auto-login' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesAutoLogin
+
+		'spam-check-modes' => array (
+			'type' => 'select',
+			'value' => $setup->spamCheckModes,
+
+			'options' => array (
+				'both' => 'Both',
+				'json' => 'JavaScript',
+				'php' => 'PHP'
+			)
 		),
-		'shows-reply-count' => array (
-			'type' => 'checkbox',
-			'value' => $setup->showsReplyCount
-		),
-		'count-includes-deleted' => array (
-			'type' => 'checkbox',
-			'value' => $setup->countIncludesDeleted
-		),
+
 		'icon-mode' => array (
 			'type' => 'select',
 			'value' => $setup->iconMode,
@@ -243,86 +248,12 @@ function ui_array (Setup $setup, Locale $locale)
 				'none' => 'None'
 			)
 		),
+
 		'icon-size' => array (
 			'type' => 'number',
 			'value' => $setup->iconSize
 		),
-		'image-format' => array (
-			'type' => 'select',
-			'value' => $setup->imageFormat,
 
-			'options' => array (
-				'png' => 'PNG',
-				'svg' => 'SVG'
-			)
-		),
-		'uses-labels' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesLabels
-		),
-		'uses-cancel-buttons' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesCancelButtons
-		),
-		'appends-css' => array (
-			'type' => 'checkbox',
-			'value' => $setup->appendsCss
-		),
-		'appends-rss' => array (
-			'type' => 'checkbox',
-			'value' => $setup->appendsRss
-		),
-		'login-method' => array (
-			'type' => 'select',
-			'value' => $setup->loginMethod,
-
-			'options' => array (
-				'defaultLogin' => 'Default Login'
-			)
-		),
-		'sets-cookies' => array (
-			'type' => 'checkbox',
-			'value' => $setup->setsCookies
-		),
-		'secure-cookies' => array (
-			'type' => 'checkbox',
-			'value' => $setup->secureCookies
-		),
-		'stores-ip-address' => array (
-			'type' => 'checkbox',
-			'value' => $setup->storesIpAddress
-		),
-		'subscribes-user' => array (
-			'type' => 'checkbox',
-			'value' => $setup->subscribesUser
-		),
-		'allows-user-replies' => array (
-			'type' => 'checkbox',
-			'value' => $setup->allowsUserReplies
-		),
-		'spam-batabase' => array (
-			'type' => 'select',
-			'value' => $setup->spamDatabase,
-
-			'options' => array (
-				'remote' => 'StopForumSpam.com',
-				'local' => 'Local CSV file'
-			)
-		),
-		'spam-check-modes' => array (
-			'type' => 'select',
-			'value' => $setup->spamCheckModes,
-
-			'options' => array (
-				'json' => 'JSON',
-				'php' => 'PHP',
-				'both' => 'Both'
-			)
-		),
-		'gravatar-force' => array (
-			'type' => 'checkbox',
-			'value' => $setup->gravatarForce
-		),
 		'gravatar-default' => array (
 			'type' => 'select',
 			'value' => $setup->gravatarDefault,
@@ -335,10 +266,135 @@ function ui_array (Setup $setup, Locale $locale)
 				'retro' => 'Retro'
 			)
 		),
+
+		'gravatar-force' => array (
+			'type' => 'checkbox',
+			'value' => $setup->gravatarForce
+		),
+
+		'server-timezone' => array (
+			'documentation' => 'https://php.net/manual/en/timezones.php',
+			'type' => 'text',
+			'value' => $setup->serverTimezone
+		),
+
+		'time-format' => array (
+			'documentation' => 'https://php.net/manual/en/function.date.php',
+			'type' => 'text',
+			'value' => $setup->timeFormat
+		),
+
+		'date-format' => array (
+			'documentation' => 'https://php.net/manual/en/function.date.php',
+			'type' => 'text',
+			'value' => $setup->dateFormat
+		),
+
+		'uses-user-timezone' => array (
+			'type' => 'checkbox',
+			'value' => $setup->usesUserTimezone
+		),
+
+		'uses-short-dates' => array (
+			'type' => 'checkbox',
+			'value' => $setup->usesShortDates
+		),
+
+		'login-method' => array (
+			'type' => 'select',
+			'value' => $setup->loginMethod,
+
+			'options' => array (
+				'defaultLogin' => 'Default Login'
+			)
+		),
+
+		'allows-login' => array (
+			'type' => 'checkbox',
+			'value' => $setup->allowsLogin
+		),
+
+		'uses-auto-login' => array (
+			'type' => 'checkbox',
+			'value' => $setup->usesAutoLogin
+		),
+
+		'data-format' => array (
+			'type' => 'select',
+			'value' => $setup->dataFormat,
+
+			'options' => array (
+				'xml' => 'XML',
+				'json' => 'JSON',
+				'sql' => 'SQL'
+			)
+		),
+
+		'default-name' => array (
+			'type' => 'text',
+			'value' => $setup->defaultName
+		),
+
+		'reply-mode' => array (
+			'type' => 'select',
+			'value' => $setup->replyMode,
+
+			'options' => array (
+				'thread' => 'Threaded',
+				'stream' => 'Stream'
+			)
+		),
+
+		'stream-depth' => array (
+			'type' => 'number',
+			'value' => $setup->streamDepth
+		),
+
+		'image-format' => array (
+			'type' => 'select',
+			'value' => $setup->imageFormat,
+
+			'options' => array (
+				'png' => 'PNG',
+				'svg' => 'SVG'
+			)
+		),
+
+		'appends-css' => array (
+			'type' => 'checkbox',
+			'value' => $setup->appendsCss
+		),
+
+		'appends-rss' => array (
+			'type' => 'checkbox',
+			'value' => $setup->appendsRss
+		),
+
+		'uses-cancel-buttons' => array (
+			'type' => 'checkbox',
+			'value' => $setup->usesCancelButtons
+		),
+
+		'count-includes-deleted' => array (
+			'type' => 'checkbox',
+			'value' => $setup->countIncludesDeleted
+		),
+
+		'allow-local-metadata' => array (
+			'type' => 'checkbox',
+			'value' => $setup->allowLocalMetadata
+		),
+
+		'stores-ip-address' => array (
+			'type' => 'checkbox',
+			'value' => $setup->storesIpAddress
+		),
+
 		'minifies-javascript' => array (
 			'type' => 'checkbox',
 			'value' => $setup->minifiesJavascript
 		),
+
 		'minify-level' => array (
 			'type' => 'select',
 			'cast' => 'number',
@@ -350,12 +406,171 @@ function ui_array (Setup $setup, Locale $locale)
 				3 => 'Medium (removes newlines + Low)',
 				4 => 'High (removes extra bits + Medium)'
 			)
-		),
-		'allow-local-metadata' => array (
-			'type' => 'checkbox',
-			'value' => $setup->allowLocalMetadata
 		)
 	);
+}
+
+// Creates a select element with setting options
+function create_select ($hashover, $name, array $setting)
+{
+	// Create wrapper element for dropdown menu
+	$element = new HTMLTag ('span', array (
+		'class' => 'select-wrapper'
+	));
+
+	// Create dropdown menu
+	$select = new HTMLTag ('select', array (
+		'id' => $name,
+		'name' => $name,
+		'size' => 1
+	));
+
+	// Run through setting options
+	foreach ($setting['options'] as $value => $data) {
+		// Check if the current option is an array
+		if (is_array ($data)) {
+			// If so, add an option group spacer to menu
+			$select->appendChild (new HTMLTag ('optgroup', array (
+				'label' => '&nbsp;'
+			)));
+
+			// Create an option group with localized label
+			$optgroup = new HTMLTag ('optgroup', array (
+				'label' => $hashover->locale->text[$value]
+			));
+
+			// Run through each optgroup option
+			foreach ($data as $opt_value => $opt_text) {
+				// Create setting option
+				$option = new HTMLTag ('option', array (
+					'value' => $opt_value,
+					'innerHTML' => $opt_text
+				), false);
+
+				// Select proper option
+				if ($opt_value === $setting['value']) {
+					$option->createAttribute ('selected', 'true');
+				}
+
+				// Append option to optgroup
+				$optgroup->appendChild ($option);
+			}
+
+			// And append optgroup to menu
+			$select->appendChild ($optgroup);
+		} else {
+			// If not, create setting option
+			$option = new HTMLTag ('option', array (
+				'value' => $value,
+				'innerHTML' => $data
+			), false);
+
+			// Select proper option
+			if ($value === $setting['value']) {
+				$option->createAttribute ('selected', 'true');
+			}
+
+			// Append option to menu
+			$select->appendChild ($option);
+		}
+	}
+
+	// Append dropdown menu to wrapper element
+	$element->appendChild ($select);
+
+	return $element;
+}
+
+// Creates a table row element for a setting value
+function create_tr ($hashover, $name, array $setting)
+{
+	// Create table row
+	$tr = new HTMLTag ('tr');
+
+	// Create setting description cell
+	$description = new HTMLTag ('td');
+
+	// Setting description locale string
+	$text = $hashover->locale->text['setting-' . $name];
+
+	// Check for documentation URL
+	if (!empty ($setting['documentation'])) {
+		// If so, get lower case documentation locale string
+		$docs = mb_strtolower ($hashover->locale->text['documentation']);
+
+		// Create documentation link
+		$docs = new HTMLTag ('a', array (
+			'href' => $setting['documentation'],
+			'target' => '_blank',
+			'innerHTML' => $docs
+		), false);
+
+		// And append documentation link to description label text
+		$text .= sprintf (' (%s)', $docs->asHTML ());
+	}
+
+	// Create description label
+	$label = new HTMLTag ('label', array (
+		'for' => $name,
+		'innerHTML' => $text
+	), false);
+
+	// Append label to description cell
+	$description->appendChild ($label);
+
+	// Append description cell to settings table row
+	$tr->appendChild ($description);
+
+	// Create setting value cell
+	$field = new HTMLTag ('td');
+
+	// Handle specific setting types
+	switch ($setting['type']) {
+		// Create checkbox for enabling/disabling the setting
+		case 'checkbox': {
+			// Create checkbox type input element
+			$element = new HTMLTag ('input', array (
+				'id' => $name,
+				'type' => 'checkbox',
+				'name' => $name
+			), false, true);
+
+			// Set check based on current setting
+			if ($setting['value'] !== false) {
+				$element->createAttribute ('checked', 'true');
+			}
+
+			break;
+		}
+
+		// Create text/number box for entering the setting value
+		case 'number' : case 'text': {
+			// Create number or text type input element
+			$element = new HTMLTag ('input', array (
+				'id' => $name,
+				'type' => $setting['type'],
+				'name' => $name,
+				'value' => $setting['value'],
+				'size' => ($setting['type'] === 'text') ? '25' : '10'
+			), false, true);
+
+			break;
+		}
+
+		// Create dropdown menu for selecting the setting value
+		case 'select': {
+			// Create select element
+			$element = create_select ($hashover, $name, $setting);
+
+			break;
+		}
+	}
+
+	// Append the setting value element to the setting value cell
+	$field->appendChild ($element);
+
+	// Append the setting value cell to the settings table row
+	$tr->appendChild ($field);
 }
 
 try {
@@ -381,6 +596,7 @@ try {
 			// Use specified type or optional cast
 			$type = !empty ($setting['cast']) ? 'cast' : 'type';
 
+			// Handle specific setting types
 			switch ($setting[$type]) {
 				// Set value to boolean based on POST data
 				case 'checkbox': {
@@ -435,148 +651,7 @@ try {
 
 	// Create settings table
 	foreach ($ui as $name => $setting) {
-		// Create table row
-		$tr = new HTMLTag ('tr');
-
-		// Create setting description cell
-		$description = new HTMLTag ('td');
-
-		// Create description label
-		$label = new HTMLTag ('label', array (
-			'for' => $name,
-			'innerHTML' => $hashover->locale->text['setting-' . $name]
-		), false);
-
-		// Check for documentation URL
-		if (!empty ($setting['documentation'])) {
-			// Create documentation link
-			$docs = new HTMLTag ('a', array (
-				'href' => $setting['documentation'],
-				'target' => '_blank',
-				'innerHTML' => mb_strtolower ($hashover->locale->text['documentation'])
-			), false);
-
-			// Append documentation in parentheses
-			$label->appendInnerHTML ('(' . $docs->asHTML () . ')');
-		}
-
-		// Append label to description cell
-		$description->appendChild ($label);
-
-		// Append description cell to settings table row
-		$tr->appendChild ($description);
-
-		// Create setting value cell
-		$field = new HTMLTag ('td');
-
-		switch ($setting['type']) {
-			case 'checkbox': {
-				// Create checkbox for enabling/disabling the setting
-				$element = new HTMLTag ('input', array (
-					'id' => $name,
-					'type' => 'checkbox',
-					'name' => $name
-				), false, true);
-
-				// Set check based on current setting
-				if ($setting['value'] !== false) {
-					$element->createAttribute ('checked', 'true');
-				}
-
-				break;
-			}
-
-			// Create text/number box for entering the setting value
-			case 'number' : case 'text': {
-				$element = new HTMLTag ('input', array (
-					'id' => $name,
-					'type' => $setting['type'],
-					'name' => $name,
-					'value' => $setting['value'],
-					'size' => ($setting['type'] === 'text') ? '25' : '10'
-				), false, true);
-
-				break;
-			}
-
-			// Create dropdown menu for selecting the setting value
-			case 'select': {
-				// Create wrapper element for dropdown menu
-				$element = new HTMLTag ('span', array (
-					'class' => 'select-wrapper'
-				));
-
-				// Create dropdown menu
-				$select = new HTMLTag ('select', array (
-					'id' => $name,
-					'name' => $name,
-					'size' => 1
-				));
-
-				foreach ($setting['options'] as $value => $data) {
-					// Check if the current option is an array
-					if (is_array ($data)) {
-						// If so, add an option group spacer to menu
-						$select->appendChild (new HTMLTag ('optgroup', array (
-							'label' => '&nbsp;'
-						)));
-
-						// Create an option group with localized label
-						$optgroup = new HTMLTag ('optgroup', array (
-							'label' => $hashover->locale->text[$value]
-						));
-
-						// Run through each optgroup option
-						foreach ($data as $opt_value => $opt_text) {
-							// Create setting option
-							$option = new HTMLTag ('option', array (
-								'value' => $opt_value,
-								'innerHTML' => $opt_text
-							), false);
-
-							// Select proper option
-							if ($opt_value === $setting['value']) {
-								$option->createAttribute ('selected', 'true');
-							}
-
-							// Append option to optgroup
-							$optgroup->appendChild ($option);
-						}
-
-						// And append optgroup to menu
-						$select->appendChild ($optgroup);
-					} else {
-						// If not, create setting option
-						$option = new HTMLTag ('option', array (
-							'value' => $value,
-							'innerHTML' => $data
-						), false);
-
-						// Select proper option
-						if ($value === $setting['value']) {
-							$option->createAttribute ('selected', 'true');
-						}
-
-						// Append option to menu
-						$select->appendChild ($option);
-					}
-				}
-
-				// Append dropdown menu to wrapper element
-				$element->appendChild ($select);
-
-				break;
-			}
-		}
-
-		// Append the setting value element to the setting value cell
-		$field->appendChild ($element);
-
-		// Append the setting value cell to the settings table row
-		$tr->appendChild ($field);
-
-		// Add row to settings table
-		$table->appendChild ($tr);
+		$table->appendChild (create_tr ($hashover, $name, $setting));
 	}
 
 	// Template data

@@ -38,7 +38,7 @@ class SensitiveSettings extends SafeSettings
 	// E-mail settings
 	public $mailer			= 'sendmail';			// How to send notification e-mails, either 'sendmail' or 'smtp'
 	public $mailType		= 'text';			// What format to send e-mails in, either 'text' or 'html'
-	public $noreplyEmail		= 'noreply@example.com';	// E-mail used when no e-mail is given
+	public $noreplyEmail		= 'noreply@example.com';	// E-mail address used in e-mail notifications to normal users
 
 	// Behavior settings
 	public $usesAutoLogin		= true;				// Whether a user's first comment automatically logs them in
