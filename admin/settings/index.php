@@ -40,21 +40,21 @@ function ui_array (Setup $setup, Locale $locale)
 
 			'options' => array (
 				'en' => 'English',
+				'pt-br' => 'Brazilian Portuguese',
 				'da' => 'Danish',
-				'el' => 'Greek',
-				'de' => 'German',
-				'es' => 'Spanish',
-				'fa' => 'Persian',
+				'nl' => 'Dutch',
 				'fr' => 'French',
+				'de' => 'German',
+				'el' => 'Greek',
 				'jp' => 'Japanese',
 				'ko' => 'Korean',
 				'lt' => 'Lithuanian',
-				'nl' => 'Dutch',
+				'fa' => 'Persian',
 				'pl' => 'Polish',
-				'pt-br' => 'Brazilian Portuguese',
 				'ro' => 'Romanian',
-				'tr' => 'Turkish',
-				'zh-cn' => 'Simplified Chinese'
+				'zh-cn' => 'Simplified Chinese',
+				'es' => 'Spanish',
+				'tr' => 'Turkish'
 			)
 		),
 
