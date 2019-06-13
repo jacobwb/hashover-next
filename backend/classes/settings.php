@@ -237,6 +237,9 @@ class Settings extends SensitiveSettings
 
 			// And override settings
 			$this->loadJsonSettings ($json);
+		} else {
+			// If not, just synchronize settings
+			$this->syncSettings ();
 		}
 	}
 
