@@ -127,7 +127,7 @@ table {
 
 .plain-button {
 	padding: 0.65em 1.5em 0.6em 1.5em;
-	font-size: 0.5em;
+	font-size: 14px;
 	background-color: rgba(200, 200, 255, 0.25);
 	-moz-border-radius: 4px 4px 4px 4px;
 	-webkit-border-radius: 4px 4px 4px 4px;

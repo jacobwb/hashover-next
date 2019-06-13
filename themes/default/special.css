@@ -100,7 +100,7 @@ input[type="checkbox"] {
 	top: 0px;
 	display: inline-block;
 	height: 100%;
-	width: 31px;
+	width: 2em;
 	padding: 6px 0px 6px 0px;
 	margin: 0px;
 	line-height: 12px;
@@ -120,7 +120,7 @@ input[type="checkbox"] {
 .select-wrapper select {
 	border: none;
 	background-color: #FCFCFC;
-	padding: 1px 20px 1px 1px;
+	padding: 1px 1em 1px 1px;
 	cursor: pointer;
 }
 

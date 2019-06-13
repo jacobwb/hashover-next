@@ -253,7 +253,7 @@ conditions, unless such conditions are required by law.
 	position: relative;
 }
 
-.hashover .hashover-input-cell > *:before,
+.hashover .hashover-input-cell > div:before,
 .hashover .hashover-required-input:after {
 	content: " ";
 	display: inline-block;
@@ -539,15 +539,25 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-inputs label,
 .hashover .hashover-comment-label {
 	display: inline-block;
-	padding: 5px;
+	padding: 5px 5px 11px 5px;
 	background-color: rgba(55, 55, 55, 0.25);
+	margin-bottom: -6px;
+
+	-moz-border-radius: 4px 4px 0px 0px;
+	-webkit-border-radius: 4px 4px 0px 0px;
+	border-radius: 4px 4px 0px 0px;
 }
 
 .hashover .hashover-comment-label {
 	display: block;
 	border: 1px solid #555555;
 	width: 100%;
-	margin-bottom: -1px;
+}
+
+.hashover.hashover-logged-out .hashover-reply-form .hashover-comment-label {
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
 }
 
 .hashover .hashover-form-links {
@@ -840,7 +850,7 @@ conditions, unless such conditions are required by law.
 .hashover .hashover-select-wrapper select {
 	border: none;
 	background-color: #030303;
-	padding: 0px 14px 0px 0px;
+	padding: 0px 1em 0px 0px;
 	cursor: pointer;
 }
 
@@ -873,7 +883,7 @@ conditions, unless such conditions are required by law.
 	top: 0px;
 	display: inline-block;
 	height: 100%;
-	width: 26px;
+	width: 2em;
 	padding: 5px 4px;
 	margin: 0px;
 	font-size: 12px;
@@ -1153,11 +1163,11 @@ conditions, unless such conditions are required by law.
 
 /* Handle HDPI */
 .hashover.hashover-mobile .hashover-formatting,
-.hashover.hashover-mobile .hashover-input-cell > *:before,
+.hashover.hashover-mobile .hashover-input-cell > div:before,
 .hashover.hashover-mobile .hashover-required-input:after,
 .hashover.hashover-mobile .hashover-comment .hashover-buttons a,
 .hashover.hashover-vector .hashover-formatting,
-.hashover.hashover-vector .hashover-input-cell > *:before,
+.hashover.hashover-vector .hashover-input-cell > div:before,
 .hashover.hashover-vector .hashover-required-input:after,
 .hashover.hashover-vector .hashover-comment .hashover-buttons a {
 	background-image: url('../../images/inputs-and-buttons.svg');
