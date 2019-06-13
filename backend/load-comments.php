@@ -30,6 +30,9 @@ try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json');
 
+	// Throw exception if requested by remote server
+	$hashover->setup->refererCheck ();
+
 	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');
 

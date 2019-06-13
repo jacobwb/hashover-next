@@ -30,6 +30,9 @@ try {
 		'context' => 'api'
 	));
 
+	// Throw exception if requested by remote server
+	$setup->refererCheck ();
+
 	// Instantiate HashOver statistics class
 	$statistics = new Statistics ('javascript');
 

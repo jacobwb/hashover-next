@@ -30,6 +30,9 @@ try {
 	// Throw exception if API is disabled
 	$hashover->setup->apiCheck ('json');
 
+	// Enable remote access
+	$hashover->setup->setupRemoteAccess ();
+
 	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');
 

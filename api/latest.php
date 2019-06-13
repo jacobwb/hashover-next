@@ -33,6 +33,9 @@ try {
 	// Throw exception if API is disabled
 	$setup->apiCheck ('latest');
 
+	// Enable remote access
+	$setup->setupRemoteAccess ();
+
 	// Instantiate HashOver statistics class
 	$statistics = new Statistics ('javascript');
 

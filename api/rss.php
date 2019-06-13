@@ -295,6 +295,9 @@ try {
 	// Throw exception if API is disabled
 	$hashover->setup->apiCheck ('rss');
 
+	// Enable remote access
+	$hashover->setup->setupRemoteAccess ();
+
 	// Set page URL from GET data
 	$hashover->setup->setPageURL ('request');
 

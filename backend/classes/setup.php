@@ -68,15 +68,6 @@ class Setup extends Settings
 		// Check for required extensions
 		$this->extensionsLoaded ($this->extensions);
 
-		// Throw exception if script wasn't requested by this server
-		if ($this->usage['mode'] !== 'php') {
-			if ($this->refererCheck () === false) {
-				throw new \Exception (
-					'External use not allowed.'
-				);
-			}
-		}
-
 		// Check if multisite support is enabled
 		if ($this->supportsMultisites === true) {
 			// If so, set website based on domain
@@ -220,7 +211,7 @@ class Setup extends Settings
 	}
 
 	// Enables and sets up remote access
-	protected function setupRemoteAccess ()
+	public function setupRemoteAccess ()
 	{
 		// Set remote access indicator
 		$this->remoteAccess = true;
@@ -233,7 +224,7 @@ class Setup extends Settings
 	}
 
 	// Checks remote request against allowed domains setting
-	protected function refererCheck ()
+	public function refererCheck ()
 	{
 		// Return true if no referer is set
 		if (empty ($_SERVER['HTTP_REFERER'])) {
@@ -279,13 +270,10 @@ class Setup extends Settings
 			}
 		}
 
-		// Setup remote access in API usage context
-		if ($this->usage['context'] === 'api') {
-			$this->setupRemoteAccess ();
-			return true;
-		}
-
-		return false;
+		// Otherwise, throw exception
+		throw new \Exception (
+			'External use not allowed.'
+		);
 	}
 
 	// Gets value from POST or GET data

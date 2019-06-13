@@ -148,6 +148,9 @@ try {
 	// Instanciate HashOver class
 	$hashover = new \HashOver ('json');
 
+	// Throw exception if requested by remote server
+	$hashover->setup->refererCheck ();
+
 	// Get page URL from POST/GET data
 	$url = $hashover->setup->getRequest ('url', null);
 

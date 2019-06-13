@@ -27,6 +27,9 @@ try {
 		'context' => 'normal'
 	));
 
+	// Throw exception if requested by remote server
+	$setup->refererCheck ();
+
 	// User settings passed during instantiation
 	$settings = $setup->getRequest ('cfg');
 

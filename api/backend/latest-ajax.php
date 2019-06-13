@@ -36,6 +36,9 @@ try {
 	// Throw exception if API is disabled
 	$hashover->setup->apiCheck ('latest');
 
+	// Enable remote access
+	$hashover->setup->setupRemoteAccess ();
+
 	// Set thread name from POST/GET data
 	$hashover->setup->setThreadName ('request');
 
