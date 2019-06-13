@@ -77,8 +77,8 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 
 	// Add final queries
 	queries = queries.concat ([
-		// Add client time
-		'time=' + HashOver.clientTime,
+		// Add current client time
+		'time=' + HashOver.getClientTime (),
 
 		// Add AJAX indicator
 		'ajax=yes'

@@ -29,7 +29,13 @@ HashOver.prototype.showMoreComments = function (element, callback, append)
 	var requestPath = this.setup['http-backend'] + '/load-comments.php';
 
 	// Set URL queries
-	var queries = this.queries.concat (['ajax=yes']);
+	var queries = this.queries.concat ([
+		// Add current client time
+		'time=' + HashOver.getClientTime (),
+
+		// Add AJAX indicator
+		'ajax=yes'
+	]);
 
 	// Handle AJAX request return data
 	this.ajax ('POST', requestPath, queries, function (json) {

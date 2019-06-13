@@ -60,6 +60,9 @@ try {
 	// Register frontend settings URL queries converter method
 	$javascript->registerFile ('cfgqueries.js');
 
+	// Register client time getter method
+	$javascript->registerFile ('getclienttime.js');
+
 	// Register backend URL queries getter method
 	$javascript->registerFile ('getbackendqueries.js');
 

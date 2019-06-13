@@ -31,13 +31,10 @@ function HashOverLatest (options)
 	// Get current date and time
 	var datetime = new Date ();
 
-	// Get 24-hour current time
-	var hours = datetime.getHours ();
-	var minutes = datetime.getMinutes ();
-	var time = hours + ':' + minutes;
-
-	// Start queries with client time
-	var queries = ['time=' + time];
+	// Start queries with current client time
+	var queries = [
+		'time=' + HashOverLatest.getClientTime ()
+	];
 
 	// Check if options is an object
 	if (options && options.constructor === Object) {
