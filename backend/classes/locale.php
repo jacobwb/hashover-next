@@ -60,31 +60,25 @@ class Locale
 		$locales_path = $this->setup->getAbsolutePath ('backend/locales');
 
 		// Get dashed locale code (en-us, de-de, etc.)
-		$locale_name = str_replace ('_', '-', mb_strtolower ($locale));
+		$name = str_replace ('_', '-', mb_strtolower ($locale));
 
-		// Add front part of locale ('en') to checklist
-		$code = substr ($locale, 0, 2);
-
-		// Run through locale file tries
-		foreach (array ($locale_name, $code) as $name) {
 		// Locale file path to try
 		$locale_file = $locales_path . '/' . $name . '.php';
 
 		// Try to use locale file for current locale
 		if (file_exists ($locale_file)) {
 			// If exists, set locale code as language setting
-			$this->setup->language = $name;
+			$this->setup->language = $locale;
 
 			// And return locale file path
 			return $locale_file;
 		}
-		}
 
 		// Otherwise, set language setting to English
-		$this->setup->language = 'en';
+		$this->setup->language = 'en_US';
 
 		// And return path to English locale
-		return $locales_path . '/en.php';
+		return $locales_path . '/en-us.php';
 	}
 
 	// Includes a locale file

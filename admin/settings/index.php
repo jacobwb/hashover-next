@@ -39,22 +39,22 @@ function ui_array (Setup $setup, Locale $locale)
 				'value' => $setup->language,
 
 				'options' => array (
-					'en' => 'English',
-					'pt-br' => 'Brazilian Portuguese',
-					'da' => 'Danish',
-					'nl' => 'Dutch',
-					'fr' => 'French',
-					'de' => 'German',
-					'el' => 'Greek',
-					'jp' => 'Japanese',
-					'ko' => 'Korean',
-					'lt' => 'Lithuanian',
-					'fa' => 'Persian',
-					'pl' => 'Polish',
-					'ro' => 'Romanian',
-					'zh-cn' => 'Simplified Chinese',
-					'es' => 'Spanish',
-					'tr' => 'Turkish'
+					'en_US' => 'English',
+					'pt_BR' => 'Brazilian Portuguese',
+					'da_DK' => 'Danish',
+					'nl_NL' => 'Dutch',
+					'fr_FR' => 'French',
+					'de_DE' => 'German',
+					'el_EL' => 'Greek',
+					'ja_JP' => 'Japanese',
+					'ko_KR' => 'Korean',
+					'lt_LT' => 'Lithuanian',
+					'fa_IR' => 'Persian',
+					'pl_PL' => 'Polish',
+					'ro_RO' => 'Romanian',
+					'zh_CN' => 'Simplified Chinese',
+					'es_ES' => 'Spanish',
+					'tr_TR' => 'Turkish'
 				)
 			),
 
