@@ -165,7 +165,7 @@ class FormUI
 		// Create and append login input elements to main form inputs wrapper element
 		foreach ($login_input_attributes as $field => $attributes) {
 			// Skip disabled input tags
-			if ($this->setup->fieldOptions[$field] === false) {
+			if ($this->setup->formFields[$field] === 'off') {
 				continue;
 			}
 
@@ -193,7 +193,7 @@ class FormUI
 			));
 
 			// Add a class for indicating a required field
-			if ($this->setup->fieldOptions[$field] === 'required') {
+			if ($this->setup->formFields[$field] === 'required') {
 				$input_wrapper->appendAttribute ('class', 'hashover-required-input');
 			}
 
@@ -812,7 +812,7 @@ class FormUI
 		));
 
 		// Add checkbox label element to main form buttons wrapper element
-		if ($this->setup->fieldOptions['email'] !== false) {
+		if ($this->setup->emailField !== 'off') {
 			if ($this->login->userIsLoggedIn === false or !empty ($this->login->email)) {
 				$subscribed = ($this->setup->subscribesUser === true);
 				$subscribe_label = $this->subscribeLabel ('', 'main', $subscribed);

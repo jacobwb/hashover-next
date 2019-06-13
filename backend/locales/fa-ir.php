@@ -116,6 +116,8 @@ $locale = array (
 	'comment'		=> 'نظر',
 	'page'			=> 'صفحه',
 	'sent-by'		=> 'این ایمیل توسط %s توسط HashOver ارسال شد.',
+	'enabled'		=> 'فعال شده است',
+	'disabled'		=> 'غیرفعال شده است',
 
 	'source-code-sub'	=> 'بازخورد کد منبع جانبی سرور HashOver',
 	'type'			=> 'تایپ کنید',
@@ -218,5 +220,9 @@ $locale = array (
 	'setting-gravatar-default'		=> 'پیش فرض Gravatar تم برای استفاده',
 	'setting-minifies-javascript'		=> 'فعال کردن جاوا اسکریپت',
 	'setting-minify-level'			=> 'سطح معادن جاوا اسکریپت',
-	'setting-allow-local-metadata'		=> 'اجازه دادن به متادیتای صفحه را از localhost به روز شود'
+	'setting-allow-local-metadata'		=> 'اجازه دادن به متادیتای صفحه را از localhost به روز شود',
+	'setting-name-field'			=> 'فیلد نام کاربری',
+	'setting-password-field'		=> 'کاربر رمز عبور، برای ویرایش امتیازات',
+	'setting-email-field'			=> 'نامه پست الکترونیکی اطلاع رسانی کاربر',
+	'setting-website-field'			=> 'نشانی اینترنتی وب سایت کاربر'
 );

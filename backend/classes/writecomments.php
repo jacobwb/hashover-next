@@ -612,14 +612,14 @@ class WriteComments extends Secrets
 		$this->data['date'] = date (DATE_ISO8601);
 
 		// Store name if one is given
-		if ($this->setup->fieldOptions['name'] !== false) {
+		if ($this->setup->nameField !== 'off') {
 			if (!empty ($this->name)) {
 				$this->data['name'] = $this->name;
 			}
 		}
 
 		// Store password and login ID if a password is given
-		if ($this->setup->fieldOptions['password'] !== false) {
+		if ($this->setup->passwordField !== 'off') {
 			if (!empty ($this->password)) {
 				$this->data['password'] = $this->password;
 			}
@@ -631,7 +631,7 @@ class WriteComments extends Secrets
 		}
 
 		// Check if the e-mail field is enabled
-		if ($this->setup->fieldOptions['email'] !== false) {
+		if ($this->setup->emailField !== 'off') {
 			// Check if we have an e-mail address
 			if (!empty ($this->email)) {
 				// Get encryption info for e-mail
@@ -655,7 +655,7 @@ class WriteComments extends Secrets
 		}
 
 		// Store website URL if one is given
-		if ($this->setup->fieldOptions['website'] !== false) {
+		if ($this->setup->websiteField !== 'off') {
 			if (!empty ($this->website)) {
 				$this->data['website'] = $this->website;
 			}

@@ -116,6 +116,8 @@ $locale = array (
 	'comment'		=> '评论',
 	'page'			=> '页',
 	'sent-by'		=> '此电子邮件由%s通过HashOver发送。',
+	'enabled'		=> '已启用',
+	'disabled'		=> '已禁用',
 
 	'source-code-sub'	=> 'HashOver服務器端源代碼查看器',
 	'type'			=> '类型',
@@ -218,5 +220,9 @@ $locale = array (
 	'setting-gravatar-default'		=> '使用默认的Gravatar主题',
 	'setting-minifies-javascript'		=> '启用JavaScript缩小',
 	'setting-minify-level'			=> 'JavaScript缩小级别',
-	'setting-allow-local-metadata'		=> '允许页面元数据从本地主机更新'
+	'setting-allow-local-metadata'		=> '允许页面元数据从本地主机更新',
+	'setting-name-field'			=> '用户名字段',
+	'setting-password-field'		=> '用户密码字段，用于编辑权限',
+	'setting-email-field'			=> '用户通知电子邮件字段',
+	'setting-website-field'			=> '用户网站URL字段'
 );

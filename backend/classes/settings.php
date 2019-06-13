@@ -133,22 +133,21 @@ class Settings extends SensitiveSettings
 			$this->allowsDislikes = false;
 		}
 
-		// Setup default field options
-		foreach (array ('name', 'password', 'email', 'website') as $field) {
-			if (!isset ($this->fieldOptions[$field])) {
-				$this->fieldOptions[$field] = true;
-			}
-		}
+		// Store status of each form field as array
+		$this->formFields = array (
+			'name' => $this->nameField,
+			'password' => $this->passwordField,
+			'email' => $this->emailField,
+			'website' => $this->websiteField
+		);
 
 		// Disable password if name is disabled
-		if ($this->fieldOptions['name'] === false) {
-			$this->fieldOptions['password'] = false;
+		if ($this->nameField === 'off') {
+			$this->passwordField = 'off';
 		}
 
 		// Disable login if name or password is disabled
-		if ($this->fieldOptions['name'] === false
-		    or $this->fieldOptions['password'] === false)
-		{
+		if ($this->nameField === 'off' or $this->passwordField === 'off') {
 			$this->allowsLogin = false;
 		}
 

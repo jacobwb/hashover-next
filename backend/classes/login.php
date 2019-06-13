@@ -151,7 +151,7 @@ class Login extends Secrets
 	public function validateFields ()
 	{
 		// Run through login field options
-		foreach ($this->setup->fieldOptions as $field => $status) {
+		foreach ($this->setup->formFields as $field => $status) {
 			// Check if current field is required and is empty
 			if ($status === 'required' and empty ($this->$field)) {
 				// If so, set cookies if request is not AJAX

@@ -123,6 +123,8 @@ $locale = array (
 	'comment'		=> 'Commentaire',
 	'page'			=> 'Page',
 	'sent-by'		=> 'Cet e-mail a été envoyé par %s via HashOver.',
+	'enabled'		=> 'Activé',
+	'disabled'		=> 'Désactivé',
 
 	'source-code-sub'	=> 'HashOver visionneuse de code source côté serveur',
 	'type'			=> 'Type',
@@ -225,5 +227,9 @@ $locale = array (
 	'setting-gravatar-default'		=> 'Thème Gravatar par défaut à utiliser',
 	'setting-minifies-javascript'		=> 'Activer la minification JavaScript',
 	'setting-minify-level'			=> 'Niveau de minimisation JavaScript',
-	'setting-allow-local-metadata'		=> 'Autoriser la mise à jour des métadonnées de page depuis localhost'
+	'setting-allow-local-metadata'		=> 'Autoriser la mise à jour des métadonnées de page depuis localhost',
+	'setting-name-field'			=> 'Champ Nom d\'utilisateur.',
+	'setting-password-field'		=> 'Champ de mot de passe utilisateur, pour modifier les privilèges',
+	'setting-email-field'			=> 'Champ e-mail de notification de l\'utilisateur',
+	'setting-website-field'			=> 'Champ URL du site Web de l\'utilisateur.'
 );

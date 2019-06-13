@@ -52,14 +52,11 @@ class SafeSettings
 	public $datePattern		= 'MMMM d, YYYY';		// Date format pattern (see: http://userguide.icu-project.org/formatparse/datetime)
 	public $timePattern		= 'h:mm a';			// Time format pattern, use 'HH:mm' for 24-hour time
 
-	// Field options, use true/false to enable/disable a field,
-	// use 'required' to require a field be properly filled
-	public $fieldOptions = array (
-		'name'     => true,
-		'password' => true,
-		'email'    => true,
-		'website'  => true
-	);
+	// Form fields
+	public $nameField		= 'on';				// Commenter's name field
+	public $passwordField		= 'on';				// Commenter's password field, allows them to edit their comment later
+	public $emailField		= 'on';				// Commenter's e-mail address, for e-mail notifications and avatar
+	public $websiteField		= 'on';				// Commenter's website URL
 
 	// Behavior settings
 	public $displaysTitle		= true;				// Whether page title is shown or not

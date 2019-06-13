@@ -32,6 +32,13 @@ function ui_array (Setup $setup, Locale $locale)
 		$themes[$theme] = $theme;
 	}
 
+	// Form fields options
+	$field_options = array (
+		'on'		=> $locale->text['enabled'],
+		'required'	=> $locale->text['required'],
+		'off'		=> $locale->text['disabled'],
+	);
+
 	// Return array of settings allowed to be changed
 	return array (
 		'general' => array (
@@ -277,6 +284,30 @@ function ui_array (Setup $setup, Locale $locale)
 					'top' => 'Top',
 					'bottom' => 'Bottom'
 				)
+			),
+
+			'name-field' => array (
+				'type' => 'select',
+				'value' => $setup->nameField,
+				'options' => $field_options
+			),
+
+			'password-field' => array (
+				'type' => 'select',
+				'value' => $setup->passwordField,
+				'options' => $field_options
+			),
+
+			'email-field' => array (
+				'type' => 'select',
+				'value' => $setup->emailField,
+				'options' => $field_options
+			),
+
+			'website-field' => array (
+				'type' => 'select',
+				'value' => $setup->websiteField,
+				'options' => $field_options
 			),
 
 			'displays-title' => array (

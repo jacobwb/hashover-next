@@ -2,14 +2,14 @@
 HashOver.prototype.commentValidator = function (form, skipComment, isReply)
 {
 	// Check each input field for if they are required
-	for (var field in this.setup['field-options']) {
+	for (var field in this.setup['form-fields']) {
 		// Skip other people's prototypes
-		if (this.setup['field-options'].hasOwnProperty (field) !== true) {
+		if (this.setup['form-fields'].hasOwnProperty (field) !== true) {
 			continue;
 		}
 
 		// Check if the field is required, and that the input exists
-		if (this.setup['field-options'][field] === 'required' && form[field] !== undefined) {
+		if (this.setup['form-fields'][field] === 'required' && form[field] !== undefined) {
 			// Check if it has a value
 			if (form[field].value === '') {
 				// If not, add a class indicating a failed post

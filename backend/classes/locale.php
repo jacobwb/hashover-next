@@ -122,7 +122,7 @@ class Locale
 	protected function prepareLocale ()
 	{
 		// Add optionality to form field title locales
-		foreach ($this->setup->fieldOptions as $field => $option) {
+		foreach ($this->setup->formFields as $field => $option) {
 			// Title locale key
 			$tooltip_key = $field . '-tip';
 

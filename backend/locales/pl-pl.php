@@ -116,6 +116,8 @@ $locale = array (
 	'comment'		=> 'Komentarz',
 	'page'			=> 'Strona',
 	'sent-by'		=> 'Ten e-mail został wysłany przez %s za pośrednictwem HashOver.',
+	'enabled'		=> 'Włączony',
+	'disabled'		=> 'Wyłączony',
 
 	'source-code-sub'	=> 'Przeglądarka kodu źródłowego HashOver po stronie serwera',
 	'type'			=> 'Typ',
@@ -218,5 +220,9 @@ $locale = array (
 	'setting-gravatar-default'		=> 'Domyślny motyw Gravatta do użycia',
 	'setting-minifies-javascript'		=> 'Włącz minimalizację JavaScript',
 	'setting-minify-level'			=> 'Poziom minimalizacji JavaScript',
-	'setting-allow-local-metadata'		=> 'Pozwól na aktualizowanie metadanych strony z localhosta'
+	'setting-allow-local-metadata'		=> 'Pozwól na aktualizowanie metadanych strony z localhosta',
+	'setting-name-field'			=> 'Pole nazwy użytkownika',
+	'setting-password-field'		=> 'Pole hasła użytkownika dla uprawnień do edycji',
+	'setting-email-field'			=> 'Pole e-mail z powiadomieniem użytkownika',
+	'setting-website-field'			=> 'Pole adresu URL witryny użytkownika'
 );

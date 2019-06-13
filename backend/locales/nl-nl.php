@@ -116,6 +116,8 @@ $locale = array (
 	'comment'		=> 'Reactie',
 	'page'			=> 'Pagina',
 	'sent-by'		=> 'Deze e-mail is verzonden door %s via HashOver.',
+	'enabled'		=> 'Ingeschakeld',
+	'disabled'		=> 'Uitgeschakeld',
 
 	'source-code-sub'	=> 'HashOver server-side broncode-viewer',
 	'type'			=> 'Type',
@@ -218,5 +220,9 @@ $locale = array (
 	'setting-gravatar-default'		=> 'Standaard Gravatar-thema om te gebruiken',
 	'setting-minifies-javascript'		=> 'JavaScript-verkleining inschakelen',
 	'setting-minify-level'			=> 'JavaScript-minificatieniveau',
-	'setting-allow-local-metadata'		=> 'Sta toe dat paginametadata worden bijgewerkt van localhost'
+	'setting-allow-local-metadata'		=> 'Sta toe dat paginametadata worden bijgewerkt van localhost',
+	'setting-name-field'			=> 'Veld gebruikersnaam',
+	'setting-password-field'		=> 'Gebruikerswachtwoordveld, voor het bewerken van rechten',
+	'setting-email-field'			=> 'Gebruikerskennisgeving e-mailveld',
+	'setting-website-field'			=> 'URL van gebruikerswebsite'
 );

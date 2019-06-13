@@ -125,6 +125,8 @@ $locale = array (
 	'comment'		=> 'Komentaras',
 	'page'			=> 'Puslapis',
 	'sent-by'		=> 'Šis el. Laiškas buvo išsiųstas %s per HashOver.',
+	'enabled'		=> 'Įjungta',
+	'disabled'		=> 'Išjungta',
 
 	'source-code-sub'	=> 'HashOver serverio šaltinio kodo žiūryklė',
 	'type'			=> 'Tipas',
@@ -227,5 +229,9 @@ $locale = array (
 	'setting-gravatar-default'		=> 'Numatytoji Gravatar tema, kurią norite naudoti',
 	'setting-minifies-javascript'		=> 'Įgalinti JavaScript žymėjimą',
 	'setting-minify-level'			=> 'JavaScript minimizavimo lygis',
-	'setting-allow-local-metadata'		=> 'Leisti puslapio metaduomenis atnaujinti iš "localhost'
+	'setting-allow-local-metadata'		=> 'Leisti puslapio metaduomenis atnaujinti iš "localhost',
+	'setting-name-field'			=> 'Vartotojo vardo laukas',
+	'setting-password-field'		=> 'Vartotojo slaptažodžio laukas, skirtas redaguoti privilegijas',
+	'setting-email-field'			=> 'Vartotojo pranešimo el. Pašto laukas',
+	'setting-website-field'			=> 'Vartotojo svetainės URL laukas'
 );

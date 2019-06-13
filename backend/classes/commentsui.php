@@ -373,7 +373,7 @@ class CommentsUI extends FormUI
 		));
 
 		// Add checkbox label element to reply form footer element
-		if ($this->setup->fieldOptions['email'] !== false) {
+		if ($this->setup->emailField !== 'off') {
 			if ($this->login->userIsLoggedIn === false or !empty ($this->login->email)) {
 				$subscribe_label = $this->subscribeLabel ($permalink, 'reply', $subscribed);
 				$reply_form_links_wrapper->appendChild ($subscribe_label);
@@ -564,7 +564,7 @@ class CommentsUI extends FormUI
 		));
 
 		// Add checkbox label element to edit form buttons wrapper element
-		if ($this->setup->fieldOptions['email'] !== false) {
+		if ($this->setup->emailField !== 'off') {
 			$subscribe_label = $this->subscribeLabel ($permalink, 'edit', $subscribed);
 			$edit_form_links_wrapper->appendChild ($subscribe_label);
 		}

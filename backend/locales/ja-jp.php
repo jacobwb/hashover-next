@@ -116,6 +116,8 @@ $locale = array (
 	'comment'		=> 'コメント',
 	'page'			=> 'ページ',
 	'sent-by'		=> 'この電子メールは、HashOver経由で%sから送信されました。',
+	'enabled'		=> '有効',
+	'disabled'		=> '無効',
 
 	'source-code-sub'	=> 'HashOverサーバーサイドのソースコードビューア',
 	'type'			=> 'タイプ',
@@ -218,5 +220,9 @@ $locale = array (
 	'setting-gravatar-default'		=> 'デフォルトのGravatarテーマを使用する',
 	'setting-minifies-javascript'		=> 'JavaScriptの有効化を有効にする',
 	'setting-minify-level'			=> 'JavaScriptの縮小レベル',
-	'setting-allow-local-metadata'		=> 'ページ・メタデータをlocalhostから更新できるようにする'
+	'setting-allow-local-metadata'		=> 'ページ・メタデータをlocalhostから更新できるようにする',
+	'setting-name-field'			=> 'ユーザー名フィールド',
+	'setting-password-field'		=> '特権を編集するためのユーザーパスワードフィールド',
+	'setting-email-field'			=> 'ユーザー通知Eメール・フィールド',
+	'setting-website-field'			=> 'ユーザーWebサイトのURLフィールド'
 );

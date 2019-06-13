@@ -116,6 +116,8 @@ $locale = array (
 	'comment'		=> 'σχόλιο',
 	'page'			=> 'Σελίδα',
 	'sent-by'		=> 'Αυτό το ηλεκτρονικό ταχυδρομείο στάλθηκε από το %s μέσω του HashOver.',
+	'enabled'		=> 'Ενεργοποιημένο',
+	'disabled'		=> 'Απενεργοποιημένο',
 
 	'source-code-sub'	=> 'Προβολή πηγαίου κώδικα HashOver εντός του εξυπηρετητή',
 	'type'			=> 'Τύπος',
@@ -218,5 +220,9 @@ $locale = array (
 	'setting-gravatar-default'		=> 'Προεπιλεγμένο Gravatar θέμα προς χρήση',
 	'setting-minifies-javascript'		=> 'Ενεργοποίηση σύμπτυξης JavaScript',
 	'setting-minify-level'			=> 'Επίπεδο σύμπτυξης JavaScript',
-	'setting-allow-local-metadata'		=> 'Επίτρεψε την ενημέρωση των μεταδεδομένων σελίδων από το localhost'
+	'setting-allow-local-metadata'		=> 'Επίτρεψε την ενημέρωση των μεταδεδομένων σελίδων από το localhost',
+	'setting-name-field'			=> 'Πεδίο ονόματος χρήστη',
+	'setting-password-field'		=> 'Πεδίο κωδικού χρήστη, για επεξεργασία δικαιωμάτων',
+	'setting-email-field'			=> 'Πεδίο ηλεκτρονικού ταχυδρομείου ειδοποίησης χρήστη',
+	'setting-website-field'			=> 'Πεδίο διεύθυνσης URL ιστοτόπου χρήστη'
 );

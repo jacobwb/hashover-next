@@ -65,9 +65,7 @@ options.settings = {
 	formPosition: 'bottom',
 
 	// Since passwords aren't required as admin, disable them
-	fieldOptions: {
-		password: false
-	}
+	passwordField: 'off'
 };
 
 // And instantiate HashOver

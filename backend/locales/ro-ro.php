@@ -116,6 +116,8 @@ $locale = array (
 	'comment'		=> 'Comentariu',
 	'page'			=> 'Pagină',
 	'sent-by'		=> 'Acest e-mail a fost trimis de %s prin HashOver.',
+	'enabled'		=> 'Activată',
+	'disabled'		=> 'Dezactivat',
 
 	'source-code-sub'	=> 'Vizualizatorul codului sursă HashOver de pe server',
 	'type'			=> 'Tip',
@@ -218,5 +220,9 @@ $locale = array (
 	'setting-gravatar-default'		=> 'Tema Gravatar implicită pentru utilizare',
 	'setting-minifies-javascript'		=> 'Activați minificarea JavaScript',
 	'setting-minify-level'			=> 'Nivel de minime JavaScript',
-	'setting-allow-local-metadata'		=> 'Permiteți actualizarea metadatelor de pagină de la localhost'
+	'setting-allow-local-metadata'		=> 'Permiteți actualizarea metadatelor de pagină de la localhost',
+	'setting-name-field'			=> 'Nume câmp utilizator',
+	'setting-password-field'		=> 'Câmp de parolă utilizator, pentru editarea privilegiilor',
+	'setting-email-field'			=> 'Câmp de e-mail de notificare utilizator',
+	'setting-website-field'			=> 'Câmpul URL al site-ului web al utilizatorului'
 );

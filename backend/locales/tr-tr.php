@@ -116,6 +116,8 @@ $locale = array (
 	'comment'		=> 'Yorum',
 	'page'			=> 'Sayfa',
 	'sent-by'		=> 'Bu e-posta, %s tarafından HashOver aracılığıyla gönderilmiştir.',
+	'enabled'		=> 'Etkin',
+	'disabled'		=> 'Engelli',
 
 	'source-code-sub'	=> 'HashOver sunucu tarafı kaynak kodu görüntüleyici',
 	'type'			=> 'Tipi',
@@ -218,5 +220,9 @@ $locale = array (
 	'setting-gravatar-default'		=> 'Kullanılacak varsayılan Gravatar teması',
 	'setting-minifies-javascript'		=> 'JavaScript küçültmeyi etkinleştir',
 	'setting-minify-level'			=> 'JavaScript minification level',
-	'setting-allow-local-metadata'		=> 'Sayfa meta verilerinin localhost\'tan güncellenmesine izin ver'
+	'setting-allow-local-metadata'		=> 'Sayfa meta verilerinin localhost\'tan güncellenmesine izin ver',
+	'setting-name-field'			=> 'Kullanıcı adı alanı',
+	'setting-password-field'		=> 'Ayrıcalıkları düzenlemek için kullanıcı şifresi alanı',
+	'setting-email-field'			=> 'Kullanıcı bildirimi e-posta alanı',
+	'setting-website-field'			=> 'Kullanıcı web sitesi URL alanı'
 );

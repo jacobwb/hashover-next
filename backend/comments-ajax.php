@@ -139,7 +139,7 @@ try {
 			'uses-auto-login'	=> $hashover->setup->usesAutoLogin,
 			'uses-ajax'		=> $hashover->setup->usesAjax,
 			'allows-login'		=> $hashover->setup->allowsLogin,
-			'field-options'		=> $hashover->setup->fieldOptions
+			'form-fields'		=> $hashover->setup->formFields
 		);
 
 		// And add UI HTML to data

@@ -116,6 +116,8 @@ $locale = array (
 	'comment'		=> '댓글',
 	'page'			=> '페이지',
 	'sent-by'		=> '이 이메일은 HashOver를 통해 %s에서 보냈습니다.',
+	'enabled'		=> '사용함',
+	'disabled'		=> '사용안함',
 
 	'source-code-sub'	=> 'HashOver 서버 측 소스 코드 뷰어',
 	'type'			=> '유형',
@@ -218,5 +220,9 @@ $locale = array (
 	'setting-gravatar-default'		=> '기본 Gravatar 테마 사용',
 	'setting-minifies-javascript'		=> '자바 스크립트 축소 사용',
 	'setting-minify-level'			=> '자바 스크립트 축소 수준',
-	'setting-allow-local-metadata'		=> '페이지 메타 데이터가 localhost에서 업데이트되도록 허용'
+	'setting-allow-local-metadata'		=> '페이지 메타 데이터가 localhost에서 업데이트되도록 허용',
+	'setting-name-field'			=> '사용자 이름 필드',
+	'setting-password-field'		=> '편집 권한을위한 사용자 암호 필드',
+	'setting-email-field'			=> '사용자 통지 전자 우편 필드',
+	'setting-website-field'			=> '사용자 웹 사이트 URL 필드'
 );
