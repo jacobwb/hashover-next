@@ -14,6 +14,38 @@ body {
 	padding-left: 245px;
 }
 
+body, #sidebar, body:before {
+	-moz-transition: all 250ms linear 0ms;
+	-webkit-transition: all 250ms linear 0ms;
+	transition: all 250ms linear 0ms;
+}
+
+body:before {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	background-color: transparent;
+	z-index: -1;
+}
+
+#sidebar-button {
+	display: none;
+	width: 32px;
+	height: 32px;
+	vertical-align: middle;
+	margin-right: 15px;
+	margin-bottom: 4px;
+	background-image: url('sidebar-button.svg');
+	background-repeat: no-repeat; 
+	background-attachment: scroll;
+	background-position: center center;
+	cursor: pointer;
+}
+
 #sidebar {
 	position: fixed;
 	top: 0px;
@@ -90,4 +122,34 @@ div#logo a:hover, div#logo a.active {
 	height: 100%;
 	vertical-align: top;
 	background-color: #FFFFFF;
+}
+
+@media only screen and (max-width: 800px) {
+	body {
+		padding-left: 15px;
+		-webkit-text-size-adjust: 100%;
+	}
+
+	body.sidebar-shown:before {
+		background-color: rgba(0, 0, 0, 0.25);
+		z-index: 1000;
+	}
+
+	body.sidebar-shown #sidebar {
+		left: 0px;
+	}
+
+	h1 {
+		font-size: 20px;
+		position: relative;
+		top: -4px;
+	}
+
+	#sidebar-button {
+		display: inline-block;
+	}
+
+	#sidebar {
+		left: -230px;
+	}
 }

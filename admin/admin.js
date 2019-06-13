@@ -17,6 +17,12 @@
 
 // Wait for the page HTML to be parsed
 document.addEventListener ('DOMContentLoaded', function () {
+	// Get show sidebar button
+	var sidebarButton = document.getElementById ('sidebar-button');
+
+	// Get sidebar
+	var sidebar = document.getElementById ('sidebar');
+
 	// Get logo
 	var logo = document.getElementById ('logo');
 
@@ -38,6 +44,44 @@ document.addEventListener ('DOMContentLoaded', function () {
 			link.className = 'view-link';
 		});
 	}
+
+	// Add click event to sidebar button
+	sidebarButton.onclick = function (event)
+	{
+		// Add class to show sidebar
+		document.body.className = 'sidebar-shown';
+
+		// Click/touch event handler
+		var clickHandler = function (event)
+		{
+			// Do nothing if target is a sidebar element
+			if (sidebar.contains (event.target)) {
+				return true;
+			}
+
+			// Otherwise, remove class from body
+			this.className = '';
+
+			// Remove touchend event
+			document.body.removeEventListener ('touchend', clickHandler);
+
+			// And remove click event
+			this.onclick = null;
+		};
+
+		// Add touchend event to body element
+		document.body.addEventListener ('touchend', clickHandler, false);
+
+		// Add click event to body element
+		document.body.onclick = clickHandler;
+
+		// Stop event from propagation
+		if (event.stopPropagation) {
+			event.stopPropagation ();
+		} else {
+			event.cancelBubble ();
+		}
+	};
 
 	// Automatically select the proper view tab on page load
 	window.onload = function ()

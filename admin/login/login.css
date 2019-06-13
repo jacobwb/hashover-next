@@ -45,3 +45,9 @@ input[type="submit"], input[type="submit"]:hover {
 	border-bottom: none;
 	border-right: none;
 }
+
+@media only screen and (max-width: 800px) {
+	#login {
+		margin: -102px 0px 0px -128px;
+	}
+}
