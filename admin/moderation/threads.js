@@ -16,7 +16,7 @@
 
 
 // Get the full list of URL queries
-var fullQueries = window.location.search.substr (1);
+var fullQueries = window.location.search.substring (1);
 
 // Split the list into individual name and value pairs
 var queries = fullQueries.split ('&');

@@ -17,7 +17,7 @@ HashOver.prototype.init = function (id)
 	var pageURL = window.location.href.split ('#')[0];
 
 	// Current page URL hash
-	var pageHash = window.location.hash.substr (1);
+	var pageHash = window.location.hash.substring (1);
 
 	// Scrolls to a specified element
 	function scrollToElement (id)
