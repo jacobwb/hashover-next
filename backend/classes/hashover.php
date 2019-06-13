@@ -19,7 +19,7 @@
 
 class HashOver
 {
-	protected $usage = array ();
+	protected $mode;
 	protected $setupChecks;
 	protected $commentCount;
 	protected $sortComments;
@@ -40,11 +40,10 @@ class HashOver
 	public $comments = array ();
 	public $ui;
 
-	public function __construct ($mode = 'php', $context = 'normal')
+	public function __construct ($mode = 'php')
 	{
-		// Store usage context information
-		$this->usage['mode'] = $mode;
-		$this->usage['context'] = $context;
+		// Store output mode (javascript or php)
+		$this->mode = $mode;
 
 		// Instantiate statistics class
 		$this->statistics = new HashOver\Statistics ($mode);
@@ -53,7 +52,7 @@ class HashOver
 		$this->statistics->executionStart ();
 
 		// Instantiate general setup class
-		$this->setup = new HashOver\Setup ($this->usage);
+		$this->setup = new HashOver\Setup ($mode);
 
 		//Instantiate setup checks class
 		$this->setupChecks = new HashOver\SetupChecks ($this->setup);
@@ -83,9 +82,6 @@ class HashOver
 			$primary_count -= $this->thread->primaryDeletedCount;
 			$total_count -= $this->thread->totalDeletedCount;
 		}
-
-		// Decide which locale to use; Exclude "Showing" in API usages
-		$locale_key = ($this->usage['context'] === 'api') ? 'count-link' : $locale_key;
 
 		// Decide if comment count is pluralized
 		$prime_plural = ($primary_count !== 2) ? 1 : 0;

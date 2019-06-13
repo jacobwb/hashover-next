@@ -32,7 +32,7 @@ class CommentsUI extends FormUI
 			'class' => 'hashover-comment'
 		), false);
 
-		if ($this->mode !== 'php') {
+		if ($this->setup->mode !== 'php') {
 			$comment_wrapper->appendAttribute ('class', '{class}', false);
 			$comment_wrapper->innerHTML ('{html}');
 
@@ -381,7 +381,7 @@ class CommentsUI extends FormUI
 		}
 
 		// Create and add accepted HTML revealer hyperlink
-		if ($this->mode !== 'php') {
+		if ($this->setup->mode !== 'php') {
 			$reply_form_links_wrapper->appendChild ($this->acceptedFormatting ('reply', $permalink));
 		}
 
@@ -570,7 +570,7 @@ class CommentsUI extends FormUI
 		}
 
 		// Create and add accepted HTML revealer hyperlink
-		if ($this->mode !== 'php') {
+		if ($this->setup->mode !== 'php') {
 			$edit_form_links_wrapper->appendChild ($this->acceptedFormatting ('edit', $permalink));
 		}
 

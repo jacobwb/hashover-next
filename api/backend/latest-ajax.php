@@ -31,7 +31,7 @@ if (isset ($_GET['jsonp'])) {
 
 try {
 	// Instantiate HashOver class
-	$hashover = new \HashOver ('json', 'api');
+	$hashover = new \HashOver ('json');
 
 	// Throw exception if API is disabled
 	$hashover->setup->apiCheck ('latest');

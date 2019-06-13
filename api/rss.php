@@ -290,7 +290,7 @@ function create_rss (&$hashover)
 
 try {
 	// Instantiate HashOver class
-	$hashover = new \HashOver ('rss', 'api');
+	$hashover = new \HashOver ('rss');
 
 	// Throw exception if API is disabled
 	$hashover->setup->apiCheck ('rss');

@@ -25,10 +25,7 @@ require ('backend/javascript-setup.php');
 
 try {
 	// Instantiate general setup class
-	$setup = new Setup (array (
-		'mode' => 'javascript',
-		'context' => 'api'
-	));
+	$setup = new Setup ('javascript');
 
 	// Throw exception if requested by remote server
 	$setup->refererCheck ();

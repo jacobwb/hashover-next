@@ -20,7 +20,6 @@
 class WriteComments extends Secrets
 {
 	protected $setup;
-	protected $mode;
 	protected $thread;
 	protected $postData;
 	protected $locale;
@@ -141,7 +140,6 @@ class WriteComments extends Secrets
 	{
 		// Store parameters as properties
 		$this->setup = $setup;
-		$this->mode = $setup->usage['mode'];
 		$this->thread = $thread;
 
 		// Instantiate various classes
@@ -265,7 +263,7 @@ class WriteComments extends Secrets
 		}
 
 		// Whether to check for spam in current mode
-		if ($this->setup->spamCheckModes === $this->mode
+		if ($this->setup->spamCheckModes === $this->setup->mode
 		    or $this->setup->spamCheckModes === 'both')
 		{
 			// Check user's IP address against local or remote database
