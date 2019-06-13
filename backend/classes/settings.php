@@ -327,22 +327,24 @@ class Settings extends SensitiveSettings
 	}
 
 	// Check if a given API format is enabled
-	public function apiStatus ($api)
+	public function apiCheck ($api)
 	{
 		// Check if the given API is enabled
 		if (is_array ($this->enabledApi)) {
-			// Return enabled if all available APIs are enabled
+			// Return true if all available APIs are enabled
 			if (in_array ('all', $this->enabledApi)) {
-				return 'enabled';
+				return true;
 			}
 
-			// Return enabled if the given API is enabled
+			// Return true if the given API is enabled
 			if (in_array ($api, $this->enabledApi)) {
-				return 'enabled';
+				return true;
 			}
 		}
 
-		// Otherwise, assume API is disabled by default
-		return 'disabled';
+		// Otherwise, throw exception by default
+		throw new \Exception (
+			'This API is not enabled.'
+		);
 	}
 }

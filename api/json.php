@@ -27,12 +27,8 @@ try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json', 'api');
 
-	// Display error if the API is disabled
-	if ($hashover->setup->apiStatus ('json') === 'disabled') {
-		throw new \Exception (
-			'<b>HashOver</b>: This API is not enabled.'
-		);
-	}
+	// Throw exception if API is disabled
+	$hashover->setup->apiCheck ('json');
 
 	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');

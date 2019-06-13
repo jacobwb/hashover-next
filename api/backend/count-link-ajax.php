@@ -33,13 +33,6 @@ try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json', 'api');
 
-	// Throw exception if the "Latest Comments" API is disabled
-	if ($hashover->setup->apiStatus ('count-link') === 'disabled') {
-		throw new \Exception (
-			'This API is not enabled.'
-		);
-	}
-
 	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');
 

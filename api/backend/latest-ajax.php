@@ -33,12 +33,8 @@ try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json', 'api');
 
-	// Throw exception if the "Latest Comments" API is disabled
-	if ($hashover->setup->apiStatus ('latest') === 'disabled') {
-		throw new \Exception (
-			'This API is not enabled.'
-		);
-	}
+	// Throw exception if API is disabled
+	$hashover->setup->apiCheck ('latest');
 
 	// Set thread name from POST/GET data
 	$hashover->setup->setThreadName ('request');

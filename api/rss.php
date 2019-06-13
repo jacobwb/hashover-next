@@ -72,26 +72,6 @@ function create_rss (&$hashover)
 	$rss->setAttribute ('xmlns:content', 'http://purl.org/rss/1.0/modules/content/');
 	$rss->setAttribute ('xmlns:atom', 'http://www.w3.org/2005/Atom');
 
-	// Display error if the API is disabled
-	if ($hashover->setup->apiStatus ('rss') === 'disabled') {
-		$message = 'This API is not enabled.';
-		$title = $xml->createElement ('title');
-		$title_value = $xml->createTextNode ($message);
-		$title->appendChild ($title_value);
-		$rss->appendChild ($title);
-
-		$description = $xml->createElement ('description');
-		$description_value = $xml->createTextNode ($message);
-		$description->appendChild ($description_value);
-		$rss->appendChild ($description);
-
-		// Add main RSS element to XML
-		$xml->appendChild ($rss);
-
-		// Return RSS XML
-		exit (str_replace ('  ', "\t", $xml->saveXML ()));
-	}
-
 	// Create channel element
 	$channel = $xml->createElement ('channel');
 
@@ -311,6 +291,9 @@ function create_rss (&$hashover)
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('rss', 'api');
+
+	// Throw exception if API is disabled
+	$hashover->setup->apiCheck ('rss');
 
 	// Set page URL from GET data
 	$hashover->setup->setPageURL ('request');

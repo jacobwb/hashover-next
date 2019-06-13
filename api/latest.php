@@ -30,12 +30,8 @@ try {
 		'context' => 'api'
 	));
 
-	// Throw exception if the "Latest Comments" API is disabled
-	if ($setup->apiStatus ('latest') === 'disabled') {
-		throw new \Exception (
-			'This API is not enabled.'
-		);
-	}
+	// Throw exception if API is disabled
+	$setup->apiCheck ('latest');
 
 	// Instantiate HashOver statistics class
 	$statistics = new Statistics ('javascript');

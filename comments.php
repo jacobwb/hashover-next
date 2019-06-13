@@ -249,7 +249,7 @@ try {
 
 	// Register comments RSS feed appender method
 	$javascript->registerFile ('appendrss.js', array (
-		'include' => ($setup->appendsRss and $setup->apiStatus ('rss') !== 'disabled')
+		'include' => $setup->appendsRss
 	));
 
 	// Register uncollapse interface method

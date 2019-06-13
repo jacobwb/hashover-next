@@ -1141,10 +1141,8 @@ class FormUI
 
 		// Check if there is at least one comment
 		if ($this->commentCounts['total'] > 1) {
-			// If so, check if the RSS API is enabled
-			if ($this->setup->appendsRss === true
-			    and $this->setup->apiStatus ('rss') !== 'disabled')
-			{
+			// If so, check if we are to append an RSS feed link
+			if ($this->setup->appendsRss === true) {
 				// If so, encode page URL
 				$page_url = $this->safeURLEncode ($this->setup->pageURL);
 
