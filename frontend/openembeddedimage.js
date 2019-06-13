@@ -1,11 +1,18 @@
 // Callback to close the embedded image (openembeddedimage.js)
 HashOverConstructor.prototype.closeEmbeddedImage = function (image)
 {
-	// Reset title
-	image.title = this.locale['external-image-tip'];
+	// Set image load event handler
+	image.onload = function ()
+	{
+		// Reset title
+		this.title = hashover.locale['external-image-tip'];
 
-	// Remove loading class from wrapper
-	this.classes.remove (image.parentNode, 'hashover-loading');
+		// Remove loading class from wrapper
+		hashover.classes.remove (this.parentNode, 'hashover-loading');
+
+		// Remove load event handler
+		this.onload = null;
+	};
 
 	// Reset source
 	image.src = image.dataset.placeholder;
