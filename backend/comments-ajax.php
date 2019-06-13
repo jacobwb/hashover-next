@@ -79,7 +79,6 @@ try {
 		// If so, add locales to data
 		$data['locale'] = array (
 			'cancel'		=> $hashover->locale->text['cancel'],
-			'date-time'		=> $hashover->locale->text['date-time'],
 			'dislike-comment'	=> $hashover->locale->text['dislike-comment'],
 			'disliked-comment'	=> $hashover->locale->text['disliked-comment'],
 			'disliked'		=> $hashover->locale->text['disliked'],
@@ -107,9 +106,7 @@ try {
 			'email'			=> $hashover->locale->text['email'],
 			'name'			=> $hashover->locale->text['name'],
 			'password'		=> $hashover->locale->text['password'],
-			'website'		=> $hashover->locale->text['website'][0],
-			'day-names'		=> $hashover->locale->text['date-day-names'],
-			'month-names'		=> $hashover->locale->text['date-month-names']
+			'website'		=> $hashover->locale->text['website'][0]
 		);
 
 		// Add setup information to data
@@ -124,7 +121,6 @@ try {
 			'http-backend'		=> $hashover->setup->httpBackend,
 			'allows-dislikes'	=> $hashover->setup->allowsDislikes,
 			'allows-likes'		=> $hashover->setup->allowsLikes,
-			'time-format'		=> $hashover->setup->timeFormat,
 			'image-extensions'	=> $hashover->setup->imageTypes,
 			'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
 			'stream-mode'		=> ($hashover->setup->replyMode === 'stream'),

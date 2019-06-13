@@ -55,7 +55,6 @@ try {
 
 	// Add locales to data
 	$data['locale'] = array (
-		'date-time'		=> $hashover->locale->text['date-time'],
 		'dislike'		=> $hashover->locale->text['dislike'],
 		'external-image-tip'	=> $hashover->locale->text['external-image-tip'],
 		'like'			=> $hashover->locale->text['like'],
@@ -66,9 +65,7 @@ try {
 		'replies'		=> $hashover->locale->text['replies'],
 		'reply'			=> $hashover->locale->text['reply'],
 		'loading'		=> $hashover->locale->text['loading'],
-		'click-to-close'	=> $hashover->locale->text['click-to-close'],
-		'day-names'		=> $hashover->locale->text['date-day-names'],
-		'month-names'		=> $hashover->locale->text['date-month-names']
+		'click-to-close'	=> $hashover->locale->text['click-to-close']
 	);
 
 	// Add setup information to data
@@ -76,7 +73,6 @@ try {
 		'server-eol'		=> PHP_EOL,
 		'default-name'		=> $hashover->setup->defaultName,
 		'user-is-logged-in'	=> $hashover->login->userIsLoggedIn,
-		'time-format'		=> $hashover->setup->timeFormat,
 		'image-extensions'	=> $hashover->setup->imageTypes,
 		'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
 		'theme-css'		=> $hashover->setup->getThemePath ('latest.css'),
