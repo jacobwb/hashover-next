@@ -186,7 +186,7 @@ class Settings extends SensitiveSettings
 				$setting = mb_strtolower ($setting);
 
 				// Then convert dashed-case setting key to camelCase
-				$setting = preg_replace_callback ('/-([a-z])/', function ($grp) {
+				$setting = preg_replace_callback ('/-([a-z])/S', function ($grp) {
 					return mb_strtoupper ($grp[1]);
 				}, $setting);
 			}

@@ -62,9 +62,9 @@ class SortComments
 	// Sorts comments by date
 	protected function sortByDate (array $a, array $b)
 	{
-		// Return microtime difference if dates are different
-		if ($b['sort-date'] !== $a['sort-date']) {
-			return $b['sort-date'] - $a['sort-date'];
+		// Return timestamp difference if dates are different
+		if ($b['timestamp'] !== $a['timestamp']) {
+			return $b['timestamp'] - $a['timestamp'];
 		}
 
 		// Otherwise, return 1

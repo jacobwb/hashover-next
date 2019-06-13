@@ -41,52 +41,43 @@ class Locale
 	// Check for PHP locale file
 	protected function getLocaleFile ()
 	{
-		// Locales checklist
-		$locales = array ();
+		// Check if we are automatically selecting the locale
+		if ($this->setup->language === 'auto') {
+			// If so, get system locale
+			$ctype = mb_strtolower (setlocale (LC_CTYPE, 0));
 
-		// Lowercase language code
-		$language = mb_strtolower ($this->setup->language);
+			// Split locale by encoding
+			$ctype_parts = explode ('.', $ctype);
+
+			// Get locale code (en_US, de_DE, etc.)
+			$locale = $ctype_parts[0];
+		} else {
+			// If not, use configured language as locale
+			$locale = $this->setup->language;
+		}
 
 		// Get path to locales directory
 		$locales_path = $this->setup->getAbsolutePath ('backend/locales');
 
-		// Check if we are automatically selecting the locale
-		if ($language === 'auto') {
-			// If so, get system locale
-			$system_locale = mb_strtolower (setlocale (LC_CTYPE, 0));
+		// Get dashed locale code (en-us, de-de, etc.)
+		$locale_name = str_replace ('_', '-', mb_strtolower ($locale));
 
-			// Split the locale into specific parts
-			$locale_parts = explode ('.', $system_locale);
-			$language_parts = explode ('_', $locale_parts[0]);
+		// Add front part of locale ('en') to checklist
+		$code = substr ($locale, 0, 2);
 
-			// Add locale in 'en-us' format to checklist
-			$locales[] = implode ('-', $language_parts);
+		// Run through locale file tries
+		foreach (array ($locale_name, $code) as $name) {
+		// Locale file path to try
+		$locale_file = $locales_path . '/' . $name . '.php';
 
-			// Add front part of locale ('en') to checklist
-			$locales[] = $language_parts[0];
+		// Try to use locale file for current locale
+		if (file_exists ($locale_file)) {
+			// If exists, set locale code as language setting
+			$this->setup->language = $name;
 
-			// Add end part of locale ('us') to checklist
-			if (!empty ($language_parts[1])) {
-				$locales[] = $language_parts[1];
-			}
-		} else {
-			// If not, add configured locale to checklist
-			$locales[] = $language;
+			// And return locale file path
+			return $locale_file;
 		}
-
-		// Run through locale checklist
-		foreach ($locales as $locale) {
-			// Locale file path
-			$locale_file = $locales_path . '/' . $locale . '.php';
-
-			// Check if a locale file exists for current locale
-			if (file_exists ($locale_file)) {
-				// If so, set locale as language setting
-				$this->setup->language = $locale;
-
-				// Return locale file path
-				return $locale_file;
-			}
 		}
 
 		// Otherwise, set language setting to English

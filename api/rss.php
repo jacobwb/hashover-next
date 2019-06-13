@@ -124,7 +124,8 @@ function create_rss (&$hashover)
 
 	// Create channel atom link element
 	$atom_link = $xml->createElement ('atom:link');
-	$atom_link->setAttribute ('href', 'http://' . $hashover->setup->domain . $_SERVER['PHP_SELF'] . '?url=' . urlencode ($metadata['url']));
+	$atom_url = $hashover->setup->domain . $_SERVER['PHP_SELF'] . '?url=' . urlencode ($metadata['url']);
+	$atom_link->setAttribute ('href', 'http://' . $atom_url);
 	$atom_link->setAttribute ('rel', 'self');
 
 	// Add channel atom link to channel element
@@ -204,8 +205,11 @@ function create_rss (&$hashover)
 		// Add item name element to item element
 		$item->appendChild ($item_name);
 
+		// URL regular expression
+		$url_regex = '/((http|https|ftp):\/\/[a-z0-9-@:%_\+.~#?&\/=]+) {0,}/iS';
+
 		// Add HTML anchor tag to URLs (hyperlinks)
-		$comment['body'] = preg_replace ('/((ftp|http|https):\/\/[a-z0-9-@:%_\+.~#?&\/=]+) {0,}/iS', '<a href="\\1" target="_blank">\\1</a>', $comment['body']);
+		$comment['body'] = preg_replace ($url_regex, '<a href="\\1" target="_blank">\\1</a>', $comment['body']);
 
 		// Replace newlines with break tags
 		$comment['body'] = str_replace (PHP_EOL, '<br>', $comment['body']);
@@ -250,8 +254,9 @@ function create_rss (&$hashover)
 
 		// Create item publication date element
 		$item_pubDate = $xml->createElement ('pubDate');
-		$item_pubDate_value = $xml->createTextNode (date ('D, d M Y H:i:s O', $comment['sort-date']));
-		$item_pubDate->appendChild ($item_pubDate_value);
+		$item_pubDate_value = date (DATE_RSS, $comment['timestamp']);
+		$item_pubDate_node = $xml->createTextNode ($item_pubDate_value);
+		$item_pubDate->appendChild ($item_pubDate_node);
 
 		// Add item pubDate element to item element
 		$item->appendChild ($item_pubDate);

@@ -284,7 +284,7 @@ class HashOver
 						$level = $this->commentParser->notice ('pending', $key, $last_date);
 					} else {
 						// If not, update last sort date
-						$last_date = $parsed['sort-date'];
+						$last_date = $parsed['timestamp'];
 
 						// And set current level to parsed comment
 						$level = $parsed;
@@ -301,7 +301,7 @@ class HashOver
 						$level = $this->commentParser->parse ($comment, $key, $key_parts, false);
 
 						// And update the last sort date
-						$last_date = $level['sort-date'];
+						$last_date = $level['timestamp'];
 					} else {
 						// If not, parse comment as deleted notice
 						$level = $this->commentParser->notice ('deleted', $key, $last_date);
@@ -331,7 +331,7 @@ class HashOver
 					$level = $this->commentParser->parse ($comment, $key, $key_parts);
 
 					// And update last sort date
-					$last_date = $level['sort-date'];
+					$last_date = $level['timestamp'];
 
 					break;
 				}

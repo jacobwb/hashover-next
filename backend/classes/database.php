@@ -49,44 +49,44 @@ class Database extends Secrets
 		$this->setup = $setup;
 
 		try {
-			// Check if database type is SQLite
-			if ($this->databaseType === 'sqlite') {
-				// If so, construct SQLite file name
-				$file = sprintf ('%s/%s.sqlite',
-					$setup->commentsRoot, $this->databaseName
-				);
+		// Check if database type is SQLite
+		if ($this->databaseType === 'sqlite') {
+			// If so, construct SQLite file name
+			$file = sprintf ('%s/%s.sqlite',
+				$setup->commentsRoot, $this->databaseName
+			);
 
-				// Instantiate an SQLite data object
-				$this->database = new \PDO ('sqlite:' . $file);
+			// Instantiate an SQLite data object
+			$this->database = new \PDO ('sqlite:' . $file);
 
-				// And change file permissions
-				@chmod ($file, 0600);
-			} else {
-				// If not, create SQL server connection statement
-				$connection = implode (';', array (
-					'host=' . $this->databaseHost,
-					'dbname=' . $this->databaseName,
-					'charset=' . $this->databaseCharset
-				));
+			// And change file permissions
+			@chmod ($file, 0600);
+		} else {
+			// If not, create SQL server connection statement
+			$connection = implode (';', array (
+				'host=' . $this->databaseHost,
+				'dbname=' . $this->databaseName,
+				'charset=' . $this->databaseCharset
+			));
 
-				// And create SQL server data object
-				$this->database = new \PDO (
-					// PDO driver and connection details
-					$this->databaseType . ':' . $connection,
+			// And create SQL server data object
+			$this->database = new \PDO (
+				// PDO driver and connection details
+				$this->databaseType . ':' . $connection,
 
-					// Database user as configured
-					$this->databaseUser,
+				// Database user as configured
+				$this->databaseUser,
 
-					// Database password as configured
-					$this->databasePassword,
+				// Database password as configured
+				$this->databasePassword,
 
-					// We want the number of found (matched) rows,
-					// not the number of changed rows
-					array (
-						\PDO::MYSQL_ATTR_FOUND_ROWS => true
-					)
-				);
-			}
+				// We want the number of found (matched) rows,
+				// not the number of changed rows
+				array (
+					\PDO::MYSQL_ATTR_FOUND_ROWS => true
+				)
+			);
+		}
 		} catch (\PDOException $error) {
 			throw new \Exception ($error->getMessage ());
 		}
@@ -96,19 +96,19 @@ class Database extends Secrets
 	protected function executeStatement ($statement, $data = null)
 	{
 		try {
-			// Prepare statement
-			$prepare = $this->database->prepare ($statement);
+		// Prepare statement
+		$prepare = $this->database->prepare ($statement);
 
-			// Check if prepare was successful
-			if ($prepare !== false) {
-				// If so, attempt to execute statement
-				$execute = $prepare->execute ($data);
+		// Check if prepare was successful
+		if ($prepare !== false) {
+			// If so, attempt to execute statement
+			$execute = $prepare->execute ($data);
 
-				// And return statement object if execute was successful
-				if ($execute !== false) {
-					return $prepare;
-				}
+			// And return statement object if execute was successful
+			if ($execute !== false) {
+				return $prepare;
 			}
+		}
 		} catch (\PDOException $error) {
 			throw new \Exception ($error->getMessage ());
 		}

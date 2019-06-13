@@ -34,379 +34,379 @@ function ui_array (Setup $setup, Locale $locale)
 
 	// Return array of settings allowed to be changed
 	return array (
-		'language' => array (
-			'type' => 'select',
-			'value' => $setup->language,
+			'language' => array (
+				'type' => 'select',
+				'value' => $setup->language,
 
-			'options' => array (
-				'en' => 'English',
-				'pt-br' => 'Brazilian Portuguese',
-				'da' => 'Danish',
-				'nl' => 'Dutch',
-				'fr' => 'French',
-				'de' => 'German',
-				'el' => 'Greek',
-				'jp' => 'Japanese',
-				'ko' => 'Korean',
-				'lt' => 'Lithuanian',
-				'fa' => 'Persian',
-				'pl' => 'Polish',
-				'ro' => 'Romanian',
-				'zh-cn' => 'Simplified Chinese',
-				'es' => 'Spanish',
-				'tr' => 'Turkish'
-			)
-		),
+				'options' => array (
+					'en' => 'English',
+					'pt-br' => 'Brazilian Portuguese',
+					'da' => 'Danish',
+					'nl' => 'Dutch',
+					'fr' => 'French',
+					'de' => 'German',
+					'el' => 'Greek',
+					'jp' => 'Japanese',
+					'ko' => 'Korean',
+					'lt' => 'Lithuanian',
+					'fa' => 'Persian',
+					'pl' => 'Polish',
+					'ro' => 'Romanian',
+					'zh-cn' => 'Simplified Chinese',
+					'es' => 'Spanish',
+					'tr' => 'Turkish'
+				)
+			),
 
-		'theme' => array (
-			'type' => 'select',
-			'value' => $setup->theme,
-			'options' => $themes
-		),
+			'theme' => array (
+				'type' => 'select',
+				'value' => $setup->theme,
+				'options' => $themes
+			),
 
-		'form-position' => array (
-			'type' => 'select',
-			'value' => $setup->formPosition,
+			'default-sorting' => array (
+				'type' => 'select',
+				'value' => $setup->defaultSorting,
 
-			'options' => array (
-				'top' => 'Top',
-				'bottom' => 'Bottom'
-			)
-		),
+				'options' => array (
+					'ascending'	=> $locale->text['sort-ascending'],
+					'descending'	=> $locale->text['sort-descending'],
+					'by-date'	=> $locale->text['sort-by-date'],
+					'by-likes'	=> $locale->text['sort-by-likes'],
+					'by-replies'	=> $locale->text['sort-by-replies'],
+					'by-name'	=> $locale->text['sort-by-name'],
 
-		'default-sorting' => array (
-			'type' => 'select',
-			'value' => $setup->defaultSorting,
+					'sort-threads' => array (
+						'threaded-descending'	=> $locale->text['sort-descending'],
+						'threaded-by-date'	=> $locale->text['sort-by-date'],
+						'threaded-by-likes'	=> $locale->text['sort-by-likes'],
+						'by-popularity'		=> $locale->text['sort-by-popularity'],
+						'by-discussion'		=> $locale->text['sort-by-discussion'],
+						'threaded-by-name'	=> $locale->text['sort-by-name']
+					)
+				)
+			),
 
-			'options' => array (
-				'ascending'	=> $locale->text['sort-ascending'],
-				'descending'	=> $locale->text['sort-descending'],
-				'by-date'	=> $locale->text['sort-by-date'],
-				'by-likes'	=> $locale->text['sort-by-likes'],
-				'by-replies'	=> $locale->text['sort-by-replies'],
-				'by-name'	=> $locale->text['sort-by-name'],
+			'uses-markdown' => array (
+				'type' => 'checkbox',
+				'value' => $setup->usesMarkdown
+			),
 
-				'sort-threads' => array (
-					'threaded-descending'	=> $locale->text['sort-descending'],
-					'threaded-by-date'	=> $locale->text['sort-by-date'],
-					'threaded-by-likes'	=> $locale->text['sort-by-likes'],
-					'by-popularity'		=> $locale->text['sort-by-popularity'],
-					'by-discussion'		=> $locale->text['sort-by-discussion'],
-					'threaded-by-name'	=> $locale->text['sort-by-name']
+			'uses-ajax' => array (
+				'type' => 'checkbox',
+				'value' => $setup->usesAjax
+			),
+
+			'shows-reply-count' => array (
+				'type' => 'checkbox',
+				'value' => $setup->showsReplyCount
+			),
+
+			'allows-images' => array (
+				'type' => 'checkbox',
+				'value' => $setup->allowsImages
+			),
+
+			'allows-likes' => array (
+				'type' => 'checkbox',
+				'value' => $setup->allowsLikes
+			),
+
+			'allows-dislikes' => array (
+				'type' => 'checkbox',
+				'value' => $setup->allowsDislikes
+			),
+
+			'uses-moderation' => array (
+				'type' => 'checkbox',
+				'value' => $setup->usesModeration
+			),
+
+			'pends-user-edits' => array (
+				'type' => 'checkbox',
+				'value' => $setup->pendsUserEdits
+			),
+
+			'mail-type' => array (
+				'type' => 'select',
+				'value' => $setup->mailType,
+
+				'options' => array (
+					'text' => 'Text',
+					'html' => 'HTML'
+				)
+			),
+
+			'mailer' => array (
+				'type' => 'select',
+				'value' => $setup->mailer,
+
+				'options' => array (
+					'sendmail' => 'Sendmail',
+					'smtp' => 'SMTP'
+				)
+			),
+
+			'noreply-email' => array (
+				'type' => 'text',
+				'value' => $setup->noreplyEmail
+			),
+
+			'subscribes-user' => array (
+				'type' => 'checkbox',
+				'value' => $setup->subscribesUser
+			),
+
+			'allows-user-replies' => array (
+				'type' => 'checkbox',
+				'value' => $setup->allowsUserReplies
+			),
+
+			'sets-cookies' => array (
+				'type' => 'checkbox',
+				'value' => $setup->setsCookies
+			),
+
+			'secure-cookies' => array (
+				'type' => 'checkbox',
+				'value' => $setup->secureCookies
+			),
+
+			'collapses-interface' => array (
+				'type' => 'checkbox',
+				'value' => $setup->collapsesInterface
+			),
+
+			'collapses-comments' => array (
+				'type' => 'checkbox',
+				'value' => $setup->collapsesComments
+			),
+
+			'collapse-limit' => array (
+				'type' => 'number',
+				'value' => $setup->collapseLimit
+			),
+
+			'popularity-threshold' => array (
+				'type' => 'number',
+				'value' => $setup->popularityThreshold
+			),
+
+			'popularity-limit' => array (
+				'type' => 'number',
+				'value' => $setup->popularityLimit
+			),
+
+			'spam-batabase' => array (
+				'type' => 'select',
+				'value' => $setup->spamDatabase,
+
+				'options' => array (
+					'remote' => 'StopForumSpam.com',
+					'local' => 'Local CSV file'
+				)
+			),
+
+			'spam-check-modes' => array (
+				'type' => 'select',
+				'value' => $setup->spamCheckModes,
+
+				'options' => array (
+					'both' => 'Both',
+					'json' => 'JavaScript',
+					'php' => 'PHP'
+				)
+			),
+
+			'icon-mode' => array (
+				'type' => 'select',
+				'value' => $setup->iconMode,
+
+				'options' => array (
+					'image' => 'Image',
+					'count' => 'Count',
+					'none' => 'None'
+				)
+			),
+
+			'icon-size' => array (
+				'type' => 'number',
+				'value' => $setup->iconSize
+			),
+
+			'gravatar-default' => array (
+				'type' => 'select',
+				'value' => $setup->gravatarDefault,
+
+				'options' => array (
+					'custom' => 'Custom',
+					'identicon' => 'Identicon',
+					'monsterid' => 'Monsterid',
+					'wavatar' => 'Wavatar',
+					'retro' => 'Retro'
+				)
+			),
+
+			'gravatar-force' => array (
+				'type' => 'checkbox',
+				'value' => $setup->gravatarForce
+			),
+
+			'form-position' => array (
+				'type' => 'select',
+				'value' => $setup->formPosition,
+
+				'options' => array (
+					'top' => 'Top',
+					'bottom' => 'Bottom'
+				)
+			),
+
+			'displays-title' => array (
+				'type' => 'checkbox',
+				'value' => $setup->displaysTitle
+			),
+
+			'uses-cancel-buttons' => array (
+				'type' => 'checkbox',
+				'value' => $setup->usesCancelButtons
+			),
+
+			'uses-labels' => array (
+				'type' => 'checkbox',
+				'value' => $setup->usesLabels
+			),
+
+			'time-format' => array (
+				'documentation' => 'https://php.net/manual/en/function.date.php',
+				'type' => 'text',
+				'value' => $setup->timeFormat
+			),
+
+			'date-format' => array (
+				'documentation' => 'https://php.net/manual/en/function.date.php',
+				'type' => 'text',
+				'value' => $setup->dateFormat
+			),
+
+			'server-timezone' => array (
+				'documentation' => 'https://php.net/manual/en/timezones.php',
+				'type' => 'text',
+				'value' => $setup->serverTimezone
+			),
+
+			'uses-user-timezone' => array (
+				'type' => 'checkbox',
+				'value' => $setup->usesUserTimezone
+			),
+
+			'uses-short-dates' => array (
+				'type' => 'checkbox',
+				'value' => $setup->usesShortDates
+			),
+
+			'login-method' => array (
+				'type' => 'select',
+				'value' => $setup->loginMethod,
+
+				'options' => array (
+					'defaultLogin' => 'Default Login'
+				)
+			),
+
+			'allows-login' => array (
+				'type' => 'checkbox',
+				'value' => $setup->allowsLogin
+			),
+
+			'uses-auto-login' => array (
+				'type' => 'checkbox',
+				'value' => $setup->usesAutoLogin
+			),
+
+			'data-format' => array (
+				'type' => 'select',
+				'value' => $setup->dataFormat,
+
+				'options' => array (
+					'xml' => 'XML',
+					'json' => 'JSON',
+					'sql' => 'SQL'
+				)
+			),
+
+			'default-name' => array (
+				'type' => 'text',
+				'value' => $setup->defaultName
+			),
+
+			'reply-mode' => array (
+				'type' => 'select',
+				'value' => $setup->replyMode,
+
+				'options' => array (
+					'thread' => 'Threaded',
+					'stream' => 'Stream'
+				)
+			),
+
+			'stream-depth' => array (
+				'type' => 'number',
+				'value' => $setup->streamDepth
+			),
+
+			'image-format' => array (
+				'type' => 'select',
+				'value' => $setup->imageFormat,
+
+				'options' => array (
+					'png' => 'PNG',
+					'svg' => 'SVG'
+				)
+			),
+
+			'appends-css' => array (
+				'type' => 'checkbox',
+				'value' => $setup->appendsCss
+			),
+
+			'appends-rss' => array (
+				'type' => 'checkbox',
+				'value' => $setup->appendsRss
+			),
+
+			'count-includes-deleted' => array (
+				'type' => 'checkbox',
+				'value' => $setup->countIncludesDeleted
+			),
+
+			'allow-local-metadata' => array (
+				'type' => 'checkbox',
+				'value' => $setup->allowLocalMetadata
+			),
+
+			'stores-ip-address' => array (
+				'type' => 'checkbox',
+				'value' => $setup->storesIpAddress
+			),
+
+			'minifies-javascript' => array (
+				'type' => 'checkbox',
+				'value' => $setup->minifiesJavascript
+			),
+
+			'minify-level' => array (
+				'type' => 'select',
+				'cast' => 'number',
+				'value' => $setup->minifyLevel,
+
+				'options' => array (
+					1 => 'Basic (removes code comments)',
+					2 => 'Low (removes whitespace + Basic)',
+					3 => 'Medium (removes newlines + Low)',
+					4 => 'High (removes extra bits + Medium)'
 				)
 			)
-		),
-
-		'uses-markdown' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesMarkdown
-		),
-
-		'uses-ajax' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesAjax
-		),
-
-		'shows-reply-count' => array (
-			'type' => 'checkbox',
-			'value' => $setup->showsReplyCount
-		),
-
-		'allows-images' => array (
-			'type' => 'checkbox',
-			'value' => $setup->allowsImages
-		),
-
-		'allows-likes' => array (
-			'type' => 'checkbox',
-			'value' => $setup->allowsLikes
-		),
-
-		'allows-dislikes' => array (
-			'type' => 'checkbox',
-			'value' => $setup->allowsDislikes
-		),
-
-		'displays-title' => array (
-			'type' => 'checkbox',
-			'value' => $setup->displaysTitle
-		),
-
-		'uses-labels' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesLabels
-		),
-
-		'uses-moderation' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesModeration
-		),
-
-		'pends-user-edits' => array (
-			'type' => 'checkbox',
-			'value' => $setup->pendsUserEdits
-		),
-
-		'mail-type' => array (
-			'type' => 'select',
-			'value' => $setup->mailType,
-
-			'options' => array (
-				'text' => 'Text',
-				'html' => 'HTML'
-			)
-		),
-
-		'mailer' => array (
-			'type' => 'select',
-			'value' => $setup->mailer,
-
-			'options' => array (
-				'sendmail' => 'Sendmail',
-				'smtp' => 'SMTP'
-			)
-		),
-
-		'noreply-email' => array (
-			'type' => 'text',
-			'value' => $setup->noreplyEmail
-		),
-
-		'subscribes-user' => array (
-			'type' => 'checkbox',
-			'value' => $setup->subscribesUser
-		),
-
-		'allows-user-replies' => array (
-			'type' => 'checkbox',
-			'value' => $setup->allowsUserReplies
-		),
-
-		'sets-cookies' => array (
-			'type' => 'checkbox',
-			'value' => $setup->setsCookies
-		),
-
-		'secure-cookies' => array (
-			'type' => 'checkbox',
-			'value' => $setup->secureCookies
-		),
-
-		'collapses-interface' => array (
-			'type' => 'checkbox',
-			'value' => $setup->collapsesInterface
-		),
-
-		'collapses-comments' => array (
-			'type' => 'checkbox',
-			'value' => $setup->collapsesComments
-		),
-
-		'collapse-limit' => array (
-			'type' => 'number',
-			'value' => $setup->collapseLimit
-		),
-
-		'popularity-threshold' => array (
-			'type' => 'number',
-			'value' => $setup->popularityThreshold
-		),
-
-		'popularity-limit' => array (
-			'type' => 'number',
-			'value' => $setup->popularityLimit
-		),
-
-		'spam-batabase' => array (
-			'type' => 'select',
-			'value' => $setup->spamDatabase,
-
-			'options' => array (
-				'remote' => 'StopForumSpam.com',
-				'local' => 'Local CSV file'
-			)
-		),
-
-		'spam-check-modes' => array (
-			'type' => 'select',
-			'value' => $setup->spamCheckModes,
-
-			'options' => array (
-				'both' => 'Both',
-				'json' => 'JavaScript',
-				'php' => 'PHP'
-			)
-		),
-
-		'icon-mode' => array (
-			'type' => 'select',
-			'value' => $setup->iconMode,
-
-			'options' => array (
-				'image' => 'Image',
-				'count' => 'Count',
-				'none' => 'None'
-			)
-		),
-
-		'icon-size' => array (
-			'type' => 'number',
-			'value' => $setup->iconSize
-		),
-
-		'gravatar-default' => array (
-			'type' => 'select',
-			'value' => $setup->gravatarDefault,
-
-			'options' => array (
-				'custom' => 'Custom',
-				'identicon' => 'Identicon',
-				'monsterid' => 'Monsterid',
-				'wavatar' => 'Wavatar',
-				'retro' => 'Retro'
-			)
-		),
-
-		'gravatar-force' => array (
-			'type' => 'checkbox',
-			'value' => $setup->gravatarForce
-		),
-
-		'server-timezone' => array (
-			'documentation' => 'https://php.net/manual/en/timezones.php',
-			'type' => 'text',
-			'value' => $setup->serverTimezone
-		),
-
-		'time-format' => array (
-			'documentation' => 'https://php.net/manual/en/function.date.php',
-			'type' => 'text',
-			'value' => $setup->timeFormat
-		),
-
-		'date-format' => array (
-			'documentation' => 'https://php.net/manual/en/function.date.php',
-			'type' => 'text',
-			'value' => $setup->dateFormat
-		),
-
-		'uses-user-timezone' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesUserTimezone
-		),
-
-		'uses-short-dates' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesShortDates
-		),
-
-		'login-method' => array (
-			'type' => 'select',
-			'value' => $setup->loginMethod,
-
-			'options' => array (
-				'defaultLogin' => 'Default Login'
-			)
-		),
-
-		'allows-login' => array (
-			'type' => 'checkbox',
-			'value' => $setup->allowsLogin
-		),
-
-		'uses-auto-login' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesAutoLogin
-		),
-
-		'data-format' => array (
-			'type' => 'select',
-			'value' => $setup->dataFormat,
-
-			'options' => array (
-				'xml' => 'XML',
-				'json' => 'JSON',
-				'sql' => 'SQL'
-			)
-		),
-
-		'default-name' => array (
-			'type' => 'text',
-			'value' => $setup->defaultName
-		),
-
-		'reply-mode' => array (
-			'type' => 'select',
-			'value' => $setup->replyMode,
-
-			'options' => array (
-				'thread' => 'Threaded',
-				'stream' => 'Stream'
-			)
-		),
-
-		'stream-depth' => array (
-			'type' => 'number',
-			'value' => $setup->streamDepth
-		),
-
-		'image-format' => array (
-			'type' => 'select',
-			'value' => $setup->imageFormat,
-
-			'options' => array (
-				'png' => 'PNG',
-				'svg' => 'SVG'
-			)
-		),
-
-		'appends-css' => array (
-			'type' => 'checkbox',
-			'value' => $setup->appendsCss
-		),
-
-		'appends-rss' => array (
-			'type' => 'checkbox',
-			'value' => $setup->appendsRss
-		),
-
-		'uses-cancel-buttons' => array (
-			'type' => 'checkbox',
-			'value' => $setup->usesCancelButtons
-		),
-
-		'count-includes-deleted' => array (
-			'type' => 'checkbox',
-			'value' => $setup->countIncludesDeleted
-		),
-
-		'allow-local-metadata' => array (
-			'type' => 'checkbox',
-			'value' => $setup->allowLocalMetadata
-		),
-
-		'stores-ip-address' => array (
-			'type' => 'checkbox',
-			'value' => $setup->storesIpAddress
-		),
-
-		'minifies-javascript' => array (
-			'type' => 'checkbox',
-			'value' => $setup->minifiesJavascript
-		),
-
-		'minify-level' => array (
-			'type' => 'select',
-			'cast' => 'number',
-			'value' => $setup->minifyLevel,
-
-			'options' => array (
-				1 => 'Basic (removes code comments)',
-				2 => 'Low (removes whitespace + Basic)',
-				3 => 'Medium (removes newlines + Low)',
-				4 => 'High (removes extra bits + Medium)'
-			)
-		)
 	);
 }
 
@@ -591,40 +591,40 @@ try {
 		// Existing JSON settings or an empty array
 		$settings = ($json !== false) ? $json : array ();
 
-		// Run through configurable settings
-		foreach ($ui as $name => $setting) {
-			// Use specified type or optional cast
-			$type = !empty ($setting['cast']) ? 'cast' : 'type';
+			// Run through configurable settings
+			foreach ($ui as $name => $setting) {
+				// Use specified type or optional cast
+				$type = !empty ($setting['cast']) ? 'cast' : 'type';
 
-			// Handle specific setting types
-			switch ($setting[$type]) {
-				// Set value to boolean based on POST data
-				case 'checkbox': {
-					$settings[$name] = isset ($_POST[$name]);
-					break;
-				}
-
-				// Cast number values to integers
-				case 'number': {
-					$settings[$name] = (int)($_POST[$name]);
-					break;
-				}
-
-				// All other values are strings
-				default: {
-					// Check if setting has a value
-					if (!empty ($_POST[$name])) {
-						// If so, cast it to string before setting it
-						$settings[$name] = (string)($_POST[$name]);
-					} else {
-						// If not, remove the setting entirely
-						unset ($settings[$name]);
+				// Handle specific setting types
+				switch ($setting[$type]) {
+					// Set value to boolean based on POST data
+					case 'checkbox': {
+						$settings[$name] = isset ($_POST[$name]);
+						break;
 					}
 
-					break;
+					// Cast number values to integers
+					case 'number': {
+						$settings[$name] = (int)($_POST[$name]);
+						break;
+					}
+
+					// All other values are strings
+					default: {
+						// Check if setting has a value
+						if (!empty ($_POST[$name])) {
+							// If so, cast it to string before setting it
+							$settings[$name] = (string)($_POST[$name]);
+						} else {
+							// If not, remove the setting entirely
+							unset ($settings[$name]);
+						}
+
+						break;
+					}
 				}
 			}
-		}
 
 		// Check if the user login is admin
 		if ($hashover->login->verifyAdmin () === true) {

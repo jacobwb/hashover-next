@@ -230,6 +230,9 @@ class CommentParser
 			}
 		}
 
+		// Get micro time of comment post date
+		$timestamp = $post_date->getTimestamp ();
+
 		// Get localized full comment post date
 		$full_date = $post_date->format ($this->dateLocale);
 
@@ -242,12 +245,6 @@ class CommentParser
 			$comment_date = $full_date;
 		}
 
-		// Add comment date to output
-		$output['date'] = (string)($comment_date);
-
-		// Set full date and time
-		$output['full-date'] = (string)($full_date);
-
 		// Check if we have a status
 		if (!empty ($comment['status'])) {
 			// If so, get comment status
@@ -258,13 +255,22 @@ class CommentParser
 				// If so, add comment status to output
 				$output['status'] = (string)($status);
 
+				// Get status locale
+				$status_locale = $this->locale->text[$status . '-name'];
+
 				// And add status text to output
-				$output['status-text'] = mb_strtolower ($this->locale->text[$status . '-name']);
+				$output['status-text'] = mb_strtolower ($status_locale);
 			}
 		}
 
+		// Add comment date to output
+		$output['date'] = (string)($comment_date);
+
+		// Set full date and time
+		$output['full-date'] = (string)($full_date);
+
 		// Add comment date as Unix timestamp to output
-		$output['sort-date'] = $post_date->getTimestamp ();
+		$output['timestamp'] = $post_date->getTimestamp ();
 
 		// Add comment body to output
 		$output['body'] = (string)($comment['body']);
@@ -286,7 +292,7 @@ class CommentParser
 		$output['permalink'] = 'c' . str_replace ('-', 'r', $key);
 		$output['notice'] = $this->locale->text[$type . '-note'];
 		$output['notice-class'] = 'hashover-' . $type;
-		$output['sort-date'] = (int)($last_date);
+		$output['timestamp'] = (int)($last_date);
 
 		return $output;
 	}

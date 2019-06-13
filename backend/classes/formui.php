@@ -925,7 +925,7 @@ class FormUI
 
 			// Add popular comments title text
 			$popular_plural = ($this->commentCounts['popular'] !== 1) ? 1 : 0;
-			$popular_comments_locale = $this->locale->text['popular-comments'];
+			$popular_comments_locale = $this->locale->text['most-popular-comments'];
 			$pop_count_element->innerHTML ($popular_comments_locale[$popular_plural]);
 
 			// Add popular comments title element to wrapper element

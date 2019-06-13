@@ -11,8 +11,8 @@ HashOver.prototype.sortComments = function (comments, method)
 	function sortByDate (a, b)
 	{
 		// Return microtime difference if dates are different
-		if (b['sort-date'] !== a['sort-date']) {
-			return b['sort-date'] - a['sort-date'];
+		if (b.timestamp !== a.timestamp) {
+			return b.timestamp - a.timestamp;
 		}
 
 		// Otherwise, return 1

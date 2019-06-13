@@ -55,7 +55,7 @@ HashOver.instantiator = function (id, options, instance)
 	// Set instance number
 	this.instanceNumber = instance;
 
-	// Store options and queries
+	// Store options and backend queries
 	this.options = options;
 	this.queries = queries;
 
