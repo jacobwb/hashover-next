@@ -10,6 +10,9 @@ HashOverConstructor.prototype.closeEmbeddedImage = function (image)
 		// Remove loading class from wrapper
 		hashover.classes.remove (this.parentNode, 'hashover-loading');
 
+		// Remove open class from wrapper
+		hashover.classes.remove (this.parentNode, 'hashover-embedded-image-open');
+
 		// Remove load event handler
 		this.onload = null;
 	};
@@ -47,6 +50,9 @@ HashOverConstructor.prototype.openEmbeddedImage = function (image)
 
 		// Remove loading class from wrapper
 		hashover.classes.remove (this.parentNode, 'hashover-loading');
+
+		// Add open class to wrapper
+		hashover.classes.add (this.parentNode, 'hashover-embedded-image-open');
 
 		// Remove load event handler
 		this.onload = null;
