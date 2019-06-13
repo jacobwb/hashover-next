@@ -155,6 +155,17 @@ $locale = array (
 	'settings-sub'		=> 'Schimbarea diferitelor setări',
 	'moderation-sub'	=> 'Postați, editați, aprobați și ștergeți comentariile',
 
+	'general'		=> 'General',
+	'e-mail'		=> 'E-mail',
+	'cookies'		=> 'Cookie-urile',
+	'comment-collapsing'	=> 'Comentariu colaps',
+	'popular-comments'	=> 'Comentarii populare',
+	'spam-protection'	=> 'Protectie spam',
+	'avatars'		=> 'Avatare',
+	'form-fields'		=> 'Formă/Câmpuri',
+	'date-time'		=> 'Data/ora',
+	'technical'		=> 'Tehnic',
+
 	'setting-language'			=> 'Limba',
 	'setting-theme'				=> 'Tema',
 	'setting-default-sorting'		=> 'Ordinea de sortare a comentariilor implicite',

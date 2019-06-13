@@ -155,6 +155,17 @@ $locale = array (
 	'settings-sub'		=> 'Alterar várias configurações',
 	'moderation-sub'	=> 'Publicar, editar, aprovar e excluir comentários',
 
+	'general'		=> 'Geral',
+	'e-mail'		=> 'O email',
+	'cookies'		=> 'Biscoitos',
+	'comment-collapsing'	=> 'Comentário em colapso',
+	'popular-comments'	=> 'Comentários populares',
+	'spam-protection'	=> 'Proteção contra SPAM',
+	'avatars'		=> 'Avatares',
+	'form-fields'		=> 'Formulário/Campos',
+	'date-time'		=> 'Data/hora',
+	'technical'		=> 'Técnico',
+
 	'setting-language'			=> 'Língua',
 	'setting-theme'				=> 'Tema',
 	'setting-default-sorting'		=> 'Ordem de classificação de comentário padrão',

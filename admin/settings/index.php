@@ -34,6 +34,7 @@ function ui_array (Setup $setup, Locale $locale)
 
 	// Return array of settings allowed to be changed
 	return array (
+		'general' => array (
 			'language' => array (
 				'type' => 'select',
 				'value' => $setup->language,
@@ -115,8 +116,10 @@ function ui_array (Setup $setup, Locale $locale)
 			'allows-dislikes' => array (
 				'type' => 'checkbox',
 				'value' => $setup->allowsDislikes
-			),
+			)
+		),
 
+		'moderation' => array (
 			'uses-moderation' => array (
 				'type' => 'checkbox',
 				'value' => $setup->usesModeration
@@ -125,8 +128,10 @@ function ui_array (Setup $setup, Locale $locale)
 			'pends-user-edits' => array (
 				'type' => 'checkbox',
 				'value' => $setup->pendsUserEdits
-			),
+			)
+		),
 
+		'e-mail' => array (
 			'mail-type' => array (
 				'type' => 'select',
 				'value' => $setup->mailType,
@@ -160,8 +165,10 @@ function ui_array (Setup $setup, Locale $locale)
 			'allows-user-replies' => array (
 				'type' => 'checkbox',
 				'value' => $setup->allowsUserReplies
-			),
+			)
+		),
 
+		'cookies' => array (
 			'sets-cookies' => array (
 				'type' => 'checkbox',
 				'value' => $setup->setsCookies
@@ -170,8 +177,10 @@ function ui_array (Setup $setup, Locale $locale)
 			'secure-cookies' => array (
 				'type' => 'checkbox',
 				'value' => $setup->secureCookies
-			),
+			)
+		),
 
+		'comment-collapsing' => array (
 			'collapses-interface' => array (
 				'type' => 'checkbox',
 				'value' => $setup->collapsesInterface
@@ -185,8 +194,10 @@ function ui_array (Setup $setup, Locale $locale)
 			'collapse-limit' => array (
 				'type' => 'number',
 				'value' => $setup->collapseLimit
-			),
+			)
+		),
 
+		'popular-comments' => array (
 			'popularity-threshold' => array (
 				'type' => 'number',
 				'value' => $setup->popularityThreshold
@@ -195,8 +206,10 @@ function ui_array (Setup $setup, Locale $locale)
 			'popularity-limit' => array (
 				'type' => 'number',
 				'value' => $setup->popularityLimit
-			),
+			)
+		),
 
+		'spam-protection' => array (
 			'spam-batabase' => array (
 				'type' => 'select',
 				'value' => $setup->spamDatabase,
@@ -216,8 +229,10 @@ function ui_array (Setup $setup, Locale $locale)
 					'json' => 'JavaScript',
 					'php' => 'PHP'
 				)
-			),
+			)
+		),
 
+		'avatars' => array (
 			'icon-mode' => array (
 				'type' => 'select',
 				'value' => $setup->iconMode,
@@ -250,8 +265,10 @@ function ui_array (Setup $setup, Locale $locale)
 			'gravatar-force' => array (
 				'type' => 'checkbox',
 				'value' => $setup->gravatarForce
-			),
+			)
+		),
 
+		'form-fields' => array (
 			'form-position' => array (
 				'type' => 'select',
 				'value' => $setup->formPosition,
@@ -275,8 +292,10 @@ function ui_array (Setup $setup, Locale $locale)
 			'uses-labels' => array (
 				'type' => 'checkbox',
 				'value' => $setup->usesLabels
-			),
+			)
+		),
 
+		'date-time' => array (
 			'date-pattern' => array (
 				'documentation' => 'http://userguide.icu-project.org/formatparse/datetime',
 				'type' => 'text',
@@ -302,8 +321,10 @@ function ui_array (Setup $setup, Locale $locale)
 			'uses-short-dates' => array (
 				'type' => 'checkbox',
 				'value' => $setup->usesShortDates
-			),
+			)
+		),
 
+		'login' => array (
 			'login-method' => array (
 				'type' => 'select',
 				'value' => $setup->loginMethod,
@@ -321,8 +342,10 @@ function ui_array (Setup $setup, Locale $locale)
 			'uses-auto-login' => array (
 				'type' => 'checkbox',
 				'value' => $setup->usesAutoLogin
-			),
+			)
+		),
 
+		'technical' => array (
 			'data-format' => array (
 				'type' => 'select',
 				'value' => $setup->dataFormat,
@@ -387,8 +410,10 @@ function ui_array (Setup $setup, Locale $locale)
 			'stores-ip-address' => array (
 				'type' => 'checkbox',
 				'value' => $setup->storesIpAddress
-			),
+			)
+		),
 
+		'JavaScript' => array (
 			'minifies-javascript' => array (
 				'type' => 'checkbox',
 				'value' => $setup->minifiesJavascript
@@ -406,6 +431,7 @@ function ui_array (Setup $setup, Locale $locale)
 					4 => 'High (removes extra bits + Medium)'
 				)
 			)
+		)
 	);
 }
 
@@ -480,14 +506,11 @@ function create_select ($hashover, $name, array $setting)
 	return $element;
 }
 
-// Creates a table row element for a setting value
-function create_tr ($hashover, $name, array $setting)
+// Creates a paragraph element for a setting value
+function create_paragraph ($hashover, $name, array $setting)
 {
-	// Create table row
-	$tr = new HTMLTag ('tr');
-
-	// Create setting description cell
-	$description = new HTMLTag ('td');
+	// Create setting description and value paragraph
+	$paragraph = new HTMLTag ('p');
 
 	// Setting description locale string
 	$text = $hashover->locale->text['setting-' . $name];
@@ -514,15 +537,6 @@ function create_tr ($hashover, $name, array $setting)
 		'innerHTML' => $text
 	), false);
 
-	// Append label to description cell
-	$description->appendChild ($label);
-
-	// Append description cell to settings table row
-	$tr->appendChild ($description);
-
-	// Create setting value cell
-	$field = new HTMLTag ('td');
-
 	// Handle specific setting types
 	switch ($setting['type']) {
 		// Create checkbox for enabling/disabling the setting
@@ -544,7 +558,10 @@ function create_tr ($hashover, $name, array $setting)
 
 		// Create text/number box for entering the setting value
 		case 'number' : case 'text': {
-			// Create number or text type input element
+			// Add class to make label a block element
+			$label->createAttribute ('class', 'block');
+
+			// And create number or text type input element
 			$element = new HTMLTag ('input', array (
 				'id' => $name,
 				'type' => $setting['type'],
@@ -558,6 +575,9 @@ function create_tr ($hashover, $name, array $setting)
 
 		// Create dropdown menu for selecting the setting value
 		case 'select': {
+			// Add class to make label a block element
+			$label->createAttribute ('class', 'block');
+
 			// Create select element
 			$element = create_select ($hashover, $name, $setting);
 
@@ -565,11 +585,22 @@ function create_tr ($hashover, $name, array $setting)
 		}
 	}
 
-	// Append the setting value element to the setting value cell
-	$field->appendChild ($element);
+	// Check if setting is a checkbox
+	if ($setting['type'] === 'checkbox') {
+		// If so, append setting value element to paragraph
+		$paragraph->appendChild ($element);
 
-	// Append the setting value cell to the settings table row
-	$tr->appendChild ($field);
+		// Then append label element to paragraph
+		$paragraph->appendChild ($label);
+	} else {
+		// If not, append label element to paragraph
+		$paragraph->appendChild ($label);
+
+		// Then append setting value element to paragraph
+		$paragraph->appendChild ($element);
+	}
+
+	return $paragraph;
 }
 
 try {
@@ -590,8 +621,10 @@ try {
 		// Existing JSON settings or an empty array
 		$settings = ($json !== false) ? $json : array ();
 
-			// Run through configurable settings
-			foreach ($ui as $name => $setting) {
+		// Run through configurable settings
+		foreach ($ui as $items) {
+			// Run through each settings category
+			foreach ($items as $name => $setting) {
 				// Use specified type or optional cast
 				$type = !empty ($setting['cast']) ? 'cast' : 'type';
 
@@ -624,6 +657,7 @@ try {
 					}
 				}
 			}
+		}
 
 		// Check if the user login is admin
 		if ($hashover->login->verifyAdmin () === true) {
@@ -640,17 +674,36 @@ try {
 		redirect ('./?status=failure');
 	}
 
-	// Otherwise, create settings table
-	$table = new HTMLTag ('table', array (
-		'id' => 'settings',
-		'class' => 'p-spaced',
-		'cellspacing' => '0',
-		'cellpadding' => '4'
+	// Otherwise, create settings div
+	$div = new HTMLTag ('div', array (
+		'class' => 'p-spaced'
 	));
 
-	// Create settings table
-	foreach ($ui as $name => $setting) {
-		$table->appendChild (create_tr ($hashover, $name, $setting));
+	// Create settings divs
+	foreach ($ui as $locale => $settings) {
+		// Replace key with locale string if one exists
+		if (!empty ($hashover->locale->text[$locale])) {
+			$locale = $hashover->locale->text[$locale];
+		}
+
+		// Append settings category text to settings div
+		$div->appendChild (new HTMLTag ('p', array (
+			'class' => 'settings-category',
+			'innerHTML' => $locale
+		), false));
+
+		// Create settings items element
+		$items = new HTMLTag ('div', array (
+			'class' => 'settings p-spaced'
+		));
+
+		// Append each settings category items to div
+		foreach ($settings as $name => $setting) {
+			$items->appendChild (create_paragraph ($hashover, $name, $setting));
+		}
+
+		// Append settings items element to div
+		$div->appendChild ($items);
 	}
 
 	// Template data
@@ -660,7 +713,7 @@ try {
 		'logout'	=> $logout->asHTML ("\t\t\t"),
 		'sub-title'	=> $hashover->locale->text['settings-sub'],
 		'message'	=> $form_message,
-		'settings'	=> $table->asHTML ("\t\t\t"),
+		'settings'	=> $div->asHTML ("\t\t\t"),
 		'save-button'	=> $hashover->locale->text['save']
 	);
 

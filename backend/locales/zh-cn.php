@@ -155,6 +155,17 @@ $locale = array (
 	'settings-sub'		=> '更改各种设置',
 	'moderation-sub'	=> '发布，编辑，批准和删除评论',
 
+	'general'		=> '一般',
+	'e-mail'		=> '电子邮件',
+	'cookies'		=> '饼干',
+	'comment-collapsing'	=> '评论崩溃',
+	'popular-comments'	=> '热门评论',
+	'spam-protection'	=> '垃圾邮件保护',
+	'avatars'		=> '头像',
+	'form-fields'		=> '表格/字段',
+	'date-time'		=> '日期和时间',
+	'technical'		=> '技术',
+
 	'setting-language'			=> '语言',
 	'setting-theme'				=> '主题',
 	'setting-default-sorting'		=> '默认评论排序顺序',

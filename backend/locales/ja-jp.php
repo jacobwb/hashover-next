@@ -155,6 +155,17 @@ $locale = array (
 	'settings-sub'		=> 'さまざまな設定を変更する',
 	'moderation-sub'	=> 'コメントの投稿、編集、承認、削除',
 
+	'general'		=> '一般的な',
+	'e-mail'		=> 'メール',
+	'cookies'		=> 'クッキー',
+	'comment-collapsing'	=> 'コメントが崩れています',
+	'popular-comments'	=> '人気のコメント',
+	'spam-protection'	=> 'スパム保護',
+	'avatars'		=> 'アバター',
+	'form-fields'		=> 'フォーム/フィールド',
+	'date-time'		=> '日時',
+	'technical'		=> 'テクニカル',
+
 	'setting-language'			=> '言語',
 	'setting-theme'				=> 'テーマ',
 	'setting-default-sorting'		=> 'デフォルトのコメント並べ替え順',

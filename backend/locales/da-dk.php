@@ -155,6 +155,17 @@ $locale = array (
 	'settings-sub'		=> 'Skift forskellige indstillinger',
 	'moderation-sub'	=> 'Indlæg, redigere, godkende og slet kommentarer',
 
+	'general'		=> 'Generel',
+	'e-mail'		=> 'E-mail',
+	'cookies'		=> 'Cookies',
+	'comment-collapsing'	=> 'Kommentér sammenbrud',
+	'popular-comments'	=> 'Populære kommentarer',
+	'spam-protection'	=> 'Spam beskyttelse',
+	'avatars'		=> 'Avatars',
+	'form-fields'		=> 'Form/Fields',
+	'date-time'		=> 'Dato/tid',
+	'technical'		=> 'Teknisk',
+
 	'setting-language'			=> 'Sprog',
 	'setting-theme'				=> 'Tema',
 	'setting-default-sorting'		=> 'Standard kommentar sorteringsrækkefølge',

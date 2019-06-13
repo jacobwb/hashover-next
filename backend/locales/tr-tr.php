@@ -155,6 +155,17 @@ $locale = array (
 	'settings-sub'		=> 'Değişik ayarları değiştir',
 	'moderation-sub'	=> 'Yorumları yayınla, düzenle, onayla ve sil',
 
+	'general'		=> 'Genel',
+	'e-mail'		=> 'E-mail',
+	'cookies'		=> 'Kurabiye',
+	'comment-collapsing'	=> 'Yorum çöküyor',
+	'popular-comments'	=> 'Popüler yorumlar',
+	'spam-protection'	=> 'Spam koruması',
+	'avatars'		=> 'Avatarlar',
+	'form-fields'		=> 'Form/Alanlar',
+	'date-time'		=> 'Tarih/Saat',
+	'technical'		=> 'Teknik',
+
 	'setting-language'			=> 'Dil',
 	'setting-theme'				=> 'Tema',
 	'setting-default-sorting'		=> 'Varsayılan yorum sıralama sırası',

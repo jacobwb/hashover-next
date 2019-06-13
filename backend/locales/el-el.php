@@ -155,6 +155,17 @@ $locale = array (
 	'settings-sub'		=> 'Αλλάξτε διάφορες ρυθμίσεις',
 	'moderation-sub'	=> 'Αποστολή, επεξεργασία, έγκριση και διαγραφή σχολίων',
 
+	'general'		=> 'Γενικός',
+	'e-mail'		=> 'ΗΛΕΚΤΡΟΝΙΚΗ ΔΙΕΥΘΥΝΣΗ',
+	'cookies'		=> 'Μπισκότα',
+	'comment-collapsing'	=> 'Η κατάρρευση του σχολίου',
+	'popular-comments'	=> 'Δημοφιλή σχόλια',
+	'spam-protection'	=> 'Προστασία ανεπιθύμητων',
+	'avatars'		=> 'Avatars',
+	'form-fields'		=> 'Μορφή/πεδία',
+	'date-time'		=> 'Ημερομηνία/ώρα',
+	'technical'		=> 'Τεχνικός',
+
 	'setting-language'			=> 'Γλώσσα',
 	'setting-theme'				=> 'Θέμα',
 	'setting-default-sorting'		=> 'Προκαθορισμένη σειρά ταξινόμησης σχολίων',

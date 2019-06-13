@@ -155,6 +155,17 @@ $locale = array (
 	'settings-sub'		=> 'تغییر تنظیمات مختلف',
 	'moderation-sub'	=> 'ارسال، ویرایش، تایید و حذف نظرات',
 
+	'general'		=> 'عمومی',
+	'e-mail'		=> 'پست الکترونیک',
+	'cookies'		=> 'بیسکویت ها',
+	'comment-collapsing'	=> 'نظر سقوط',
+	'popular-comments'	=> 'نظرات محبوب',
+	'spam-protection'	=> 'حفاظت از هرزنامه',
+	'avatars'		=> 'آواتار ها',
+	'form-fields'		=> 'فرم/زمینه',
+	'date-time'		=> 'تاریخ و زمان',
+	'technical'		=> 'فنی',
+
 	'setting-language'			=> 'زبان',
 	'setting-theme'				=> 'تم',
 	'setting-default-sorting'		=> 'نظم مرتب سازی پیشفرض پیش فرض',

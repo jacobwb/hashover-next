@@ -155,6 +155,17 @@ $locale = array (
 	'settings-sub'		=> '다양한 설정 변경',
 	'moderation-sub'	=> '의견 게시, 수정, 승인 및 삭제',
 
+	'general'		=> '일반',
+	'e-mail'		=> '이메일',
+	'cookies'		=> '쿠키',
+	'comment-collapsing'	=> '댓글 축소 중',
+	'popular-comments'	=> '인기있는 댓글',
+	'spam-protection'	=> '스팸 방지',
+	'avatars'		=> '아바타',
+	'form-fields'		=> '양식/입력란',
+	'date-time'		=> '날짜와 시간',
+	'technical'		=> '전문인',
+
 	'setting-language'			=> '언어',
 	'setting-theme'				=> '테마',
 	'setting-default-sorting'		=> '기본 댓글 정렬 순서',

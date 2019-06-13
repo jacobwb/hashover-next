@@ -164,6 +164,17 @@ $locale = array (
 	'settings-sub'		=> 'Keisti įvairius nustatymus',
 	'moderation-sub'	=> 'Skelbti, redaguoti, patvirtinti ir ištrinti komentarus',
 
+	'general'		=> 'Bendra informacija',
+	'e-mail'		=> 'El. Paštas',
+	'cookies'		=> 'Slapukai',
+	'comment-collapsing'	=> 'Komentaro žlugimas',
+	'popular-comments'	=> 'Populiariausi komentarai',
+	'spam-protection'	=> 'Apsauga nuo šlamšto',
+	'avatars'		=> 'Avatarai',
+	'form-fields'		=> 'Forma/laukai',
+	'date-time'		=> 'Data/laikas',
+	'technical'		=> 'Techninis',
+
 	'setting-language'			=> 'Kalba',
 	'setting-theme'				=> 'Tema',
 	'setting-default-sorting'		=> 'Numatytoji komentarų rūšiavimo tvarka',

@@ -155,6 +155,17 @@ $locale = array (
 	'settings-sub'		=> 'Change various settings',
 	'moderation-sub'	=> 'Post, edit, approve, and delete comments',
 
+	'general'		=> 'General',
+	'e-mail'		=> 'E-mail',
+	'cookies'		=> 'Cookies',
+	'comment-collapsing'	=> 'Comment collapsing',
+	'popular-comments'	=> 'Popular comments',
+	'spam-protection'	=> 'Spam protection',
+	'avatars'		=> 'Avatars',
+	'form-fields'		=> 'Form/Fields',
+	'date-time'		=> 'Date/Time',
+	'technical'		=> 'Technical',
+
 	'setting-language'			=> 'Language',
 	'setting-theme'				=> 'Theme',
 	'setting-default-sorting'		=> 'Default comment sorting order',

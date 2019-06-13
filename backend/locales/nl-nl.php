@@ -155,6 +155,17 @@ $locale = array (
 	'settings-sub'		=> 'Verschillende instellingen wijzigen',
 	'moderation-sub'	=> 'Reacties plaatsen, bewerken, goedkeuren en verwijderen',
 
+	'general'		=> 'Algemeen',
+	'e-mail'		=> 'E-mail',
+	'cookies'		=> 'Cookies',
+	'comment-collapsing'	=> 'Commentaar samenvouwen',
+	'popular-comments'	=> 'Populaire reacties',
+	'spam-protection'	=> 'Beveiliging tegen spam',
+	'avatars'		=> 'Avatars',
+	'form-fields'		=> 'Formulier/velden',
+	'date-time'		=> 'Datum/Tijd',
+	'technical'		=> 'Technisch',
+
 	'setting-language'			=> 'Taal',
 	'setting-theme'				=> 'Thema',
 	'setting-default-sorting'		=> 'Standaard sorteervolgorde voor reacties',

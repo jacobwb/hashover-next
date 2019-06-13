@@ -14,14 +14,52 @@ input, textarea, select, .select-wrapper {
 	margin: 0px;
 }
 
-#settings {
-	width: 100%;
+.select-wrapper:before {
+	background-color: #DDDDDD;
 }
 
-#settings tr:nth-child(odd) {
+.settings-category {
+	font-size: 20px;
+}
+
+.settings {
+	padding-left: 2em;
+}
+
+.settings p {
+	padding: 8px;
 	background-color: #F5F5F5;
 }
 
-table tr {
-	height: 35px;
+.settings p > * {
+	vertical-align: middle;
+}
+
+.settings label {
+	line-height: 28px;
+}
+
+label.block {
+	display: inline-block;
+	width: 50%;
+}
+
+input[type="checkbox"] {
+	margin: 0px 1em 0px 0px;
+}
+
+label.block input[type="checkbox"] {
+	margin-bottom: 3px;
+}
+
+@media only screen and (max-width: 800px) {
+	.settings {
+		-webkit-text-size-adjust: 75%;
+	}
+}
+
+@media only screen and (max-width: 640px) {
+	.settings label.block {
+		width: 100%;
+	}
 }
