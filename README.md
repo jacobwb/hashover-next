@@ -37,6 +37,7 @@ Document Object Model            | dom                     | *part of PHP core*
 Regular Expressions              | pcre                    | *part of PHP core*
 User information encryption      | openssl                 | *part of PHP core*
 Multi-byte character support     | mbstring                | php-mbstring
+Internationalisation             | intl                    | php-intl
 XML data storage format support  | xml, libxml, SimpleXML  | php-xml
 JSON data storage format support | json                    | php-json
 

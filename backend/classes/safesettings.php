@@ -49,8 +49,8 @@ class SafeSettings
 	public $serverTimezone		= 'auto';			// Server timezone
 	public $usesUserTimezone	= true;				// Whether comment dates should use the user's timezone (JavaScript-mode)
 	public $usesShortDates		= true;				// Whether comment dates are shortened, for example "X days ago"
-	public $timeFormat		= 'g:ia';			// Time format, use 'H:i' for 24-hour format (see: http://php.net/manual/en/function.date.php)
-	public $dateFormat		= 'm/d/Y';			// Date format (see: http://php.net/manual/en/function.date.php)
+	public $datePattern		= 'MMMM d, YYYY';		// Date format pattern (see: http://userguide.icu-project.org/formatparse/datetime)
+	public $timePattern		= 'h:mm a';			// Time format pattern, use 'HH:mm' for 24-hour time
 
 	// Field options, use true/false to enable/disable a field,
 	// use 'required' to require a field be properly filled

@@ -30,7 +30,8 @@ class CommentParser
 	protected $currentDate;
 	protected $shortDateLocales;
 	protected $todayLocale;
-	protected $dateLocale;
+	protected $date;
+	protected $time;
 
 	public function __construct (Setup $setup)
 	{
@@ -77,12 +78,38 @@ class CommentParser
 		// Short date when a comment was posted today
 		$this->todayLocale = $this->locale->text['date-today'];
 
-		// Full configurable date locale
-		$this->dateLocale = $this->locale->text['date-time'];
+		// Get date formatter for comment post date
+		$this->date = $this->getDateFormatter ($setup->datePattern);
+
+		// Get date formatter for comment post time
+		$this->time = $this->getDateFormatter ($setup->timePattern);
 	}
 
-	// Get localized comment posting date and time
-	protected function getDateTime (\DateTime $dt)
+	// Get date and time formatter
+	protected function getDateFormatter ($pattern)
+	{
+		// Instantiate International Date Formatter
+		return \IntlDateFormatter::create (
+			// Set language as configured
+			$this->setup->language,
+
+			// We're setting our own format
+			\IntlDateFormatter::NONE,
+			\IntlDateFormatter::NONE,
+
+			// Set timezone as configured
+			$this->setup->serverTimezone,
+
+			// Use Gregorian calender
+			\IntlDateFormatter::GREGORIAN,
+
+			// Set date format
+			$pattern
+		);
+	}
+
+	// Get short form date and time
+	protected function getDateTime (\DateTime $dt, $time)
 	{
 		// Remove time from datetime
 		$datetime = new \DateTime ($dt->format ('Y-m-d'));
@@ -104,10 +131,7 @@ class CommentParser
 			}
 		}
 
-		// Otherwise, get time from datetime
-		$time = $dt->format ($this->setup->timeFormat);
-
-		// Inject time into today locale string
+		// Otherwise, inject time into today locale string
 		$date = sprintf ($this->todayLocale, $time);
 
 		return $date;
@@ -123,7 +147,7 @@ class CommentParser
 		$date = Misc::getArrayItem ($comment, 'date');
 
 		// Get comment post datetime
-		$post_date = new \DateTime ($date);
+		$post_date = new \DateTime ($date ?: date ('Y-m-d', 0));
 
 		// Adjust post date to client timezone if enabled
 		if ($this->setup->usesUserTimezone === true) {
@@ -234,12 +258,15 @@ class CommentParser
 		$timestamp = $post_date->getTimestamp ();
 
 		// Get localized full comment post date
-		$full_date = $post_date->format ($this->dateLocale);
+		$full_date = $this->date->format ($timestamp);
+
+		// Get localized full comment post time
+		$post_time = $this->time->format ($timestamp);
 
 		// Check if short dates are enabled
 		if ($this->setup->usesShortDates === true) {
 			// If so, get localized short date
-			$comment_date = $this->getDateTime ($post_date);
+			$comment_date = $this->getDateTime ($post_date, $post_time);
 		} else {
 			// If not, use full localized date and time
 			$comment_date = $full_date;
@@ -264,16 +291,16 @@ class CommentParser
 		}
 
 		// Add comment date to output
-		$output['date'] = (string)($comment_date);
+		$output['date'] = $comment_date;
 
 		// Set full date and time
-		$output['full-date'] = (string)($full_date);
+		$output['date-time'] = $full_date . ' - ' . $post_time;
 
 		// Add comment date as Unix timestamp to output
-		$output['timestamp'] = $post_date->getTimestamp ();
+		$output['timestamp'] = $timestamp;
 
 		// Add comment body to output
-		$output['body'] = (string)($comment['body']);
+		$output['body'] = $comment['body'];
 
 		return $output;
 	}

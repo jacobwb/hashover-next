@@ -339,7 +339,7 @@ class PHPMode
 			}
 
 			// Add date permalink hyperlink to template
-			$template['date'] = $this->ui->dateLink ($this->setup->filePath, $first_instance, $comment['full-date'], $comment['date']);
+			$template['date'] = $this->ui->dateLink ($this->setup->filePath, $first_instance, $comment['date-time'], $comment['date']);
 
 			// Add "Reply" hyperlink to template
 			if (!empty ($_GET['hashover-reply']) and $_GET['hashover-reply'] === $permalink) {

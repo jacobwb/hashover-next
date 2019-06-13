@@ -277,16 +277,15 @@ function ui_array (Setup $setup, Locale $locale)
 				'value' => $setup->usesLabels
 			),
 
-			'time-format' => array (
-				'documentation' => 'https://php.net/manual/en/function.date.php',
+			'date-pattern' => array (
+				'documentation' => 'http://userguide.icu-project.org/formatparse/datetime',
 				'type' => 'text',
-				'value' => $setup->timeFormat
+				'value' => $setup->datePattern
 			),
 
-			'date-format' => array (
-				'documentation' => 'https://php.net/manual/en/function.date.php',
+			'time-pattern' => array (
 				'type' => 'text',
-				'value' => $setup->dateFormat
+				'value' => $setup->timePattern
 			),
 
 			'server-timezone' => array (

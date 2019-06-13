@@ -266,7 +266,7 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 				hashover: prefix,
 				href: comment.url || this.instance['file-path'],
 				permalink: 'hashover-' + commentKey,
-				title: comment['full-date'],
+				title: comment['date-time'],
 				date: commentDate
 			}
 		);

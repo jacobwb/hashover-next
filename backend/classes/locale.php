@@ -135,22 +135,6 @@ class Locale
 			// Update the locale
 			$this->text[$tooltip_key] = $optionality;
 		}
-
-		// Run through each locale string
-		foreach ($this->text as $key => $value) {
-			switch ($key) {
-				// Inject date and time formats into date and time locale
-				case 'date-time': {
-					$this->text[$key] = sprintf (
-						$value,
-						$this->setup->dateFormat,
-						$this->setup->timeFormat
-					);
-
-					break;
-				}
-			}
-		}
 	}
 
 	// Return file permissions locale with directory and PHP user
