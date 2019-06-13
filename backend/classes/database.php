@@ -48,7 +48,6 @@ class Database extends Secrets
 		// Store parameters as properties
 		$this->setup = $setup;
 
-		try {
 		// Check if database type is SQLite
 		if ($this->databaseType === 'sqlite') {
 			// If so, construct SQLite file name
@@ -87,15 +86,11 @@ class Database extends Secrets
 				)
 			);
 		}
-		} catch (\PDOException $error) {
-			throw new \Exception ($error->getMessage ());
-		}
 	}
 
 	// Prepares and executes an SQL statement
 	protected function executeStatement ($statement, $data = null)
 	{
-		try {
 		// Prepare statement
 		$prepare = $this->database->prepare ($statement);
 
@@ -108,9 +103,6 @@ class Database extends Secrets
 			if ($execute !== false) {
 				return $prepare;
 			}
-		}
-		} catch (\PDOException $error) {
-			throw new \Exception ($error->getMessage ());
 		}
 
 		return false;
