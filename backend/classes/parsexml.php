@@ -20,8 +20,7 @@
 // Functions for reading and writing XML files
 class ParseXML extends CommentFiles
 {
-	// LibXML flags
-	protected $flags = LIBXML_COMPACT | LIBXML_NOCDATA;
+	protected $flags;
 
 	public function __construct (Setup $setup, Thread $thread)
 	{
@@ -30,6 +29,9 @@ class ParseXML extends CommentFiles
 
 		// Enable XML user error handling
 		libxml_use_internal_errors (true);
+
+		// Set LibXML flags
+		$this->flags = LIBXML_COMPACT | LIBXML_NOCDATA;
 
 		// Throw exception if required XML extensions aren't loaded
 		$setup->extensionsLoaded (array (
