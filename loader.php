@@ -48,11 +48,6 @@ try {
 	// Register frontend settings URL queries converter method
 	$javascript->registerFile ('cfgqueries.js');
 
-	// Register automatic instantiation code
-	$javascript->registerFile ('instantiate.js', array (
-		'include' => !isset ($_GET['nodefault'])
-	));
-
 	// JavaScript build process output
 	$output = $javascript->build (
 		$settings->minifiesJavascript,
