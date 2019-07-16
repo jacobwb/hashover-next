@@ -47,7 +47,7 @@ class SetupChecks extends Secrets
 		// Throw exception if administrative password is set to the default
 		if ($this->adminPassword === 'password') {
 			throw new \Exception (sprintf (
-				'You must use an admin password other than "password" in %s',
+				'You must use an admin password other than "password" for `$adminPassword` in %s',
 				$setup->getBackendPath ('classes/secrets.php')
 			));
 		}
@@ -55,7 +55,7 @@ class SetupChecks extends Secrets
 		// Throw exception if encryption key is set to the default
 		if ($this->encryptionKey === '8CharKey') {
 			throw new \Exception (sprintf (
-				'You must use an encryption key other than "8CharKey" in %s',
+				'You must use an encryption key other than "8CharKey" for `$encryptionKey` in %s',
 				$setup->getBackendPath ('classes/secrets.php')
 			));
 		}
@@ -63,7 +63,7 @@ class SetupChecks extends Secrets
 		// Throw exception if notification e-mail address is set to the default
 		if ($this->notificationEmail === 'example@example.com') {
 			throw new \Exception (sprintf (
-				'You must use an e-mail address other than "example@example.com" in %s',
+				'You must use an e-mail address other than "example@example.com" for `$notificationEmail` in %s',
 				$setup->getBackendPath ('classes/secrets.php')
 			));
 		}
@@ -73,7 +73,7 @@ class SetupChecks extends Secrets
 			// If so, throw exception if database user is set to the default
 			if ($this->databaseUser === 'user') {
 				throw new \Exception (sprintf (
-					'You must use a database user name other than "user" in %s',
+					'You must use a database user name other than "user" for `$databaseUser` in %s',
 					$setup->getBackendPath ('classes/secrets.php')
 				));
 			}
@@ -81,7 +81,7 @@ class SetupChecks extends Secrets
 			// Throw exception if database password is set to the default
 			if ($this->databasePassword === 'password') {
 				throw new \Exception (sprintf (
-					'You must use a database password other than "password" in %s',
+					'You must use a database password other than "password" for `$databasePassword` in %s',
 					$setup->getBackendPath ('classes/secrets.php')
 				));
 			}
@@ -92,7 +92,7 @@ class SetupChecks extends Secrets
 			// If so, throw exception if SMTP user is set to the default
 			if ($this->smtpUser === 'user') {
 				throw new \Exception (sprintf (
-					'You must use an SMTP user name other than "user" in %s',
+					'You must use an SMTP user name other than "user" for `$smtpUser` in %s',
 					$setup->getBackendPath ('classes/secrets.php')
 				));
 			}
@@ -100,7 +100,7 @@ class SetupChecks extends Secrets
 			// Throw exception if SMTP password is set to the default
 			if ($this->smtpPassword === 'password') {
 				throw new \Exception (sprintf (
-					'You must use an SMTP password other than "password" in %s',
+					'You must use an SMTP password other than "password" for `$smtpPassword` in %s',
 					$setup->getBackendPath ('classes/secrets.php')
 				));
 			}
