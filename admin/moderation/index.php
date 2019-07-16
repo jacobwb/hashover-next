@@ -17,8 +17,8 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Adds a row to a table
-function add_table_row (HTMLTag $table, HTMLTag $child)
+// Adds a row to a table body
+function add_table_row (HTMLTag $body, HTMLTag $child)
 {
 	// Create table row and column
 	$tr = new HTMLTag ('tr');
@@ -30,8 +30,29 @@ function add_table_row (HTMLTag $table, HTMLTag $child)
 	// Append column to row
 	$tr->appendChild ($td);
 
-	// Append row to table
-	$table->appendChild ($tr);
+	// Append row to table body
+	$body->appendChild ($tr);
+}
+
+// Adds a head to a table
+function add_table_head (HTMLTag $table, $html)
+{
+	// Create table head, row and column
+	$thead = new HTMLTag ('thead');
+	$th = new HTMLTag ('tr', false, false);
+	$td = new HTMLTag ('th', false, false);
+
+	// Append child element to column
+	$td->innerHTML ($html);
+
+	// Append column to row
+	$th->appendChild ($td);
+
+	// Append row to head
+	$thead->appendChild ($th);
+
+	// Append row to table body
+	$table->appendChild ($thead);
 }
 
 try {
@@ -60,9 +81,12 @@ try {
 		'cellpadding' => '8'
 	));
 
-	// Add first row as header if multiple website support is enabled
+	// Create comment thread table body
+	$threads_body = new HTMLTag ('tbody');
+
+	// Add table head if multiple website support is enabled
 	if ($hashover->setup->supportsMultisites === true) {
-		add_table_row ($threads_table, new HTMLTag ('b', $website, false));
+		add_table_head ($threads_table, $website);
 	}
 
 	// Run through comment threads
@@ -95,9 +119,12 @@ try {
 			'children' => array (new HTMLTag ('small', $data['url'], false))
 		)));
 
-		// And row div to table
-		add_table_row ($threads_table, $div);
+		// And row div to table body
+		add_table_row ($threads_body, $div);
 	}
+
+	// Add table body to table
+	$threads_table->appendChild ($threads_body);
 
 	// Template data
 	$template = array (
@@ -124,10 +151,8 @@ try {
 				'cellpadding' => '8'
 			));
 
-			// Add first row as header
-			add_table_row ($websites_table, new HTMLTag ('b', array (
-				'innerHTML' => $hashover->locale->text['website'][1],
-			), false));
+			// Add table head
+			add_table_head ($websites_table, $hashover->locale->text['website'][1]);
 
 			// Sort the websites
 			sort ($websites, SORT_NATURAL);
@@ -143,7 +168,7 @@ try {
 				add_table_row ($websites_table, new HTMLTag ('a', array (
 					'href' => '?website=' . urlencode ($name),
 					'innerHTML' => $name
-				)));
+				), false));
 			}
 
 			// And add other websites to template
@@ -158,5 +183,5 @@ try {
 	echo $hashover->templater->parseTemplate ('moderation.html', $template);
 
 } catch (\Exception $error) {
-	echo Misc::displayError ($error->getMessage ());
+	echo Misc::displayException ($error);
 }

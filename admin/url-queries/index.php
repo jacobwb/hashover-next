@@ -127,5 +127,5 @@ try {
 	echo $hashover->templater->parseTemplate ('url-queries.html', $template);
 
 } catch (\Exception $error) {
-	echo Misc::displayError ($error->getMessage ());
+	echo Misc::displayException ($error);
 }

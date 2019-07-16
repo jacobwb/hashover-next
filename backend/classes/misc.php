@@ -88,10 +88,9 @@ class Misc
 		), true);
 	}
 
-	// Make a string XSS-safe
+	// Makes a string XSS-safe by removing harmful characters
 	public static function makeXSSsafe ($string)
 	{
-		// Return cookie value without harmful characters
 		return str_replace (self::$searchXSS, self::$replaceXSS, $string);
 	}
 
@@ -143,6 +142,12 @@ class Misc
 		$message = implode (PHP_EOL, $data);
 
 		return $message;
+	}
+
+	// Returns error in HTML paragraph
+	public static function displayException (\Exception $error, $mode = 'php')
+	{
+		return self::displayError ($error->getMessage (), $mode);
 	}
 
 	// Returns an array item or a given default value

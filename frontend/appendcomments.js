@@ -37,7 +37,7 @@ HashOver.prototype.appendComments = function (comments, dest, parent)
 
 		// Check if we can insert HTML adjacently
 		if ('insertAdjacentHTML' in dest) {
-			// If so, just do so
+			// If so, insert comment adjacently
 			dest.insertAdjacentHTML ('beforeend', html);
 		} else {
 			// If not, convert HTML to NodeList

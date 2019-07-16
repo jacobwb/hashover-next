@@ -20,7 +20,7 @@ HashOver.prototype.parseAll = function (comments, element, collapse, popular)
 		// And insert HTML adjacently
 		element.insertAdjacentHTML ('beforeend', html);
 	} else {
-		// If not, add comments as element's innerHTML
+		// If not, add comments as element's inner HTML
 		element.innerHTML = html;
 	}
 

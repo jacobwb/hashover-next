@@ -9,13 +9,13 @@ HashOverConstructor.prototype.getMainElement = function (id)
 
 	// Check if the HashOver element exists
 	if (element === null) {
-		// If not, get HashOver script tag
+		// If not, get script tag
 		var script = this.constructor.script;
 
-		// Create div tag for HashOver comments to appear in
+		// Create div for comments to appear in
 		element = this.createElement ('div', { id: id });
 
-		// Place the main HashOver element on the page
+		// Place HashOver element before script tag
 		script.parentNode.insertBefore (element, script);
 	}
 

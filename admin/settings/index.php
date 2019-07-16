@@ -725,7 +725,7 @@ try {
 
 		// Create settings items element
 		$items = new HTMLTag ('div', array (
-			'class' => 'settings p-spaced'
+			'class' => 'settings'
 		));
 
 		// Append each settings category items to div
@@ -752,5 +752,5 @@ try {
 	echo $hashover->templater->parseTemplate ('settings.html', $template);
 
 } catch (\Exception $error) {
-	echo Misc::displayError ($error->getMessage ());
+	echo Misc::displayException ($error);
 }

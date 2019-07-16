@@ -20,12 +20,13 @@
 class FormUI
 {
 	protected $setup;
+	protected $commentCounts;
+
 	protected $locale;
 	protected $avatars;
 	protected $misc;
 	protected $cookies;
 	protected $login;
-	protected $commentCounts;
 	protected $pageTitle;
 	protected $pageURL;
 
@@ -38,12 +39,15 @@ class FormUI
 
 	public function __construct (Setup $setup, array $counts)
 	{
+		// Store parameters as properties
 		$this->setup = $setup;
+		$this->commentCounts = $counts;
+
+		// Instantiate various classes
 		$this->locale = new Locale ($setup);
 		$this->login = new Login ($setup);
 		$this->avatars = new Avatars ($setup);
 		$this->cookies = new Cookies ($setup);
-		$this->commentCounts = $counts;
 		$this->pageTitle = $this->setup->pageTitle;
 		$this->pageURL = $this->setup->pageURL;
 

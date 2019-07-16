@@ -28,55 +28,55 @@ class PostData
 	public function __construct ()
 	{
 		// Use POST or GET based on whether request is for JSONP
-		$postget = isset ($_GET['jsonp']) ? $_GET : $_POST;
+		$request = isset ($_GET['jsonp']) ? $_GET : $_POST;
 
 		// Set status
-		if (isset ($postget['status'])) {
-			$this->data['status'] = $this->ForceUTF8 ($postget['status']);
+		if (isset ($request['status'])) {
+			$this->data['status'] = $this->ForceUTF8 ($request['status']);
 		}
 
 		// Set name
-		if (isset ($postget['name'])) {
-			$this->data['name'] = $this->ForceUTF8 ($postget['name']);
+		if (isset ($request['name'])) {
+			$this->data['name'] = $this->ForceUTF8 ($request['name']);
 		}
 
 		// Set password
-		if (isset ($postget['password'])) {
-			$this->data['password'] = $this->ForceUTF8 ($postget['password']);
+		if (isset ($request['password'])) {
+			$this->data['password'] = $this->ForceUTF8 ($request['password']);
 		}
 
 		// Set e-mail address
-		if (isset ($postget['email'])) {
-			$this->data['email'] = $this->ForceUTF8 ($postget['email']);
+		if (isset ($request['email'])) {
+			$this->data['email'] = $this->ForceUTF8 ($request['email']);
 		}
 
 		// Set website URL
-		if (isset ($postget['website'])) {
-			$this->data['website'] = $this->ForceUTF8 ($postget['website']);
+		if (isset ($request['website'])) {
+			$this->data['website'] = $this->ForceUTF8 ($request['website']);
 		}
 
 		// Set comment
-		if (isset ($postget['comment'])) {
-			$this->data['comment'] = $this->ForceUTF8 ($postget['comment']);
+		if (isset ($request['comment'])) {
+			$this->data['comment'] = $this->ForceUTF8 ($request['comment']);
 		}
 
 		// Set indicator of remote access
-		if (isset ($postget['remote-access'])) {
+		if (isset ($request['remote-access'])) {
 			$this->remoteAccess = true;
 		}
 
 		// Get comment file
-		if (isset ($postget['file'])) {
-			$this->file = $postget['file'];
+		if (isset ($request['file'])) {
+			$this->file = $request['file'];
 		}
 
 		// Get reply comment file
-		if (isset ($postget['reply-to'])) {
-			$this->replyTo = $postget['reply-to'];
+		if (isset ($request['reply-to'])) {
+			$this->replyTo = $request['reply-to'];
 		}
 
 		// Set indicator of AJAX requests
-		if (isset ($postget['ajax'])) {
+		if (isset ($request['ajax'])) {
 			$this->viaAJAX = true;
 		}
 	}

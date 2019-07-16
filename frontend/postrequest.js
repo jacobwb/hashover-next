@@ -1,8 +1,10 @@
 // Posts comments via AJAX (postrequest.js)
 HashOver.prototype.postRequest = function (destination, form, button, callback, type, permalink, close, isReply, isEdit)
 {
-	var formElements = form.elements;
-	var elementsLength = formElements.length;
+	// Form inputs
+	var inputs = form.elements;
+
+	// Initial request queries
 	var queries = [];
 
 	// Reference to this object
@@ -48,31 +50,30 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 	// Sends a request to post a comment
 	function sendRequest ()
 	{
-		hashover.ajax ('POST', form.action, queries, commentHandler, true);
+		// Create post comment request queries
+		var postQueries = queries.concat ([ 'post=' + encodeURIComponent (form.post.value) ]);
+
+		// Send request to post a comment
+		hashover.ajax ('POST', form.action, postQueries, commentHandler, true);
 	}
 
 	// Get all form input names and values
-	for (var i = 0; i < elementsLength; i++) {
-		// Skip login/logout input
-		if (formElements[i].name === 'login' || formElements[i].name === 'logout') {
+	for (var i = 0, il = inputs.length; i < il; i++) {
+		// Skip submit inputs
+		if (inputs[i].type === 'submit') {
 			continue;
 		}
 
 		// Skip unchecked checkboxes
-		if (formElements[i].type === 'checkbox' && formElements[i].checked !== true) {
-			continue;
-		}
-
-		// Skip delete input
-		if (formElements[i].name === 'delete') {
+		if (inputs[i].type === 'checkbox' && inputs[i].checked !== true) {
 			continue;
 		}
 
 		// Otherwise, get encoded input value
-		var value = encodeURIComponent (formElements[i].value);
+		var value = encodeURIComponent (inputs[i].value);
 
 		// Add query to queries array
-		queries.push (formElements[i].name + '=' + value);
+		queries.push (inputs[i].name + '=' + value);
 	}
 
 	// Add final queries
@@ -91,7 +92,7 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 		// If so, check if the user is logged in
 		if (this.setup['user-is-logged-in'] !== true || isEdit === true) {
 			// If not, send a login request
-			var loginQueries = queries.concat (['login=Login']);
+			var loginQueries = queries.concat ([ 'login=Login' ]);
 
 			// Send post comment request after login
 			this.ajax ('POST', form.action, loginQueries, sendRequest, true);

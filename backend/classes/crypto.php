@@ -100,7 +100,7 @@ class Crypto extends Secrets
 		$keys = array ();
 
 		// Initial key
-		$key = '';
+		$encryption_key = '';
 
 		// Generate random string from encryption key SHA-256 hash
 		for ($k = 0; $k < 16; $k++) {
@@ -108,13 +108,19 @@ class Crypto extends Secrets
 			$keys[] = array_search ($string[$k], $this->encryptionHash);
 
 			// Add encryption key character to key
-			$key .= $string[$k];
+			$encryption_key .= $string[$k];
 		}
 
-		// Return random string and list of encryption hash array keys
+		// Convert encryption hash array keys to string
+		$list = join (',', $keys);
+
+		// Return encryption key info
 		return array (
-			'key' => $key,
-			'keys' => join (',', $keys)
+			// Randomly generated encryption key
+			'key' => $encryption_key,
+
+			// List of encryption hash array keys
+			'keys' => $list
 		);
 	}
 
@@ -128,17 +134,32 @@ class Crypto extends Secrets
 		$iv = openssl_random_pseudo_bytes ($this->ivSize);
 
 		// OpenSSL encrypt using random encryption key
-		$ciphertext = openssl_encrypt (
+		$encrypted = openssl_encrypt (
+			// String being encrypted
 			$string,
+
+			// Encryption cipher method
 			$this->cipher,
+
+			// Generated encryption key
 			$key_pair['key'],
+
+			// OpenSSL options
 			$this->options,
+
+			// Initialization vector
 			$iv
 		);
 
-		// Return encrypted value and list of encryption hash array keys
+		// Encode encrypted text as base64
+		$encoded = base64_encode ($iv . $encrypted);
+
+		// Return encryption info
 		return array (
-			'encrypted' => base64_encode ($iv . $ciphertext),
+			// Encrypted string
+			'encrypted' => $encoded,
+
+			// List of encryption hash array keys
 			'keys' => $key_pair['keys']
 		);
 	}
@@ -152,7 +173,7 @@ class Crypto extends Secrets
 		}
 
 		// Initial key
-		$key = '';
+		$decryption_key = '';
 
 		// Split keys string into array
 		$keys = explode (',', $keys);
@@ -162,31 +183,43 @@ class Crypto extends Secrets
 			// Cast key to integer
 			$hash_key = (int)($value);
 
-			// Give up if any array value isn't valid
-			if (!isset ($this->encryptionHash[$hash_key])) {
-				return '';
+			// Check if encryption hash key exists
+			if (isset ($this->encryptionHash[$hash_key])) {
+				// If so, add character to decryption key
+				$decryption_key .= $this->encryptionHash[$hash_key];
+			} else {
+				// If not, give up and return false
+				return false;
 			}
-
-			// Add character to decryption key
-			$key .= $this->encryptionHash[$hash_key];
 		}
 
 		// Decode base64 encoded string
-		$decode = base64_decode ($string, true);
+		$decoded = base64_decode ($string, true);
+
+		// Get length of decoded string
+		$length = mb_strlen ($decoded, '8bit');
+
+		// Get decipher text from decoded string
+		$decrypted = mb_substr ($decoded, $this->ivSize, $length, '8bit');
 
 		// Setup OpenSSL IV
-		$iv = mb_substr ($decode, 0, $this->ivSize, '8bit');
-
-		// Setup OpenSSL cipher text
-		$full_length = mb_strlen ($decode, '8bit');
-		$deciphertext = mb_substr ($decode, $this->ivSize, $full_length, '8bit');
+		$iv = mb_substr ($decoded, 0, $this->ivSize, '8bit');
 
 		// Return OpenSSL decrypted string
 		return openssl_decrypt (
-			$deciphertext,
+			// String being decrypted
+			$decrypted,
+
+			// Encryption decipher method
 			$this->cipher,
-			$key,
+
+			// Retrieved decryption key
+			$decryption_key,
+
+			// OpenSSL options
 			$this->options,
+
+			// Initialization vector
 			$iv
 		);
 	}

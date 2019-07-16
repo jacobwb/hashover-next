@@ -48,10 +48,10 @@ try {
 		$hashover->login->clearLogin ();
 
 		// Get path to main admin page
-		$admin = $hashover->setup->getHttpPath ('admin');
+		$admin_path = $hashover->setup->getHttpPath ('admin');
 
 		// And redirect user to main admin page
-		redirect ($admin . '/');
+		redirect ($admin_path . '/');
 	}
 
 	// Template data
@@ -69,5 +69,5 @@ try {
 	echo $hashover->templater->parseTemplate ('login.html', $template);
 
 } catch (\Exception $error) {
-	echo Misc::displayError ($error->getMessage ());
+	echo Misc::displayException ($error);
 }

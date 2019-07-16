@@ -41,7 +41,7 @@ document.addEventListener ('DOMContentLoaded', function () {
 	function clearViewTabs ()
 	{
 		eachViewLink (function (link) {
-			link.className = 'view-link';
+			link.classList.add ('view-link');
 		});
 	}
 
@@ -49,7 +49,7 @@ document.addEventListener ('DOMContentLoaded', function () {
 	sidebarButton.onclick = function (event)
 	{
 		// Add class to show sidebar
-		document.body.className = 'sidebar-shown';
+		document.body.classList.add ('sidebar-shown');
 
 		// Click/touch event handler
 		var clickHandler = function (event)
@@ -60,7 +60,7 @@ document.addEventListener ('DOMContentLoaded', function () {
 			}
 
 			// Otherwise, remove class from body
-			this.className = '';
+			this.classList.remove ('sidebar-shown');
 
 			// Remove touchend event
 			document.body.removeEventListener ('touchend', clickHandler);
@@ -98,7 +98,7 @@ document.addEventListener ('DOMContentLoaded', function () {
 			var frameUrl = window.location.href;
 
 			if (regex.test (decodeURIComponent (frameUrl))) {
-				link.className += ' active';
+				link.classList.add ('active');
 			}
 		});
 	};

@@ -317,5 +317,5 @@ try {
 	create_rss ($hashover);
 
 } catch (\Exception $error) {
-	echo Misc::displayError ($error->getMessage (), 'rss');
+	echo Misc::displayException ($error, 'rss');
 }

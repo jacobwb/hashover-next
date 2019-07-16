@@ -151,5 +151,5 @@ try {
 	echo $statistics->executionEnd ();
 
 } catch (\Exception $error) {
-	echo Misc::displayError ($error->getMessage (), 'javascript');
+	echo Misc::displayException ($error, 'javascript');
 }

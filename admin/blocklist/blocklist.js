@@ -17,11 +17,12 @@
 
 // Wait for the page HTML to be parsed
 document.addEventListener ('DOMContentLoaded', function () {
-	// Get the "New Address" and "Save" buttons
+	// Get the "+" and "Save" buttons
 	var newButton = document.getElementById ('new-button');
 	var ipList = document.getElementById ('ip-list');
 	var saveButton = document.getElementById ('save-button');
 
+	// Add click event handler to "Add" button
 	newButton.onclick = function ()
 	{
 		// Create input and indentation

@@ -29,7 +29,7 @@ class Secrets
 {
 	// REQUIRED SETUP INFORMATION
 
-	// E-mail for notification of new comments
+	// Admin e-mail address to send notifications to
 	protected $notificationEmail = 'example@example.com';
 
 	// Unique encryption key (case-sensitive)

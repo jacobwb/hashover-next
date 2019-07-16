@@ -94,7 +94,7 @@ HashOver.prototype.init = function (id)
 	}
 
 	// Append theme CSS if enabled
-	this.optionalMethod ('appendCSS');
+	this.optionalMethod ('appendCSS', [ id ]);
 
 	// Put number of comments into "hashover-comment-count" identified HTML element
 	if (this.instance['total-count'] !== 0) {
@@ -106,11 +106,15 @@ HashOver.prototype.init = function (id)
 		this.optionalMethod ('appendRSS');
 	}
 
-	// Add initial HTML to page
+	// Check if we can insert HTML adjacently
 	if ('insertAdjacentHTML' in mainElement) {
+		// If so, clear main element's contents
 		mainElement.textContent = '';
+
+		// And insert initial HTML adjacently
 		mainElement.insertAdjacentHTML ('beforeend', this.instance['initial-html']);
 	} else {
+		// If not, replace main element's inner HTML with initial HTML
 		mainElement.innerHTML = this.instance['initial-html'];
 	}
 

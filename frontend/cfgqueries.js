@@ -10,7 +10,7 @@ HashOver.cfgQueries = function (value, name, queries)
 	// Check if value is an object
 	if (typeof (value) !== 'object') {
 		// If so, get query matrix as string
-		var matrix = '['  + name.join ('][') + ']';
+		var matrix = '[' + name.join ('][') + ']';
 
 		// Encode current URL query value
 		var value = encodeURIComponent (value);
@@ -27,5 +27,6 @@ HashOver.cfgQueries = function (value, name, queries)
 		HashOver.cfgQueries (value[key], name.concat (key), queries);
 	}
 
+	// And return settings URL queries
 	return queries;
 };

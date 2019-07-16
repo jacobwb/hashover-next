@@ -6,5 +6,6 @@ HashOverConstructor.rootPath = (function () {
 	// Get HashOver root path
 	var root = scriptSrc.replace (/\/[^\/]*\/?$/, '');
 
+	// And return HashOver root path
 	return root;
 }) ();

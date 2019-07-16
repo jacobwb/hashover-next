@@ -178,5 +178,5 @@ try {
 	echo Misc::jsonData ($data);
 
 } catch (\Exception $error) {
-	echo Misc::displayError ($error->getMessage (), 'json');
+	echo Misc::displayException ($error, 'json');
 }

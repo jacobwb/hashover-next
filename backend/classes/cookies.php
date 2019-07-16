@@ -43,9 +43,10 @@ class Cookies
 	// Set a cookie with expiration date
 	public function set ($name, $value = '', $date = false)
 	{
+		// Add pseudo-namespacing prefix to cookie name
 		$name = 'hashover-' . $name;
 
-		// Use specific expiration date or the one in Settings
+		// Use specific expiration date or configured date
 		$date = $date ?: $this->setup->cookieExpiration;
 
 		// Set the cookie if cookies are enabled
@@ -77,10 +78,12 @@ class Cookies
 	// Get cookie value
 	public function getValue ($name, $trim = false)
 	{
+		// Add pseudo-namespacing prefix to cookie name
 		$name = 'hashover-' . $name;
 
-		// Check if it exists
+		// Check if cookie exists
 		if (!empty ($_COOKIE[$name])) {
+			// If so, store as value for cleaner code
 			$value = $_COOKIE[$name];
 
 			// Strip escaping backslashes from cookie value
@@ -93,10 +96,11 @@ class Cookies
 				$value = trim ($value, " \r\n\t");
 			}
 
+			// Otherwise, return value as-is
 			return $value;
 		}
 
-		// If not set return null
+		// If not, return null
 		return null;
 	}
 

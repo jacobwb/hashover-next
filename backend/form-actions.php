@@ -21,13 +21,21 @@
 if (isset ($_GET['jsonp'])) {
 	// If so, setup HashOver for JavaScript
 	require ('javascript-setup.php');
+
+	// Set mode as JavaScript
 	$mode = 'javascript';
-	$postget = $_GET;
+
+	// Get data from GET request
+	$request = $_GET;
 } else {
 	// If not, setup HashOver for JSON
 	require ('json-setup.php');
+
+	// Set mode as JSON
 	$mode = 'json';
-	$postget = $_POST;
+
+	// Get data from POST request
+	$request = $_POST;
 }
 
 try {
@@ -67,7 +75,7 @@ try {
 
 	// Execute an action (write/edit/login/etc)
 	foreach ($post_actions as $action) {
-		if (empty ($postget[$action])) {
+		if (empty ($request[$action])) {
 			continue;
 		}
 
@@ -103,7 +111,7 @@ try {
 	}
 
 	// Returns comment being saved as JSON
-	if (isset ($postget['ajax']) and isset ($data) and is_array ($data)) {
+	if (isset ($request['ajax']) and isset ($data) and is_array ($data)) {
 		// Slit file into parts
 		$file = $data['file'];
 		$key_parts = explode ('-', $file);
@@ -119,5 +127,5 @@ try {
 		));
 	}
 } catch (\Exception $error) {
-	echo Misc::displayError ($error->getMessage (), $mode);
+	echo Misc::displayException ($error, $mode);
 }

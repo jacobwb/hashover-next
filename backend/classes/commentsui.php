@@ -19,11 +19,6 @@
 
 class CommentsUI extends FormUI
 {
-	public function __construct (Setup $setup, array $counts)
-	{
-		parent::__construct ($setup, $counts);
-	}
-
 	// Creates a wrapper element for each comment
 	public function commentWrapper ($permalink = '{permalink}')
 	{

@@ -33,10 +33,9 @@ class Statistics
 		$this->mode = $mode;
 	}
 
-	// Script execution starting time
+	// Starts script execution time in seconds
 	public function executionStart ()
 	{
-		// Start time in seconds
 		$this->executionStart = microtime (true);
 	}
 

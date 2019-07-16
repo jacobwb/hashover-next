@@ -542,12 +542,12 @@ class WriteComments extends Secrets
 		} else {
 			// Check if setup is for a comment edit
 			if ($editing === true) {
-				// If so, set status to "pending" if moderation of user edits is enabled
+				// If so, pend comment if edit moderation is enabled
 				if ($this->setup->pendsUserEdits === true) {
 					$this->data['status'] = 'pending';
 				}
 			} else {
-				// If not, set status to "pending" if moderation is enabled
+				// If not, pend comment if moderation is enabled
 				if ($this->setup->usesModeration === true) {
 					$this->data['status'] = 'pending';
 				}

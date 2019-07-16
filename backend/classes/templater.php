@@ -55,7 +55,7 @@ class Templater
 		// Local callback for preg_replace
 		$parser = function ($grp) use (&$template)
 		{
-			// Store match for pretty code
+			// Store key for pretty code
 			$key = $grp[1];
 
 			// Return data from template if it exists

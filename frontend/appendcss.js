@@ -1,8 +1,6 @@
 // Appends HashOver theme CSS to page head (appendcss.js)
 HashOverConstructor.prototype.appendCSS = function (id)
 {
-	id = id || 'hashover';
-
 	// Get the page head
 	var head = document.head || document.getElementsByTagName ('head')[0];
 

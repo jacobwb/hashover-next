@@ -83,6 +83,12 @@ $pages = array (
 
 	new HTMLTag ('a', array (
 		'class' => 'view-link',
+		'href' => '../settings/',
+		'innerHTML' => $hashover->locale->text['settings']
+	), false),
+
+	new HTMLTag ('a', array (
+		'class' => 'view-link',
 		'href' => '../updates/',
 		'innerHTML' => $hashover->locale->text['check-for-updates']
 	), false),
@@ -91,12 +97,6 @@ $pages = array (
 		'class' => 'view-link',
 		'href' => '../documentation/',
 		'innerHTML' => $hashover->locale->text['documentation']
-	), false),
-
-	new HTMLTag ('a', array (
-		'class' => 'view-link',
-		'href' => '../settings/',
-		'innerHTML' => $hashover->locale->text['settings']
 	), false)
 );
 

@@ -136,7 +136,7 @@ try {
 			continue;
 		}
 
-		// Parse comment
+		// Otherwise, parse comment
 		$comment = $hashover->commentParser->parse ($raw, $key, $key_parts);
 
 		// Merge comment with page metadata
@@ -198,5 +198,5 @@ try {
 	echo Misc::jsonData ($data);
 
 } catch (\Exception $error) {
-	echo Misc::displayError ($error->getMessage (), 'json');
+	echo Misc::displayException ($error, 'json');
 }

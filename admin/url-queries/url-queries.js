@@ -17,11 +17,12 @@
 
 // Wait for the page HTML to be parsed
 document.addEventListener ('DOMContentLoaded', function () {
-	// Get the "New Query Pair" and "Save" buttons
+	// Get the "+" and "Save" buttons
 	var newButton = document.getElementById ('new-button');
 	var queriesList = document.getElementById ('queries-list');
 	var saveButton = document.getElementById ('save-button');
 
+	// Add click event handler to "Add" button
 	newButton.onclick = function ()
 	{
 		// Create inputs and indentation

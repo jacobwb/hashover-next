@@ -28,7 +28,6 @@
 // Automated settings
 class Settings extends SensitiveSettings
 {
-	public $themePath;
 	public $rootDirectory;
 	public $commentsRoot;
 	public $commentsPath;
@@ -39,13 +38,15 @@ class Settings extends SensitiveSettings
 	public $scheme;
 	public $domain;
 	public $absolutePath;
+	public $themePath;
+	public $formFields;
 
 	public function __construct ()
 	{
 		// Set encoding
 		mb_internal_encoding ('UTF-8');
 
-		// Get parent directory
+		// Get absolute root directory path
 		$root_directory = dirname (dirname (__DIR__));
 
 		// Get HTTP root directory
@@ -190,18 +191,18 @@ class Settings extends SensitiveSettings
 				}, $setting);
 			}
 
-			// Check if the setting from the JSON data exists
+			// Check if setting from JSON data exists
 			if (property_exists ('HashOver\\' . $class, $setting)) {
 				// If so, get default setting type
-				$default_type = gettype ($this->{$setting});
+				$type = gettype ($this->{$setting});
 
 				// Skip setting if its an empty string
-				if ($default_type === 'string' and empty ($value)) {
+				if ($type === 'string' and empty ($value)) {
 					continue;
 				}
 
-				// Otherwise, override default if setting types match
-				if (gettype ($value) === $default_type) {
+				// Otherwise, override setting if types match
+				if (gettype ($value) === $type) {
 					$this->{$setting} = $value;
 				}
 			}

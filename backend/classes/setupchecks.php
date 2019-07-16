@@ -60,10 +60,10 @@ class SetupChecks extends Secrets
 			));
 		}
 
-		// Throw exception if notification email is set to the default
+		// Throw exception if notification e-mail address is set to the default
 		if ($this->notificationEmail === 'example@example.com') {
 			throw new \Exception (sprintf (
-				'You must use an e-mail other than "example@example.com" in %s',
+				'You must use an e-mail address other than "example@example.com" in %s',
 				$setup->getBackendPath ('classes/secrets.php')
 			));
 		}
