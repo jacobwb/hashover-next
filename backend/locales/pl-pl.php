@@ -209,6 +209,7 @@ $locale = array (
 	'setting-appends-rss'			=> 'Dodaj kanały RSS kanału HashOver do strony',
 	'setting-login-method'			=> 'System logowania użytkownika',
 	'setting-sets-cookies'			=> 'Włącz ciasteczka',
+	'setting-cookie-expiration'		=> 'Względna data ważności pliku cookie',
 	'setting-secure-cookies'		=> 'Użyj bezpiecznych plików cookie HTTPS',
 	'setting-stores-ip-address'		=> 'Włącz przechowywanie adresów IP użytkowników',
 	'setting-subscribes-user'		=> 'Domyślnie zasubskrybuj użytkownika, aby otrzymywać powiadomienia e-mail',

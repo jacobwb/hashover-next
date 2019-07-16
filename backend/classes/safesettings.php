@@ -58,6 +58,7 @@ class SafeSettings
 
 	// Behavior settings
 	public $setsCookies		= true;				// Whether cookies are enabled
+	public $cookieExpiration	= 'next month';			// Cookie expiration date, see: https://www.php.net/manual/en/datetime.formats.relative.php
 	public $displaysTitle		= true;				// Whether page title is shown or not
 	public $formPosition		= 'top';			// Position for primary form; options: 'top' or 'bottom'
 	public $showsReplyCount		= true;				// Whether to show reply count separately from total

@@ -40,6 +40,32 @@ class Cookies
 		}
 	}
 
+	// Returns cookie expiration date after datetime modification
+	protected function getCookieExpiration ()
+	{
+		// Get current datetime
+		$datetime = new \DateTime ();
+
+		// Return zero expiration date is session
+		if ($this->setup->cookieExpiration === 'session') {
+			return 0;
+		}
+
+		// Set date/time to configured expiration date/time
+		$modified = @$datetime->modify ($this->setup->cookieExpiration);
+
+		// Set datetime to next month if modification failed
+		if ($modified === false) {
+			$datetime->modify ('next month');
+		}
+
+		// Get datetime timestamp
+		$timestamp = $datetime->getTimestamp ();
+
+		// And return timestamp
+		return $timestamp;
+	}
+
 	// Set a cookie with expiration date
 	public function set ($name, $value = '', $date = false)
 	{
@@ -47,7 +73,7 @@ class Cookies
 		$name = 'hashover-' . $name;
 
 		// Use specific expiration date or configured date
-		$date = $date ?: $this->setup->cookieExpiration;
+		$date = $date ?: $this->getCookieExpiration ();
 
 		// Set the cookie if cookies are enabled
 		if ($this->setup->setsCookies !== false) {

@@ -209,6 +209,7 @@ $locale = array (
 	'setting-appends-rss'			=> 'Add HashOver RSS Feed links to page',
 	'setting-login-method'			=> 'User login system',
 	'setting-sets-cookies'			=> 'Enable cookies',
+	'setting-cookie-expiration'		=> 'Relative cookie expiration date',
 	'setting-secure-cookies'		=> 'Use secure HTTPS-only cookies',
 	'setting-stores-ip-address'		=> 'Enable storage of user IP addresses',
 	'setting-subscribes-user'		=> 'Subscribe the user to e-mail notifications by default',

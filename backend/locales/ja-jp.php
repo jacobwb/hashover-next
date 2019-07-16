@@ -209,6 +209,7 @@ $locale = array (
 	'setting-appends-rss'			=> 'ページへのHashOver RSSフィードリンクを追加',
 	'setting-login-method'			=> 'ユーザーログインシステム',
 	'setting-sets-cookies'			=> 'クッキーを有効にする',
+	'setting-cookie-expiration'		=> '相対的なクッキーの有効期限',
 	'setting-secure-cookies'		=> '安全なHTTPSのみのクッキーを使用する',
 	'setting-stores-ip-address'		=> 'ユーザーIPアドレスの保存を有効にする',
 	'setting-subscribes-user'		=> '既定でユーザーに電子メール通知を登録します',

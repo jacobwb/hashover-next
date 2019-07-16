@@ -209,6 +209,7 @@ $locale = array (
 	'setting-appends-rss'			=> 'Adăugați link-uri HashOver RSS feeds to page',
 	'setting-login-method'			=> 'Sistem de conectare utilizator',
 	'setting-sets-cookies'			=> 'Activați cookie-urile',
+	'setting-cookie-expiration'		=> 'Data de expirare a cookie-lor relativă',
 	'setting-secure-cookies'		=> 'Utilizați cookie-urile securizate HTTPS',
 	'setting-stores-ip-address'		=> 'Activați stocarea adreselor IP utilizator',
 	'setting-subscribes-user'		=> 'Abonează-l pe utilizator să trimită notificări prin e-mail în mod implicit',

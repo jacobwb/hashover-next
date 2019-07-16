@@ -33,7 +33,6 @@ class Settings extends SensitiveSettings
 	public $httpRoot;
 	public $httpBackend;
 	public $httpImages;
-	public $cookieExpiration;
 	public $domain;
 	public $themePath;
 	public $formFields;
@@ -68,9 +67,6 @@ class Settings extends SensitiveSettings
 
 		// Image directory for HTTP
 		$this->httpImages = $http_directory . '/images';
-
-		// Cookie expiration date
-		$this->cookieExpiration = time () + 60 * 60 * 24 * 30;
 
 		// Domain name for refer checking & notifications
 		$this->domain = Misc::getArrayItem ($_SERVER, 'HTTP_HOST') ?: 'localhost';

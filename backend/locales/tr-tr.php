@@ -209,6 +209,7 @@ $locale = array (
 	'setting-appends-rss'			=> 'HashOver RSS Feed linklerini sayfaya ekleyin',
 	'setting-login-method'			=> 'Kullanıcı giriş sistemi',
 	'setting-sets-cookies'			=> 'Çerezleri etkinleştir',
+	'setting-cookie-expiration'		=> 'Göreli çerez son kullanma tarihi',
 	'setting-secure-cookies'		=> 'Güvenli HTTPS sadece çerezleri kullan',
 	'setting-stores-ip-address'		=> 'Kullanıcı IP adreslerinin saklanmasını etkinleştir',
 	'setting-subscribes-user'		=> 'Varsayılan olarak bildirimleri e-postaya göndermek için kullanıcıya abone olun',

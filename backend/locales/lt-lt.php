@@ -218,6 +218,7 @@ $locale = array (
 	'setting-appends-rss'			=> 'Pridėti HashOver RSS kanalo nuorodas į puslapį',
 	'setting-login-method'			=> 'Vartotojo prisijungimo sistema',
 	'setting-sets-cookies'			=> 'Įgalinti slapukus',
+	'setting-cookie-expiration'		=> 'Santykinė slapukų galiojimo data',
 	'setting-secure-cookies'		=> 'Naudoti saugius HTTPS slapukus',
 	'setting-stores-ip-address'		=> 'Įgalinti naudotojo IP adresų saugojimą',
 	'setting-subscribes-user'		=> 'Pagal numatytuosius nustatymus prenumeruojamas naudotojas el. Paštu',

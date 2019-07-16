@@ -209,6 +209,7 @@ $locale = array (
 	'setting-appends-rss'			=> '페이지에 HashOver RSS 피드 링크 추가',
 	'setting-login-method'			=> '사용자 로그인 시스템',
 	'setting-sets-cookies'			=> '쿠키 사용',
+	'setting-cookie-expiration'		=> '상대 쿠키 만료 날짜',
 	'setting-secure-cookies'		=> '보안 HTTPS 전용 쿠키 사용',
 	'setting-stores-ip-address'		=> '사용자 IP 주소 저장 사용',
 	'setting-subscribes-user'		=> '기본적으로 전자 메일 알림을 구독합니다',

@@ -209,6 +209,7 @@ $locale = array (
 	'setting-appends-rss'			=> '将HashOver RSS Feed链接添加到页面',
 	'setting-login-method'			=> '用户登录系统',
 	'setting-sets-cookies'			=> '启用Cookie',
+	'setting-cookie-expiration'		=> '相对cookie到期日',
 	'setting-secure-cookies'		=> '使用安全的HTTPS专用Cookie',
 	'setting-stores-ip-address'		=> '启用存储用户IP地址',
 	'setting-subscribes-user'		=> '订阅用户默认通过电子邮件通知',

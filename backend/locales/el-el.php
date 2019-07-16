@@ -209,6 +209,7 @@ $locale = array (
 	'setting-appends-rss'			=> 'Προσθήκη συνδέσμων HashOver RSS Ροής στη σελίδα',
 	'setting-login-method'			=> 'Σύστημα σύνδεσης χρηστών',
 	'setting-sets-cookies'			=> 'Ενεργοποίηση cookies',
+	'setting-cookie-expiration'		=> 'Σχετική ημερομηνία λήξης cookie',
 	'setting-secure-cookies'		=> 'Χρήση ασφαλών HTTPS-only cookies',
 	'setting-stores-ip-address'		=> 'Ενεργοποίηση αποθήκευσης των IP διευθύνσεων χρηστών',
 	'setting-subscribes-user'		=> 'Οι χρήστες εγγράφονται στα μηνύματα ηλεκτρονικού ταχυδρομείου ειδοποιήσεων από προεπιλογή',

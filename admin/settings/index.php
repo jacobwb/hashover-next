@@ -159,11 +159,6 @@ function ui_array (Setup $setup, Locale $locale)
 				)
 			),
 
-			'noreply-email' => array (
-				'type' => 'text',
-				'value' => $setup->noreplyEmail
-			),
-
 			'subscribes-user' => array (
 				'type' => 'checkbox',
 				'value' => $setup->subscribesUser
@@ -179,6 +174,12 @@ function ui_array (Setup $setup, Locale $locale)
 			'sets-cookies' => array (
 				'type' => 'checkbox',
 				'value' => $setup->setsCookies
+			),
+
+			'cookie-expiration' => array (
+				'type' => 'text',
+				'documentation'=> 'https://www.php.net/manual/en/datetime.formats.relative.php',
+				'value' => $setup->cookieExpiration
 			),
 
 			'secure-cookies' => array (
