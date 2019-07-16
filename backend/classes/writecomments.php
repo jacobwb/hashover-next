@@ -1032,7 +1032,7 @@ class WriteComments extends Secrets
 				// Rename file for reply
 				$comment_file = $this->postData->replyTo . '-' . $comment_number;
 			} else {
-				$comment_file = $this->thread->primaryCount;
+				$comment_file = (string)($this->thread->primaryCount);
 			}
 
 			// Check if comment thread exists
