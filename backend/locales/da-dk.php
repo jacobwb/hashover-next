@@ -138,18 +138,18 @@ $locale = array (
 
 	'admin'			=> 'Admin',
 	'moderation'		=> 'Moderation',
-	'block-ip-addresses'	=> 'Bloker IP-adresser',
-	'filter-url-queries'	=> 'Filter URL Queries',
-	'check-for-updates'	=> 'Check for Updates',
+	'block-ip-addresses'	=> 'IP-blokering',
+	'filter-url-queries'	=> 'URL-filtrering',
 	'settings'		=> 'Indstillinger',
+	'check-for-updates'	=> 'Opdateringer',
 
 	'admin-required'	=> 'Du skal være logget som administrator',
 
-	'blocklist-title'	=> 'IP-adresseliste',
+	'blocklist-title'	=> 'Bloker IP-adresser',
 	'blocklist-sub'		=> 'Blokér specifikke IP-adresser',
 	'blocklist-ip-tip'	=> 'IP-adresse eller tom for at fjerne',
 
-	'url-queries-title'	=> 'Ignorerede URL forespørgsler',
+	'url-queries-title'	=> 'Filter URL Queries',
 	'url-queries-sub'	=> 'Filtrer hvilke webadressespørgsmål der skal ignoreres',
 	'url-queries-name-tip'	=> 'Navne navn eller tom for at fjerne',
 	'url-queries-value-tip'	=> 'Forespørgselsværdi eller tom for enhver værdi',

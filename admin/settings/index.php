@@ -636,6 +636,9 @@ function create_paragraph ($hashover, $name, array $setting)
 }
 
 try {
+	// Do some standard HashOver setup work
+	require (realpath ('../../backend/standard-setup.php'));
+
 	// View setup
 	require (realpath ('../view-setup.php'));
 
@@ -708,7 +711,7 @@ try {
 
 	// Otherwise, create settings div
 	$div = new HTMLTag ('div', array (
-		'class' => 'p-spaced'
+		'id' => 'settings'
 	));
 
 	// Create settings divs
@@ -740,17 +743,14 @@ try {
 
 	// Template data
 	$template = array (
-		'sidebar'	=> $sidebar->asHTML ("\t\t"),
 		'title'		=> $hashover->locale->text['settings'],
-		'logout'	=> $logout->asHTML ("\t\t\t"),
 		'sub-title'	=> $hashover->locale->text['settings-sub'],
-		'message'	=> $form_message,
-		'settings'	=> $div->asHTML ("\t\t\t"),
+		'settings'	=> $div->asHTML ("\t"),
 		'save-button'	=> $hashover->locale->text['save']
 	);
 
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('settings.html', $template);
+	echo parse_templates ('admin', 'settings.html', $template, $hashover);
 
 } catch (\Exception $error) {
 	echo Misc::displayException ($error);

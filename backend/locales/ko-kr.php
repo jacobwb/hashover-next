@@ -138,18 +138,18 @@ $locale = array (
 
 	'admin'			=> '관리자',
 	'moderation'		=> '검토',
-	'block-ip-addresses'	=> 'IP 주소 차단',
-	'filter-url-queries'	=> 'URL 쿼리 필터링',
-	'check-for-updates'	=> '업데이트 확인',
+	'block-ip-addresses'	=> 'IP 차단',
+	'filter-url-queries'	=> 'URL 필터링',
 	'settings'		=> '설정',
+	'check-for-updates'	=> '업데이트',
 
 	'admin-required'	=> '관리자로 로그인해야합니다',
 
-	'blocklist-title'	=> 'IP 주소 차단 목록',
+	'blocklist-title'	=> 'IP 주소 차단',
 	'blocklist-sub'		=> '특정 IP 주소 차단',
 	'blocklist-ip-tip'	=> '제거 할 IP 주소 또는 공백',
 
-	'url-queries-title'	=> '무시 된 URL 검색어',
+	'url-queries-title'	=> 'URL 쿼리 필터링',
 	'url-queries-sub'	=> '무시할 URL 검색어 필터링',
 	'url-queries-name-tip'	=> '제거 할 쿼리 이름 또는 공백',
 	'url-queries-value-tip'	=> '쿼리 값 또는 모든 값의 공백',

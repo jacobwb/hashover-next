@@ -10,140 +10,350 @@ conditions, unless such conditions are required by law.
 
 -----------------------------------------------------------------------------*/
 
-body {
+body.general-style {
 	margin: 0px;
 	padding: 15px;
+}
+
+.general-style {
+	line-height: 1.75em;
 	cursor: default;
 }
 
-body, td, textarea, input, select {
+.general-style,
+.general-style td,
+.general-style textarea,
+.general-style input,
+.general-style select {
 	font-family: "Cantarell","Arial","Helvetica","FreeSans",sans-serif;
 	color: #000000;
 	font-size: 16px;
 }
 
-*, :after, :before {
+.general-style textarea,
+.general-style input,
+.general-style select,
+.general-style .select-wrapper  {
+	line-height: initial;
+}
+
+.general-style *,
+.general-style *:after,
+.general-style *:before {
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	-o-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
-body, a, a:link {
+.general-style,
+.general-style a,
+.general-style a:link {
 	text-decoration: none;
 	text-transform: none;
 }
 
-a, a:link {
+.general-style a,
+.general-style a:link {
 	color: #3485C7;
 }
 
-input:focus, textarea:focus, .animate-all {
+.general-style a:visited {
+	color: #3485C7;
+}
+
+.general-style a:hover {
+	text-decoration: underline;
+	color: #266394;
+	cursor: pointer;
+}
+
+.general-style h1 {
+	padding: 16px 0px 16px 0px;
+	border-bottom: 1px solid #AAAAAA;
+	margin: 32px 0px 16px 0px;
+}
+
+.general-style h2,
+.general-style h3,
+.general-style h4,
+.general-style h5 {
+	padding: 16px 0px 8px 0px;
+	border-bottom: 1px solid #CCCCCC;
+	margin: 32px 0px 8px 0px;
+}
+
+.general-style h1:first-child,
+.general-style h2:first-child {
+	margin-top: -16px;
+}
+
+.general-style *:first-child {
+	margin-top: 0px;
+}
+
+.general-style *:last-child {
+	margin-bottom: 0px;
+}
+
+.general-style ol,
+.general-style ul,
+.general-style dd {
+	margin: 0px 0px 1em 0px;
+	padding: 0px 0px 0px 2em;
+}
+
+.general-style li,
+.general-style dd {
+	margin-bottom: 16px;
+}
+
+.general-style dt {
+	margin-bottom: 8px;
+}
+
+.general-style ol {
+	list-style: none;
+	counter-reset: item;
+}
+
+.general-style li {
+	padding: 8px;
+}
+
+.general-style ol > li {
+	position: relative;
+	counter-increment: item;
+	border-left: 3px solid #41A7FA;
+	background-color: #F8F8FF;
+}
+
+.general-style ol > li:before {
+	content: counter(item);
+	display: inline-block;
+	position: absolute;
+	top: 0px;
+	left: -2em;
+	width: 2em;
+	height: 2em;
+	line-height: 2em;
+	text-align: center;
+	background: #41A7FA;
+	color: white;
+}
+
+.general-style h1 {
+	font-weight: bold;
+	font-size: 24px;
+}
+
+.general-style h2 {
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.general-style h3,
+.general-style h4,
+.general-style h5 {
+	font-size: 16px;
+}
+
+.general-style .muted-text {
+	color: #808080;
+}
+
+.general-style p,
+.general-style .p-spaced {
+	margin: 0px 0px 16px 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+.general-style p:last-child {
+	margin-bottom: 0px;
+}
+
+table.general-style,
+.general-style table {
+	width: 100%;
+}
+
+.general-style input:focus,
+.general-style textarea:focus,
+.general-style .animate-all {
 	-moz-transition: all 150ms linear 0s;
 	-webkit-transition: all 150ms linear 0s;
 	-o-transition: all 150ms linear 0s;
 	transition: all 150ms linear 0s;
 }
 
-a:visited {
-	color: #3485C7;
+.general-style input,
+.general-style textarea {
+	padding: 3px 5px 3px 5px;
+	border: 1px solid #909090;
+	background-color: #FCFCFC;
 }
 
-a:hover {
-	text-decoration: underline;
-	color: #266394;
+.general-style input,
+.general-style textarea,
+.general-style .select-wrapper {
+	margin: 0px 0px 5px 0px;
+}
+
+.general-style input:hover,
+.general-style textarea:hover {
+	border-color: #000000;
+}
+
+.general-style input[type="text"]:focus,
+.general-style input[type="password"]:focus,
+.general-style input[type="number"]:focus,
+.general-style input[type="button"]:focus,
+.general-style input[type="submit"]:focus,
+.general-style textarea:focus {
+	-o-box-shadow: 0px 0px 2px rgba(0, 191, 255, 0.5);
+	-moz-box-shadow: 0px 0px 2px rgba(0, 191, 255, 0.5);
+	-webkit-box-shadow: 0px 0px 2px rgba(0, 191, 255, 0.5);
+	box-shadow: 0px 0px 2px rgba(0, 191, 255, 0.5);
+}
+
+.general-style input[type="text"]:focus,
+.general-style input[type="password"]:focus,
+.general-style input[type="number"]:focus,
+.general-style input[type="button"]:focus,
+.general-style textarea:focus {
+	border-color: #3B96E0;
+}
+
+.general-style input[type="button"] {
+	padding: 5px 10px 5px 10px;
+	background-color: #F5F5F5;
+}
+
+.general-style input[type="button"]:hover {
+	background-color: #F0F0F0;
+}
+
+.general-style input[type="submit"] {
+	padding: 5px 15px 5px 15px;
+	color: #FFFFFF;
+	border: 1px solid #326BAC;
+	background-color: #3B96E0;
+}
+
+.general-style input[type="submit"]:hover {
+	text-decoration: none;
+	border: 1px solid #004799;
+	background-color: #41A7FA;
+}
+
+.general-style input[type="submit"]:active {
+	background-color: #007DFA;
+}
+
+.general-style input[type="submit"],
+.general-style input[type="button"] {
+	margin: 0px;
 	cursor: pointer;
 }
 
-h1 {
-	font-size: 28px;
-	font-weight: normal;
-	line-height: 1.25em;
+.general-style input[type="checkbox"] {
+	margin-top: -3px;
 }
 
-h1, h2 {
-	margin: 0px;
-	font-weight: normal;
+.general-style .select-wrapper {
+	display: inline-block;
+	position: relative;
 	overflow: hidden;
+	border: 1px solid #AAAAAA;
+	cursor: pointer;
 }
 
-.underlined {
-	display: block;
-	padding-bottom: 0.5em;
-	margin-bottom: 0.5em;
-	border-bottom: 1px solid #CCCCCC;
+.general-style .select-wrapper:before {
+	content: "\25BC";
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	display: inline-block;
+	height: 100%;
+	width: 2em;
+	padding: 6px 0px 6px 0px;
+	margin: 0px;
+	line-height: 12px;
+	text-align: center;
+	pointer-events: none;
+	background-color: #F0F0F0;
+	border-left: 1px solid #AAAAAA;
+	font-family: monospace;
+	font-size: 14px;
 }
 
-.muted-text {
-	color: #808080;
+.general-style .select-wrapper:hover,
+.general-style .select-wrapper:hover:before {
+	border-color: #000000;
 }
 
-.striped-rows-odd tr:nth-child(odd) {
+.general-style .select-wrapper select {
+	border: none;
+	background-color: #FCFCFC;
+	padding: 1px 1em 1px 1px;
+	cursor: pointer;
+}
+
+.general-style .striped-rows-odd tr:nth-child(odd) {
 	background-color: #F5F5F5;
 }
 
-.striped-rows-even tr:nth-child(even) {
+.general-style .striped-rows-even tr:nth-child(even) {
 	background-color: #F5F5F5;
 }
 
-.column-borders td {
+.general-style .column-borders td {
 	border-right: 1px solid #CCCCCC;
 }
 
-.striped-rows-even.column-borders tr:first-child > td,
-.column-borders td:last-child {
+.general-style .striped-rows-even.column-borders tr:first-child > td,
+.general-style .column-borders td:last-child {
 	border: none;
 }
 
-p, .p-spaced {
-	margin: 0px 0px 1em 0px;
-	padding: 0px;
-	overflow: hidden;
-}
-
-p:last-child {
-	margin-bottom: 0px;
-}
-
-table {
-	width: 100%;
-}
-
-.left {
+.general-style .left {
 	float: left;
 }
 
-.right {
+.general-style .right {
 	float: right;
 }
 
-.margin-left-children > * {
+.general-style .margin-left-children > * {
 	margin-left: 10px;
 }
 
-.margin-right-children > * {
+.general-style .margin-right-children > * {
 	margin-right: 10px;
 }
 
-.plain-button {
-	padding: 0.65em 1.5em 0.6em 1.5em;
+.general-style .plain-button {
+	display: inline-block;
+	padding: 4px 16px 4px 16px;
 	font-size: 14px;
 	background-color: rgba(200, 200, 255, 0.25);
+
 	-moz-border-radius: 4px 4px 4px 4px;
 	-webkit-border-radius: 4px 4px 4px 4px;
 	border-radius: 4px 4px 4px 4px;
 }
 
-.plain-button,
-.plain-button * {
+.general-style .plain-button,
+.general-style .plain-button * {
 	vertical-align: middle;
 }
 
-.plain-button:hover,
-.plain-button:hover * {
+.general-style .plain-button:hover,
+.general-style .plain-button:hover * {
 	text-decoration: none;
 }
 
-.plain-button:hover {
+.general-style .plain-button:hover {
 	background-color: rgba(200, 200, 255, 0.33);
 }

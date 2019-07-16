@@ -1,3 +1,5 @@
+<?php namespace HashOver;
+
 // Copyright (C) 2018-2019 Jacob Barkdull
 // This file is part of HashOver.
 //
@@ -15,15 +17,22 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Wait for the page HTML to be parsed
-document.addEventListener ('DOMContentLoaded', function () {
-	// Get message element
-	var message = document.getElementById ('message');
+try {
+	// Do some standard HashOver setup work
+	require (realpath ('../../backend/standard-setup.php'));
 
-	// Hide message after 5 seconds
-	if (message !== null) {
-		setTimeout (function () {
-			message.className = message.className.replace ('success', 'hide');
-		}, 1000 * 5);
-	}
-}, false);
+	// View setup
+	require (realpath ('../view-setup.php'));
+
+	// Template data
+	$template = array (
+		'title'		=> $hashover->locale->text['documentation'],
+		'coming-soon'	=> $hashover->locale->text['coming-soon']
+	);
+
+	// Load and parse HTML template
+	echo parse_templates ('admin', 'docs.html', $template, $hashover);
+
+} catch (\Exception $error) {
+	echo Misc::displayException ($error);
+}

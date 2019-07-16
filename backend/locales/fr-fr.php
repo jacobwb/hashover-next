@@ -145,18 +145,18 @@ $locale = array (
 
 	'admin'			=> 'Admin',
 	'moderation'		=> 'Modération',
-	'block-ip-addresses'	=> 'Bloquer les adresses IP',
-	'filter-url-queries'	=> 'Filtrer les requêtes URL',
-	'check-for-updates'	=> 'Vérifier les mises à jour',
+	'block-ip-addresses'	=> 'Blocage IP',
+	'filter-url-queries'	=> 'Filtrage d\'URL',
 	'settings'		=> 'Paramètres',
+	'check-for-updates'	=> 'Mises à jour',
 
 	'admin-required'	=> 'Vous devez être connecté en tant qu\'admin',
 
-	'blocklist-title'	=> 'Liste d\'adresses IP bloquées',
+	'blocklist-title'	=> 'Bloquer les adresses IP',
 	'blocklist-sub'		=> 'Bloquer les adresses IP spécifiques',
 	'blocklist-ip-tip'	=> 'Adresse IP ou vide à supprimer',
 
-	'url-queries-title'	=> 'Requêtes URL ignorées',
+	'url-queries-title'	=> 'Filtrer les requêtes URL',
 	'url-queries-sub'	=> 'Filtrer quelles requêtes d\'URL doivent être ignorées',
 	'url-queries-name-tip'	=> 'Nom de la requête ou vide à supprimer',
 	'url-queries-value-tip'	=> 'Valeur de requête ou vide pour toute valeur',

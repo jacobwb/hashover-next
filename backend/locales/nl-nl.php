@@ -138,18 +138,18 @@ $locale = array (
 
 	'admin'			=> 'Beheerder',
 	'moderation'		=> 'Moderatie',
-	'block-ip-addresses'	=> 'Blokkeer IP-adressen',
-	'filter-url-queries'	=> 'Filter URL-zoekopdrachten',
-	'check-for-updates'	=> 'Controleren op updates',
+	'block-ip-addresses'	=> 'IP-blokkering',
+	'filter-url-queries'	=> 'URL-filtering',
 	'settings'		=> 'Instellingen',
+	'check-for-updates'	=> 'Updates',
 
 	'admin-required'	=> 'Je moet ingelogd zijn als admin',
 
-	'blocklist-title'	=> 'IP Address Blocklist',
+	'blocklist-title'	=> 'Blokkeer IP-adressen',
 	'blocklist-sub'		=> 'Blokkeer specifieke IP-adressen',
 	'blocklist-ip-tip'	=> 'IP-adres of leeg om te verwijderen',
 
-	'url-queries-title'	=> 'Genegeerde URL-zoekopdrachten',
+	'url-queries-title'	=> 'Filter URL-zoekopdrachten',
 	'url-queries-sub'	=> 'Filter welke urlqueries moeten worden genegeerd',
 	'url-queries-name-tip'	=> 'Vraagnaam of leeg om te verwijderen',
 	'url-queries-value-tip'	=> 'Querywaarde of leeg voor elke waarde',

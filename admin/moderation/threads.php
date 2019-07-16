@@ -18,19 +18,20 @@
 
 
 try {
+	// Do some standard HashOver setup work
+	require (realpath ('../../backend/standard-setup.php'));
+
 	// View setup
 	require (realpath ('../view-setup.php'));
 
 	// Template data
 	$template = array (
-		'sidebar'	=> $sidebar->asHTML ("\t\t"),
 		'title'		=> $hashover->locale->text['moderation'],
-		'back'		=> $hashover->locale->text['back'],
-		'logout'	=> $logout->asHTML ("\t\t\t")
+		'back'		=> $hashover->locale->text['back']
 	);
 
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('threads.html', $template);
+	echo parse_templates ('admin', 'threads.html', $template, $hashover);
 
 } catch (\Exception $error) {
 	echo Misc::displayException ($error);

@@ -18,6 +18,9 @@
 
 
 try {
+	// Do some standard HashOver setup work
+	require (realpath ('../../backend/standard-setup.php'));
+
 	// View setup
 	require (realpath ('../view-setup.php'));
 
@@ -114,17 +117,14 @@ try {
 
 	// Template data
 	$template = array (
-		'sidebar'	=> $sidebar->asHTML ("\t\t"),
 		'title'		=> $hashover->locale->text['url-queries-title'],
-		'logout'	=> $logout->asHTML ("\t\t\t"),
 		'sub-title'	=> $hashover->locale->text['url-queries-sub'],
-		'message'	=> $form_message,
-		'inputs'	=> $inputs->getInnerHTML ("\t\t\t\t"),
+		'inputs'	=> $inputs->getInnerHTML ("\t\t"),
 		'save-button'	=> $hashover->locale->text['save']
 	);
 
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('url-queries.html', $template);
+	echo parse_templates ('admin', 'url-queries.html', $template, $hashover);
 
 } catch (\Exception $error) {
 	echo Misc::displayException ($error);

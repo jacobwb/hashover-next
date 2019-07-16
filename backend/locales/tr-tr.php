@@ -138,18 +138,18 @@ $locale = array (
 
 	'admin'			=> 'Yönetici',
 	'moderation'		=> 'Moderasyon',
-	'block-ip-addresses'	=> 'IP Adreslerini Engelle',
-	'filter-url-queries'	=> 'URL Sorgularını Filtrele',
-	'check-for-updates'	=> 'Güncellemeleri Kontrol Et',
+	'block-ip-addresses'	=> 'IP Engelleme',
+	'filter-url-queries'	=> 'URL Filtreleme',
 	'settings'		=> 'Ayarlar',
+	'check-for-updates'	=> 'Güncellemeler',
 
 	'admin-required'	=> 'Yönetici olarak giriş yapmalısınız',
 
-	'blocklist-title'	=> 'IP Adresi Engelleme Listesi',
+	'blocklist-title'	=> 'IP Adreslerini Engelle',
 	'blocklist-sub'		=> 'Belirli IP adreslerini engelle',
 	'blocklist-ip-tip'	=> 'Kaldırılacak IP Adresi veya boş',
 
-	'url-queries-title'	=> 'Yok Sayılan URL Sorguları',
+	'url-queries-title'	=> 'URL Sorgularını Filtrele',
 	'url-queries-sub'	=> 'Hangi URL sorgularının dikkate alınmaması gerektiğini filtreleyin',
 	'url-queries-name-tip'	=> 'Sorgu adı veya kaldırmak için boş',
 	'url-queries-value-tip'	=> 'Herhangi bir değer için sorgu değeri veya boş',

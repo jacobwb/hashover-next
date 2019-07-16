@@ -19,7 +19,7 @@ body {
 	left: 50%;
 	top: 50%;
 	text-align: center;
-	margin: -102px 0px 0px -14px;
+	margin: -102px 0px 0px -128px;
 	width: 256px;
 	border: 1px solid #CCCCCC;
 	background-color: #FFFFFF;
@@ -27,6 +27,7 @@ body {
 }
 
 #login input {
+	display: block;
 	width: 100%;
 }
 
@@ -39,15 +40,10 @@ body {
 	padding: 15px;
 }
 
-input[type="submit"], input[type="submit"]:hover {
+#login input[type="submit"],
+#login input[type="submit"]:hover {
 	padding: 10px;
 	border-left: none;
 	border-bottom: none;
 	border-right: none;
-}
-
-@media only screen and (max-width: 800px) {
-	#login {
-		margin: -102px 0px 0px -128px;
-	}
 }

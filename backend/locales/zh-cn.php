@@ -138,18 +138,18 @@ $locale = array (
 
 	'admin'			=> '管理员',
 	'moderation'		=> '审核',
-	'block-ip-addresses'	=> '阻止IP地址',
-	'filter-url-queries'	=> '过滤网址查询',
-	'check-for-updates'	=> '检查更新',
+	'block-ip-addresses'	=> 'IP阻止',
+	'filter-url-queries'	=> 'URL过滤',
 	'settings'		=> '设置',
+	'check-for-updates'	=> '更新',
 
 	'admin-required'	=> '您必须以管理员身份登录',
 
-	'blocklist-title'	=> 'IP地址阻止列表',
+	'blocklist-title'	=> '阻止IP地址',
 	'blocklist-sub'		=> '阻止特定的IP地址',
 	'blocklist-ip-tip'	=> 'IP地址或空白删除',
 
-	'url-queries-title'	=> '忽略的网址查询',
+	'url-queries-title'	=> '过滤网址查询',
 	'url-queries-sub'	=> '过滤哪些URL查询应该被忽略',
 	'url-queries-name-tip'	=> '查询名称或空白删除',
 	'url-queries-value-tip'	=> '查询值或空白的任何值',

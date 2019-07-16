@@ -18,6 +18,9 @@
 
 
 try {
+	// Do some standard HashOver setup work
+	require (realpath ('../../backend/standard-setup.php'));
+
 	// View setup
 	require (realpath ('../view-setup.php'));
 
@@ -56,9 +59,7 @@ try {
 
 	// Template data
 	$template = array (
-		'sidebar'	=> $sidebar->asHTML ("\t\t"),
 		'title'		=> $hashover->locale->text['login'],
-		'logout'	=> $logout->asHTML ("\t\t\t"),
 		'sub-title'	=> $hashover->locale->text['admin-required'],
 		'name'		=> $hashover->locale->text['name'],
 		'password'	=> $hashover->locale->text['password'],

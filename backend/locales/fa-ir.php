@@ -138,18 +138,18 @@ $locale = array (
 
 	'admin'			=> 'مدیریت',
 	'moderation'		=> 'مديريت',
-	'block-ip-addresses'	=> 'بلوک آدرس های IP',
-	'filter-url-queries'	=> 'جستجوگر URL فیلتر',
-	'check-for-updates'	=> 'بررسی برای به روز رسانی',
+	'block-ip-addresses'	=> 'مسدود کردن IP',
+	'filter-url-queries'	=> 'فیلتر URL',
 	'settings'		=> 'تنظیمات',
+	'check-for-updates'	=> 'به روز رسانی ها',
 
 	'admin-required'	=> 'شما باید به عنوان مدیر وارد شوید',
 
-	'blocklist-title'	=> 'لیست آدرس IP آدرس',
+	'blocklist-title'	=> 'بلوک آدرس های IP',
 	'blocklist-sub'		=> 'بلوک آدرس های خاص IP',
 	'blocklist-ip-tip'	=> 'آدرس IP یا خالی برای حذف',
 
-	'url-queries-title'	=> 'نظرسنجی های URL نادیده گرفته شده',
+	'url-queries-title'	=> 'جستجوگر URL فیلتر',
 	'url-queries-sub'	=> 'فیلتر کردن نمایشهای URL باید نادیده گرفته شود',
 	'url-queries-name-tip'	=> 'نام پرس و جو یا خالی برای حذف',
 	'url-queries-value-tip'	=> 'مقدار درخواست یا خالی برای هر مقدار',

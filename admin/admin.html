@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr">
+	<head>
+		<title>HashOver - {title}</title>
+
+		<link type="text/css" rel="stylesheet" href="{root}/themes/default/general.css">
+		<link type="text/css" rel="stylesheet" href="{admin}/admin.css">
+
+		<script type="text/javascript" src="{admin}/admin.js"></script>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, target-densityDpi=device-dpi">
+
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<meta http-equiv="Content-Language" content="EN">
+
+		<link type="image/x-icon" href="{root}/images/favicon.png" rel="shortcut icon">
+		<link type="image/x-icon" href="{root}/images/favicon.png" rel="icon">
+
+		<link href="https://www.gnu.org/licenses/agpl" rel="copyright">
+	</head>
+
+	<body>
+		<div class="general-style">
+			<div id="logo">
+				<img src="{root}/images/hashover-logo.png" width="64" height="64" alt="HashOver">
+				<b>{title}</b>
+				<a id="sidebar-button" href="#"></a>
+			</div>
+
+			<div id="sidebar">
+				<img src="{root}/images/hashover-logo.png" width="64" height="64" alt="HashOver">
+
+				<div class="navigation">
+					<a class="view-link" href="{admin}/moderation/">{moderation}</a>
+					<a class="view-link" href="{admin}/blocklist/">{ip-blocking}</a>
+					<a class="view-link" href="{admin}/url-queries/">{url-filtering}</a>
+					<a class="view-link" href="{admin}/settings/">{settings}</a>
+					<a class="view-link" href="{admin}/updates/">{updates}</a>
+					<a class="view-link" href="{admin}/docs/">{docs}</a>
+
+					<a class="right" href="{admin}/login/?logout=true">{logout}</a>
+				</div>
+			</div>
+
+			<div class="p-spaced">
+				{sub-title}
+				<div id="message" class="message {message-status}">{message}</div>
+				<div class="message error">{error}</div>
+			</div>
+		</div>
+
+		{content}
+	</body>
+</html>

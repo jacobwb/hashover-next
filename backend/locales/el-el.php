@@ -138,18 +138,18 @@ $locale = array (
 
 	'admin'			=> 'Διαχειριστής',
 	'moderation'		=> 'Διαχείριση',
-	'block-ip-addresses'	=> 'Φραγή IP Διευθύνσεων',
-	'filter-url-queries'	=> 'Φιλτράρισμα URL Ερωτημάτων',
-	'check-for-updates'	=> 'Έλεγχος για Ενημερώσεις',
+	'block-ip-addresses'	=> 'IP Απαγόρευση',
+	'filter-url-queries'	=> 'Φιλτράρισμα διευθύνσεων URL',
 	'settings'		=> 'Ρυθμίσεις',
+	'check-for-updates'	=> 'Ενημερώσεις',
 
 	'admin-required'	=> 'Πρέπει να συνδεθείτε ως διαχειριστής',
 
-	'blocklist-title'	=> 'Λίστα Φραγής IP Διευθύνσεων',
+	'blocklist-title'	=> 'Φραγή IP Διευθύνσεων',
 	'blocklist-sub'		=> 'Φραγή συγκεκριμένων IP διευθύνσεων',
 	'blocklist-ip-tip'	=> 'IP Διεύθυνση ή κενό για να αφαιρεθεί',
 
-	'url-queries-title'	=> 'Αγνοημένα URL Ερωτήματα',
+	'url-queries-title'	=> 'Φιλτράρισμα URL Ερωτημάτων',
 	'url-queries-sub'	=> 'Φιλτράρετε ποια URL ερωτήματα να αγνοηθούν',
 	'url-queries-name-tip'	=> 'Όνομα ερωτήματος ή κενό για να αφαιρεθεί',
 	'url-queries-value-tip'	=> 'Τιμή ερωτήματος ή κενό για οποιαδήποτε τιμή',

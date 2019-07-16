@@ -17,9 +17,6 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-// Do some standard HashOver setup work
-require (realpath ('../../backend/standard-setup.php'));
-
 // Setup class autoloader
 setup_autoloader ();
 
@@ -51,6 +48,64 @@ function redirect ($url = '')
 	exit;
 }
 
+// Parse and return template files
+function parse_templates ($template, $fragment, array $data, \HashOver $hashover)
+{
+	// Parse page fragment template file
+	$page = $hashover->templater->parseTemplate ($fragment, $data);
+
+	// Indent page fragment by two tabs
+	$page = str_replace (PHP_EOL, PHP_EOL . "\t\t", $page);
+
+	// Merge some default informatin into template data
+	$data = array_merge ($data, array (
+		// HTTP root directory
+		'root' => $hashover->setup->httpRoot,
+
+		// HTTP admin root directory
+		'admin' => $hashover->setup->getHttpPath ('admin'),
+
+		// Navigation locale strings
+		'moderation' => $hashover->locale->text['moderation'],
+		'ip-blocking' => $hashover->locale->text['block-ip-addresses'],
+		'url-filtering' => $hashover->locale->text['filter-url-queries'],
+		'settings' => $hashover->locale->text['settings'],
+		'updates' => $hashover->locale->text['check-for-updates'],
+		'docs' => $hashover->locale->text['documentation'],
+		'logout' => $hashover->locale->text['logout'],
+
+		// Parsed page template
+		'content' => $page
+	));
+
+	// Check if form has been submitted
+	if (!empty ($_GET['status'])) {
+		// If so, check if form submission was successful
+		if ($_GET['status'] === 'success') {
+			// If so, add success message locale to template data
+			$data['message'] = $hashover->locale->text['successful-save'];
+
+			// And add message status to template data
+			$data['message-status'] = 'success';
+		} else {
+			// If so, add error message locale to template data
+			$data['message'] = $hashover->locale->text['failed-to-save'];
+
+			// Add file permissions explanation to template data
+			$data['error'] = $hashover->locale->permissionsInfo ('config');
+
+			// And add message status to template data
+			$data['message-status'] = 'error';
+		}
+	}
+
+	// Load and parse admin template
+	$admin = $hashover->templater->parseTemplate ('../' . $template . '.html', $data);
+
+	// Return parsed admin template
+	return $admin;
+}
+
 // Exit if the user isn't logged in as admin
 if ($hashover->login->userIsAdmin !== true) {
 	$uri = $_SERVER['REQUEST_URI'];
@@ -59,114 +114,4 @@ if ($hashover->login->userIsAdmin !== true) {
 	if (basename ($uri_parts[0]) !== 'login') {
 		redirect ('../login/?redirect=' . urlencode ($uri));
 	}
-}
-
-// Hyperlinks to admin pages
-$pages = array (
-	new HTMLTag ('a', array (
-		'class' => 'view-link',
-		'href' => '../moderation/',
-		'innerHTML' => $hashover->locale->text['moderation']
-	), false),
-
-	new HTMLTag ('a', array (
-		'class' => 'view-link',
-		'href' => '../blocklist/',
-		'innerHTML' => $hashover->locale->text['block-ip-addresses']
-	), false),
-
-	new HTMLTag ('a', array (
-		'class' => 'view-link',
-		'href' => '../url-queries/',
-		'innerHTML' => $hashover->locale->text['filter-url-queries']
-	), false),
-
-	new HTMLTag ('a', array (
-		'class' => 'view-link',
-		'href' => '../settings/',
-		'innerHTML' => $hashover->locale->text['settings']
-	), false),
-
-	new HTMLTag ('a', array (
-		'class' => 'view-link',
-		'href' => '../updates/',
-		'innerHTML' => $hashover->locale->text['check-for-updates']
-	), false),
-
-	new HTMLTag ('a', array (
-		'class' => 'view-link',
-		'href' => '../documentation/',
-		'innerHTML' => $hashover->locale->text['documentation']
-	), false)
-);
-
-// Create navigation sidebar
-$sidebar = new HTMLTag ('div', array (
-	'id' => 'sidebar',
-	'class' => 'special',
-
-	'children' => array (
-		new HTMLTag ('img', array (
-			'id' => 'logo',
-			'src' => '../../images/hashover-logo.png',
-			'width' => '229',
-			'height' => '229',
-			'alt' => 'HashOver'
-		), false, true),
-
-		new HTMLTag ('div', array (
-			'id' => 'navigation',
-			'children' => $pages
-		))
-	)
-));
-
-// Create logout hyperlink
-$logout = new HTMLTag ('a', array (
-	'class' => 'plain-button right',
-	'href' => '../login/?logout=true',
-	'target' => '_parent',
-	'innerHTML' => $hashover->locale->text['logout']
-));
-
-// Check if the form has been submitted
-if (!empty ($_GET['status'])) {
-	// Check if the form submission was successful
-	if ($_GET['status'] === 'success') {
-		// If so, create message element for success message
-		$message = new HTMLTag ('div', array (
-			'id' => 'message',
-			'class' => 'success',
-
-			'children' => array (
-				new HTMLTag ('p', array (
-					'innerHTML' => $hashover->locale->text['successful-save']
-				), false)
-			)
-		));
-	} else {
-		// If so, create message element for error message
-		$message = new HTMLTag ('div', array (
-			'id' => 'message',
-			'class' => 'error',
-
-			'children' => array (
-				// Main error message
-				new HTMLTag ('p', array (
-					'innerHTML' => $hashover->locale->text['failed-to-save']
-				), false),
-
-				// File permissions explanation
-				new HTMLTag ('p', array (
-					'innerHTML' => $hashover->locale->permissionsInfo ('config')
-				), false)
-			)
-		));
-	}
-
-	// Set message as HTML
-	$form_message = $message->asHTML ("\t\t");
-} else {
-	// If not, set the message as an empty string
-	$form_message = '';
 }

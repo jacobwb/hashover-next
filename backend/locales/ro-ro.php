@@ -138,18 +138,18 @@ $locale = array (
 
 	'admin'			=> 'Admin',
 	'moderation'		=> 'Moderare',
-	'block-ip-addresses'	=> 'Blocați adresele IP',
-	'filter-url-queries'	=> 'Filtre interogări URL',
-	'check-for-updates'	=> 'Verificați pentru actualizări',
+	'block-ip-addresses'	=> 'Blocarea adreselor IP',
+	'filter-url-queries'	=> 'Filtrarea adreselor URL',
 	'settings'		=> 'Setări',
+	'check-for-updates'	=> 'Actualizări',
 
 	'admin-required'	=> 'Trebuie să fii logat ca administrator',
 
-	'blocklist-title'	=> 'Listă de blocare a adresei IP',
+	'blocklist-title'	=> 'Blocați adresele IP',
 	'blocklist-sub'		=> 'Blocați adresele IP specifice',
 	'blocklist-ip-tip'	=> 'Adresă IP sau gol pentru a fi eliminat',
 
-	'url-queries-title'	=> 'Interogări de adrese URL ignorate',
+	'url-queries-title'	=> 'Filtre interogări URL',
 	'url-queries-sub'	=> 'Filtrați interogările adreselor URL care ar trebui ignorate',
 	'url-queries-name-tip'	=> 'Nume de interogare sau gol pentru a fi eliminat',
 	'url-queries-value-tip'	=> 'Valoare interogare sau gol pentru orice valoare',

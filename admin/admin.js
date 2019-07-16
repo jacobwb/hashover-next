@@ -23,11 +23,11 @@ document.addEventListener ('DOMContentLoaded', function () {
 	// Get sidebar
 	var sidebar = document.getElementById ('sidebar');
 
-	// Get logo
-	var logo = document.getElementById ('logo');
-
 	// Get view links
 	var viewLinks = document.getElementsByClassName ('view-link');
+
+	// Get message element
+	var message = document.getElementById ('message');
 
 	// Execute a given function for each view link
 	function eachViewLink (callback)
@@ -45,8 +45,8 @@ document.addEventListener ('DOMContentLoaded', function () {
 		});
 	}
 
-	// Add click event to sidebar button
-	sidebarButton.onclick = function (event)
+	// Sidebar button click event handler
+	function openSidebar (event)
 	{
 		// Add class to show sidebar
 		document.body.classList.add ('sidebar-shown');
@@ -81,20 +81,19 @@ document.addEventListener ('DOMContentLoaded', function () {
 		} else {
 			event.cancelBubble ();
 		}
-	};
+	}
 
 	// Automatically select the proper view tab on page load
 	window.onload = function ()
 	{
-		// Set logo height to auto
-		logo.style.height = 'auto';
-
 		// Remove active class from all view links
 		clearViewTabs ();
 
 		// Select active proper tab for currently loaded view
 		eachViewLink (function (link) {
-			var regex = new RegExp (link.getAttribute ('href'));
+			var href = link.getAttribute ('href');
+			var viewUrl = href.replace (/\.\.\//g, '');
+			var regex = new RegExp (viewUrl);
 			var frameUrl = window.location.href;
 
 			if (regex.test (decodeURIComponent (frameUrl))) {
@@ -102,4 +101,16 @@ document.addEventListener ('DOMContentLoaded', function () {
 			}
 		});
 	};
+
+	// Add click event to sidebar button
+	if (sidebarButton !== null) {
+		sidebarButton.onclick = openSidebar;
+	}
+
+	// Hide message after 5 seconds
+	if (message !== null) {
+		setTimeout (function () {
+			message.className = message.className.replace (/success|error/, 'hide');
+		}, 1000 * 5);
+	}
 }, false);

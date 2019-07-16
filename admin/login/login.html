@@ -5,7 +5,6 @@
 		<title>HashOver - {title}</title>
 
 		<link type="text/css" rel="stylesheet" href="../../themes/default/general.css">
-		<link type="text/css" rel="stylesheet" href="../../themes/default/special.css">
 		<link type="text/css" rel="stylesheet" href="../admin.css">
 		<link type="text/css" rel="stylesheet" href="login.css">
 
@@ -23,15 +22,13 @@
 		<link href="https://www.gnu.org/licenses/agpl" rel="copyright">
 	</head>
 
-	<body>
-		{sidebar}
-
+	<body class="general-style">
 		<form id="login" class="red animate-all" method="post">
 			<div id="padding">
-				<h1 class="underlined">{title}</h1>
+				<h1>{title}</h1>
 
-				<div><input type="text" name="name" placeholder="{name}"></div>
-				<div><input type="password" name="password" placeholder="{password}"></div>
+				<input type="text" name="name" placeholder="{name}">
+				<input type="password" name="password" placeholder="{password}">
 			</div>
 
 			<p>

@@ -147,18 +147,18 @@ $locale = array (
 
 	'admin'			=> 'Administratorius',
 	'moderation'		=> 'Moderacija',
-	'block-ip-addresses'	=> 'Blokuoti IP adresus',
-	'filter-url-queries'	=> 'Filtruoti URL užklausas',
-	'check-for-updates'	=> 'Patikrinkite atnaujinimus',
+	'block-ip-addresses'	=> 'IP blokavimas',
+	'filter-url-queries'	=> 'URL filtravimas',
 	'settings'		=> 'Nustatymai',
+	'check-for-updates'	=> 'Atnaujinimai',
 
 	'admin-required'	=> 'Jūs turite būti prisijungęs kaip administratorius',
 
-	'blocklist-title'	=> 'IP adresų blokinis sąrašas',
+	'blocklist-title'	=> 'Blokuoti IP adresus',
 	'blocklist-sub'		=> 'Blokuoti konkrečius IP adresus',
 	'blocklist-ip-tip'	=> 'IP adresas arba tuščias, jei norite pašalinti',
 
-	'url-queries-title'	=> 'Nepaisyti URL užklausų',
+	'url-queries-title'	=> 'Filtruoti URL užklausas',
 	'url-queries-sub'	=> 'Filtruoti, kurie URL užklausos turėtų būti ignoruojami',
 	'url-queries-name-tip'	=> 'Užklausos pavadinimas arba tuščias, norint pašalinti',
 	'url-queries-value-tip'	=> 'Užklausos vertė arba bet kuri verte tuščia',

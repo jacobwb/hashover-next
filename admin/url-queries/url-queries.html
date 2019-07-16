@@ -1,52 +1,12 @@
-<!DOCTYPE html>
+<form method="post" class="general-style">
+	<div id="queries-list" class="p-spaced">
+		{inputs}
+	</div>
 
-<html lang="en" dir="ltr">
-	<head>
-		<title>HashOver - {title}</title>
+	<p>
+		<input id="save-button" type="submit" value="{save-button}">
+		<input id="new-button" type="button" value="+">
+	</p>
+</form>
 
-		<link type="text/css" href="../../themes/default/general.css" rel="stylesheet">
-		<link type="text/css" href="../../themes/default/special.css" rel="stylesheet">
-		<link type="text/css" href="../admin.css" rel="stylesheet">
-
-		<script type="text/javascript" src="../shared/update-elements.js"></script>
-		<script type="text/javascript" src="../admin.js"></script>
-		<script type="text/javascript" src="url-queries.js"></script>
-
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, target-densityDpi=device-dpi">
-
-		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-		<meta http-equiv="Content-Language" content="EN">
-
-		<link type="image/x-icon" href="../../images/favicon.png" rel="shortcut icon">
-		<link type="image/x-icon" href="../../images/favicon.png" rel="icon">
-		<link href="https://www.gnu.org/licenses/agpl" rel="copyright">
-	</head>
-
-	<body>
-		{sidebar}
-
-		<h1 class="underlined">
-			<div id="sidebar-button"></div>
-
-			{title}
-
-			{logout}
-		</h1>
-
-		<div class="p-spaced muted-text">
-			{sub-title}
-			{message}
-		</div>
-
-		<form method="post">
-			<div id="queries-list" class="p-spaced">
-				{inputs}
-			</div>
-
-			<p>
-				<input id="save-button" type="submit" value="{save-button}">
-				<input id="new-button" type="button" value="+">
-			</p>
-		</form>
-	</body>
-</html>
+<script type="text/javascript" src="url-queries.js"></script>

@@ -56,6 +56,9 @@ function add_table_head (HTMLTag $table, $html)
 }
 
 try {
+	// Do some standard HashOver setup work
+	require (realpath ('../../backend/standard-setup.php'));
+
 	// View setup
 	require (realpath ('../view-setup.php'));
 
@@ -76,7 +79,6 @@ try {
 	// Create comment thread table
 	$threads_table = new HTMLTag ('table', array (
 		'id' => 'threads',
-		'class' => 'striped-rows-odd',
 		'cellspacing' => '0',
 		'cellpadding' => '8'
 	));
@@ -128,12 +130,10 @@ try {
 
 	// Template data
 	$template = array (
-		'sidebar'	=> $sidebar->asHTML ("\t\t"),
 		'title'		=> $hashover->locale->text['moderation'],
-		'logout'	=> $logout->asHTML ("\t\t\t"),
 		'sub-title'	=> $hashover->locale->text['moderation-sub'],
 		'left-id'	=> 'threads-column',
-		'threads'	=> $threads_table->asHTML ("\t\t\t\t\t"),
+		'threads'	=> $threads_table->asHTML ("\t\t\t\t"),
 	);
 
 	// Check if multiple website support is enabled
@@ -146,7 +146,6 @@ try {
 			// If so, create comment thread table
 			$websites_table = new HTMLTag ('table', array (
 				'id' => 'websites',
-				'class' => 'striped-rows-odd',
 				'cellspacing' => '0',
 				'cellpadding' => '8'
 			));
@@ -174,13 +173,13 @@ try {
 			// And add other websites to template
 			$template = array_merge ($template, array (
 				'right-id'	=> 'websites-column',
-				'websites'	=> $websites_table->asHTML ("\t\t\t\t\t")
+				'websites'	=> $websites_table->asHTML ("\t\t\t\t")
 			));
 		}
 	}
 
 	// Load and parse HTML template
-	echo $hashover->templater->parseTemplate ('moderation.html', $template);
+	echo parse_templates ('admin', 'moderation.html', $template, $hashover);
 
 } catch (\Exception $error) {
 	echo Misc::displayException ($error);
