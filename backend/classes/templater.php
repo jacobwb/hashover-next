@@ -56,11 +56,14 @@ class Templater
 		$parser = function ($grp) use (&$template)
 		{
 			// Store key for pretty code
-			$key = $grp[1];
+			$key = $grp[2];
+
+			// Store whitespace for pretty code
+			$whitespace = $grp[1];
 
 			// Return data from template if it exists
 			if (!empty ($template[$key])) {
-				return $template[$key];
+				return $whitespace . $template[$key];
 			}
 
 			// Otherwise, return nothing
@@ -68,7 +71,7 @@ class Templater
 		};
 
 		// Curly brace variable regular expression
-		$curly_regex = '/\{([a-z_-]+)\}/i';
+		$curly_regex = '/(\s*)\{([a-z_-]+)\}/i';
 
 		// Convert string to OS-specific line endings
 		$template = preg_replace ('/\r\n|\r|\n/', PHP_EOL, $template);
