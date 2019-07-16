@@ -62,7 +62,7 @@ class SafeSettings
 	public $displaysTitle		= true;				// Whether page title is shown or not
 	public $formPosition		= 'top';			// Position for primary form; options: 'top' or 'bottom'
 	public $showsReplyCount		= true;				// Whether to show reply count separately from total
-	public $countIncludesDeleted	= true;				// Whether comment counts should include deleted comments
+	public $countsDeletions		= true;				// Whether comment counts should include deleted comments
 	public $iconMode		= 'image';			// How to display avatar icons (either 'image', 'count' or 'none')
 	public $iconSize		= 45;				// Size of Gravatar icons in pixels
 	public $imageFormat		= 'png';			// Format for icons and other images (use 'svg' for HDPI)

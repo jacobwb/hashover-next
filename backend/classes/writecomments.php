@@ -419,8 +419,8 @@ class WriteComments extends Secrets
 				$user_is_admin = $this->login->verifyAdmin ($this->password);
 
 				// Unlink comment file indicator
-				$user_deletions_unlink = ($this->setup->userDeletionsUnlink === true);
-				$unlink_comment = ($user_deletions_unlink or $user_is_admin);
+				$unlinks_files = ($this->setup->unlinksFiles === true);
+				$unlink_comment = ($unlinks_files or $user_is_admin);
 
 				// Attempt to delete comment file
 				if ($this->thread->data->delete ($this->postData->file, $unlink_comment)) {

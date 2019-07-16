@@ -78,7 +78,7 @@ class HashOver
 		$total_count = $this->thread->totalCount;
 
 		// Subtract deleted comment counts
-		if ($this->setup->countIncludesDeleted === false) {
+		if ($this->setup->countsDeletions === false) {
 			$primary_count -= $this->thread->primaryDeletedCount;
 			$total_count -= $this->thread->totalDeletedCount;
 		}
@@ -148,7 +148,7 @@ class HashOver
 	public function defaultMetadata ()
 	{
 		// Check if local metadata is disabled
-		if ($this->setup->allowLocalMetadata !== true) {
+		if ($this->setup->localMetadata !== true) {
 			// If so, get remote address
 			$address = HashOver\Misc::getArrayItem ($_SERVER, 'REMOTE_ADDR');
 

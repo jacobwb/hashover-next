@@ -428,14 +428,14 @@ function ui_array (Setup $setup, Locale $locale)
 				'value' => $setup->appendsRss
 			),
 
-			'count-includes-deleted' => array (
+			'counts-deletions' => array (
 				'type' => 'checkbox',
-				'value' => $setup->countIncludesDeleted
+				'value' => $setup->countsDeletions
 			),
 
-			'allow-local-metadata' => array (
+			'local-metadata' => array (
 				'type' => 'checkbox',
-				'value' => $setup->allowLocalMetadata
+				'value' => $setup->localMetadata
 			),
 
 			'stores-ip-address' => array (

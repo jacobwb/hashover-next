@@ -199,7 +199,7 @@ try {
 			$other_count = ($total_count - 1) - $collapse_limit;
 
 			// Subtract deleted comment counts
-			if ($hashover->setup->countIncludesDeleted === false) {
+			if ($hashover->setup->countsDeletions === false) {
 				$other_count -= $hashover->thread->collapsedDeletedCount;
 			}
 
