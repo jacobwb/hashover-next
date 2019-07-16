@@ -8,10 +8,10 @@ HashOverLatest.prototype.init = function ()
 	var html = '';
 
 	// Get the main HashOver element
-	var mainElement = this.getMainElement ('hashover-widget');
+	var mainElement = this.getMainElement ('hashover-latest');
 
 	// Append theme CSS if enabled
-	this.optionalMethod ('appendCSS', [ 'hashover-widget' ]);
+	this.optionalMethod ('appendCSS', [ 'hashover-latest' ]);
 
 	// Add main HashOver element to this HashOver instance
 	this.instance['main-element'] = mainElement;

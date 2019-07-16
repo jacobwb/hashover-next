@@ -56,7 +56,7 @@ function HashOverLatest (options)
 	this.ajax ('POST', requestPath, queries, function (json) {
 		// Handle error messages
 		if (json.message !== undefined) {
-			hashover.displayError (json, 'hashover-widget');
+			hashover.displayError (json, 'hashover-latest');
 			return;
 		}
 
