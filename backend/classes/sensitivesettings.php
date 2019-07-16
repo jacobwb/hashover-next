@@ -53,7 +53,6 @@ class SensitiveSettings extends SafeSettings
 	public $spamCheckModes		= 'php';			// Perform IP spam check in 'json' or 'php' mode, or 'both'
 	public $enabledApi		= array ('all');		// An array of enabled API. 'all' = fully-enabled, empty array = fully disabled
 	public $latestMax		= 10;				// Maximum number of comments to save as latest comments
-	public $latestTrimWidth		= 100;				// Number of characters to trim latest comments to, 0 for no trim
 	public $unlinksFiles		= false;			// Whether user deleted files are actually unlinked from the filesystem
 	public $localMetadata		= false;			// Whether metadata should be collected while running on a local server
 
