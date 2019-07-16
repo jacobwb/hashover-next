@@ -2,7 +2,7 @@
 HashOverConstructor.prototype.getMainElement = function (id)
 {
 	// Given element ID or default
-	id = id || 'hashover';
+	id = id || this.prefix ();
 
 	// Attempt to get main HashOver element
 	var element = document.getElementById (id);
@@ -15,8 +15,14 @@ HashOverConstructor.prototype.getMainElement = function (id)
 		// Create div for comments to appear in
 		element = this.createElement ('div', { id: id });
 
-		// Place HashOver element before script tag
-		script.parentNode.insertBefore (element, script);
+		// Check if script tag is in the body
+		if (document.body.contains (script) === true) {
+			// If so, place HashOver element before script tag
+			script.parentNode.insertBefore (element, script);
+		} else {
+			// If not, place HashOver element in the body
+			document.body.appendChild (element);
+		}
 	}
 
 	// Add main HashOver class
