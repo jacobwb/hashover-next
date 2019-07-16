@@ -30,14 +30,11 @@ class Settings extends SensitiveSettings
 {
 	public $rootDirectory;
 	public $commentsRoot;
-	public $commentsPath;
 	public $httpRoot;
 	public $httpBackend;
 	public $httpImages;
 	public $cookieExpiration;
-	public $scheme;
 	public $domain;
-	public $absolutePath;
 	public $themePath;
 	public $formFields;
 
@@ -62,7 +59,6 @@ class Settings extends SensitiveSettings
 
 		// Comments directory path
 		$this->commentsRoot = $root_directory . '/comments';
-		$this->commentsPath = $this->commentsRoot;
 
 		// Root directory for HTTP
 		$this->httpRoot = $http_directory;
@@ -76,14 +72,8 @@ class Settings extends SensitiveSettings
 		// Cookie expiration date
 		$this->cookieExpiration = time () + 60 * 60 * 24 * 30;
 
-		// Get connection scheme
-		$this->scheme = $this->isHTTPS () ? 'https' : 'http';
-
 		// Domain name for refer checking & notifications
 		$this->domain = Misc::getArrayItem ($_SERVER, 'HTTP_HOST') ?: 'localhost';
-
-		// Absolute path or remote access
-		$this->absolutePath = $this->scheme . '://' . $this->domain;
 
 		// Load JSON settings
 		$this->loadSettingsFile ();

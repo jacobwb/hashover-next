@@ -38,15 +38,18 @@ class SensitiveSettings extends SafeSettings
 	// E-mail settings
 	public $mailer			= 'sendmail';			// How to send notification e-mails, either 'sendmail' or 'smtp'
 	public $mailType		= 'text';			// What format to send e-mails in, either 'text' or 'html'
-	public $noreplyEmail		= 'noreply@example.com';	// E-mail address used in e-mail notifications to normal users
 
 	// Behavior settings
 	public $usesAutoLogin		= true;				// Whether a user's first comment automatically logs them in
+	public $imageFormat		= 'png';			// Format for icons and other images (use 'svg' for HDPI)
+
+	// Date and Time settings
+	public $datePattern		= 'MMMM d, YYYY';		// Date format pattern (see: http://userguide.icu-project.org/formatparse/datetime)
+	public $timePattern		= 'h:mm a';			// Time format pattern, use 'HH:mm' for 24-hour time
 
 	// Technical settings
 	public $loginMethod		= 'defaultLogin';		// Login method class for handling user login information
 	public $requiresLogin		= false;			// Whether user must be logged in to comment (only for restrictive login methods)
-	public $setsCookies		= true;				// Whether cookies are enabled
 	public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 	public $storesIpAddress		= false;			// Whether to store users' IP addresses
 	public $spamDatabase		= 'remote';			// Whether to use a remote or local spam database

@@ -32,6 +32,9 @@ class Secrets
 	// Admin e-mail address to send notifications to
 	protected $notificationEmail = 'example@example.com';
 
+	// E-mail address to use in notifications to normal users
+	protected $noreplyEmail = 'noreply@example.com';
+
 	// Unique encryption key (case-sensitive)
 	protected $encryptionKey = '8CharKey';
 

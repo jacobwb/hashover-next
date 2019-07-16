@@ -19,6 +19,9 @@
 
 class Setup extends Settings
 {
+	public $scheme;
+	public $absolutePath;
+	public $commentsPath;
 	public $threadsPath;
 	public $website;
 	public $isMobile = false;
@@ -64,12 +67,21 @@ class Setup extends Settings
 		// Check for required extensions
 		$this->extensionsLoaded ($this->extensions);
 
+		// Get connection scheme
+		$this->scheme = $this->isHTTPS () ? 'https' : 'http';
+
+		// Absolute path or remote access
+		$this->absolutePath = $this->scheme . '://' . $this->domain;
+
 		// Check if multisite support is enabled
 		if ($this->supportsMultisites === true) {
 			// If so, set website based on domain
 			$this->setWebsite ($this->domain);
 		} else {
-			// If not, set threads directory path
+			// If not, comments directory path
+			$this->commentsPath = $this->commentsRoot;
+
+			// Set threads directory path
 			$this->threadsPath = $this->commentsRoot . '/threads';
 
 			// And set website to "all"

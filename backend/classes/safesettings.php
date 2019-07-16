@@ -49,8 +49,6 @@ class SafeSettings
 	public $serverTimezone		= 'auto';			// Server timezone
 	public $usesUserTimezone	= true;				// Whether comment dates should use the user's timezone (JavaScript-mode)
 	public $usesShortDates		= true;				// Whether comment dates are shortened, for example "X days ago"
-	public $datePattern		= 'MMMM d, YYYY';		// Date format pattern (see: http://userguide.icu-project.org/formatparse/datetime)
-	public $timePattern		= 'h:mm a';			// Time format pattern, use 'HH:mm' for 24-hour time
 
 	// Form fields
 	public $nameField		= 'on';				// Commenter's name field
@@ -59,13 +57,13 @@ class SafeSettings
 	public $websiteField		= 'on';				// Commenter's website URL
 
 	// Behavior settings
+	public $setsCookies		= true;				// Whether cookies are enabled
 	public $displaysTitle		= true;				// Whether page title is shown or not
 	public $formPosition		= 'top';			// Position for primary form; options: 'top' or 'bottom'
 	public $showsReplyCount		= true;				// Whether to show reply count separately from total
 	public $countsDeletions		= true;				// Whether comment counts should include deleted comments
 	public $iconMode		= 'image';			// How to display avatar icons (either 'image', 'count' or 'none')
 	public $iconSize		= 45;				// Size of Gravatar icons in pixels
-	public $imageFormat		= 'png';			// Format for icons and other images (use 'svg' for HDPI)
 	public $usesLabels		= false;			// Whether to display labels above inputs
 	public $usesCancelButtons	= true;				// Whether forms have "Cancel" buttons
 	public $appendsCss		= true;				// Whether to automatically add a CSS <link> element to the page <head>
