@@ -52,6 +52,9 @@ class Secrets
 	// SQL database host name
 	protected $databaseHost = 'localhost';
 
+	// SQL database port number
+	protected $databasePort = '3306';
+
 	// SQL database login user
 	protected $databaseUser = 'root';
 

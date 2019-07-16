@@ -64,6 +64,7 @@ class Database extends Secrets
 			// If not, create SQL server connection statement
 			$connection = implode (';', array (
 				'host=' . $this->databaseHost,
+				'port=' . $this->databasePort,
 				'dbname=' . $this->databaseName,
 				'charset=' . $this->databaseCharset
 			));
