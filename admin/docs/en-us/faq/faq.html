@@ -1,0 +1,66 @@
+<div class="general-style">
+	<h1 id="faq">
+		Frequently Asked Questions
+	</h1>
+
+	<p>
+		While the other sections of this documentation covers everything you need
+		to know to start using HashOver on your website, some information didn't
+		fit into the other sections nicely. Here is some more information in the form
+		of answers to common questions. If you have any questions please feel free to
+		<a href="http://tildehash.com/?page=author" target="_blank">contact me on my website</a>.
+		Also feel free to edit this file on
+		<a href="https://github.com/jacobwb/hashover-next" target="_blank">GitHub</a>,
+		by adding your question and submitting a pull request, I will merge the pull
+		request along with an answer to the question.
+	</p>
+
+	<h2 id="html-in-comments">
+		What HTML does HashOver allow in comments?
+	</h2>
+
+	<p>
+		Users may post comments with a limited number of HTML tags. These tags
+		include <code>&lt;b&gt;</code>, <code>&lt;em&gt;</code>,
+		<code>&lt;u&gt;</code>, <code>&lt;i&gt;</code>, <code>&lt;s&gt;</code>,
+		<code>&lt;big&gt;</code>, <code>&lt;small&gt;</code>,
+		<code>&lt;strong&gt;</code>, <code>&lt;sub&gt;</code>,
+		<code>&lt;sup&gt;</code>, <code>&lt;pre&gt;</code>,
+		<code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>,
+		<code>&lt;li&gt;</code>, <code>&lt;blockquote&gt;</code>, and
+		<code>&lt;code&gt;</code> escapes HTML.
+	</p>
+
+	<p>
+		Users may also include an image in their posts using
+		<code>[img]https://example.com/image.jpg[/img]</code>. Images in comments
+		are not shown by default, they appear as a Polaroid-esque icon, which
+		must be clicked for the image to be shown.
+	</p>
+
+	<p>
+		All other HTML in a comment will be escaped. The allowed HTML tags are
+		case insensitive, but they must appear exactly as stated, no attributes
+		or odd spacing, otherwise they too will be escaped. The hyperlink tag
+		<code>&lt;a&gt;</code> is not allowed in comments, instead users can post
+		URLs as-is and they will become links. This is done to help protect users
+		against scams and SPAM, since links can't say something different than
+		where they actually link to, thereby preventing phishing attacks.
+	</p>
+
+	<h2 id="markdown-in-comments">
+		Does HashOver support Markdown in comments?
+	</h2>
+
+	<p>
+		Yes, HashOver supports a limited type of Markdown. The syntax is:
+		<code>**bold**</code>, <code>_underline_</code>, <code>*italic*</code>,
+		<code>~~strikethrough~~</code>, <code>`highlight`</code>, and
+		<code>```code```</code> escapes HTML. Additionally, <code>__bold__</code>
+		will force the underline styling and allow it to span multiple lines.
+		Markdown support will always remain limited, it will never support the
+		<code>[]()</code> hyperlink syntax, but all of the allowed HTML tags will
+		eventually be supported as Markdown at least. HTML and Markdown may be
+		used together in comments.
+	</p>
+</div>

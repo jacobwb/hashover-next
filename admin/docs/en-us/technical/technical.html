@@ -1,0 +1,405 @@
+<div id="available-settings" class="general-style">
+	<h1 id="url-filtering">
+		URL Query Filtering
+	</h1>
+
+	<p>
+		By default, each page URL is treated as a separate page with separate
+		comments, even if two different URLs show the same content. However, you
+		can control how HashOver treats the page URL by using either or both of
+		the methods below.
+	</p>
+
+	<h2 id="canonical-url">
+		Using a Canonical URL
+	</h2>
+
+	<p>
+		By default, HashOver will use a canonical URL when one is present. You
+		can add one to your website by placing a
+		<a href="http://en.wikipedia.org/wiki/Canonical_link_element">Canonical Link Element</a>
+		in <code>&lt;head&gt;</code> of your website, if you do this properly HashOver
+		will show the same comment for URLs that show the same content.
+	</p>
+
+	<p>
+		Here is an example of a Canonical Link Element...
+	</p>
+
+	<div class="code block">
+		&lt;link rel="canonical" href="https://example.com/page.html" /&gt;
+	</div>
+
+	<p>
+		A canonical URL is designed to be the same for all URLs that show the
+		same content, normally this is done by removing unimportant queries from
+		the normal URL before using it as the canonical URL. This is done on the
+		server-side, by using PHP for example, so by the time HashOver sees the page
+		the URL in the Canonical Link Element should have already been processed.
+	</p>
+
+	<h2 id="ignored-queries">
+		Ignoring URL Queries
+	</h2>
+
+	<p>
+		You can make HashOver ignore unwanted URL queries by either adding them
+		on the admin "URL Filtering" page, or by adding them to the
+		<code>/hashover/config/ignored-queries.json</code> file. Adding a query
+		name without a value will cause that query to be ignored no matter what
+		its value is. Adding a query name with a value (ie. name=value) will
+		cause only that specific query with that specific value to be ignored.
+	</p>
+
+	<p>
+		Ignoring specific URL queries allows URLs that are otherwise the same to
+		get treated as the same page by HashOver. For example, a website that has
+		content in multiple languages might have a URL query named "lang" that
+		decides what language to use. By default, HashOver will treat URLs like
+		<code>https://example.com/page.html?lang=en</code> and
+		<code>https://example.com/page.html?lang=jp</code> as separate pages, but if
+		you add the "lang" query to the <code>ignored-queries.json</code> file these
+		URLs will be treated as being the same page and display the same comments.
+	</p>
+
+	<h1 id="controlling-hashover">
+		Controlling the Behavior of HashOver
+	</h1>
+
+	<p>
+		Assuming everything is setup properly, HashOver should "just work", it
+		will automatically detect what page it is on and show comments for that page,
+		it will automatically add the theme CSS to the page, among other things.
+	</p>
+
+	<p>
+		However, this automatic setup is not useful for every situation, such as
+		displaying multiple comment forms on a single page, displaying comments
+		from a different page, or adjusting the language based on what language
+		is set on your website.
+	</p>
+
+	<p>
+		To do these things you need to use the loader script instead...
+	</p>
+
+	<div class="code block">
+		&lt;script type="text/javascript" src="/hashover/loader.php"&gt;&lt;/script&gt;
+	</div>
+
+	<p>
+		This script allows you to pass various information to HashOver before it
+		appears on page. It allows you to specify where to display the comments,
+		what page or thread to show comments for, and it even lets you override a
+		limited number of settings.
+	</p>
+
+	<p>
+		Unlike the <code>comments.php</code> script, the loader script does not
+		display comments until you instantiate an instance. This allows you to
+		dynamically load comments when an element is clicked or a certain element
+		is scrolled into view for example, it also allows you to display the comments
+		for a specific page when that page is loaded dynamically via JavaScript.
+	</p>
+
+	<p>
+		You may instantiate an instance manually like this...
+	</p>
+
+	<div class="code block paragraph">
+		&lt;script type="text/javascript"&gt;<br>
+		&nbsp; &nbsp; var hashover = new HashOver ();<br>
+		&lt;/script&gt;
+	</div>
+
+	<p>
+		You may tell HashOver to place the comments in a specific element like
+		this...
+	</p>
+
+	<div class="code block paragraph">
+		&lt;script type="text/javascript"&gt;<br>
+		&nbsp; &nbsp; var hashover = new HashOver ('comments');<br>
+		&lt;/script&gt;
+	</div>
+
+	<p>
+		You may load comments from a different page by passing the URL and title
+		in the second parameter...
+	</p>
+
+	<div class="code block paragraph">
+		&lt;script type="text/javascript"&gt;<br>
+		&nbsp; &nbsp; var hashover = new HashOver ('hashover', {<br>
+		&nbsp; &nbsp; &nbsp; &nbsp; url: 'https://example.com/super/cool/article.html',<br>
+		&nbsp; &nbsp; &nbsp; &nbsp; title: 'Super Cool Article Title'<br>
+		&nbsp; &nbsp; });<br>
+		&lt;/script&gt;
+	</div>
+
+	<p>
+		You may override various settings by passing them as an object in the
+		second parameter...
+	</p>
+
+	<div class="code block">
+		&lt;script type="text/javascript"&gt;<br>
+		&nbsp; &nbsp; var hashover = new HashOver ('hashover', {<br>
+		&nbsp; &nbsp; &nbsp; &nbsp; settings: {<br>
+		&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; language: 'de',<br>
+		&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; formPosition: 'bottom',<br>
+		&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; websiteField: 'off'<br>
+		&nbsp; &nbsp; &nbsp; &nbsp; }<br>
+		&nbsp; &nbsp; });<br>
+		&lt;/script&gt;
+	</div>
+
+	<p>
+		This example sets the interface language to German, sets the primary
+		comment form position to below the posted comments, and disables the
+		website field. The <code>settings</code> object's key names can be
+		hyphenated or camelCase. Some settings cannot be adjusted from the
+		frontend like this for security reasons, see the
+		<a href="../settings" title="Settings">Settings</a>
+		page for more information about each setting.
+	</p>
+
+	<h2 id="object-syntax">
+		HashOver Object Syntax
+	</h2>
+
+	<div class="code block">
+		function HashOver ([id, options, instance])
+	</div>
+
+	<h2 id="parameters">
+		<b>Parameters</b>
+	</h2>
+
+	<dl>
+		<dt>
+			<code>id</code>
+		</dt>
+		<dd>
+			The ID of an element to add the comments to. If omitted, it defaults to
+			<code>hashover</code> and is automatically suffixed with a dash and the
+			instance number for every instance except the first. This parameter
+			expects a <code>string</code> value.
+		</dd>
+		<dt>
+			<code>options</code>
+		</dt>
+		<dd>
+			<p>
+				An object containing the following information.
+			</p>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th width="1%">
+							Name
+						</th>
+						<th width="1%">
+							Type
+						</th>
+						<th>
+							Description
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id="title">
+						<td valign="top">
+							<code>title</code>
+						</td>
+						<td valign="top">
+							<code>string</code>
+						</td>
+						<td valign="top">
+							<p>
+								A page title. This title appears before the primary comment
+								form. If omitted, the title of the page HashOver is being
+								used on will be automatically detected and used instead.
+								This title is collected as metadata for use in the various
+								APIs that don't have direct access to the page they are
+								showing comments for.
+							</p>
+							<p>
+								Here's an example...
+							</p>
+							<div class="code block">
+								&lt;script type="text/javascript"&gt;<br>
+								&nbsp; &nbsp; var hashover = new HashOver ('hashover', {<br>
+								&nbsp; &nbsp; &nbsp; &nbsp; title: 'Super Cool Article Title'<br>
+								&nbsp; &nbsp; });<br>
+								&lt;/script&gt;
+							</div>
+						</td>
+					</tr>
+					<tr id="url">
+						<td valign="top">
+							<code>url</code>
+						</td>
+						<td valign="top">
+							<code>string</code>
+						</td>
+						<td valign="top">
+							<p>
+								A page URL. This URL is used to differentiate the comments
+								on each page from each other. This option allows you to display
+								comments from a different page by passing in a different URL.
+								If omitted, the URL of the page HashOver is being used on
+								will be automatically detected and used instead. This URL is
+								collected as metadata for use in the various APIs that don't
+								have direct access to the page they are showing comments for.
+							</p>
+							<p>
+								Here's an example...
+							</p>
+							<div class="code block">
+								&lt;script type="text/javascript"&gt;<br>
+								&nbsp; &nbsp; var hashover = new HashOver ('hashover', {<br>
+								&nbsp; &nbsp; &nbsp; &nbsp; url: 'https://example.com/super/cool/article.html'<br>
+								&nbsp; &nbsp; });<br>
+								&lt;/script&gt;
+							</div>
+						</td>
+					</tr>
+					<tr id="thread">
+						<td valign="top">
+							<code>thread</code>
+						</td>
+						<td valign="top">
+							<code>string</code>
+						</td>
+						<td valign="top">
+							<p>
+								The internal name of a comment thread. By default, this would
+								be a directory name under either <code>/hashover/comments</code>
+								or <code>/hashover/comments/&lt;domain&gt;/threads</code>
+								depending on whether support for multiple websites is enabled
+								or not, or the value of the <code>thread</code> column when
+								storing the comments in an SQL database. If omitted, the thread
+								name will be automatically generated based on the page URL.
+							</p>
+							<p>
+								Here's an example...
+							</p>
+							<div class="code block">
+								&lt;script type="text/javascript"&gt;<br>
+								&nbsp; &nbsp; var hashover = new HashOver ('hashover', {<br>
+								&nbsp; &nbsp; &nbsp; &nbsp; thread: 'super-cool-article'<br>
+								&nbsp; &nbsp; });<br>
+								&lt;/script&gt;
+							</div>
+						</td>
+					</tr>
+					<tr id="website">
+						<td valign="top">
+							<code>website</code>
+						</td>
+						<td valign="top">
+							<code>string</code>
+						</td>
+						<td valign="top">
+							<p>
+								A website domain name. This is used to differentiate between
+								comment threads that may have the same name but are on
+								different websites. By default, this would be a directory
+								name under <code>/hashover/comments</code> when support for
+								multiple websites is enabled, or the value of the
+								<code>website</code> column when storing the comments in an
+								SQL database. This setting is only used when support for
+								multiple websites is enabled. If omitted, the domain name
+								will be extracted from the client's request to your server.
+							</p>
+							<p>
+								Here's an example...
+							</p>
+							<div class="code block">
+								&lt;script type="text/javascript"&gt;<br>
+								&nbsp; &nbsp; var hashover = new HashOver ('hashover', {<br>
+								&nbsp; &nbsp; &nbsp; &nbsp; website: 'example.com'<br>
+								&nbsp; &nbsp; });<br>
+								&lt;/script&gt;
+							</div>
+						</td>
+					</tr>
+					<tr id="canonical">
+						<td valign="top">
+							<code>canonical</code>
+						</td>
+						<td valign="top">
+							<code>boolean</code>
+						</td>
+						<td valign="top">
+							<p>
+								Whether to pull the page URL from a
+								<a href="http://en.wikipedia.org/wiki/Canonical_link_element" target="_blank">Canonical Link Element</a>
+								rather than the document title in the page <code>&lt;head&gt;</code>
+								element. If omitted, the Canonical Link Element is used.
+							</p>
+							<p>
+								Here's an example...
+							</p>
+							<div class="code block">
+								&lt;script type="text/javascript"&gt;<br>
+								&nbsp; &nbsp; var hashover = new HashOver ('hashover', {<br>
+								&nbsp; &nbsp; &nbsp; &nbsp; canonical: false<br>
+								&nbsp; &nbsp; });<br>
+								&lt;/script&gt;
+							</div>
+						</td>
+					</tr>
+					<tr id="settings">
+						<td valign="top">
+							<code>settings</code>
+						</td>
+						<td valign="top">
+							<code>object</code>
+						</td>
+						<td valign="top">
+							<p>
+								An object of settings to override. The key names can be
+								hyphenated or camelCase. Not all settings are supported. For
+								a complete list of all available settings see the
+								<a href="../settings" title="Settings">Settings</a>
+								page for more information. If omitted, the default settings
+								or those set in the <code>/hashover/config/settings.json</code>
+								file will be used instead.
+							</p>
+							<p>
+								Here's an example...
+							</p>
+							<div class="code block">
+								&lt;script type="text/javascript"&gt;<br>
+								&nbsp; &nbsp; var hashover = new HashOver ('hashover', {<br>
+								&nbsp; &nbsp; &nbsp; &nbsp; settings: {<br>
+								&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; language: 'de',<br>
+								&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; formPosition: 'bottom',<br>
+								&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; websiteField: 'off'<br>
+								&nbsp; &nbsp; &nbsp; &nbsp; }<br>
+								&nbsp; &nbsp; });<br>
+								&lt;/script&gt;
+							</div>
+							<p>
+								This example sets the interface language to German, sets the
+								primary comment form position to below the posted comments,
+								and disables the website field.
+							</p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</dd>
+		<dt>
+			<code>instance</code>
+		</dt>
+		<dd>
+			The instance number, which is used when there are multiple comment
+			threads on a single page. If omitted, it defaults to <code>1</code> and
+			automatically increases each time a new HashOver instance is
+			instantiated. This parameter expects a <code>number</code> value.
+		</dd>
+	</dl>
+</div>

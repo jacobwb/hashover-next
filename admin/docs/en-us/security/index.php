@@ -19,10 +19,10 @@
 
 try {
 	// Do some standard HashOver setup work
-	require (realpath ('../../backend/standard-setup.php'));
+	require (realpath ('../../../../backend/standard-setup.php'));
 
 	// View setup
-	require (realpath ('../view-setup.php'));
+	require (realpath ('../../../view-setup.php'));
 
 	// Template data
 	$template = array (
@@ -30,7 +30,7 @@ try {
 	);
 
 	// Load and parse HTML template
-	echo parse_templates ('admin', 'docs.html', $template, $hashover);
+	echo parse_templates ('../../docs/en-us/steps', 'security.html', $template, $hashover);
 
 } catch (\Exception $error) {
 	echo Misc::displayException ($error);

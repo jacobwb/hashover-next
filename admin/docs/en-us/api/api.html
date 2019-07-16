@@ -1,0 +1,158 @@
+<div class="general-style">
+	<h1 id="hashover-api">
+		Using the HashOver APIs
+	</h1>
+
+	<p>
+		HashOver has a number of available APIs that you may find useful. As of
+		writing this, there are four different APIs, two of which relate to
+		summarizing the comments as either a comment count link or a list of the
+		most recent comments from either a single page of across all pages, and the
+		other two relate to retrieving the comments in either RSS or JSON format.
+	</p>
+
+	<h1 id="comment-count-link">
+		Comment Count Link API
+	</h1>
+
+	<div>
+		<p>
+			This API allows you to display the number of comments a page has as a
+			link to that page.
+		</p>
+		<p>
+			This API is easy to use, only a few simple lines of code are needed,
+			here's what you have to do...
+		</p>
+		<ol>
+			<li>
+				<p>
+					Place this JavaScript tag in either the <code>&lt;head&gt;</code>
+					or <code>&lt;body&gt;</code> of your page.
+				</p>
+				<div class="code block">
+					&lt;script type="text/javascript" src="/hashover/api/count-link.php"&gt;&lt;/script&gt;
+				</div>
+			</li>
+			<li>
+				<p>
+					Place any number of links like this anywhere on your page...
+				</p>
+				<div class="code block">
+					&lt;a class="hashover-count-link" href="https://example.com/super/cool/article.html"&gt;&lt;/a&gt;
+				</div>
+				<p>
+					Any link with the <code>hashover-count-link</code> class will have
+					their content replaced with a comment count, or the text "Post Comment"
+					if the page has no comments yet. If you want the count link to jump to
+					the comments, place a <code>#comments</code> on the end of the URL.
+				</p>
+			</li>
+		</ol>
+	</div>
+
+	<h1 id="latest-comments">
+		Latest Comments API
+	</h1>
+
+	<p>
+		This API allows you to display a configurable number of the most recent
+		comments, either from a specific page or from every page.
+	</p>
+
+	<p>
+		This API is easy to use, its setup is similar to how you use HashOver itself...
+	</p>
+
+	<ol>
+		<li>
+			<p>
+				Place this JavaScript tag in either the <code>&lt;head&gt;</code> or
+				<code>&lt;body&gt;</code> of your page.
+			</p>
+			<div class="code block">
+				&lt;script type="text/javascript" src="/hashover/api/latest.php"&gt;&lt;/script&gt;
+			</div>
+		</li>
+		<li>
+			<p>
+				Place an element with the ID attribute <code>hashover-latest</code> on
+				your website, this element is where the comments will appear. This element
+				can be a simple <code>&lt;div&gt;</code> or <code>&lt;section&gt;</code>
+				element, it just needs the correct ID attribute.
+			</p>
+			<p>
+				Here is an example of a simple element that will work...
+			</p>
+			<div class="code block">
+				&lt;div id="hashover-latest"&gt;&lt;/div&gt;
+			</div>
+			<p>
+				<b>Note</b>: If an element like this does not exist on the page
+				HashOver will try to find a nice place for the comments to appear. If
+				the JavaScript tag is in the <code>&lt;body&gt;</code> element the
+				comments will appear directly before the JavaScript tag, if the JavaScript
+				tag is in the <code>&lt;head&gt;</code> element the comments will
+				appear at the end of the <code>&lt;body&gt;</code> element.
+			</p>
+		</li>
+		<li>
+			<p>
+				This step is optional, but required if you want to display the latest
+				comments from a specific page.
+			</p>
+			<p>
+				To display the latest comments from a specific page you need to
+				change the JavaScript tag to this...
+			</p>
+			<div class="code block paragraph">
+				&lt;script type="text/javascript" src="/hashover/api/latest.php?nodefault"&gt;&lt;/script&gt;
+			</div>
+			<p>
+				And instantiate an instance of the <code>HashOverLatest</code> object
+				with a specific URL or thread...
+			</p>
+			<div class="code block">
+				&lt;script type="text/javascript"&gt;<br>
+				&nbsp; &nbsp; var latest = new HashOverLatest ({<br>
+				&nbsp; &nbsp; &nbsp; &nbsp; url: 'https://example.com/super/cool/article.html'<br>
+				&nbsp; &nbsp; });<br>
+				&lt;/script&gt;
+			</div>
+			<p>
+				The <code>HashOverLatest</code> object is very similar to the
+				<code>HashOver</code> object, they even share the same code. The
+				<code>HashOverLatest</code> object accepts the following options
+				<code>url</code>, <code>thread</code>, and <code>website</code>. See
+				the <a href="../technical" title="Technical">Technical</a>
+				page for more information about these options.
+			</p>
+		</li>
+	</ol>
+
+	<h1 id="rss">
+		RSS API
+	</h1>
+
+	<p>
+		This API generates an RSS feed of comments from a specific page. This API
+		is located at: <code>/hashover/api/rss.php</code> and accepts the
+		following URL queries. The <code>url</code> query, which is required,
+		controls which page to display comments from. The <code>sorting</code>
+		query, which is optional, controls how the comments will be sorted, this
+		query is <code>by-date</code> by default, see the page
+		for all available sorting options.
+	</p>
+
+	<h1 id="json">
+		JSON API
+	</h1>
+
+	<p>
+		This API generates JSON data of comments from a specific page. This API
+		is located at: <code>/hashover/api/json.php</code> and accepts only one
+		URL query, the <code>url</code> query, which is required to control which
+		page to display comments from.
+	</p>
+
+</div>

@@ -57,6 +57,12 @@ function parse_templates ($template, $fragment, array $data, \HashOver $hashover
 	// Indent page fragment by two tabs
 	$page = str_replace (PHP_EOL, PHP_EOL . "\t\t", $page);
 
+	// Get configured language in en-us format
+	$language = str_replace ('_', '-', strtolower ($hashover->setup->language));
+
+	// Fallback to English if documentation does not exist for configured language
+	$language = file_exists ('/docs/' . $language) ? $language : 'en-us';
+
 	// Merge some default informatin into template data
 	$data = array_merge ($data, array (
 		// HTTP root directory
@@ -73,6 +79,9 @@ function parse_templates ($template, $fragment, array $data, \HashOver $hashover
 		'updates' => $hashover->locale->text['check-for-updates'],
 		'docs' => $hashover->locale->text['documentation'],
 		'logout' => $hashover->locale->text['logout'],
+
+		// Configured language in en-us format
+		'language' => $language,
 
 		// Parsed page template
 		'content' => $page

@@ -1,0 +1,416 @@
+<div class="general-style">
+	<h1 id="required-setup">
+		Required Setup
+	</h1>
+
+	<p>
+		To use HashOver you first need to change a few settings that control
+		important features, such as email notifications, data encryption, and admin
+		comment moderation. To do this you need to edit the
+		<code>/hashover/backend/classes/secrets.php</code> file and fill in the following information...
+	</p>
+
+	<dl>
+		<dt>
+			<code>$notificationEmail</code>
+		</dt>
+		<dd>
+			An email address to send notifications of new comments.
+		</dd>
+		<dt>
+			<code>$encryptionKey</code>
+		</dt>
+		<dd>
+			An encryption key, for encrypting and decrypting sensitive user data in
+			comments such as email addresses and passwords. It can contain text of
+			any length, but its best to keep the value alphanumeric. This setting
+			is case-sensitive. You should think of this as a password, make it
+			something hard to guess but easy for you to remember, in case the
+			<code>secrets.php</code> file gets replaced with the default at some
+			point, for example when updating HashOver to a newer version.
+		</dd>
+		<dt>
+			<code>$adminName</code>
+		</dt>
+		<dd>
+			The name for the Admin user. This does not need to be a user that
+			exists on your server, it is completely HashOver-specific. This setting
+			is case-sensitive. Anyone who uses this name with the correct password
+			when they login will gain Admin rights, they will be able to moderate
+			the comments, edit, delete, and approve pending comments.
+		</dd>
+		<dt>
+			<code>$adminPassword</code>
+		</dt>
+		<dd>
+			The password for the Admin user. This setting is case-sensitive.
+		</dd>
+	</dl>
+
+	<h2 id="sql-setup">
+		SQL Setup
+	</h2>
+
+	<p>
+		The following settings are optional, but required if you plan to store
+		comments in a MySQL database or any other SQL server supported by
+		<a href="https://www.php.net/manual/en/pdo.drivers.php" target="_blank">PDO</a>
+		that uses MySQL compatible statement syntax. Below is the information you
+		need to fill in before HashOver will connect to your database.
+	</p>
+
+	<dl>
+		<dt>
+			<code>$databaseType</code>
+		</dt>
+		<dd>
+			<p>
+				This setting specifies what kind of SQL database HashOver stores the comments
+				in, either <code>sqlite</code> or <code>mysql</code>. Other databases might
+				work as well, but they are not officially supported or tested.
+			</p>
+		</dd>
+		<dt>
+			<code>$databaseName</code>
+		</dt>
+		<dd>
+			This setting specifies different things based on the database type. For
+			SQLite it serves as the name of the database file stored under
+			<code>/hashover/comments</code>, for MySQL it serves as the name of an
+			existing database in the server.
+		</dd>
+		<dt>
+			<code>$databaseHost</code>
+		</dt>
+		<dd>
+			This setting specifies where to find the SQL server, it is a regular
+			host either a local hostname or an IP address, normally
+			<code>localhost</code>, but it can be a remote host as well. This
+			setting is not used for SQLite.
+		</dd>
+		<dt>
+			<code>$databasePort</code>
+		</dt>
+		<dd>
+			This setting specifies which port the SQL server is running on. For MySQL
+			this is normally <code>3306</code>, but it can be any port and is normally
+			unique to a specific SQL server. This setting is not used for SQLite.
+		</dd>
+		<dt>
+			<code>$databaseUser</code>
+		</dt>
+		<dd>
+			This setting specifies which user to connect to the SQL server as.
+			Unlike the Admin user, this setting needs to be a user that exists on
+			the SQL server, often this is the <code>root</code> user as they have
+			permission to write to any database. Connecting to the SQL server as
+			<code>root</code> is not recommended, as it is a security
+			vulnerability. Instead, if you can, you should create a new user to use
+			with HashOver, one that has permission to write to the database and
+			their own unique password. This setting is not used for SQLite.
+		</dd>
+		<dt>
+			<code>$databasePassword</code>
+		</dt>
+		<dd>
+			This setting specifies the password for the SQL server user described
+			above. This setting is not used for SQLite.
+		</dd>
+		<dt>
+			<code>$databaseCharset</code>
+		</dt>
+		<dd>
+			The character set of the comments being stored in the database.
+		</dd>
+	</dl>
+
+	<h2 id="smtp-setup">
+		SMTP Setup
+	</h2>
+
+	<p>
+		The following settings are optional, but required if you plan to send
+		email notifications through a remote SMTP server, such as Gmail. By
+		default, HashOver uses the built-in email support in PHP, which uses
+		sendmail on GNU/Linux and Mac OS. This may cause problems with some
+		Internet Service Providers (ISP), hosting providers, and certain server
+		configurations. When this happens you may need to send email notifications
+		through a remote SMTP server. Below is the information you need to fill in
+		before you can send email notifications through a remote SMTP server.
+	</p>
+
+	<p>
+		On Windows, PHP's sendmail uses SMTP by default, so the following
+		settings should not need to be changed on Windows, but if you encounter
+		problems, you might try using HashOver SMTP instead of sendmail.
+	</p>
+
+	<dl>
+		<dt>
+			<code>$smtpHost</code>
+		</dt>
+		<dd>
+			This setting specifies the SMTP server, for example
+			<code>smtp.gmail.com</code>.
+		</dd>
+		<dt>
+			<code>$smtpPort</code>
+		</dt>
+		<dd>
+			This setting specifies the SMTP server port number, commonly
+			<code>465</code>. The port number depends on the type of encryption
+			being used, but it can be anything. Please consult your SMTP server
+			host for proper configuration.
+		</dd>
+		<dt>
+			<code>$smtpCrypto</code>
+		</dt>
+		<dd>
+			Type of encryption to use when connecting to the SMTP server. The SMTP
+			server must support the specified encryption. The most common
+			encryption type is <code>ssl</code>. Please consult your SMTP server
+			host for proper configuration.
+		</dd>
+		<dt>
+			<code>$smtpAuth</code>
+		</dt>
+		<dd>
+			This setting specifies whether the SMTP connection is encrypted, which
+			is commonly the case.
+		</dd>
+		<dt>
+			<code>$smtpUser</code>
+		</dt>
+		<dd>
+			This setting specifies the user to connect to the SMTP server as.
+			Unlike the Admin user, this setting needs to be a user that exists on
+			the SMTP server. For example, if you're sending email through the Gmail
+			SMTP server, this setting would be your Gmail account username.
+		</dd>
+		<dt>
+			<code>$smtpPassword</code>
+		</dt>
+		<dd>
+			This setting specifies the password for the SMTP server user described above.
+		</dd>
+	</dl>
+
+	<h1 id="troubleshooting">
+		Troubleshooting
+	</h1>
+
+	<p>
+		To begin with, at the bare minimum you want to ensure your server has PHP
+		installed, since HashOver is written in the PHP scripting language. PHP has a
+		long history with many versions, but HashOver is written with backward
+		compatibility in mind, so the minimum PHP version supported is 5.3.3. HashOver
+		does not need to be installed like normal software, the files can be downloaded
+		and used as-is. HashOver does not require any specific server configuration
+		changes. With this in mind, there are very few ways a setup can go wrong.
+	</p>
+
+	<h2 id="file-permissions">
+		File permissions
+	</h2>
+
+	<p>
+		HashOver needs to write various data to various files and directories, so
+		all of the HashOver files should be owned by the user your server is
+		running as, normally this is the <code>www-data</code> user. It is
+		particularly important that the directories <code>/hashover/config</code>
+		and <code>/hashover/comments</code> be owned by this user. Alternatively,
+		these directories can be given permissions <code>0777</code> which grants
+		full read and write access to all users. This is generally seen as a
+		security vulnerability, so you should avoid doing this if at all possible.
+	</p>
+
+	<h2 id="required-modules">
+		Required modules/compilation
+	</h2>
+
+	<p>
+		HashOver does not depend on any third-party libraries or frameworks,
+		especially not any other PHP-based software. Although most PHP installations
+		include everything HashOver requires by default, depending on your setup
+		you may need to install some modules/extensions and/or ensure PHP was
+		compiled with support for the following modules.
+	</p>
+
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<thead>
+			<tr>
+				<th width="33%">
+					Feature
+				</th>
+				<th width="33%">
+					Module name(s)
+				</th>
+				<th width="33%">
+					Debian/Ubuntu package name(s)
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					Date and Time
+				</td>
+				<td>
+					date
+				</td>
+				<td>
+					<i>part of PHP core</i>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Document Object Model
+				</td>
+				<td>
+					dom
+				</td>
+				<td>
+					<i>part of PHP core</i>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Regular Expressions
+				</td>
+				<td>
+					pcre
+				</td>
+				<td>
+					<i>part of PHP core</i>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					User information encryption
+				</td>
+				<td>
+					openssl
+				</td>
+				<td>
+					<i>part of PHP core</i>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Multi-byte character support
+				</td>
+				<td>
+					mbstring
+				</td>
+				<td>
+					php-mbstring
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Internationalization
+				</td>
+				<td>
+					intl
+				</td>
+				<td>
+					php-intl
+				</td>
+			</tr>
+			<tr>
+				<td>
+					XML data storage format support
+				</td>
+				<td>
+					xml, libxml, SimpleXML
+				</td>
+				<td>
+					php-xml
+				</td>
+			</tr>
+			<tr>
+				<td>
+					JSON data support
+				</td>
+				<td>
+					json
+				</td>
+				<td>
+					php-json
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<p>
+		If you want to use an SQLite or MySQL database, than the following
+		modules are also required...
+	</p>
+
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<thead>
+			<tr>
+				<th width="33%">
+					Feature
+				</th>
+				<th width="33%">
+					Module name(s)
+				</th>
+				<th width="33%">
+					Debian/Ubuntu package name(s)
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					PHP Data Objects
+				</td>
+				<td>
+					PDO
+				</td>
+				<td>
+					<i>part of PHP core</i>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					SQLite support
+				</td>
+				<td>
+					pdo_sqlite, sqlite3
+				</td>
+				<td>
+					php-sqlite3
+				</td>
+			</tr>
+			<tr>
+				<td>
+					MySQL support
+				</td>
+				<td>
+					pdo_mysql
+				</td>
+				<td>
+					php-mysql
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2 id="finding-modules">
+		Checking for required modules
+	</h2>
+
+	<p>
+		On UNIX (GNU, BSD, etc) you may list installed modules with this command:
+	</p>
+
+	<code class="block">php -m</code>
+
+	<p>
+		On Windows the command to list installed modules is:
+	</p>
+
+	<code class="block">php.exe -m</code>
+</div>

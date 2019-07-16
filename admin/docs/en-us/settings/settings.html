@@ -1,0 +1,2084 @@
+<div id="available-settings" class="general-style">
+	<h1 id="changing-settings">
+		How to Change HashOver's Behavior via Settings
+	</h1>
+
+	<div class="table">
+		<div>
+			<div>
+				<p>
+					<b>Settings can be changed in three different ways:</b>
+				</p>
+				<div>
+					<ol>
+						<li>
+							<p>
+								From the <code>/hashover/admin/settings</code> page, where
+								you can make adjustments to a number of settings visually.
+								The <code>Admin</code> column below indicates which settings
+								are currently available on the admin Settings page.
+							</p>
+						</li>
+						<li>
+							<p>
+								In the <code>/hashover/config/settings.json</code> file. Do
+								not do this if you are not familiar with the
+								<a href="https://en.wikipedia.org/wiki/JSON#Data_types_and_syntax">syntax of JSON</a>,
+								if the file is not properly formatted it will fail to load. The
+								<code>Name</code> column below gives each setting's JSON key.
+							</p>
+						</li>
+						<li>
+							<p>
+								By passing the settings to HashOver in the frontend options.
+								For more information about this, please view the
+								<a href="../technical" title="Technical">Technical</a>
+								page. The <code>Option</code> column below indicates which
+								settings are allowed to be used in this manner.
+							</p>
+						</li>
+					</ol>
+				</div>
+			</div>
+			<div>
+				<div>
+					<p>
+						<b>Example of a valid</b> <code><b>settings.json</b></code>
+						<b>file:</b>
+					</p>
+					<p>
+						The example below sets the interface language to German, sets the
+						primary comment form position to below the posted comments, and
+						disables the website field.
+					</p>
+					<div class="code block">
+						{<br>
+						&nbsp; &nbsp; "language": "de",<br>
+						&nbsp; &nbsp; "form-position": "bottom",<br>
+						&nbsp; &nbsp; "website-field": "off"<br>
+						}
+					</div>
+					<p>
+						<b>Note:</b> When settings are loaded from <code>settings.json</code>
+						or the frontend options their type is checked before being applied,
+						settings with the wrong type are rejected and a default value will be
+						used instead. The <code>Type</code> column below specifies the
+						expected type for each setting.
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<h1 id="settings">
+		Full List of Available Settings
+	</h1>
+
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<thead>
+			<tr>
+				<th width="1%">
+					Name
+				</th>
+				<th width="1%">
+					Type
+				</th>
+				<th width="6%" align="center">
+					Admin
+				</th>
+				<th width="6%" align="center">
+					Option
+				</th>
+				<th>
+					Description
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr id="allowed-domains">
+				<td valign="top">
+					<code>allowed-domains</code>
+				</td>
+				<td valign="top">
+					<code>array</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						There is something called the "same-origin policy" that all
+						modern web browsers follow, along with a security mechanism
+						called "Cross-Origin Resource Sharing" which prevents scripts
+						running on one website from sending requests to another
+						server without having permission to receive a response.
+					</p>
+					<p>
+						This setting is a list of remote domains which are allowed to
+						send requests to HashOver. This allows you to host HashOver on
+						one server while using it on another different server. For
+						example, hosting HashOver on a service that supports PHP, but
+						using it on a host that doesn't support PHP, like GitHub pages.
+					</p>
+					<p>
+						This setting is empty by default, allowing no remote access.
+					</p>
+				</td>
+			</tr>
+			<tr id="allows-dislikes">
+				<td valign="top">
+					<code>allows-dislikes</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether users may dislike each other's
+						comments. Setting this to <code>true</code> will cause a dislike
+						button and a dislike count to be shown to the user, setting this to
+						<code>false</code> will hide the dislike button and dislike count.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="allows-images">
+				<td valign="top">
+					<code>allows-images</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether users can post images in their
+						comments. Setting this to <code>true</code> will allow users to
+						post images in their comments using the <code>[img]...[/img]</code>
+						syntax, setting this to <code>false</code> will cause said
+						syntax to be treated as a normal link.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="allows-likes">
+				<td valign="top">
+					<code>allows-likes</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether users may like each other's
+						comments. Setting this to <code>true</code> will cause a like
+						button and a like count to be shown to the user, setting this to
+						<code>false</code> will hide the like button and like count.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="allows-login">
+				<td valign="top">
+					<code>allows-login</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether users are allowed to login. Setting
+						this to <code>true</code> will cause a "Login" button to be shown
+						to users, setting this to <code>false</code> will hide the "Login"
+						button and the login information fields will continue to be shown.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="allows-user-replies">
+				<td valign="top">
+					<code>allows-user-replies</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether users are allowed to reply to each
+						other outside of HashOver over email. Setting this to
+						<code>true</code> will cause the user's email address to be set
+						as the "Reply-To" header of reply notification emails, setting
+						this to <code>false</code> will cause the email address in the
+						secret <code>$noreplyEmail</code> setting to be used instead. The
+						admin user is always allowed to reply by email.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="appends-css">
+				<td valign="top">
+					<code>appends-css</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether the configured theme CSS file is
+						automatically added to the page. Setting this to
+						<code>true</code> will cause the theme CSS file to automatically
+						be added to the page, if it is not already present. Setting this
+						to <code>false</code> will cause the theme CSS file to be ignored
+						all together and you will have to add the theme CSS file to the
+						page yourself, by adding the theme CSS file to your page using a
+						<code>&lt;link&gt;</code> element or by importing it into your
+						website's existing CSS using an <code>@import</code> statement at
+						the start of your CSS.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="appends-rss">
+				<td valign="top">
+					<code>appends-rss</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether the comments RSS API is added to
+						the page. Setting this to <code>true</code> will cause a link to
+						the RSS API to be placed in the end links section and the user's
+						web browser will be made aware of the feed, setting this to
+						<code>false</code> will cause neither of these things to be done.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+					<p>
+						<b>Note</b>: Web browsers have been removing support for RSS and
+						feed readers have been decreasing in popularity over the last
+						decade. This setting, along with the RSS API, may be removed in
+						the future.
+					</p>
+				</td>
+			</tr>
+			<tr id="collapse-limit">
+				<td valign="top">
+					<code>collapse-limit</code>
+				</td>
+				<td valign="top">
+					<code>integer</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						When comment collapsing is enabled this setting controls how many
+						comments are shown before they start getting collapsed.
+					</p>
+					<p>
+						This setting is <code>3</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="collapses-comments">
+				<td valign="top">
+					<code>collapses-comments</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether the comments get collapsed. Setting
+						this to <code>true</code> will cause a configurable number of
+						comments to be shown and the rest to be hidden. A button will be
+						added to the page that allows the user to display the collapsed
+						comments. Setting this to <code>false</code> will cause all
+						comments to be shown.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="collapses-interface">
+				<td valign="top">
+					<code>collapses-interface</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether the entire HashOver interface gets
+						collapsed. Setting this to <code>true</code> will hide the
+						primary comment form, all comments, and the end links. A button
+						will be added to the page that allows the user to display the
+						collapsed interface. Setting this to <code>false</code> will
+						cause the interface to be shown.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="comments-root">
+				<td valign="top">
+					<code>comments-root</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					This setting controls the path to the comments directory. The value
+					of this setting is automatically generated, so the default value is
+					unknown. However, this setting exists to allow you to override this
+					automatic default value. This allows you to store the comments
+					outside of your website's root directory for added security.
+				</td>
+			</tr>
+			<tr id="cookie-expiration">
+				<td valign="top">
+					<code>cookie-expiration</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls when cookies set by HashOver expire. This
+						setting is a relative DateTime format, so cookies expire a
+						certain number of days or months from the current date. You can
+						use things like <code>+24 hours</code>, <code>next week</code>,
+						<code>next month</code>, <code>+1 year</code>, among other
+						options, or you can use <code>session</code> to have the cookies
+						expire at the end of the session (when the browser closes).
+					</p>
+					<p>
+						This setting is <code>next month</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="counts-deletions">
+				<td valign="top">
+					<code>counts-deletions</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether deleted comments get counted.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="data-format">
+				<td valign="top">
+					<code>data-format</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how the comments are stored. The available
+						formats are <code>xml</code>, <code>json</code>, and
+						<code>sql</code>. When using SQL you need to set the
+						<code>$databaseType</code> setting in the
+						<code>/hashover/backend/classes/secrets.php</code> file, where
+						the two supported types of SQL databases are <code>sqlite</code>
+						and <code>mysql</code>. See the <a href="../setup" title="Setup">Setup</a>
+						page for more information about setting up HashOver for use with
+						an SQL database.
+					</p>
+					<p>
+						This setting is <code>xml</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="date-pattern">
+				<td valign="top">
+					<code>date-pattern</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how the dates of when comments were posted
+						are formatted. This format is in the
+						<a href="http://userguide.icu-project.org/formatparse/datetime">ICU datetime format</a>,
+						by default the format outputs a date like "January 1, 2020".
+						The dates are localized based on the locale code in the
+						<code>language</code> setting.
+					</p>
+					<p>
+						This setting is <code>MMMM d, YYYY</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="default-name">
+				<td valign="top">
+					<code>default-name</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls what name a user will be given if they
+						don't enter a name when posting their comment. Since a name is
+						not required by default.
+					</p>
+					<p>
+						This setting is <code>Anonymous</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="default-sorting">
+				<td valign="top">
+					<code>default-sorting</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the default order comments will appear in.
+					</p>
+					<p>
+						The available options are...
+					</p>
+					<dl>
+						<dt>
+							<code>ascending</code>
+						</dt>
+						<dd>
+							Sorts comments in the order they were posted.
+						</dd>
+						<dt>
+							<code>descending</code>
+						</dt>
+						<dd>
+							Sorts comments in the reverse order they were posted.
+						</dd>
+						<dt>
+							<code>by-date</code>
+						</dt>
+						<dd>
+							Sorts comments with the newest at the top.
+						</dd>
+						<dt>
+							<code>by-likes</code>
+						</dt>
+						<dd>
+							Sorts comments with the most likes at the top.
+						</dd>
+						<dt>
+							<code>by-replies</code>
+						</dt>
+						<dd>
+							Sorts comments with the most replies at the top.
+						</dd>
+						<dt>
+							<code>by-discussion</code>
+						</dt>
+						<dd>
+							Sorts comments with the most discussion at the top. This means
+							comments with the most replies and the most replies to replies.
+							In other words, comments with the most participation and
+							activity are at the top.
+						</dd>
+						<dt>
+							<code>by-popularity</code>
+						</dt>
+						<dd>
+							Sorts comments with the most likes and the most liked replies
+							at the top. In other words, the most popular comment threads
+							are at the top.
+						</dd>
+						<dt>
+							<code>by-name</code>
+						</dt>
+						<dd>
+							Sorts comments by the commenter names in alphabetical order.
+						</dd>
+						<dt>
+							<code>threaded-descending</code>
+						</dt>
+						<dd>
+							Same as <code>descending</code>, but leaves the replies in
+							ascending order.
+						</dd>
+						<dt>
+							<code>threaded-by-date</code>
+						</dt>
+						<dd>
+							Same as <code>by-date</code>, but leaves the replies in
+							ascending order.
+						</dd>
+						<dt>
+							<code>threaded-by-likes</code>
+						</dt>
+						<dd>
+							Same as <code>by-likes</code>, but leaves the replies in
+							ascending order.
+						</dd>
+						<dt>
+							<code>threaded-by-name</code>
+						</dt>
+						<dd>
+							Same as <code>by-name</code>, but leaves the replies in
+							ascending order.
+						</dd>
+					</dl>
+					<p>
+						This setting is <code>ascending</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="displays-title">
+				<td valign="top">
+					<code>displays-title</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether the page title is displayed above
+						the primary comment form. Setting this to <code>true</code> will
+						cause the text above the primary comment form to say something
+						like " Post a comment on "Super Cool Article Title" ", setting
+						this to <code>false</code> will cause this text to simply say
+						"Post a comment".
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="domain">
+				<td valign="top">
+					<code>domain</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					This setting controls the server domain name. The value of this
+					setting is automatically generated, so the default value is
+					unknown. However, this setting exists to allow you to override this
+					automatic default value.
+				</td>
+			</tr>
+			<tr id="email-field">
+				<td valign="top">
+					<code>email-field</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the behavior of the email address field.
+						Setting this to <code>on</code> will cause the field to be shown,
+						setting this to <code>off</code> will cause the field to be
+						hidden, setting this to <code>required</code> will cause the
+						field to be shown and require a properly formatted email address
+						before the user will be allowed to post their comment.
+					</p>
+					<p>
+						This setting is <code>on</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="enabled-api">
+				<td valign="top">
+					<code>enabled-api</code>
+				</td>
+				<td valign="top">
+					<code>array</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting is a list of APIs to enable. The available options
+						are <code>rss</code>, <code>json</code>, <code>latest</code>,
+						<code>all</code> to enable all APIs, or leave the array empty to
+						disable all APIs.
+					</p>
+					<p>
+						This setting is <code>["all"]</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="form-position">
+				<td valign="top">
+					<code>form-position</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td>
+					<p>
+						This setting controls the position of the primary comment form.
+						Setting this to <code>top</code> will cause the form to appear
+						before the comments, setting this to <code>bottom</code> will cause
+						the form to appear after the comments but before the end links.
+					</p>
+					<p>
+						This setting is <code>top</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="gravatar-default">
+				<td valign="top">
+					<code>gravatar-default</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls which themed Gravatar default avatars to
+						use when a user's email address doesn't have a Gravatar avatar
+						image associated with it. For available options, please see the
+						<a href="https://en.gravatar.com/site/implement/images/#default-image">Gravatar documentation</a>.
+						The option <code>custom</code> is also supported, which loads
+						the HashOver default avatar.
+					</p>
+					<p>
+						This setting is <code>custom</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="gravatar-force">
+				<td valign="top">
+					<code>gravatar-force</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						The setting controls whether the themed Gravatar default avatars
+						are always loaded instead of each user's personal avatar image.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="http-backend">
+				<td valign="top">
+					<code>http-backend</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					This setting controls the client-side path to the HashOver backend
+					directory. In a default installation this setting is
+					<code>/hashover/backend</code> by default, however, the value of
+					this setting is technically automatically generated, so the default
+					value is unknown. This setting exists to allow you to override this
+					automatic default value.
+				</td>
+			</tr>
+			<tr id="http-images">
+				<td valign="top">
+					<code>http-images</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					This setting controls the client-side path to the HashOver images
+					directory. In a default installation this setting is
+					<code>/hashover/images</code> by default, however, the value of
+					this setting is technically automatically generated, so the default
+					value is unknown. This setting exists to allow you to override this
+					automatic default value.
+				</td>
+			</tr>
+			<tr id="http-root">
+				<td valign="top">
+					<code>http-root</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					This setting controls the client-side path to the HashOver root
+					directory. In a default installation this setting is
+					<code>/hashover</code> by default, however, the value of this
+					setting is technically automatically generated, so the default
+					value is unknown. This setting exists to allow you to override this
+					automatic default value.
+				</td>
+			</tr>
+			<tr id="icon-mode">
+				<td valign="top">
+					<code>icon-mode</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the type of avatar each comment has. The
+						available options are <code>image</code> for a Gravatar avatar image,
+						<code>count</code> for the comment number, or <code>none</code>.
+					</p>
+					<p>
+						This setting is <code>image</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="icon-size">
+				<td valign="top">
+					<code>icon-size</code>
+				</td>
+				<td valign="top">
+					<code>integer</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the size of the Gravatar avatar image.
+					</p>
+					<p>
+						This setting is <code>45</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="image-format">
+				<td valign="top">
+					<code>image-format</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the type of images used in the interface.
+						Use <code>png</code> for greatest backward compatibility, use
+						<code>svg</code> for scalability. This setting is automatically
+						set to <code>svg</code> on mobile devices to allow scalability,
+						most mobile devices support SVG.
+					</p>
+					<p>
+						This setting is <code>png</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="image-types">
+				<td valign="top">
+					<code>image-types</code>
+				</td>
+				<td valign="top">
+					<code>array</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting is a list of image file extensions that will be
+						allowed to be posted and displayed in comments using the
+						<code>[img]...[/img]</code> syntax, any other file extensions
+						will be converted to normal links.
+					</p>
+					<p>
+						This setting is <code>["jpeg", "jpg", "png", "gif"]</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="language">
+				<td valign="top">
+					<code>language</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the language of the HashOver interface, its
+						locale. A number of languages are currently supported, look in
+						<code>/hashover/backend/locales</code> to see if your preferred
+						language is there. This setting expects the value to be a valid
+						locale code in a common format, like <code>en_US</code>,
+						<code>de_DE</code>, <code>ja_JP</code>, etc. The
+						<code>auto</code> option is also supported which will cause
+						HashOver to try to use the current system locale.
+					</p>
+					<p>
+						This setting is <code>auto</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="latest-max">
+				<td valign="top">
+					<code>latest-max</code>
+				</td>
+				<td valign="top">
+					<code>integer</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how many comments will be collected as
+						metadata for the Latest Comments API. Changing this setting does
+						not change the number of comments already collected, so there may
+						be a delay in how many are shown.
+					</p>
+					<p>
+						This setting is <code>10</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="local-metadata">
+				<td valign="top">
+					<code>local-metadata</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether metadata is updated when HashOver
+						is accessed from within a local network. Setting this to
+						<code>true</code> will allow metadata to be created and updated
+						for local network requests, setting this to <code>false</code>
+						will only allow metadata to be updated for remote requests.
+					</p>
+					<p>
+						Metadata about each page using HashOver, such as title and URL,
+						is created or updated every time a request for comments is sent
+						to the HashOver server backend. This is fine for production use,
+						but it might not be desirable in development where each page URL
+						might be different than in production. For example, the domain
+						might be different: example.com vs. 127.0.0.1.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="login-method">
+				<td valign="top">
+					<code>login-method</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how user login is handled. Only the
+						original login system, which uses cookies to store the user's
+						information on their system for easy commenting after their first
+						comment, has been implemented currently.
+					</p>
+					<p>
+						This setting is <code>defaultLogin</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="mailer">
+				<td valign="top">
+					<code>mailer</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how email notifications are sent. Setting
+						this to <code>sendmail</code> will cause HashOver to send email
+						using the built-in email support in PHP, setting this to
+						<code>smtp</code> will cause HashOver to use its own SMTP
+						functionality to send email.
+					</p>
+					<p>
+						Using <code>sendmail</code> may cause problems with some Internet
+						Service Providers (ISP), hosting providers, and certain server
+						configurations. When this happens you may need to send email
+						notifications through a remote SMTP server. See the
+						<a href="../setup" title="Setup">Setup</a> page for more
+						information about setting up HashOver for use with an SMTP server.
+					</p>
+					<p>
+						This setting is <code>sendmail</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="mail-type">
+				<td valign="top">
+					<code>mail-type</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls what format email notifications will be
+						sent in. Setting this to <code>text</code> will cause the
+						notification emails to be sent as plain text, setting this to
+						<code>html</code> will cause the notification emails to be sent
+						as HTML with the plain text version sent as a fallback option.
+						Each HashOver theme should include both a text and HTML notification
+						email template file, which can be modified to your liking.
+					</p>
+					<p>
+						This setting is <code>text</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="minifies-javascript">
+				<td valign="top">
+					<code>minifies-javascript</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether the HashOver frontend JavaScript
+						code will be minified. Minification is a process by which
+						unnecessary code is removed to reduce the size of the file sent
+						to the user, which can help save bandwidth. Setting this to
+						<code>true</code> will cause HashOver to minify the frontend
+						JavaScript code, setting this to <code>false</code> will cause
+						HashOver to return the full code.
+					</p>
+					<p>
+						HashOver has a built-in minifier, which reduces the size of the
+						JavaScript by removing code comments and unnecessary lines and
+						other characters. This minifier does not obfuscate the code, and
+						it provides a link to the full original source code as a code
+						comment at the top of the minified output.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="minify-level">
+				<td valign="top">
+					<code>minify-level</code>
+				</td>
+				<td valign="top">
+					<code>integer</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the level of minification. <code>1</code>
+						will remove code comments. <code>2</code> will remove indentation
+						and empty lines. <code>3</code> will remove all newlines, so the
+						code in on a single line. <code>4</code> will remove spaces before
+						parentheses, spaces around operators, and unnecessary semicolons.
+						Higher levels apply the minification of all lower levels.
+					</p>
+					<p>
+						This setting is <code>1</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="name-field">
+				<td valign="top">
+					<code>name-field</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the behavior of the name field. Setting this
+						to <code>on</code> will cause the field to be shown, setting this
+						to <code>off</code> will cause the field to be hidden, setting this
+						to <code>required</code> will cause the field to be shown and require
+						a value before the user will be allowed to post their comment.
+					</p>
+					<p>
+						This setting is <code>on</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="password-field">
+				<td valign="top">
+					<code>password-field</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the behavior of the password field. Setting
+						this to <code>on</code> will cause the field to be shown, setting
+						this to <code>off</code> will cause the field to be hidden, setting
+						this to <code>required</code> will cause the field to be shown and
+						require a value before the user will be allowed to post their comment.
+					</p>
+					<p>
+						This setting is <code>on</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="pends-user-edits">
+				<td valign="top">
+					<code>pends-user-edits</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether a comment requires approval when it
+						is edited by a user. Setting this to <code>true</code> will cause
+						comments to get reset to the <code>pending</code> status every
+						time they are edited, setting this to <code>false</code> will cause
+						approved comments to stay approved even when they are edited.
+					</p>
+					<p>
+						This setting is separate from but complementary to general
+						comment moderation, the <code>uses-moderation</code> setting.
+						This is because you will receive an email notification about each
+						new comment but not about each comment edit, so you may want to
+						moderate comment edits while not moderating all new comments.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="popularity-limit">
+				<td valign="top">
+					<code>popularity-limit</code>
+				</td>
+				<td valign="top">
+					<code>integer</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how many comment are allowed to be
+						considered popular; how many comments will appear in the "Popular
+						Comments" section. Setting this to <code>0</code> will allow no
+						comments to become popular.
+					</p>
+					<p>
+						This setting is <code>2</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="popularity-threshold">
+				<td valign="top">
+					<code>popularity-threshold</code>
+				</td>
+				<td valign="top">
+					<code>integer</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how many net likes are needed for a comment
+						to be considered "popular"; whether they qualify to be shown in
+						the "Popular Comments" section. For this calculation net likes
+						is: number of likes minus number of dislikes.
+					</p>
+					<p>
+						This setting is <code>5</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="reply-mode">
+				<td valign="top">
+					<code>reply-mode</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how reply comments are displayed. Setting
+						this to <code>thread</code> will cause replies to be shown as a
+						thread, where each reply always gets indented. Setting this to
+						<code>stream</code> will cause the comments to be displayed with
+						only limited, but configurable, levels of indentation. This
+						prevents comments with many replies from becoming too narrow to
+						read as they run out of horizontal space.
+					</p>
+					<p>
+						This setting is <code>thread</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="requires-login">
+				<td valign="top">
+					<code>requires-login</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether users must be logged in to comment.
+						Setting this to <code>true</code> will cause the entire interface
+						to be hidden with a message about the login requirement being
+						shown when a user is not logged in, setting this to
+						<code>false</code> will allow users to view and post comments
+						without being logged in first.
+					</p>
+					<p>
+						This is a technical setting implemented to allow very restrictive
+						custom login methods, particularly those designed to integrate
+						HashOver into a website's own login system to prevent people who
+						are not logged in to the website itself from posting comments. Do
+						not set this to <code>true</code> unless you have created a way for
+						users to login to HashOver without using HashOver itself to do so.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="root-directory">
+				<td valign="top">
+					<code>root-directory</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					This setting controls the path to the HashOver root directory. The
+					value of this setting is automatically generated, so the default
+					value is unknown. This setting exists to allow you to override this
+					automatic default value.
+				</td>
+			</tr>
+			<tr id="secure-cookies">
+				<td valign="top">
+					<code>secure-cookies</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether the HashOver cookies will only be
+						transmitted from the user over a secure HTTPS connection. Setting
+						this <code>true</code> will cause cookies to only be sent over an
+						HTTPS connection, setting this <code>false</code> will cause
+						cookies to be sent over both HTTP and HTTPS connections.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="server-timezone">
+				<td valign="top">
+					<code>server-timezone</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the default timezone used by the server. By
+						default, the server's timezone will try to be automatically
+						detected, but if the time is incorrect you will want to set this
+						manually. This setting expects a timezone location in a common
+						format, like <code>America/Los_Angeles</code>,
+						<code>Europe/Berlin</code>, or <code>Asia/Tokyo</code>. For a
+						<a href="https://www.php.net/manual/en/timezones.php">full list
+						of available timezones</a> see the PHP documentation.
+					</p>
+					<p>
+						This setting is <code>auto</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="sets-cookies">
+				<td valign="top">
+					<code>sets-cookies</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether HashOver will set cookies. Setting
+						this true will cause cookies to be set for things like the name,
+						email, and website field. Setting this false will prevent
+						HashOver from setting cookies.
+					</p>
+					<p>
+						If you are in Europe, you might find it useful to set this to
+						<code>false</code> in the settings, but set it <code>true</code>
+						from the frontend options once you have obtained permission to
+						set cookies from the user. See the
+						<a href="../technical" title="Technical">Technical</a>
+						page for more information about how to adjust settings from the
+						frontend options.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="shows-reply-count">
+				<td valign="top">
+					<code>shows-reply-count</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether the number of reply comments are
+						shown separately from the number of normal comments. Setting this
+						to <code>true</code> will cause the comment count to show the
+						number of replies separately from the number of normal comments,
+						for example "10 comments (25 counting replies)". Setting this to
+						<code>false</code> will cause only the total number of comments
+						to be shown, for example "25 comments".
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="spam-check-modes">
+				<td valign="top">
+					<code>spam-check-modes</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls which HashOver modes have IP address spam
+						checking. HashOver has two modes, JavaScript mode and PHP mode,
+						one or the other or both can have IP address spam checking
+						enabled. PHP mode is more susceptible to spam attacks, but both
+						modes can be targeted on popular websites. Setting this to
+						<code>javascript</code> will enabled IP address spam checking for
+						only JavaScript mode, setting this to <code>php</code> will enabled
+						IP address spam checking for only PHP mode, setting this to
+						<code>both</code> will enable IP address spam checking in both modes.
+					</p>
+					<p>
+						This setting is <code>php</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="spam-database">
+				<td valign="top">
+					<code>spam-database</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls where to find the spam IP address database.
+						Setting this to <code>remote</code> will cause HashOver to send a
+						request to <a href="https://stopforumspam.com/">stopforumspam.com</a>
+						whenever a user posts a comment to verify if their IP address is a known
+						spammer in this database. Setting this to <code>local</code> will
+						cause HashOver to check if the IP address of the user is in the
+						local <code>/hashover/config/spam-database.csv</code> database.
+					</p>
+					<p>
+						This setting is <code>remote</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="stores-ip-address">
+				<td valign="top">
+					<code>stores-ip-address</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether each user's IP address is stored
+						along with their comment. Setting this to <code>true</code> will
+						cause the user's IP address to be stored with their comment,
+						setting this to <code>false</code> will cause the user's IP
+						address to not be stored.
+					</p>
+					<p>
+						You should set this true if you are having a troublesome user
+						spamming your comments, so that you can get their IP address and
+						add it to the blocklist.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="stream-depth">
+				<td valign="top">
+					<code>stream-depth</code>
+				</td>
+				<td valign="top">
+					<code>integer</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how many levels of indentation replies
+						have in stream mode.
+					</p>
+					<p>
+						This setting is <code>3</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="subscribes-user">
+				<td valign="top">
+					<code>subscribes-user</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether users are subscribed to email
+						notifications by default. Setting this to <code>true</code> will
+						cause the "Notify me of replies" checkbox to be checked by
+						default, setting this to <code>false</code> will cause this
+						checkbox to be unchecked by default.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="supports-multisites">
+				<td valign="top">
+					<code>supports-multisites</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether comment threads should be separated
+						by domain names. Setting this to <code>true</code> will cause
+						each website HashOver is used on to get their own directory under
+						<code>/hashover/comments</code>, with their own metadata. Setting
+						this to <code>false</code> will cause all websites to be treated
+						as one, with all threads and metadata directly under the
+						<code>/hashover/comments</code> directory.
+					</p>
+					<p>
+						When using an SQL database, this setting only controls whether
+						the <code>domain</code> column should be respected or not, it
+						does not change the data structure.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="theme">
+				<td valign="top">
+					<code>theme</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the theme, specifically, it controls which
+						theme CSS file to add to the page and which theme directory to
+						load the HTML template from. See the admin Settings page for
+						available themes.
+					</p>
+					<p>
+						This setting is <code>default</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="theme-path">
+				<td valign="top">
+					<code>theme-path</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					This setting controls the path to the HashOver themes directory. In
+					a default installation this setting is <code>themes/default</code>
+					by default, however, the value of this setting is technically
+					automatically generated, so the default value is unknown. This setting
+					exists to allow you to override this automatic default value.
+				</td>
+			</tr>
+			<tr id="time-pattern">
+				<td valign="top">
+					<code>time-pattern</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how the times of when comments were posted
+						are formatted. The time format is in the
+						<a href="http://userguide.icu-project.org/formatparse/datetime">ICU datetime format</a>,
+						by default the format outputs a 12-hour time like "12:00 PM". You can use
+						<code>HH:mm</code> for 24-hour time. The time is localized automatically
+						based on the locale code in the <code>language</code> setting.
+					</p>
+					<p>
+						This setting is <code>h:mm a</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="user-deletions-unlink">
+				<td valign="top">
+					<code>unlinks-files</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether user deleted comments are actually
+						deleted from storage. Setting this to <code>true</code> will
+						cause the file or database row to be deleted when a user deletes
+						their comment. Setting this to <code>false</code> will cause
+						deleted comments to only be give the <code>deleted</code> status,
+						which will cause the comment to appear deleted to normal users
+						while still remaining in storage and visible to the admin user.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="uses-ajax">
+				<td valign="top">
+					<code>uses-ajax</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether most actions in the JavaScript
+						frontend are performed over asynchronous requests (AJAX). Setting
+						this to <code>true</code> will cause most actions like posting or
+						editing a comment, and loading more comments to be performed
+						using AJAX requests, which don't require the page to be reloaded.
+						Setting this <code>false</code> will cause most actions to
+						trigger a page reload, and may disable some functionality.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="uses-auto-login">
+				<td valign="top">
+					<code>uses-auto-login</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether a user is automatically logged in
+						when they post their first comment. Setting this
+						<code>true</code> will cause a user to automatically be logged in
+						when they post their first comment, setting this
+						<code>false</code> will cause the user to remain logged out and
+						will only be logged in when they choose to login.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="uses-cancel-buttons">
+				<td valign="top">
+					<code>uses-cancel-buttons</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether reply and edit forms have cancel
+						buttons. Setting this to <code>true</code> will cause cancel
+						buttons to be shown in the reply and edit forms, setting this to
+						<code>false</code> will hide the cancel buttons.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="uses-labels">
+				<td valign="top">
+					<code>uses-labels</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether form text inputs have labels.
+						Setting this to <code>true</code> will cause a label to be shown
+						above text inputs, such as the name, password, email, website,
+						and comment fields. Setting this to <code>false</code> will hide
+						these labels.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="uses-markdown">
+				<td valign="top">
+					<code>uses-markdown</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether Markdown in comments will be
+						parsed. Setting this to <code>true</code> will cause Markdown in
+						comments to be parsed as HTML, setting this to <code>false</code>
+						will cause Markdown to appear as-is, unprocessed.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="uses-moderation">
+				<td valign="top">
+					<code>uses-moderation</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether new comments need to be approved by
+						the admin user before they will appear to normal users. Setting
+						this to <code>true</code> will cause all new comments to be given
+						the <code>pending</code> status, which will cause them to appear
+						as a pending notice for normal users until they are approved by
+						the admin user. Setting this to <code>false</code> will cause all
+						new comments to be automatically approved.
+					</p>
+					<p>
+						This setting is <code>false</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="uses-short-dates">
+				<td valign="top">
+					<code>uses-short-dates</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether the comment post dates use a short
+						format. Setting this to <code>true</code> will cause comment post
+						dates to use a short format, like "1 day ago". Setting this to
+						<code>false</code> will cause comment post dates to use the full
+						format, as configured in the <code>date-pattern</code> and
+						<code>time-pattern</code> settings.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="uses-user-timezone">
+				<td valign="top">
+					<code>uses-user-timezone</code>
+				</td>
+				<td valign="top">
+					<code>boolean</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether the JavaScript frontend will adjust
+						the comment post times to the user's timezone. Setting this to
+						<code>true</code> will cause HashOver to adjust the comment post
+						times to the user's timezone as calculated by the difference
+						between the server's time and the user's local time. Setting this
+						to <code>false</code> will cause the comment post times to appear
+						in the server's timezone.
+					</p>
+					<p>
+						This setting is <code>true</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="website-field">
+				<td valign="top">
+					<code>website-field</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls the behavior of the website field. Setting
+						this to <code>on</code> will cause the field to be shown, setting
+						this to <code>off</code> will cause the field to be hidden,
+						setting this to <code>required</code> will cause the field to be
+						shown and require a properly formatted website URL before the
+						user will be allowed to post their comment.
+					</p>
+					<p>
+						This setting is <code>on</code> by default.
+					</p>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

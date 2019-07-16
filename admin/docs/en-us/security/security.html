@@ -1,0 +1,40 @@
+<div class="general-style">
+	<h1 id="blocklist">
+		Blocking IP Addresses
+	</h1>
+
+	<p>
+		You can block IP addresses by adding them on the admin "IP Blocking"
+		page, or by adding them to the
+		<code>/hashover/config/blocklist.json</code> file. You may find the
+		<code>stores-ip-address</code> setting helpful, this setting controls
+		whether each user's IP address is stored with their comments.
+	</p>
+
+	<h1 id="spam-protection">
+		Enabling Spam Protection
+	</h1>
+
+	<p>
+		By default, spam protection is only enabled in PHP mode, because
+		JavaScript mode is somewhat naturally protected against some forms of
+		spam attacks, such as basic automated form filing, while PHP mode is not.
+		However, spam protection can be enabled for JavaScript mode as well by
+		changing the "Modes to perform SPAM check under" setting to "Both" on the
+		admin Settings page, or by adding or changing the
+		<code>spam-check-modes</code> setting to <code>both</code> in the
+		<code>/hashover/config/settings.json</code> file.
+	</p>
+
+	<p>
+		<b>How it works</b>: HashOver will check whether or not a visitor's IP
+		address is in a database of spam server IP addresses maintained at
+		<a href="https://stopforumspam.com/">stopforumspam.com</a>, you may also
+		use your own local spam IP address database by changing the
+		<code>spam-database</code> setting to <code>local</code>. If a visitor's
+		IP address is in the database the visitor is most likely a spammer,
+		HashOver will exit with a message saying "You are blocked!" while
+		disallowing the visitor any interaction with the comments.
+	</p>
+
+</div>

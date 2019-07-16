@@ -1,0 +1,114 @@
+<div class="general-style">
+	<h1 id="using-hashover">
+		Using HashOver on Your Website
+	</h1>
+
+	<p>
+		After you have finished the instructions on the
+		<a href="../setup/" title="Setup">Setup</a> page
+		using HashOver is very simple.
+	</p>
+
+	<ol>
+		<li>
+			<p>
+				Place this JavaScript tag in either the <code>&lt;head&gt;</code> or
+				<code>&lt;body&gt;</code> element of your website...
+			</p>
+			<div class="code block">
+				&lt;script type="text/javascript" src="/hashover/comments.php"&gt;&lt;/script&gt;
+			</div>
+		</li>
+		<li>
+			<p>
+				Place an element with the ID attribute <code>hashover</code> on your
+				website, this element is where the comments will appear. This element
+				can be a simple <code>&lt;div&gt;</code> or <code>&lt;section&gt;</code>
+				element, it just needs the correct ID attribute. The contents of this
+				element are replaced with the comments, do not put anything you want
+				to keep on the page inside this element.
+			</p>
+			<p>
+				Here is an example of a simple element that will work...
+			</p>
+			<div class="code block">
+				&lt;div id="hashover"&gt;&lt;/div&gt;
+			</div>
+			<p>
+				<b>Note</b>: If an element like this does not exist on the page
+				HashOver will try to find a nice place for the comments to appear. If
+				the JavaScript tag is in the <code>&lt;body&gt;</code> element the
+				comments will appear directly before the JavaScript tag, if the JavaScript
+				tag is in the <code>&lt;head&gt;</code> element the comments will appear
+				at the end of the <code>&lt;body&gt;</code> element.
+			</p>
+		</li>
+		<li>
+			<p>
+				This step is optional. You can place an element with the ID attribute
+				<code>hashover-comment-count</code> on your website, this element
+				will display a simple comment count, just a number. This is useful
+				for creating comment widgets, links, or buttons that display the
+				comment count and link to the comment section.
+			</p>
+		</li>
+	</ol>
+
+	<p>
+		And you're done, congrats!
+	</p>
+
+	<h1 id="best-practices">
+		Best Practices
+	</h1>
+
+	<p>
+		By default, HashOver will automatically add the configured theme CSS file
+		to the page. However, because the CSS file is only added to the page
+		after the JavaScript has finished loading and executing, the comments may
+		appear without any style until the CSS file is finished loading. To avoid
+		this odd visual effect, it is best to add the configured theme CSS
+		directly to the <code>&lt;head&gt;</code> element.
+	</p>
+
+	<p>
+		You can do this by using a <code>&lt;link&gt;</code> element...
+	</p>
+
+	<div class="code block">
+		&lt;link rel="stylesheet" type="text/css" href="/hashover/themes/default/comments.css"&gt;
+	</div>
+
+	<p>
+		This example adds the default theme to the page, you will want to make
+		sure you are using the same theme as configured in HashOver, otherwise both
+		themes will get applied and you might not get the styling you expect.
+	</p>
+
+	<h1 id="general-security">
+		General Security
+	</h1>
+
+	<p>
+		It is recommended that HashOver be used over HTTPS, because sensitive
+		user data such as email addresses and passwords will be sent to and from
+		your server. Using normal HTTP opens the possibility of
+		<a href="https://en.wikipedia.org/wiki/Cross-site_scripting">XSS</a> and
+		<a href="https://en.wikipedia.org/wiki/Man-in-the-middle_attack">man-in-the-middle</a>
+		attacks. In Firefox, the HashOver comment form will tell the user that
+		your website is not secure when your website is served over normal HTTP.
+		If you are able to use HTTPS, please do.
+	</p>
+
+	<h1 id="hashover-on-windows">
+		HashOver on Windows
+	</h1>
+
+	<p>
+		Windows has been officially supported since HashOver 2.0, there should
+		not be any major issues with using HashOver on Windows. However, HashOver
+		is primarily developed on and for UNIX operating systems, which are the
+		primary operating systems used by the majority of web servers. If you
+		have any issues with HashOver on Windows, please report them.
+	</p>
+</div>
