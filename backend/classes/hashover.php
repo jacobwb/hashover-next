@@ -46,13 +46,13 @@ class HashOver
 		$this->mode = $mode;
 
 		// Instantiate statistics class
-		$this->statistics = new HashOver\Statistics ($mode);
+		$this->statistics = new HashOver\Statistics ();
 
 		// Start execution time
 		$this->statistics->executionStart ();
 
 		// Instantiate general setup class
-		$this->setup = new HashOver\Setup ($mode);
+		$this->setup = new HashOver\Setup ();
 
 		//Instantiate setup checks class
 		$this->setupChecks = new HashOver\SetupChecks ($this->setup);
@@ -430,6 +430,7 @@ class HashOver
 
 		// Instantiate UI output class
 		$this->ui = new HashOver\CommentsUI (
+			$this->mode,
 			$this->setup,
 			$commentCounts
 		);
@@ -479,7 +480,7 @@ class HashOver
 		$this->setup->instanceNumber++;
 
 		// End statistics and add them as code comment
-		$html .= $this->statistics->executionEnd ();
+		$html .= $this->statistics->executionEnd ('php');
 
 		// Return final HTML
 		return $html;

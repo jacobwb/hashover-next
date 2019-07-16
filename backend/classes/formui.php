@@ -19,6 +19,7 @@
 
 class FormUI
 {
+	protected $mode;
 	protected $setup;
 	protected $commentCounts;
 
@@ -37,9 +38,10 @@ class FormUI
 	public $popularComments;
 	public $comments;
 
-	public function __construct (Setup $setup, array $counts)
+	public function __construct ($mode = 'javascript', Setup $setup, array $counts)
 	{
 		// Store parameters as properties
+		$this->mode = $mode;
 		$this->setup = $setup;
 		$this->commentCounts = $counts;
 
@@ -76,7 +78,7 @@ class FormUI
 	public function prefix ($id = '', $template = true)
 	{
 		// Return template prefix in JavaScript mode
-		if ($template === true and $this->setup->mode !== 'php') {
+		if ($template === true and $this->mode !== 'php') {
 			return '{hashover}-' . $id;
 		}
 
@@ -413,7 +415,7 @@ class FormUI
 		$accepted_formatting_message->appendChild ($accepted_formatting_table);
 
 		// Ensure the accepted HTML message is open in PHP mode
-		if ($this->setup->mode === 'php') {
+		if ($this->mode === 'php') {
 			$accepted_formatting_message->appendAttribute ('class', 'hashover-message-open');
 			$accepted_formatting_message->appendAttribute ('class', 'hashover-php-message-open');
 		}
@@ -574,7 +576,7 @@ class FormUI
 		));
 
 		// Hide primary form wrapper if comments are to be initially hidden
-		if ($this->setup->mode !== 'php' and $this->setup->collapsesInterface === true) {
+		if ($this->mode !== 'php' and $this->setup->collapsesInterface === true) {
 			$form_section->createAttribute ('style', 'display: none;');
 		}
 
@@ -609,7 +611,7 @@ class FormUI
 		    or $this->cookies->getValue ('error') !== null)
 		{
 			// If so, set the message element to open in PHP mode
-			if ($this->setup->mode === 'php') {
+			if ($this->mode === 'php') {
 				$message_container->appendAttribute ('class', array (
 					'hashover-message-open',
 					'hashover-php-message-open'
@@ -825,7 +827,7 @@ class FormUI
 		}
 
 		// Create and add accepted HTML revealer hyperlink
-		if ($this->setup->mode !== 'php') {
+		if ($this->mode !== 'php') {
 			$main_form_links_wrapper->appendChild ($this->acceptedFormatting ('main'));
 		}
 
@@ -909,7 +911,7 @@ class FormUI
 			), false);
 
 			// Hide popular comments wrapper if comments are to be initially hidden
-			if ($this->setup->mode !== 'php') {
+			if ($this->mode !== 'php') {
 				if ($this->setup->collapsesInterface === true or $this->setup->collapseLimit <= 0) {
 					$popular_section->createAttribute ('style', 'display: none;');
 				}
@@ -981,7 +983,7 @@ class FormUI
 		$count_sort_wrapper->appendChild ($count_element);
 
 		// JavaScript mode specific HTML
-		if ($this->setup->mode !== 'php') {
+		if ($this->mode !== 'php') {
 			// Hide wrapper if comments are to be initially hidden
 			if ($this->setup->collapsesInterface === true) {
 				$comments_section->createAttribute ('style', 'display: none;');
@@ -1119,7 +1121,7 @@ class FormUI
 		));
 
 		// Hide end links wrapper if comments are to be initially hidden
-		if ($this->setup->mode !== 'php' and $this->setup->collapsesInterface === true) {
+		if ($this->mode !== 'php' and $this->setup->collapsesInterface === true) {
 			$end_links_wrapper->createAttribute ('style', 'display: none;');
 		}
 
@@ -1186,7 +1188,7 @@ class FormUI
 		// Add source code hyperlink to end links array
 		$end_links[] = $source_link->asHTML ();
 
-		if ($this->setup->mode !== 'php') {
+		if ($this->mode !== 'php') {
 			// Create link to HashOver JavaScript source code
 			$javascript_link = new HTMLTag ('a', array (
 				'href' => $this->setup->getHttpPath ('comments.php'),

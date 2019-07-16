@@ -19,7 +19,6 @@
 
 class Statistics
 {
-	protected $mode;
 	protected $executionStart;
 	protected $executionEnd;
 	protected $executionMicroTime;
@@ -28,11 +27,6 @@ class Statistics
 	public $scriptMemory;
 	public $systemMemory;
 
-	public function __construct ($mode = 'php')
-	{
-		$this->mode = $mode;
-	}
-
 	// Starts script execution time in seconds
 	public function executionStart ()
 	{
@@ -40,7 +34,7 @@ class Statistics
 	}
 
 	// Script execution ending time
-	public function executionEnd ()
+	public function executionEnd ($mode = 'javascript')
 	{
 		// End time in seconds
 		$this->executionEnd = microtime (true);
@@ -81,7 +75,7 @@ class Statistics
 		$statistics .= PHP_EOL . PHP_EOL;
 
 		// Return statistics as JavaScript comment
-		if ($this->mode === 'javascript') {
+		if ($mode !== 'php') {
 			return PHP_EOL . '/*' . $statistics . '*/';
 		}
 

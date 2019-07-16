@@ -19,7 +19,6 @@
 
 class Setup extends Settings
 {
-	public $mode;
 	public $threadsPath;
 	public $website;
 	public $isMobile = false;
@@ -57,13 +56,10 @@ class Setup extends Settings
 		'hashover-reply', 'hashover-edit'
 	);
 
-	public function __construct ($mode)
+	public function __construct ()
 	{
 		// Construct parent class
 		parent::__construct ();
-
-		// Store output mode (javascript or php)
-		$this->mode = $mode;
 
 		// Check for required extensions
 		$this->extensionsLoaded ($this->extensions);

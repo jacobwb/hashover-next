@@ -38,6 +38,27 @@ if (isset ($_GET['jsonp'])) {
 	$request = $_POST;
 }
 
+// Handles posted comment data
+function displayJson (\HashOver $hashover, $data)
+{
+	// Otherwise, slit file into parts
+	$key_parts = explode ('-', $data['file']);
+
+	// Parse comment data
+	$parsed = $hashover->commentParser->parse (
+		$data['comment'], $data['file'], $key_parts
+	);
+
+	// Return JSON or JSONP function call
+	return Misc::jsonData (array (
+		// Current comment count
+		'count' => $hashover->getCommentCount (),
+
+		// Parsed comment data
+		'comment' => $parsed
+	));
+}
+
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ($mode);
@@ -64,67 +85,65 @@ try {
 		$hashover->thread
 	);
 
-	// Various POST data actions
-	$post_actions = array (
-		'login',
-		'logout',
-		'post',
-		'edit',
-		'delete'
-	);
-
-	// Execute an action (write/edit/login/etc)
-	foreach ($post_actions as $action) {
-		if (empty ($request[$action])) {
-			continue;
+	// Run through POST/GET data
+	foreach (array_keys ($request) as $action) {
+		// Handle user login
+		if ($action === 'login') {
+			$write_comments->login ();
+			break;
 		}
 
-		switch ($action) {
-			case 'login': {
-				$write_comments->login ();
-				break;
-			}
-
-			case 'logout': {
-				$write_comments->logout ();
-				break;
-			}
-
-			case 'post': {
-				$data = $write_comments->postComment ();
-				$hashover->defaultMetadata ();
-				break;
-			}
-
-			case 'edit': {
-				$data = $write_comments->editComment ();
-				break;
-			}
-
-			case 'delete': {
-				$write_comments->deleteComment ();
-				break;
-			}
+		// Handle user logout
+		if ($action === 'logout') {
+			$write_comments->logout ();
+			break;
 		}
 
-		break;
-	}
+		// Handle new comment post
+		if ($action === 'post') {
+			// Check IP address for spam
+			$write_comments->checkForSpam ($mode);
 
-	// Returns comment being saved as JSON
-	if (isset ($request['ajax']) and isset ($data) and is_array ($data)) {
-		// Slit file into parts
-		$file = $data['file'];
-		$key_parts = explode ('-', $file);
+			// Save posted comment
+			$data = $write_comments->postComment ();
 
-		// Parsed comment data
-		$comment = $data['comment'];
-		$parsed = $hashover->commentParser->parse ($comment, $file, $key_parts);
+			// Create/update page metadata
+			$hashover->defaultMetadata ();
 
-		// Return JSON or JSONP function call
-		echo Misc::jsonData (array (
-			'comment' => $parsed,
-			'count' => $hashover->getCommentCount ()
-		));
+			// Display JSON for AJAX requests
+			if (isset ($request['ajax']) and is_array ($data)) {
+				echo displayJson ($hashover, $data);
+			}
+
+			break;
+		}
+
+		// Handle comment edit
+		if ($action === 'edit') {
+			// Check IP address for spam
+			$write_comments->checkForSpam ($mode);
+
+			// Save edited comment
+			$data = $write_comments->editComment ();
+
+			// Display JSON for AJAX requests
+			if (isset ($request['ajax']) and is_array ($data)) {
+				echo displayJson ($hashover, $data);
+			}
+
+			break;
+		}
+
+		// Handle comment deletion
+		if ($action === 'delete') {
+			// Check IP address for spam
+			$write_comments->checkForSpam ($mode);
+
+			// Delete comment
+			$write_comments->deleteComment ();
+
+			break;
+		}
 	}
 } catch (\Exception $error) {
 	echo Misc::displayException ($error, $mode);

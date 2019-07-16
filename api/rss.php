@@ -285,7 +285,7 @@ function create_rss (&$hashover)
 	}, $xml->saveXML ());
 
 	// Return statistics
-	echo $hashover->statistics->executionEnd ();
+	echo $hashover->statistics->executionEnd ('php');
 }
 
 try {

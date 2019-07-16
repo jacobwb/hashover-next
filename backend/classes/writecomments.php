@@ -248,7 +248,7 @@ class WriteComments extends Secrets
 	}
 
 	// Checks user IP against spam databases
-	protected function checkForSpam ()
+	public function checkForSpam ($mode = 'javascript')
 	{
 		// Block user if they fill any trap fields
 		foreach ($this->trapFields as $name) {
@@ -263,7 +263,7 @@ class WriteComments extends Secrets
 		}
 
 		// Whether to check for spam in current mode
-		if ($this->setup->spamCheckModes === $this->setup->mode
+		if ($this->setup->spamCheckModes === $mode
 		    or $this->setup->spamCheckModes === 'both')
 		{
 			// Check user's IP address against local or remote database
@@ -1034,9 +1034,6 @@ class WriteComments extends Secrets
 			} else {
 				$comment_file = $this->thread->primaryCount;
 			}
-
-			// Check if comment is SPAM
-			$this->checkForSpam ();
 
 			// Check if comment thread exists
 			$this->thread->data->checkThread ();
