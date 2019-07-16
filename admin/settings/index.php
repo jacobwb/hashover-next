@@ -217,7 +217,7 @@ function ui_array (Setup $setup, Locale $locale)
 		),
 
 		'spam-protection' => array (
-			'spam-batabase' => array (
+			'spam-database' => array (
 				'type' => 'select',
 				'value' => $setup->spamDatabase,
 
