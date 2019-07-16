@@ -39,11 +39,17 @@ try {
 	// Enable remote access
 	$hashover->setup->setupRemoteAccess ();
 
-	// Set thread name from POST/GET data
-	$hashover->setup->setThreadName ('request');
+	// Check if a page URL was given
+	if ($hashover->setup->getRequest ('url') !== false) {
+		// If so, set page URL from POST/GET data
+		$hashover->setup->setPageURL ('request');
+	} else {
+		// If not, set thread name from POST/GET data
+		$hashover->setup->setThreadName ('request');
 
-	// Set website from POST/GET data
-	$hashover->setup->setWebsite ('request');
+		// And set website from POST/GET data
+		$hashover->setup->setWebsite ('request');
+	}
 
 	// Initiate and finalize comment processing
 	$hashover->initiate ();
@@ -97,7 +103,7 @@ try {
 	);
 
 	// Attempt to get comment thread from GET/POST data
-	$get_thread = $hashover->setup->getRequest ('thread', 'auto');
+	$get_thread = $hashover->setup->threadName ?: 'auto';
 
 	// Check if we're getting metadata for a specific thread
 	if ($get_thread !== 'auto') {

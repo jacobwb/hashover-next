@@ -39,6 +39,11 @@ function HashOverLatest (options)
 	// Check if options is an object
 	if (options && options.constructor === Object) {
 		// If so, add website to queries if present
+		if (options.url !== undefined) {
+			queries.push ('url=' + encodeURIComponent (options.url));
+		}
+
+		// Add website to queries if present
 		if (options.website !== undefined) {
 			queries.push ('website=' + encodeURIComponent (options.website));
 		}
