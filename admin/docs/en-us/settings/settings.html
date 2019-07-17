@@ -32,7 +32,7 @@
 							<p>
 								By passing the settings to HashOver in the frontend options.
 								For more information about this, please view the
-								<a href="../technical" title="Technical">Technical</a>
+								<a href="../technical#controlling-hashover" title="Technical">Technical</a>
 								page. The <code>Option</code> column below indicates which
 								settings are allowed to be used in this manner.
 							</p>
@@ -113,15 +113,16 @@
 						There is something called the "same-origin policy" that all
 						modern web browsers follow, along with a security mechanism
 						called "Cross-Origin Resource Sharing" which prevents scripts
-						running on one website from sending requests to another
+						being delivered by one server from sending requests to another
 						server without having permission to receive a response.
 					</p>
 					<p>
-						This setting is a list of remote domains which are allowed to
-						send requests to HashOver. This allows you to host HashOver on
-						one server while using it on another different server. For
-						example, hosting HashOver on a service that supports PHP, but
-						using it on a host that doesn't support PHP, like GitHub pages.
+						This setting is a list of remote domains that are to be
+						allowed to receive responses from HashOver. This allows you to
+						host HashOver on one server while using it on another
+						different server. For example, hosting HashOver on a service
+						that supports PHP, but using it on a host that doesn't
+						support PHP, like GitHub pages.
 					</p>
 					<p>
 						This setting is empty by default, allowing no remote access.
@@ -220,8 +221,8 @@
 				<td valign="top">
 					<p>
 						This setting controls whether users are allowed to login. Setting
-						this to <code>true</code> will cause a "Login" button to be shown
-						to users, setting this to <code>false</code> will hide the "Login"
+						this to <code>true</code> will cause a "Login" button to be shown to
+						the user, setting this to <code>false</code> will hide the "Login"
 						button and the login information fields will continue to be shown.
 					</p>
 					<p>
@@ -247,10 +248,10 @@
 						This setting controls whether users are allowed to reply to each
 						other outside of HashOver over email. Setting this to
 						<code>true</code> will cause the user's email address to be set
-						as the "Reply-To" header of reply notification emails, setting
-						this to <code>false</code> will cause the email address in the
-						secret <code>$noreplyEmail</code> setting to be used instead. The
-						admin user is always allowed to reply by email.
+						as the <code>Reply-To</code> header of reply notification emails,
+						setting this to <code>false</code> will cause the email address
+						in the secret <code>$noreplyEmail</code> setting to be used
+						instead. The admin user is always allowed to reply by email.
 					</p>
 					<p>
 						This setting is <code>false</code> by default.
@@ -273,10 +274,10 @@
 				<td valign="top">
 					<p>
 						This setting controls whether the configured theme CSS file is
-						automatically added to the page. Setting this to
-						<code>true</code> will cause the theme CSS file to automatically
-						be added to the page, if it is not already present. Setting this
-						to <code>false</code> will cause the theme CSS file to be ignored
+						automatically added to the page. Setting this to <code>true</code>
+						will cause the theme CSS file to be automatically added to the
+						page, if it is not already present. Setting this to
+						<code>false</code> will cause the theme CSS file to be ignored
 						all together and you will have to add the theme CSS file to the
 						page yourself, by adding the theme CSS file to your page using a
 						<code>&lt;link&gt;</code> element or by importing it into your
@@ -314,9 +315,8 @@
 					</p>
 					<p>
 						<b>Note</b>: Web browsers have been removing support for RSS and
-						feed readers have been decreasing in popularity over the last
-						decade. This setting, along with the RSS API, may be removed in
-						the future.
+						feed readers have been decreasing in popularity over the last decade.
+						This setting, along with the RSS API, may be removed in the future.
 					</p>
 				</td>
 			</tr>
@@ -335,8 +335,8 @@
 				</td>
 				<td valign="top">
 					<p>
-						When comment collapsing is enabled this setting controls how many
-						comments are shown before they start getting collapsed.
+						This setting controls how many comments are shown before they start
+						getting collapsed, when comment collapsing is enabled.
 					</p>
 					<p>
 						This setting is <code>3</code> by default.
@@ -489,7 +489,7 @@
 						<code>$databaseType</code> setting in the
 						<code>/hashover/backend/classes/secrets.php</code> file, where
 						the two supported types of SQL databases are <code>sqlite</code>
-						and <code>mysql</code>. See the <a href="../setup" title="Setup">Setup</a>
+						and <code>mysql</code>. See the <a href="../setup#sql-setup" title="Setup">Setup</a>
 						page for more information about setting up HashOver for use with
 						an SQL database.
 					</p>
@@ -823,7 +823,7 @@
 				</td>
 				<td valign="top">
 					<p>
-						The setting controls whether the themed Gravatar default avatars
+						This setting controls whether the themed Gravatar default avatars
 						are always loaded instead of each user's personal avatar image.
 					</p>
 					<p>
@@ -962,7 +962,7 @@
 						Use <code>png</code> for greatest backward compatibility, use
 						<code>svg</code> for scalability. This setting is automatically
 						set to <code>svg</code> on mobile devices to allow scalability,
-						most mobile devices support SVG.
+						since most mobile devices support SVG.
 					</p>
 					<p>
 						This setting is <code>png</code> by default.
@@ -1133,7 +1133,7 @@
 						Service Providers (ISP), hosting providers, and certain server
 						configurations. When this happens you may need to send email
 						notifications through a remote SMTP server. See the
-						<a href="../setup" title="Setup">Setup</a> page for more
+						<a href="../setup#smtp-setup" title="Setup">Setup</a> page for more
 						information about setting up HashOver for use with an SMTP server.
 					</p>
 					<p>
@@ -1222,7 +1222,7 @@
 						This setting controls the level of minification. <code>1</code>
 						will remove code comments. <code>2</code> will remove indentation
 						and empty lines. <code>3</code> will remove all newlines, so the
-						code in on a single line. <code>4</code> will remove spaces before
+						code is on a single line. <code>4</code> will remove spaces before
 						parentheses, spaces around operators, and unnecessary semicolons.
 						Higher levels apply the minification of all lower levels.
 					</p>
@@ -1331,7 +1331,7 @@
 				</td>
 				<td valign="top">
 					<p>
-						This setting controls how many comment are allowed to be
+						This setting controls how many comments are allowed to be
 						considered popular; how many comments will appear in the "Popular
 						Comments" section. Setting this to <code>0</code> will allow no
 						comments to become popular.
@@ -1466,9 +1466,9 @@
 					<p>
 						This setting controls whether the HashOver cookies will only be
 						transmitted from the user over a secure HTTPS connection. Setting
-						this <code>true</code> will cause cookies to only be sent over an
-						HTTPS connection, setting this <code>false</code> will cause
-						cookies to be sent over both HTTP and HTTPS connections.
+						this to <code>true</code> will cause cookies to only be sent over
+						an HTTPS connection, setting this to <code>false</code> will
+						cause cookies to be sent over both HTTP and HTTPS connections.
 					</p>
 					<p>
 						This setting is <code>false</code> by default.
@@ -1520,16 +1520,16 @@
 				<td valign="top">
 					<p>
 						This setting controls whether HashOver will set cookies. Setting
-						this true will cause cookies to be set for things like the name,
-						email, and website field. Setting this false will prevent
-						HashOver from setting cookies.
+						this to <code>true</code> will cause cookies to be set for things
+						like the name, email, and website fields. Setting this to
+						<code>false</code> will prevent HashOver from setting cookies.
 					</p>
 					<p>
 						If you are in Europe, you might find it useful to set this to
-						<code>false</code> in the settings, but set it <code>true</code>
+						<code>false</code> in the settings, but set it to <code>true</code>
 						from the frontend options once you have obtained permission to
 						set cookies from the user. See the
-						<a href="../technical" title="Technical">Technical</a>
+						<a href="../technical#controlling-hashover" title="Technical">Technical</a>
 						page for more information about how to adjust settings from the
 						frontend options.
 					</p>
@@ -1614,9 +1614,9 @@
 						This setting controls where to find the spam IP address database.
 						Setting this to <code>remote</code> will cause HashOver to send a
 						request to <a href="https://stopforumspam.com/">stopforumspam.com</a>
-						whenever a user posts a comment to verify if their IP address is a known
-						spammer in this database. Setting this to <code>local</code> will
-						cause HashOver to check if the IP address of the user is in the
+						whenever a user posts a comment, to verify if their IP address is a
+						known spammer in this database. Setting this to <code>local</code>
+						will cause HashOver to check if the IP address of the user is in the
 						local <code>/hashover/config/spam-database.csv</code> database.
 					</p>
 					<p>
@@ -1646,9 +1646,9 @@
 						address to not be stored.
 					</p>
 					<p>
-						You should set this true if you are having a troublesome user
-						spamming your comments, so that you can get their IP address and
-						add it to the blocklist.
+						You should set this <code>true</code> if you are having a
+						troublesome user spamming your comments, so that you can get
+						their IP address and add it to the blocklist.
 					</p>
 					<p>
 						This setting is <code>false</code> by default.
@@ -1776,7 +1776,7 @@
 					<span class="emoji">❌</span>
 				</td>
 				<td valign="top">
-					This setting controls the path to the HashOver themes directory. In
+					This setting controls the path to the HashOver theme directory. In
 					a default installation this setting is <code>themes/default</code>
 					by default, however, the value of this setting is technically
 					automatically generated, so the default value is unknown. This setting
@@ -1829,8 +1829,8 @@
 						deleted from storage. Setting this to <code>true</code> will
 						cause the file or database row to be deleted when a user deletes
 						their comment. Setting this to <code>false</code> will cause
-						deleted comments to only be give the <code>deleted</code> status,
-						which will cause the comment to appear deleted to normal users
+						deleted comments to only be given the <code>deleted</code> status,
+						which will cause the comments to appear deleted to normal users
 						while still remaining in storage and visible to the admin user.
 					</p>
 					<p>
@@ -1858,7 +1858,7 @@
 						this to <code>true</code> will cause most actions like posting or
 						editing a comment, and loading more comments to be performed
 						using AJAX requests, which don't require the page to be reloaded.
-						Setting this <code>false</code> will cause most actions to
+						Setting this to <code>false</code> will cause most actions to
 						trigger a page reload, and may disable some functionality.
 					</p>
 					<p>
@@ -1882,9 +1882,9 @@
 				<td valign="top">
 					<p>
 						This setting controls whether a user is automatically logged in
-						when they post their first comment. Setting this
-						<code>true</code> will cause a user to automatically be logged in
-						when they post their first comment, setting this
+						when they post their first comment. Setting this to
+						<code>true</code> will cause a user to be automatically logged in
+						when they post their first comment, setting this to
 						<code>false</code> will cause the user to remain logged out and
 						will only be logged in when they choose to login.
 					</p>
@@ -1961,7 +1961,7 @@
 					<p>
 						This setting controls whether Markdown in comments will be
 						parsed. Setting this to <code>true</code> will cause Markdown in
-						comments to be parsed as HTML, setting this to <code>false</code>
+						comments to be converted to HTML, setting this to <code>false</code>
 						will cause Markdown to appear as-is, unprocessed.
 					</p>
 					<p>

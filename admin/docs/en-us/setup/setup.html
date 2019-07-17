@@ -7,7 +7,8 @@
 		To use HashOver you first need to change a few settings that control
 		important features, such as email notifications, data encryption, and admin
 		comment moderation. To do this you need to edit the
-		<code>/hashover/backend/classes/secrets.php</code> file and fill in the following information...
+		<code>/hashover/backend/classes/secrets.php</code> file and fill in the
+		following information...
 	</p>
 
 	<dl>
@@ -15,7 +16,25 @@
 			<code>$notificationEmail</code>
 		</dt>
 		<dd>
-			An email address to send notifications of new comments.
+			An email address. HashOver will send email notifications to this email
+			address whenever users post comments on your website and when the users
+			reply to each other. This should be an email address you want to send
+			new comment notifications to.
+		</dd>
+		<dt>
+			<code>$noreplyEmail</code>
+		</dt>
+		<dd>
+			A noreply email address. When users reply to each other HashOver will
+			send an email notification to the email address stored in the comment
+			being replied to. This setting controls what email address you want set
+			as the <code>Reply-To</code> address in reply email notifications sent
+			to normal users. This should be an e-mail address that is not monitored,
+			where the mail is potentially not even stored. This can be set to the
+			same address as the <code>$notificationEmail</code> instead, allowing
+			the user to reply to you by replying to the email notification. However,
+			this would expose your email address to everyone who receives an email
+			notification, which is something you might not want.
 		</dd>
 		<dt>
 			<code>$encryptionKey</code>
@@ -64,11 +83,9 @@
 			<code>$databaseType</code>
 		</dt>
 		<dd>
-			<p>
-				This setting specifies what kind of SQL database HashOver stores the comments
-				in, either <code>sqlite</code> or <code>mysql</code>. Other databases might
-				work as well, but they are not officially supported or tested.
-			</p>
+			This setting specifies what kind of SQL database HashOver stores the comments
+			in, either <code>sqlite</code> or <code>mysql</code>. Other databases might
+			work as well, but they are not officially supported or tested.
 		</dd>
 		<dt>
 			<code>$databaseName</code>
@@ -83,8 +100,8 @@
 			<code>$databaseHost</code>
 		</dt>
 		<dd>
-			This setting specifies where to find the SQL server, it is a regular
-			host either a local hostname or an IP address, normally
+			This setting specifies where to find the SQL server. It is a regular
+			host, either a local hostname or an IP address, normally
 			<code>localhost</code>, but it can be a remote host as well. This
 			setting is not used for SQLite.
 		</dd>
@@ -106,8 +123,8 @@
 			permission to write to any database. Connecting to the SQL server as
 			<code>root</code> is not recommended, as it is a security
 			vulnerability. Instead, if you can, you should create a new user to use
-			with HashOver, one that has permission to write to the database and
-			their own unique password. This setting is not used for SQLite.
+			with HashOver, one that has their own unique password and permission to
+			write to the database. This setting is not used for SQLite.
 		</dd>
 		<dt>
 			<code>$databasePassword</code>
@@ -166,10 +183,10 @@
 			<code>$smtpCrypto</code>
 		</dt>
 		<dd>
-			Type of encryption to use when connecting to the SMTP server. The SMTP
-			server must support the specified encryption. The most common
-			encryption type is <code>ssl</code>. Please consult your SMTP server
-			host for proper configuration.
+			This setting specifies the type of encryption to use when connecting
+			to the SMTP server. The SMTP server must support the specified
+			encryption. The most common encryption type is <code>ssl</code>.
+			Please consult your SMTP server host for proper configuration.
 		</dd>
 		<dt>
 			<code>$smtpAuth</code>

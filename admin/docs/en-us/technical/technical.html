@@ -16,10 +16,10 @@
 
 	<p>
 		By default, HashOver will use a canonical URL when one is present. You
-		can add one to your website by placing a
+		can add one by placing a
 		<a href="http://en.wikipedia.org/wiki/Canonical_link_element">Canonical Link Element</a>
-		in <code>&lt;head&gt;</code> of your website, if you do this properly HashOver
-		will show the same comment for URLs that show the same content.
+		in the <code>&lt;head&gt;</code> element of your website, if you do this properly
+		HashOver will show the same comments for URLs that show the same content.
 	</p>
 
 	<p>
@@ -274,13 +274,13 @@
 						</td>
 						<td valign="top">
 							<p>
-								The internal name of a comment thread. By default, this would
-								be a directory name under either <code>/hashover/comments</code>
-								or <code>/hashover/comments/&lt;domain&gt;/threads</code>
-								depending on whether support for multiple websites is enabled
-								or not, or the value of the <code>thread</code> column when
-								storing the comments in an SQL database. If omitted, the thread
-								name will be automatically generated based on the page URL.
+								The internal name of a comment thread. This option decides the
+								name of the thread's directory under <code>/hashover/comments/threads</code>,
+								or <code>/hashover/comments/&lt;domain&gt;/threads</code> if
+								support for multiple websites is enabled, or the value of the
+								<code>thread</code> column when storing the comments in an SQL
+								database. If omitted, the thread name will be automatically
+								generated based on the page URL.
 							</p>
 							<p>
 								Here's an example...
@@ -305,13 +305,15 @@
 							<p>
 								A website domain name. This is used to differentiate between
 								comment threads that may have the same name but are on
-								different websites. By default, this would be a directory
-								name under <code>/hashover/comments</code> when support for
-								multiple websites is enabled, or the value of the
-								<code>website</code> column when storing the comments in an
-								SQL database. This setting is only used when support for
-								multiple websites is enabled. If omitted, the domain name
-								will be extracted from the client's request to your server.
+								different websites. This option decides the name of the
+								website's directory under <code>/hashover/comments</code> or
+								the value of the <code>website</code> column when storing
+								the comments in an SQL database.
+							</p>
+							<p>
+								This option is only used when support for multiple websites
+								is enabled. If omitted, the domain name will be automatically
+								extracted from the client's request to your server.
 							</p>
 							<p>
 								Here's an example...
@@ -336,8 +338,8 @@
 							<p>
 								Whether to pull the page URL from a
 								<a href="http://en.wikipedia.org/wiki/Canonical_link_element" target="_blank">Canonical Link Element</a>
-								rather than the document title in the page <code>&lt;head&gt;</code>
-								element. If omitted, the Canonical Link Element is used.
+								in the <code>&lt;head&gt;</code> element rather than being automatically
+								detected. If omitted, the Canonical Link Element is used.
 							</p>
 							<p>
 								Here's an example...

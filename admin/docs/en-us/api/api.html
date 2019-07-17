@@ -7,7 +7,7 @@
 		HashOver has a number of available APIs that you may find useful. As of
 		writing this, there are four different APIs, two of which relate to
 		summarizing the comments as either a comment count link or a list of the
-		most recent comments from either a single page of across all pages, and the
+		most recent comments from either a single page or across all pages, and the
 		other two relate to retrieving the comments in either RSS or JSON format.
 	</p>
 
@@ -28,7 +28,7 @@
 			<li>
 				<p>
 					Place this JavaScript tag in either the <code>&lt;head&gt;</code>
-					or <code>&lt;body&gt;</code> of your page.
+					or <code>&lt;body&gt;</code> element of your website...
 				</p>
 				<div class="code block">
 					&lt;script type="text/javascript" src="/hashover/api/count-link.php"&gt;&lt;/script&gt;
@@ -36,7 +36,7 @@
 			</li>
 			<li>
 				<p>
-					Place any number of links like this anywhere on your page...
+					Place any number of links like this anywhere on your website...
 				</p>
 				<div class="code block">
 					&lt;a class="hashover-count-link" href="https://example.com/super/cool/article.html"&gt;&lt;/a&gt;
@@ -68,7 +68,7 @@
 		<li>
 			<p>
 				Place this JavaScript tag in either the <code>&lt;head&gt;</code> or
-				<code>&lt;body&gt;</code> of your page.
+				<code>&lt;body&gt;</code> element of your website...
 			</p>
 			<div class="code block">
 				&lt;script type="text/javascript" src="/hashover/api/latest.php"&gt;&lt;/script&gt;
@@ -124,7 +124,7 @@
 				<code>HashOver</code> object, they even share the same code. The
 				<code>HashOverLatest</code> object accepts the following options
 				<code>url</code>, <code>thread</code>, and <code>website</code>. See
-				the <a href="../technical" title="Technical">Technical</a>
+				the <a href="../technical#parameters" title="Technical">Technical</a>
 				page for more information about these options.
 			</p>
 		</li>
@@ -140,7 +140,8 @@
 		following URL queries. The <code>url</code> query, which is required,
 		controls which page to display comments from. The <code>sorting</code>
 		query, which is optional, controls how the comments will be sorted, this
-		query is <code>by-date</code> by default, see the page
+		query is <code>by-date</code> by default, see the
+		<a href="../settings#default-sorting" title="Settings">Settings</a> page
 		for all available sorting options.
 	</p>
 
