@@ -313,10 +313,10 @@ table, .table, dl, .paragraph {
 	z-index: 1;
 }
 
-.message {
+.message:nth-child(n) {
 	position: relative;
 	font-weight: bold;
-	margin-top: -1.25em;
+	margin-top: -1.75em;
 	background-color: #FFFFFF;
 
 	-moz-transition: color 500ms linear 0ms, background 500ms linear 500ms;
