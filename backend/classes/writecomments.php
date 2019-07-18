@@ -21,7 +21,7 @@ class WriteComments extends Secrets
 {
 	protected $setup;
 	protected $thread;
-	protected $postData;
+	protected $formData;
 	protected $locale;
 	protected $cookies;
 	protected $login;
@@ -143,7 +143,7 @@ class WriteComments extends Secrets
 		$this->thread = $thread;
 
 		// Instantiate various classes
-		$this->postData = new PostData ();
+		$this->formData = new FormData ();
 		$this->locale = new Locale ($setup);
 		$this->cookies = new Cookies ($setup);
 		$this->login = new Login ($setup);
@@ -168,7 +168,7 @@ class WriteComments extends Secrets
 			$this->referer = $_SERVER['HTTP_REFERER'];
 		} else {
 			// If not, check if posting from remote domain
-			if ($this->postData->remoteAccess === true) {
+			if ($this->formData->remoteAccess === true) {
 				// If so, use absolute path
 				$this->referer = $setup->pageURL;
 			} else {
@@ -192,7 +192,7 @@ class WriteComments extends Secrets
 	// Sets header to redirect user back to the previous page
 	protected function kickback ($anchor = 'comments')
 	{
-		if ($this->postData->viaAJAX === false) {
+		if ($this->formData->viaAJAX === false) {
 			header ('Location: ' . $this->referer . '#' . $anchor);
 		}
 	}
@@ -204,7 +204,7 @@ class WriteComments extends Secrets
 		$message_type = ($error === true) ? 'error' : 'message';
 
 		// Check if request is AJAX
-		if ($this->postData->viaAJAX === true) {
+		if ($this->formData->viaAJAX === true) {
 			// If so, display JSON for JavaScript frontend
 			echo Misc::jsonData (array (
 				'message' => $text,
@@ -236,8 +236,8 @@ class WriteComments extends Secrets
 			}
 
 			// Set cookies to indicate failure
-			if ($this->postData->viaAJAX !== true) {
-				$this->cookies->setFailedOn ('comment', $this->postData->replyTo, false);
+			if ($this->formData->viaAJAX !== true) {
+				$this->cookies->setFailedOn ('comment', $this->formData->replyTo, false);
 			}
 		}
 
@@ -375,9 +375,9 @@ class WriteComments extends Secrets
 		}
 
 		// Check if we have both required passwords
-		if (!empty ($this->postData->data['password']) and !empty ($comment['password'])) {
+		if (!empty ($this->formData->data['password']) and !empty ($comment['password'])) {
 			// If so, get the user input password
-			$password = $this->encodeHTML ($this->postData->data['password']);
+			$password = $this->encodeHTML ($this->formData->data['password']);
 
 			// Get the comment password
 			$comment_password = $comment['password'];
@@ -423,10 +423,10 @@ class WriteComments extends Secrets
 				$unlink_comment = ($unlinks_files or $user_is_admin);
 
 				// Attempt to delete comment file
-				if ($this->thread->data->delete ($this->postData->file, $unlink_comment)) {
+				if ($this->thread->data->delete ($this->formData->file, $unlink_comment)) {
 					// If successful, remove comment from latest comments metadata
 					if ($unlink_comment === true) {
-						$this->thread->data->removeFromLatest ($this->postData->file);
+						$this->thread->data->removeFromLatest ($this->formData->file);
 					}
 
 					// And kick visitor back with comment deletion message
@@ -511,14 +511,14 @@ class WriteComments extends Secrets
 	protected function setupCommentData ($editing = false)
 	{
 		// Post fails when comment is empty
-		if (empty ($this->postData->data['comment'])) {
+		if (empty ($this->formData->data['comment'])) {
 			// Set cookies to indicate failure
-			if ($this->postData->viaAJAX !== true) {
-				$this->cookies->setFailedOn ('comment', $this->postData->replyTo);
+			if ($this->formData->viaAJAX !== true) {
+				$this->cookies->setFailedOn ('comment', $this->formData->replyTo);
 			}
 
 			// Throw exception about reply requirement
-			if (!empty ($this->postData->replyTo)) {
+			if (!empty ($this->formData->replyTo)) {
 				throw new \Exception (
 					$this->locale->text['reply-needed']
 				);
@@ -533,10 +533,10 @@ class WriteComments extends Secrets
 		// Strictly verify if the user is logged in as admin
 		if ($this->login->verifyAdmin ($this->password) === true) {
 			// If so, check if status is set in POST data is set
-			if (!empty ($this->postData->data['status'])) {
+			if (!empty ($this->formData->data['status'])) {
 				// If so, use status if it is allowed
-				if (in_array ($this->postData->data['status'], $this->statuses, true)) {
-					$this->data['status'] = $this->postData->data['status'];
+				if (in_array ($this->formData->data['status'], $this->statuses, true)) {
+					$this->data['status'] = $this->formData->data['status'];
 				}
 			}
 		} else {
@@ -573,7 +573,7 @@ class WriteComments extends Secrets
 		$this->setupLogin ();
 
 		// Trim leading and trailing white space
-		$clean_code = $this->postData->data['comment'];
+		$clean_code = $this->formData->data['comment'];
 
 		// URL regular expression
 		$url_regex = '/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+)/i';
@@ -728,18 +728,18 @@ class WriteComments extends Secrets
 				}
 
 				// Attempt to write edited comment
-				if ($this->thread->data->save ($this->postData->file, $auth['comment'], true)) {
+				if ($this->thread->data->save ($this->formData->file, $auth['comment'], true)) {
 					// If successful, check if request is via AJAX
-					if ($this->postData->viaAJAX === true) {
+					if ($this->formData->viaAJAX === true) {
 						// If so, return the comment data
 						return array (
-							'file' => $this->postData->file,
+							'file' => $this->formData->file,
 							'comment' => $auth['comment']
 						);
 					}
 
 					// Otherwise kick visitor back to posted comment
-					$this->kickback ($this->filePermalink ($this->postData->file));
+					$this->kickback ($this->filePermalink ($this->formData->file));
 
 					return true;
 				}
@@ -868,7 +868,7 @@ class WriteComments extends Secrets
 		$data['sent-by'] = sprintf ($this->locale->text['sent-by'], $this->setup->domain);
 
 		// Attempt to read reply comment
-		$reply = $this->thread->data->read ($this->postData->replyTo);
+		$reply = $this->thread->data->read ($this->formData->replyTo);
 
 		// Check if the reply comment read successfully
 		if ($reply !== false) {
@@ -982,7 +982,7 @@ class WriteComments extends Secrets
 			}
 
 			// Check if we're on AJAX
-			if ($this->postData->viaAJAX === true) {
+			if ($this->formData->viaAJAX === true) {
 				// If so, increase comment count(s)
 				$this->thread->countComment ($comment_file);
 
@@ -1022,15 +1022,15 @@ class WriteComments extends Secrets
 			$this->setupCommentData ();
 
 			// Set comment file name
-			if (isset ($this->postData->replyTo)) {
+			if (isset ($this->formData->replyTo)) {
 				// Verify file exists
 				$this->verifyFile ('reply-to');
 
 				// Comment number
-				$comment_number = $this->thread->threadCount[$this->postData->replyTo];
+				$comment_number = $this->thread->threadCount[$this->formData->replyTo];
 
 				// Rename file for reply
-				$comment_file = $this->postData->replyTo . '-' . $comment_number;
+				$comment_file = $this->formData->replyTo . '-' . $comment_number;
 			} else {
 				$comment_file = (string)($this->thread->primaryCount);
 			}

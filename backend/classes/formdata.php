@@ -17,7 +17,7 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class PostData
+class FormData
 {
 	public $data = array ();
 	public $remoteAccess = false;
@@ -32,32 +32,32 @@ class PostData
 
 		// Set status
 		if (isset ($request['status'])) {
-			$this->data['status'] = $this->ForceUTF8 ($request['status']);
+			$this->data['status'] = $this->forceUTF8 ($request['status']);
 		}
 
 		// Set name
 		if (isset ($request['name'])) {
-			$this->data['name'] = $this->ForceUTF8 ($request['name']);
+			$this->data['name'] = $this->forceUTF8 ($request['name']);
 		}
 
 		// Set password
 		if (isset ($request['password'])) {
-			$this->data['password'] = $this->ForceUTF8 ($request['password']);
+			$this->data['password'] = $this->forceUTF8 ($request['password']);
 		}
 
 		// Set e-mail address
 		if (isset ($request['email'])) {
-			$this->data['email'] = $this->ForceUTF8 ($request['email']);
+			$this->data['email'] = $this->forceUTF8 ($request['email']);
 		}
 
 		// Set website URL
 		if (isset ($request['website'])) {
-			$this->data['website'] = $this->ForceUTF8 ($request['website']);
+			$this->data['website'] = $this->forceUTF8 ($request['website']);
 		}
 
 		// Set comment
 		if (isset ($request['comment'])) {
-			$this->data['comment'] = $this->ForceUTF8 ($request['comment']);
+			$this->data['comment'] = $this->forceUTF8 ($request['comment']);
 		}
 
 		// Set indicator of remote access
@@ -82,7 +82,7 @@ class PostData
 	}
 
 	// Force a string to UTF-8 encoding and acceptable character range
-	protected function ForceUTF8 ($string)
+	protected function forceUTF8 ($string)
 	{
 		$string = mb_convert_encoding ($string, 'UTF-16', 'UTF-8');
 		$string = mb_convert_encoding ($string, 'UTF-8', 'UTF-16');

@@ -210,8 +210,8 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
-			'name' => 'PostData',
-			'path' => 'backend/classes/postdata.php'
+			'name' => 'FormData',
+			'path' => 'backend/classes/formdata.php'
 		),
 		array (
 			'type' => 'Class',

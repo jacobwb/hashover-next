@@ -20,7 +20,7 @@
 class Login extends Secrets
 {
 	protected $setup;
-	protected $postData;
+	protected $formData;
 	protected $cookies;
 	protected $locale;
 	protected $crypto;
@@ -41,7 +41,7 @@ class Login extends Secrets
 		$this->setup = $setup;
 
 		// Instantiate various classes
-		$this->postData = new PostData ();
+		$this->formData = new FormData ();
 		$this->cookies = new Cookies ($setup);
 		$this->locale = new Locale ($setup);
 		$this->crypto = new Crypto ();
@@ -63,8 +63,8 @@ class Login extends Secrets
 	public function prepareCredentials ()
 	{
 		// Set name
-		if (isset ($this->postData->data['name'])) {
-			$this->loginMethod->name = $this->postData->data['name'];
+		if (isset ($this->formData->data['name'])) {
+			$this->loginMethod->name = $this->formData->data['name'];
 		}
 
 		// Attempt to get name
@@ -93,13 +93,13 @@ class Login extends Secrets
 		$this->loginMethod->loginHash = hash ('ripemd160', $name . $password);
 
 		// Set e-mail address
-		if (isset ($this->postData->data['email'])) {
-			$this->loginMethod->email = $this->postData->data['email'];
+		if (isset ($this->formData->data['email'])) {
+			$this->loginMethod->email = $this->formData->data['email'];
 		}
 
 		// Set website URL
-		if (isset ($this->postData->data['website'])) {
-			$this->loginMethod->website = $this->postData->data['website'];
+		if (isset ($this->formData->data['website'])) {
+			$this->loginMethod->website = $this->formData->data['website'];
 		}
 	}
 
@@ -155,8 +155,8 @@ class Login extends Secrets
 			// Check if current field is required and is empty
 			if ($status === 'required' and empty ($this->$field)) {
 				// If so, set cookies if request is not AJAX
-				if ($this->postData->viaAJAX !== true) {
-					$this->cookies->setFailedOn ($field, $this->postData->replyTo);
+				if ($this->formData->viaAJAX !== true) {
+					$this->cookies->setFailedOn ($field, $this->formData->replyTo);
 				}
 
 				// And throw exception
