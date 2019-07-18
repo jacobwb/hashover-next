@@ -172,14 +172,8 @@ try {
 	// Register message element methods
 	$javascript->registerFile ('messages.js');
 
-	// Register email validator method
-	$javascript->registerFile ('emailvalidator.js');
-
 	// Register email validator event handler method
 	$javascript->registerFile ('validateemail.js');
-
-	// Register comment validator method
-	$javascript->registerFile ('commentvalidator.js');
 
 	// Register comment validator event handler method
 	$javascript->registerFile ('validatecomment.js');
@@ -198,8 +192,7 @@ try {
 
 		'dependencies' => array (
 			'addcomments.js',
-			'htmlchildren.js',
-			'incrementcounts.js'
+			'htmlchildren.js'
 		)
 	));
 
