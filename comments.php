@@ -249,16 +249,16 @@ try {
 	));
 
 	// Register show interface method
-	$javascript->registerFile ('uncollapseinterfacelink.js', array (
+	$javascript->registerFile ('showinterfacelink.js', array (
 		'include' => $setup->collapsesInterface,
 
 		'dependencies' => array (
-			'uncollapseinterface.js'
+			'showinterface.js'
 		)
 	));
 
 	// Register show comments method
-	$javascript->registerFile ('uncollapsecommentslink.js', array (
+	$javascript->registerFile ('showmorelink.js', array (
 		'include' => $setup->collapsesComments
 	));
 

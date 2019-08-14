@@ -48,7 +48,7 @@ class SensitiveSettings extends SafeSettings
 	public $timePattern		= 'h:mm a';			// Time format pattern, use 'HH:mm' for 24-hour time
 
 	// Technical settings
-	public $loginMethod		= 'defaultLogin';		// Login method class for handling user login information
+	public $loginMethod		= 'CookiesLogin';		// Login method class for handling user login information
 	public $requiresLogin		= false;			// Whether user must be logged in to comment (only for restrictive login methods)
 	public $secureCookies		= false;			// Whether cookies set over secure HTTPS will only be transmitted over HTTPS
 	public $storesIpAddress		= false;			// Whether to store users' IP addresses
