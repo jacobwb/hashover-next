@@ -22,43 +22,75 @@ class SourceCode
 	public $files = array (
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/blocklist/index.php'
+			'path' => 'admin/blocklist/index.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/documentation/index.php'
+			'path' => 'admin/docs/en-us/api/index.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/example/index.php'
+			'path' => 'admin/docs/en-us/faq/index.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/login/index.php'
+			'path' => 'admin/docs/en-us/security/index.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/moderation/index.php'
+			'path' => 'admin/docs/en-us/settings/index.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/moderation/threads.php'
+			'path' => 'admin/docs/en-us/setup/index.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/settings/index.php'
+			'path' => 'admin/docs/en-us/technical/index.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/updates/index.php'
+			'path' => 'admin/docs/en-us/use/index.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/url-queries/index.php'
+			'path' => 'admin/docs/en-us/index.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'admin/views/view-setup.php'
+			'path' => 'admin/docs/index.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'admin/example/index.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'admin/login/index.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'admin/moderation/index.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'admin/moderation/threads.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'admin/settings/index.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'admin/updates/index.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'admin/url-queries/index.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'admin/view-setup.php'
 		),
 		array (
 			'type' => 'Script',
