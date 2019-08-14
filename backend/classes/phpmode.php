@@ -310,10 +310,10 @@ class PHPMode
 				// Check if there is more than one like
 				if ($comment['likes'] !== 1) {
 					// If so, use "X Likes" locale
-					$like_count = $comment['likes'] . ' ' . $this->locale->text['like'][1];
+					$like_count = $comment['likes'] . ' ' . $this->locale->text['likes'];
 				} else {
 					// If not, use "X Like" locale
-					$like_count = $comment['likes'] . ' ' . $this->locale->text['like'][0];
+					$like_count = $comment['likes'] . ' ' . $this->locale->text['like'];
 				}
 
 				// Add like count to HTML template
@@ -330,10 +330,10 @@ class PHPMode
 				// Check if there is more than one dislike
 				if ($comment['dislikes'] !== 1) {
 					// If so, use "X Dislikes" locale
-					$dislike_count = $comment['dislikes'] . ' ' . $this->locale->text['dislike'][1];
+					$dislike_count = $comment['dislikes'] . ' ' . $this->locale->text['dislikes'];
 				} else {
 					// If not, use "X Dislike" locale
-					$dislike_count = $comment['dislikes'] . ' ' . $this->locale->text['dislike'][0];
+					$dislike_count = $comment['dislikes'] . ' ' . $this->locale->text['dislike'];
 				}
 
 				// Add dislike count to HTML template

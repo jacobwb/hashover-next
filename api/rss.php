@@ -244,10 +244,10 @@ function create_rss (&$hashover)
 	// Check if there is more than one comment
 	if ($hashover->thread->totalCount !== 1) {
 		// If so, use "X Comments" locale string
-		$showing_comments_locale = $hashover->locale->text['showing-comments'][1];
+		$showing_comments_locale = $hashover->locale->text['showing-comments'];
 	} else {
 		// If not, use "X Comment" locale string
-		$showing_comments_locale = $hashover->locale->text['showing-comments'][0];
+		$showing_comments_locale = $hashover->locale->text['showing-comment'];
 	}
 
 	// Create channel description element

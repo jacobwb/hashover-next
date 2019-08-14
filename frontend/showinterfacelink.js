@@ -10,10 +10,10 @@ HashOver.prototype.showInterfaceLink = function ()
 	// Check if there is one or more comments
 	if (this.instance['total-count'] >= 1) {
 		// If so, use "Show X More Comments" locale
-		var text = this.instance['show-number-comments'];
+		var text = this.instance['show-comments'];
 	} else {
 		// If not, show "Post Comment on ..." locale
-		var text = this.instance['post-comment-on'];
+		var text = this.instance['post-a-comment'];
 	}
 
 	// Create hyperlink that shows interface

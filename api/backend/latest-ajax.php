@@ -61,8 +61,10 @@ try {
 	// Add locales to data
 	$data['locale'] = array (
 		'dislike'		=> $hashover->locale->text['dislike'],
+		'dislikes'		=> $hashover->locale->text['dislikes'],
 		'external-image-tip'	=> $hashover->locale->text['external-image-tip'],
 		'like'			=> $hashover->locale->text['like'],
+		'likes'			=> $hashover->locale->text['likes'],
 		'today'			=> $hashover->locale->text['date-today'],
 		'commenter-tip'		=> $hashover->locale->text['commenter-tip'],
 		'subscribed-tip'	=> $hashover->locale->text['subscribed-tip'],

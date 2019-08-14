@@ -19,7 +19,7 @@ HashOver.prototype.addRatings = function (comment, template, action, commentKey)
 			// If not, setup indicators that comment can be liked/disliked
 			var className = 'hashover-' + action;
 			var title = this.locale[action + '-comment'];
-			var text = this.locale[action][0];
+			var text = this.locale[action];
 		}
 
 		// Append class to indicate dislikes are enabled
@@ -47,10 +47,10 @@ HashOver.prototype.addRatings = function (comment, template, action, commentKey)
 		// Check if there is more than one like/dislike
 		if (comment[action + 's'] !== 1) {
 			// If so, use "X Likes/Dislikes" locale
-			var count = comment[action + 's'] + ' ' + this.locale[action][1];
+			var count = comment[action + 's'] + ' ' + this.locale[action + 's'];
 		} else {
 			// If not, use "X Like/Dislike" locale
-			var count = comment[action + 's'] + ' ' + this.locale[action][0];
+			var count = comment[action + 's'] + ' ' + this.locale[action];
 		}
 	}
 

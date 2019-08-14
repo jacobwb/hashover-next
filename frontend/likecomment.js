@@ -71,7 +71,7 @@ HashOver.prototype.likeComment = function (action, permalink)
 
 			// Change title and class to indicate comment has been unliked/undisliked
 			actionLink.title = hashover.locale[title];
-			actionLink.textContent = hashover.locale[content][0];
+			actionLink.textContent = hashover.locale[content];
 
 			// Add listener to change link text to "Unlike" on mouse over
 			if (action === 'like') {
@@ -81,17 +81,17 @@ HashOver.prototype.likeComment = function (action, permalink)
 
 		// Check if comment has likes
 		if (likes > 0) {
-			// If so, get like/dislike locale
-			var likeLocale = (action !== 'like') ? 'dislike' : 'like';
-
-			// Check if there is more than one like/dislike
+			// If so, check if there is more than one like/dislike
 			if (likes !== 1) {
 				// If so, use plural like/dislike locale
-				likesElement.textContent = likes + ' ' + hashover.locale[likeLocale][1];
+				var likeLocale = (action !== 'like') ? 'dislikes' : 'likes';
 			} else {
 				// If not, use singlur like/dislike locale
-				likesElement.textContent = likes + ' ' + hashover.locale[likeLocale][0];
+				var likeLocale = (action !== 'like') ? 'dislike' : 'like';
 			}
+
+			// Change number of likes/dislikes
+			likesElement.textContent = likes + ' ' + hashover.locale[likeLocale];
 
 			// And set font weight bold
 			likesElement.style.fontWeight = 'bold';

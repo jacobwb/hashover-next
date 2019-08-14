@@ -34,7 +34,7 @@ class FormUI
 	protected $emphasizedField;
 	protected $defaultLoginInputs;
 
-	public $postCommentOn;
+	public $postComment;
 	public $popularComments;
 	public $comments;
 
@@ -62,12 +62,14 @@ class FormUI
 		}
 
 		// "Post a comment" locale strings
-		$post_comment_on = $this->locale->text['post-comment-on'];
-		$this->postCommentOn = $post_comment_on[0];
+		$this->postComment = $this->locale->text['post-a-comment'];
 
 		// Use "Post a comment on <page title>" locale instead if configured to
 		if ($this->setup->displaysTitle !== false and !empty ($this->pageTitle)) {
-			$this->postCommentOn = sprintf ($post_comment_on[1], $this->pageTitle);
+			$this->postComment = sprintf (
+				$this->locale->text['post-a-comment-on'],
+				$this->pageTitle
+			);
 		}
 
 		// Create default login inputs elements
@@ -146,7 +148,7 @@ class FormUI
 			'website' => array (
 				'wrapper-class'		=> 'hashover-website-input',
 				'label-class'		=> 'hashover-website-label',
-				'placeholder'		=> $this->locale->text['website'][0],
+				'placeholder'		=> $this->locale->text['website'],
 				'input-id'		=> $this->prefix ('main-website' . $permalink, $is_form),
 				'input-type'		=> 'url',
 				'input-name'		=> 'website',
@@ -310,9 +312,7 @@ class FormUI
 		$title = new HTMLTag ('p', array ('class' => 'hashover-title'));
 
 		// "Allowed HTML/Markdown" locale string
-		$title->innerHTML (sprintf (
-			$this->locale->text['accepted-format'], $format
-		));
+		$title->innerHTML ($this->locale->text['allowed-' . $format]);
 
 		// Create allowed HTML/markdown text paragraph
 		$paragraph = new HTMLTag ('p', array (
@@ -401,13 +401,13 @@ class FormUI
 			'class' => 'hashover-formatting-table',
 
 			'children' => array (
-				$this->formatCell ('HTML', 'accepted-html')
+				$this->formatCell ('html', 'html-format')
 			)
 		));
 
 		// Append Markdown cell if Markdown is enabled
 		if ($this->setup->usesMarkdown !== false) {
-			$markdown_cell = $this->formatCell ('Markdown', 'accepted-markdown');
+			$markdown_cell = $this->formatCell ('markdown', 'markdown-format');
 			$allowed_formatting_table->appendChild ($markdown_cell);
 		}
 
@@ -588,7 +588,7 @@ class FormUI
 				'hashover-dashed-title'
 			),
 
-			'innerHTML' => $this->postCommentOn
+			'innerHTML' => $this->postComment
 		));
 
 		// Add "Post Comment" element to primary form wrapper
@@ -930,10 +930,10 @@ class FormUI
 			// Check if there is more than one popular comment
 			if ($this->commentCounts['popular'] !== 1) {
 				// If so, use "Most Popular Comments" locale string
-				$pop_count_element->innerHTML ($this->locale->text['most-popular-comments'][1]);
+				$pop_count_element->innerHTML ($this->locale->text['most-popular-comments']);
 			} else {
 				// If not, use "Most Popular Comment" locale string
-				$pop_count_element->innerHTML ($this->locale->text['most-popular-comments'][0]);
+				$pop_count_element->innerHTML ($this->locale->text['most-popular-comment']);
 			}
 
 			// Add popular comments title element to wrapper element

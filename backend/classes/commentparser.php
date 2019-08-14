@@ -70,9 +70,9 @@ class CommentParser
 
 		// Known short date interval locales
 		$this->shortDateLocales = array (
-			'y' => 'date-years',
-			'm' => 'date-months',
-			'd' => 'date-days'
+			'y' => 'date-year',
+			'm' => 'date-month',
+			'd' => 'date-day'
 		);
 
 		// Short date when a comment was posted today
@@ -127,10 +127,10 @@ class CommentParser
 			// Otherwise, check if interval is more than one
 			if ($interval->$i !== 1) {
 				// If so, use plural locale string
-				$locale = $this->locale->text[1];
+				$locale = $this->locale->text[$key . 's'];
 			} else {
 				// If not, use singlur locale string
-				$locale = $this->locale->text[0];
+				$locale = $this->locale->text[$key];
 			}
 
 			// Inject interval into locale string

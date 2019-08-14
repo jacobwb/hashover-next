@@ -86,12 +86,14 @@ try {
 			'disliked-comment'	=> $hashover->locale->text['disliked-comment'],
 			'disliked'		=> $hashover->locale->text['disliked'],
 			'dislike'		=> $hashover->locale->text['dislike'],
+			'dislikes'		=> $hashover->locale->text['dislikes'],
 			'external-image-tip'	=> $hashover->locale->text['external-image-tip'],
 			'field-needed'		=> $hashover->locale->text['field-needed'],
 			'like-comment'		=> $hashover->locale->text['like-comment'],
 			'liked-comment'		=> $hashover->locale->text['liked-comment'],
 			'liked'			=> $hashover->locale->text['liked'],
 			'like'			=> $hashover->locale->text['like'],
+			'likes'			=> $hashover->locale->text['likes'],
 			'today'			=> $hashover->locale->text['date-today'],
 			'unlike'		=> $hashover->locale->text['unlike'],
 			'commenter-tip'		=> $hashover->locale->text['commenter-tip'],
@@ -109,7 +111,7 @@ try {
 			'email'			=> $hashover->locale->text['email'],
 			'name'			=> $hashover->locale->text['name'],
 			'password'		=> $hashover->locale->text['password'],
-			'website'		=> $hashover->locale->text['website'][0]
+			'website'		=> $hashover->locale->text['website']
 		);
 
 		// Add setup information to data
@@ -176,12 +178,12 @@ try {
 	);
 
 	// Count according to `$showsReplyCount` setting
-	$show_comments = $hashover->getCommentCount ('show-number-comments');
+	$show_comments = $hashover->getCommentCount ('show-comments', 'show-comment');
 
 	// Add locales for show interface button
 	if ($hashover->setup->collapsesInterface !== false) {
-		$data['instance']['post-comment-on'] = $hashover->ui->postCommentOn;
-		$data['instance']['show-number-comments'] = $show_comments;
+		$data['instance']['post-a-comment'] = $hashover->ui->postComment;
+		$data['instance']['show-comments'] = $show_comments;
 	}
 
 	// Text for "Show X Other Comment(s)" link
@@ -203,10 +205,10 @@ try {
 			// Check if there is more than one other comment
 			if ($other_count !== 1) {
 				// If so, use the "Show X Other Comments" locale
-				$more_link_text = $hashover->locale->text['show-other-comment'][1];
+				$more_link_text = $hashover->locale->text['show-other-comments'];
 			} else {
 				// If not, use the "Show X Other Comment" locale
-				$more_link_text = $hashover->locale->text['show-other-comment'][0];
+				$more_link_text = $hashover->locale->text['show-other-comment'];
 			}
 
 			// And inject the count into the locale string

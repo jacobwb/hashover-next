@@ -71,7 +71,7 @@ class HashOver
 	}
 
 	// Returns a localized comment count
-	public function getCommentCount ($locale_key = 'showing-comments')
+	public function getCommentCount ($plural = 'showing-comments', $singular = 'showing-comment')
 	{
 		// Shorter variables
 		$primary_count = $this->thread->primaryCount;
@@ -86,10 +86,10 @@ class HashOver
 		// Check if there is more than one primary comment
 		if ($primary_count !== 2) {
 			// If so, use pluralized locale string
-			$showing_comments = $this->locale->text[1];
+			$showing_comments = $this->locale->text[$plural];
 		} else {
 			// If not, use singular locale string
-			$showing_comments = $this->locale->text[0];
+			$showing_comments = $this->locale->text[$singular];
 		}
 
 		// Whether to show reply count separately
@@ -102,10 +102,10 @@ class HashOver
 				// If so, check if there is more than one primary comment
 				if ($total_count - $primary_count !== 1) {
 					// If so, use use "X counting replies" locale string
-					$reply_locale = $this->locale->text['count-replies'][1];
+					$reply_locale = $this->locale->text['counting-replies'];
 				} else {
 					// If not, use use "X counting reply" locale string
-					$reply_locale = $this->locale->text['count-replies'][0];
+					$reply_locale = $this->locale->text['counting-reply'];
 				}
 
 				// Inject total comment count into reply count locale string

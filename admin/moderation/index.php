@@ -151,7 +151,7 @@ try {
 			));
 
 			// Add table head
-			add_table_head ($websites_table, $hashover->locale->text['website'][1]);
+			add_table_head ($websites_table, $hashover->locale->text['websites']);
 
 			// Sort the websites
 			sort ($websites, SORT_NATURAL);
