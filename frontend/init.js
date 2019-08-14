@@ -74,7 +74,7 @@ HashOver.prototype.init = function (id)
 			// If so, check if the user interface is collapsed
 			if (hashover.setup['collapses-interface'] !== false) {
 				// If so, scroll to it after uncollapsing the interface
-				hashover.uncollapseInterface (scrollCommentIntoView);
+				hashover.showInterface (scrollCommentIntoView);
 			} else {
 				// If not, scroll to the comment directly
 				scrollCommentIntoView ();
@@ -146,10 +146,10 @@ HashOver.prototype.init = function (id)
 	this.htmlTime = this.parseAll (comments, sortSection, this.setup['collapses-comments']);
 
 	// Create show interface hyperlink if enabled
-	this.optionalMethod ('uncollapseInterfaceLink');
+	this.optionalMethod ('showInterfaceLink');
 
 	// Create show more comments hyperlink if enabled
-	this.optionalMethod ('uncollapseCommentsLink');
+	this.optionalMethod ('showMoreLink');
 
 	// Attach click event to formatting revealer hyperlink
 	this.formattingOnclick ('main');

@@ -1,5 +1,5 @@
-// Shows user interface (uncollapseinterface.js)
-HashOver.prototype.uncollapseInterface = function (callback)
+// Shows user interface (showinterface.js)
+HashOver.prototype.showInterface = function (callback)
 {
 	// Reference to this object
 	var hashover = this;
@@ -8,7 +8,7 @@ HashOver.prototype.uncollapseInterface = function (callback)
 	var hiddenIds = [ 'form-section', 'comments-section', 'end-links' ];
 
 	// Check if show interface link exists
-	this.elementExists ('uncollapse-interface-link', function (showLink) {
+	this.elementExists ('show-interface-link', function (showLink) {
 		// If so, add class to hide show interface hyperlink
 		hashover.classes.add (showLink, 'hashover-hide-more-link');
 

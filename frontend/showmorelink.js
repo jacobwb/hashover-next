@@ -1,5 +1,5 @@
-// Creates "Show X Other Comments" button (uncollapsecommentslink.js)
-HashOver.prototype.uncollapseCommentsLink = function ()
+// Creates "Show X Other Comments" button (showmorelink.js)
+HashOver.prototype.showMoreLink = function ()
 {
 	// Reference to this object
 	var hashover = this;
