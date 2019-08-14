@@ -1,5 +1,5 @@
 // For editing comments (ajaxedit.js)
-HashOver.prototype.AJAXEdit = function (json, permalink, destination, isReply)
+HashOver.prototype.AJAXEdit = function (json, permalink)
 {
 	// Get old comment element
 	var comment = this.getElement (permalink);

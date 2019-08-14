@@ -89,16 +89,28 @@ function liker ($action, $like_hash, &$hashover, &$comment)
 	}
 }
 
-function get_json_response ($hashover, $key, $action)
+// Returns comment data or error
+function get_json_response ($hashover)
 {
-	// JSON data
+	// Initial JSON data
 	$data = array ();
 
-	// Store references to some long variables
-	$thread = $hashover->setup->threadName;
+	// Get comment from POST/GET data
+	$key = $hashover->setup->getRequest ('comment', null);
+
+	// Get action from POST/GET data
+	$action = $hashover->setup->getRequest ('action', null);
+
+	// Return error if we're missing necessary post data
+	if ($key === null or $action === null) {
+		return array ('error' => 'No action.');
+	}
 
 	// Sanitize file path
 	$file = str_replace ('../', '', $key);
+
+	// Store references to some long variables
+	$thread = $hashover->setup->threadName;
 
 	// Read comment
 	$comment = $hashover->thread->data->read ($file, $thread);
@@ -109,10 +121,13 @@ function get_json_response ($hashover, $key, $action)
 	}
 
 	// Check if liker isn't poster via login ID comparision
-	if ($hashover->login->userIsLoggedIn and !empty ($comment['login_id'])) {
-		if ($hashover->cookies->getValue ('login') === $comment['login_id']) {
-			// Return error message if liker posted the comment
-			return array ('message' => 'Practice altruism!');
+	if ($hashover->login->userIsLoggedIn === true) {
+		// Check if comment has a login ID
+		if (!empty ($comment['login_id'])) {
+			// If so, return error message if liker posted the comment
+			if ($hashover->cookies->getValue ('login') === $comment['login_id']) {
+				return array ('message' => 'Practice altruism!');
+			}
 		}
 	}
 
@@ -151,28 +166,14 @@ try {
 	// Throw exception if requested by remote server
 	$hashover->setup->refererCheck ();
 
-	// Get page URL from POST/GET data
-	$url = $hashover->setup->getRequest ('url', null);
-
-	// Get comment from POST/GET data
-	$key = $hashover->setup->getRequest ('comment', null);
-
-	// Get action from POST/GET data
-	$action = $hashover->setup->getRequest ('action', null);
-
-	// Return error if we're missing necessary post data
-	if ($url === null or $key === null or $action === null) {
-		return array ('error' => 'No action.');
-	}
-
 	// Set page URL from POST/GET data
-	$hashover->setup->setPageURL ($url);
+	$hashover->setup->setPageURL ('request');
 
 	// Initiate comment processing
 	$hashover->initiate ();
 
-	// Display JSON response
-	$data = get_json_response ($hashover, $key, $action);
+	// Get JSON response
+	$data = get_json_response ($hashover);
 
 	// Return JSON or JSONP function call
 	echo Misc::jsonData ($data);

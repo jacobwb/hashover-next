@@ -18,13 +18,13 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 
 	// Check if there are no comments
 	if (this.instance['total-count'] === 0) {
-		// If so, add first comment message
+		// If so, replace "Be the first to comment!"
 		this.instance.comments.primary[0] = json.comment;
 
-		// And place the comment on the page
+		// And place comment on page
 		dest.innerHTML = this.parseComment (json.comment);
 	} else {
-		// Add comment to comments array
+		// If not, add comment to comments array
 		this.addComments (json.comment, isReply);
 
 		// Fetch parent comment by its permalink

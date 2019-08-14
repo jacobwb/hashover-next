@@ -11,6 +11,7 @@ HashOver.prototype.showMoreComments = function (element, callback, append)
 			callback ();
 		}
 
+		// And return false to prevent default event
 		return false;
 	}
 
@@ -19,9 +20,10 @@ HashOver.prototype.showMoreComments = function (element, callback, append)
 		// If so, hide the more hyperlink; displaying the comments
 		this.hideMoreLink (callback);
 
-		// And set all comments as shown
+		// Set all comments as shown
 		this.instance['showing-more'] = true;
 
+		// And return false to prevent default event
 		return false;
 	}
 
@@ -87,8 +89,9 @@ HashOver.prototype.showMoreComments = function (element, callback, append)
 	// Set class to indicate loading to element
 	this.classes.add (element, 'hashover-loading');
 
-	// And set all comments as shown
+	// Set all comments as shown
 	this.instance['showing-more'] = true;
 
+	// And return false to prevent default event
 	return false;
 };

@@ -44,9 +44,14 @@ HashOver.prototype.addRatings = function (comment, template, action, commentKey)
 		// Add likes/dislikes to HTML template
 		template[action + 's'] = comment[action + 's'];
 
-		// Get "X Like/Dislike(s)" locale
-		var plural = (comment[action + 's'] === 1 ? 0 : 1);
-		var count = comment[action + 's'] + ' ' + this.locale[action][plural];
+		// Check if there is more than one like/dislike
+		if (comment[action + 's'] !== 1) {
+			// If so, use "X Likes/Dislikes" locale
+			var count = comment[action + 's'] + ' ' + this.locale[action][1];
+		} else {
+			// If not, use "X Like/Dislike" locale
+			var count = comment[action + 's'] + ' ' + this.locale[action][0];
+		}
 	}
 
 	// Add like count to HTML template

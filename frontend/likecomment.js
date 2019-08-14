@@ -4,9 +4,16 @@ HashOver.prototype.likeComment = function (action, permalink)
 	// Reference to this object
 	var hashover = this;
 
+	// Get get from permalink
 	var file = this.permalinkFile (permalink);
+
+	// Get like/dislike button
 	var actionLink = this.getElement (action + '-' + permalink);
+
+	// Get likes/dislikes count element
 	var likesElement = this.getElement (action + 's-' + permalink);
+
+	// Path to like/dislike backend script
 	var likePath = this.setup['http-backend'] + '/like.php';
 
 	// Set request queries
@@ -35,24 +42,36 @@ HashOver.prototype.likeComment = function (action, permalink)
 		var likesKey = (action !== 'dislike') ? 'likes' : 'dislikes';
 		var likes = likeResponse[likesKey] || 0;
 
-		// Change "Like" button title and class
+		// Check if button is marked as a like button
 		if (hashover.classes.contains (actionLink, 'hashover-' + action) === true) {
-			// Change class to indicate the comment has been liked/disliked
+			// If so, choose liked/disliked locale keys
+			var title = (action === 'like') ? 'liked-comment' : 'disliked-comment';
+			var content = (action === 'like') ? 'liked' : 'disliked';
+
+			// Change class to indicate comment has been liked/disliked
 			hashover.classes.add (actionLink, 'hashover-' + action + 'd');
 			hashover.classes.remove (actionLink, 'hashover-' + action);
-			actionLink.title = (action === 'like') ? hashover.locale['liked-comment'] : hashover.locale['disliked-comment'];
-			actionLink.textContent = (action === 'like') ? hashover.locale['liked'] : hashover.locale['disliked'];
+
+			// Change title and class to indicate comment has been liked/disliked
+			actionLink.title = hashover.locale[title];
+			actionLink.textContent = hashover.locale[content];
 
 			// Add listener to change link text to "Unlike" on mouse over
 			if (action === 'like') {
 				hashover.mouseOverChanger (actionLink, 'unlike', 'liked');
 			}
 		} else {
-			// Change class to indicate the comment is unliked
+			// If not, choose like/dislike locale keys
+			var title = (action === 'like') ? 'like-comment' : 'dislike-comment';
+			var content = (action === 'like') ? 'like' : 'dislike';
+
+			// Change class to indicate comment has been unliked/undisliked
 			hashover.classes.add (actionLink, 'hashover-' + action);
 			hashover.classes.remove (actionLink, 'hashover-' + action + 'd');
-			actionLink.title = (action === 'like') ? hashover.locale['like-comment'] : hashover.locale['dislike-comment'];
-			actionLink.textContent = (action === 'like') ? hashover.locale['like'][0] : hashover.locale['dislike'][0];
+
+			// Change title and class to indicate comment has been unliked/undisliked
+			actionLink.title = hashover.locale[title];
+			actionLink.textContent = hashover.locale[content][0];
 
 			// Add listener to change link text to "Unlike" on mouse over
 			if (action === 'like') {
@@ -60,18 +79,27 @@ HashOver.prototype.likeComment = function (action, permalink)
 			}
 		}
 
+		// Check if comment has likes
 		if (likes > 0) {
-			// Decide if locale is pluralized
-			var plural = (likes !== 1) ? 1 : 0;
+			// If so, get like/dislike locale
 			var likeLocale = (action !== 'like') ? 'dislike' : 'like';
-			var likeCount = likes + ' ' + hashover.locale[likeLocale][plural];
 
-			// Change number of likes; set font weight bold
-			likesElement.textContent = likeCount;
+			// Check if there is more than one like/dislike
+			if (likes !== 1) {
+				// If so, use plural like/dislike locale
+				likesElement.textContent = likes + ' ' + hashover.locale[likeLocale][1];
+			} else {
+				// If not, use singlur like/dislike locale
+				likesElement.textContent = likes + ' ' + hashover.locale[likeLocale][0];
+			}
+
+			// And set font weight bold
 			likesElement.style.fontWeight = 'bold';
 		} else {
-			// Remove like count; set font weight normal
+			// If not, remove like count
 			likesElement.textContent = '';
+
+			// And set font weight normal
 			likesElement.style.fontWeight = '';
 		}
 	}, true);

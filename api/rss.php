@@ -33,6 +33,156 @@ setup_autoloader (function ($error) {
 	echo '<error>', $error, '</error>';
 });
 
+// Parses comment into RSS item
+function parse_comments (&$metadata, &$comment, &$rss, &$xml, &$hashover)
+{
+	// Skip deleted/unmoderated comments
+	if (isset ($comment['notice'])) {
+		return;
+	}
+
+	// Encode HTML entities
+	$comment['body'] = htmlentities ($comment['body'], ENT_COMPAT, 'UTF-8', true);
+
+	// Decode HTML entities
+	$comment['body'] = html_entity_decode ($comment['body'], ENT_COMPAT, 'UTF-8');
+
+	// Remove [img] tags
+	$comment['body'] = preg_replace ('/\[(img|\/img)\]/iS', '', $comment['body']);
+
+	// Parse comment as markdown
+	$comment['body'] = $hashover->markdown->parseMarkdown ($comment['body']);
+
+	// Convert <code> tags to <pre> tags
+	$comment['body'] = preg_replace ('/(<|<\/)code>/iS', '\\1pre>', $comment['body']);
+
+	// Get name from comment or use configured default
+	$name = Misc::getArrayItem ($comment, 'name') ?: $hashover->setup->defaultName;
+
+	// Create item element
+	$item = $xml->createElement ('item');
+
+	// Start item summary title with user's name
+	$title = $name . ' : ';
+
+	// Strip HTML tags from comment and remove all newlines
+	$single_comment = str_replace (PHP_EOL, ' ', strip_tags ($comment['body']));
+
+	// Check if comment is more than 40 characters long
+	if (mb_strlen ($single_comment) > 40) {
+		// If so, add 40 characters of comment to summary title
+		$title .= mb_substr ($single_comment, 0, 40) . '...';
+	} else {
+		// If not, add comment to summary title as-is
+		$title .= $single_comment;
+	}
+
+	// Create item title element
+	$item_title = $xml->createElement ('title');
+	$item_title_value = $xml->createTextNode (html_entity_decode ($title, ENT_COMPAT, 'UTF-8'));
+	$item_title->appendChild ($item_title_value);
+
+	// Add item title element to item element
+	$item->appendChild ($item_title);
+
+	// Create item name element
+	$item_name = $xml->createElement ('name');
+	$item_name_value = $xml->createTextNode (html_entity_decode ($name, ENT_COMPAT, 'UTF-8'));
+	$item_name->appendChild ($item_name_value);
+
+	// Add item name element to item element
+	$item->appendChild ($item_name);
+
+	// URL regular expression
+	$url_regex = '/((http|https|ftp):\/\/[a-z0-9-@:%_\+.~#?&\/=]+) {0,}/iS';
+
+	// Add HTML anchor tag to URLs (hyperlinks)
+	$comment['body'] = preg_replace ($url_regex, '<a href="\\1" target="_blank">\\1</a>', $comment['body']);
+
+	// Replace newlines with break tags
+	$comment['body'] = str_replace (PHP_EOL, '<br>', $comment['body']);
+
+	// Create item description element
+	$item_description = $xml->createElement ('description');
+	$item_description_value = $xml->createTextNode ($comment['body']);
+	$item_description->appendChild ($item_description_value);
+
+	// Add item description element to item element
+	$item->appendChild ($item_description);
+
+	// Create item avatar element
+	$item_avatar = $xml->createElement ('avatar');
+	$item_avatar_value = $xml->createTextNode ($comment['avatar']);
+	$item_avatar->appendChild ($item_avatar_value);
+
+	// Add item avatar element to item element
+	$item->appendChild ($item_avatar);
+
+	// Check if likes are enabled
+	if (!empty ($comment['likes'])) {
+		// If so, create item likes element
+		$item_likes = $xml->createElement ('likes');
+		$item_likes_value = $xml->createTextNode ($comment['likes']);
+		$item_likes->appendChild ($item_likes_value);
+
+		// Add item likes element to item element
+		$item->appendChild ($item_likes);
+	}
+
+	// Check if dislikes are enabled
+	if ($hashover->setup->allowsDislikes === true) {
+		// If so, check if comment has any dislikes
+		if (!empty ($comment['dislikes'])) {
+			// If so, create dislikes item element
+			$item_dislikes = $xml->createElement ('dislikes');
+			$item_dislikes_value = $xml->createTextNode ($comment['dislikes']);
+			$item_dislikes->appendChild ($item_dislikes_value);
+
+			// Add dislikes item element to item element
+			$item->appendChild ($item_dislikes);
+		}
+	}
+
+	// Create item publication date element
+	$item_pubDate = $xml->createElement ('pubDate');
+	$item_pubDate_value = date (DATE_RSS, $comment['timestamp']);
+	$item_pubDate_node = $xml->createTextNode ($item_pubDate_value);
+	$item_pubDate->appendChild ($item_pubDate_node);
+
+	// Add item pubDate element to item element
+	$item->appendChild ($item_pubDate);
+
+	// URL to comment for item guide and link elements
+	$item_permalink_url = $metadata['url'] . '#' . $comment['permalink'];
+
+	// Create item guide element
+	$item_guid = $xml->createElement ('guid');
+	$item_guid_value = $xml->createTextNode ($item_permalink_url);
+	$item_guid->appendChild ($item_guid_value);
+
+	// Add item guide element to item element
+	$item->appendChild ($item_guid);
+
+	// Create item link element
+	$item_link = $xml->createElement ('link');
+	$item_link_value = $xml->createTextNode ($item_permalink_url);
+	$item_link->appendChild ($item_link_value);
+
+	// Add item link element to item element
+	$item->appendChild ($item_link);
+
+	// Add item element to main RSS element
+	$rss->appendChild ($item);
+
+	// Recursively parse replies
+	if (!empty ($comment['replies'])) {
+		foreach ($comment['replies'] as $reply) {
+			parse_comments ($metadata, $reply, $rss, $xml, $hashover);
+		}
+	}
+}
+
+// Creates RSS feed
 function create_rss (&$hashover)
 {
 	// Shorter variable name
@@ -91,10 +241,17 @@ function create_rss (&$hashover)
 	// Add channel link to channel element
 	$channel->appendChild ($link);
 
+	// Check if there is more than one comment
+	if ($hashover->thread->totalCount !== 1) {
+		// If so, use "X Comments" locale string
+		$showing_comments_locale = $hashover->locale->text['showing-comments'][1];
+	} else {
+		// If not, use "X Comment" locale string
+		$showing_comments_locale = $hashover->locale->text['showing-comments'][0];
+	}
+
 	// Create channel description element
 	$description = $xml->createElement ('description');
-	$count_plural = ($hashover->thread->totalCount !== 1);
-	$showing_comments_locale = $hashover->locale->text['showing-comments'][$count_plural];
 	$count_locale = sprintf ($showing_comments_locale, $hashover->thread->totalCount - 1);
 	$description_value = $xml->createTextNode ($count_locale);
 	$description->appendChild ($description_value);
@@ -129,147 +286,6 @@ function create_rss (&$hashover)
 
 	// Add channel element to main RSS element
 	$rss->appendChild ($channel);
-
-	// Parse comments
-	function parse_comments (&$metadata, &$comment, &$rss, &$xml, &$hashover)
-	{
-		// Skip deleted/unmoderated comments
-		if (isset ($comment['notice'])) {
-			return;
-		}
-
-		// Encode HTML entities
-		$comment['body'] = htmlentities ($comment['body'], ENT_COMPAT, 'UTF-8', true);
-
-		// Decode HTML entities
-		$comment['body'] = html_entity_decode ($comment['body'], ENT_COMPAT, 'UTF-8');
-
-		// Remove [img] tags
-		$comment['body'] = preg_replace ('/\[(img|\/img)\]/iS', '', $comment['body']);
-
-		// Parse comment as markdown
-		$comment['body'] = $hashover->markdown->parseMarkdown ($comment['body']);
-
-		// Convert <code> tags to <pre> tags
-		$comment['body'] = preg_replace ('/(<|<\/)code>/iS', '\\1pre>', $comment['body']);
-
-		// Get name from comment or use configured default
-		$name = Misc::getArrayItem ($comment, 'name') ?: $hashover->setup->defaultName;
-
-		// Create item element
-		$item = $xml->createElement ('item');
-
-		// Generate comment summary item title
-		$title = $name . ' : ';
-		$single_comment = str_replace (PHP_EOL, ' ', strip_tags ($comment['body']));
-
-		if (mb_strlen ($single_comment) > 40) {
-			$title .= mb_substr ($single_comment, 0, 40) . '...';
-		} else {
-			$title .= $single_comment;
-		}
-
-		// Create item title element
-		$item_title = $xml->createElement ('title');
-		$item_title_value = $xml->createTextNode (html_entity_decode ($title, ENT_COMPAT, 'UTF-8'));
-		$item_title->appendChild ($item_title_value);
-
-		// Add item title element to item element
-		$item->appendChild ($item_title);
-
-		// Create item name element
-		$item_name = $xml->createElement ('name');
-		$item_name_value = $xml->createTextNode (html_entity_decode ($name, ENT_COMPAT, 'UTF-8'));
-		$item_name->appendChild ($item_name_value);
-
-		// Add item name element to item element
-		$item->appendChild ($item_name);
-
-		// URL regular expression
-		$url_regex = '/((http|https|ftp):\/\/[a-z0-9-@:%_\+.~#?&\/=]+) {0,}/iS';
-
-		// Add HTML anchor tag to URLs (hyperlinks)
-		$comment['body'] = preg_replace ($url_regex, '<a href="\\1" target="_blank">\\1</a>', $comment['body']);
-
-		// Replace newlines with break tags
-		$comment['body'] = str_replace (PHP_EOL, '<br>', $comment['body']);
-
-		// Create item description element
-		$item_description = $xml->createElement ('description');
-		$item_description_value = $xml->createTextNode ($comment['body']);
-		$item_description->appendChild ($item_description_value);
-
-		// Add item description element to item element
-		$item->appendChild ($item_description);
-
-		// Create item avatar element
-		$item_avatar = $xml->createElement ('avatar');
-		$item_avatar_value = $xml->createTextNode ($comment['avatar']);
-		$item_avatar->appendChild ($item_avatar_value);
-
-		// Add item avatar element to item element
-		$item->appendChild ($item_avatar);
-
-		if (!empty ($comment['likes'])) {
-			// Create item likes element
-			$item_likes = $xml->createElement ('likes');
-			$item_likes_value = $xml->createTextNode ($comment['likes']);
-			$item_likes->appendChild ($item_likes_value);
-
-			// Add item likes element to item element
-			$item->appendChild ($item_likes);
-		}
-
-		if ($hashover->setup->allowsDislikes === true) {
-			if (!empty ($comment['dislikes'])) {
-				// Create item dislikes element
-				$item_dislikes = $xml->createElement ('dislikes');
-				$item_dislikes_value = $xml->createTextNode ($comment['dislikes']);
-				$item_dislikes->appendChild ($item_dislikes_value);
-
-				// Add item dislikes element to item element
-				$item->appendChild ($item_dislikes);
-			}
-		}
-
-		// Create item publication date element
-		$item_pubDate = $xml->createElement ('pubDate');
-		$item_pubDate_value = date (DATE_RSS, $comment['timestamp']);
-		$item_pubDate_node = $xml->createTextNode ($item_pubDate_value);
-		$item_pubDate->appendChild ($item_pubDate_node);
-
-		// Add item pubDate element to item element
-		$item->appendChild ($item_pubDate);
-
-		// URL to comment for item guide and link elements
-		$item_permalink_url = $metadata['url'] . '#' . $comment['permalink'];
-
-		// Create item guide element
-		$item_guid = $xml->createElement ('guid');
-		$item_guid_value = $xml->createTextNode ($item_permalink_url);
-		$item_guid->appendChild ($item_guid_value);
-
-		// Add item guide element to item element
-		$item->appendChild ($item_guid);
-
-		// Create item link element
-		$item_link = $xml->createElement ('link');
-		$item_link_value = $xml->createTextNode ($item_permalink_url);
-		$item_link->appendChild ($item_link_value);
-
-		// Add item link element to item element
-		$item->appendChild ($item_link);
-
-		// Add item element to main RSS element
-		$rss->appendChild ($item);
-
-		// Recursively parse replies
-		if (!empty ($comment['replies'])) {
-			foreach ($comment['replies'] as $reply) {
-				parse_comments ($metadata, $reply, $rss, $xml, $hashover);
-			}
-		}
-	}
 
 	// Add item element to main RSS element
 	foreach ($hashover->comments['primary'] as $comment) {

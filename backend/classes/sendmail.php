@@ -19,26 +19,32 @@
 
 class Sendmail
 {
-	// E-mail data to send
+	// Email data to send
 	protected $to;
 	protected $from;
-	protected $subject;
 	protected $reply;
+	protected $subject;
 	protected $text;
 
 	// Type of content being sent
 	protected $type = 'text';
 
-	// Sets who we're sending the e-mail to
+	// Sets who we're sending email to
 	public function to ($email)
 	{
 		$this->to = $email;
 	}
 
-	// Sets who the e-mail is coming from
+	// Sets where recipient can reply to
+	public function replyTo ($email)
+	{
+		$this->reply = $email;
+	}
+
+	// Sets who email is coming from
 	public function from ($email)
 	{
-		// Set "from" e-mail address
+		// Set "from" email address
 		$this->from = $email;
 
 		// Set "reply-to" the same way
@@ -53,12 +59,6 @@ class Sendmail
 		$this->subject = $text;
 	}
 
-	// Sets where the recipient can reply to
-	public function replyTo ($email)
-	{
-		$this->reply = $email;
-	}
-
 	// Converts message to plain text
 	protected function plainText ($text)
 	{
@@ -71,10 +71,11 @@ class Sendmail
 		// Wordwrap text to 70 characters
 		$text = wordwrap ($text, 70, "\n");
 
+		// And return text
 		return $text;
 	}
 
-	// Sets the message body
+	// Sets message body
 	public function text ($text)
 	{
 		// Set text property
@@ -84,13 +85,13 @@ class Sendmail
 		$this->type = 'text';
 	}
 
-	// Sets the message body to HTML
+	// Sets message body to HTML
 	public function html ($html)
 	{
 		// Set body property
 		$this->html = $html;
 
-		// Set automatic text version of the message
+		// Set automatic text version of message
 		if (empty ($this->text)) {
 			$this->text = $this->plainText ($html);
 		}
@@ -99,7 +100,7 @@ class Sendmail
 		$this->type = 'html';
 	}
 
-	// Sets the message body
+	// Sets message body
 	public function body ($text, $html = false)
 	{
 		// Set body as HTML if told to
@@ -122,7 +123,7 @@ class Sendmail
 		$data[] = 'From: ' . $this->from;
 		$data[] = 'Reply-To: ' . $this->reply;
 
-		// Check if the message type is text
+		// Check if message type is text
 		if ($this->type === 'text') {
 			// If so, add plain text header
 			$data[] = 'Content-Type: text/plain; charset="UTF-8"';
@@ -131,9 +132,10 @@ class Sendmail
 			$data[] = 'Content-Type: multipart/alternative; boundary="' . $boundary . '"';
 		}
 
-		// Convert data to string
+		// Convert headers data to string
 		$headers = implode ("\r\n", $data);
 
+		// And return headers as string
 		return $headers;
 	}
 
@@ -143,15 +145,15 @@ class Sendmail
 		// Initial message data
 		$data = array ();
 
-		// Check if the message type is text
+		// Check if message type is text
 		if ($this->type === 'text') {
-			// If so, only add the text version
+			// If so, only add text version
 			$data[] = $this->text;
 		} else {
 			// If not, start multipart boundary
 			$data[] = '--' . $boundary;
 
-			// Add the text version
+			// Add text version
 			$data[] = 'Content-Type: text/plain; charset="UTF-8"';
 			$data[] = '';
 			$data[] = $this->text;
@@ -159,7 +161,7 @@ class Sendmail
 			// Add another multipart boundary
 			$data[] = '--' . $boundary;
 
-			// Add the HTML version
+			// Add HTML version
 			$data[] = 'Content-Type: text/html; charset="UTF-8"';
 			$data[] = '';
 			$data[] = $this->html;
@@ -168,25 +170,32 @@ class Sendmail
 			$data[] = '--' . $boundary . '--';
 		}
 
-		// Convert data to string
+		// Convert message data to string
 		$headers = implode ("\r\n", $data);
 
+		// And return message as string
 		return $headers;
 	}
 
-	// Sends an e-mail
+	// Sends an email
 	public function send ()
 	{
+		// Get email address we're sending email to
+		$to = $this->to;
+
+		// Get subject
+		$subject = $this->subject;
+
 		// Create unique boundary
 		$boundary = md5 (uniqid (time ()));
 
-		// Get mail headers
-		$headers = $this->getHeaders ($boundary);
-
-		// Get message
+		// Get message body
 		$message = $this->getMessage ($boundary);
 
-		// Send mail
-		mail ($this->to, $this->subject, $message, $headers);
+		// Get email headers
+		$headers = $this->getHeaders ($boundary);
+
+		// And actually send the email
+		mail ($to, $subject, $message, $headers);
 	}
 }

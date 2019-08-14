@@ -1,25 +1,25 @@
-// Uncollapses the user interface (uncollapseinterface.js)
+// Shows user interface (uncollapseinterface.js)
 HashOver.prototype.uncollapseInterface = function (callback)
 {
 	// Reference to this object
 	var hashover = this;
 
 	// Elements to unhide
-	var uncollapseIDs = [ 'form-section', 'comments-section', 'end-links' ];
+	var hiddenIds = [ 'form-section', 'comments-section', 'end-links' ];
 
-	// Check if the uncollapse interface link exists
-	this.elementExists ('uncollapse-interface-link', function (uncollapseLink) {
-		// If so, add class to hide the uncollapse interface hyperlink
-		hashover.classes.add (uncollapseLink, 'hashover-hide-more-link');
+	// Check if show interface link exists
+	this.elementExists ('uncollapse-interface-link', function (showLink) {
+		// If so, add class to hide show interface hyperlink
+		hashover.classes.add (showLink, 'hashover-hide-more-link');
 
 		// Wait for the default CSS transition
 		setTimeout (function () {
-			// Remove the uncollapse interface hyperlink from page
-			uncollapseLink.parentNode.removeChild (uncollapseLink);
+			// Remove show interface hyperlink
+			showLink.parentNode.removeChild (showLink);
 
 			// Show hidden form elements
-			for (var i = 0, il = uncollapseIDs.length; i < il; i++) {
-				hashover.elementExists (uncollapseIDs[i], function (element) {
+			for (var i = 0, il = hiddenIds.length; i < il; i++) {
+				hashover.elementExists (hiddenIds[i], function (element) {
 					element.style.display = '';
 				});
 			}

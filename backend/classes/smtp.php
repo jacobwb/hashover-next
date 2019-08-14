@@ -22,10 +22,10 @@ class SMTP
 	// Unix domain socket connection file pointer
 	protected $fp;
 
-	// Time until the connection gives up
+	// Time until connection gives up
 	protected $timeout = 30;
 
-	// Local host to greet the connection with
+	// Local host to greet connection with
 	protected $localhost = 'localhost';
 
 	// Server authentication credentials
@@ -36,64 +36,71 @@ class SMTP
 	protected $user;
 	protected $password;
 
-	// E-mail data to send
+	// Email data to send
 	protected $to = array ();
 	protected $from = array ();
-	protected $subject;
 	protected $reply = array ();
+	protected $subject;
 	protected $text;
 	protected $html;
 
 	// Type of content being sent
 	protected $type = 'text';
 
-	// Sets the SMTP host server
+	// Sets SMTP host server
 	public function setHost ($host)
 	{
 		$this->host = $host;
 	}
 
-	// Sets the SMTP server port
+	// Sets SMTP server port
 	public function setPort ($port)
 	{
 		$this->port = $port;
 	}
 
-	// Sets the SMTP cryptography
+	// Sets SMTP cryptography
 	public function setCrypto ($crypto)
 	{
 		$this->crypto = $crypto;
 	}
 
-	// Sets the SMTP authentication
+	// Sets SMTP authentication
 	public function setAuth ($auth)
 	{
 		$this->auth = $auth;
 	}
 
-	// Sets the SMTP server user
+	// Sets SMTP server user
 	public function setUser ($user)
 	{
 		$this->user = $user;
 	}
 
-	// Sets the SMTP server password
+	// Sets SMTP server password
 	public function setPassword ($password)
 	{
 		$this->password = $password;
 	}
 
-	// Sets who we're sending the e-mail to
+	// Sets who we're sending email to
 	public function to ($email, $name = null)
 	{
 		$this->to['email'] = $email;
 		$this->to['name'] = $name;
 	}
 
-	// Sets who the e-mail is coming from
+	// Sets where recipient can reply to
+	public function replyTo ($email, $name = null)
+	{
+		$this->reply['email'] = $email;
+		$this->reply['name'] = $name;
+	}
+
+	// Sets who email is coming from
 	public function from ($email, $name = null)
 	{
-		// Set "from" e-mail address and name
+		// Set "from" email address and name
 		$this->from['email'] = $email;
 		$this->from['name'] = $name;
 
@@ -109,13 +116,6 @@ class SMTP
 		$this->subject = strip_tags ($text);
 	}
 
-	// Sets where the recipient can reply to
-	public function replyTo ($email, $name = null)
-	{
-		$this->reply['email'] = $email;
-		$this->reply['name'] = $name;
-	}
-
 	// Makes content comply to RFC-821
 	protected function rfc ($content)
 	{
@@ -128,13 +128,13 @@ class SMTP
 		// Wordwrap content to 998 characters
 		$content = wordwrap ($content, 998, "\n");
 
-		// Split the content by lines
+		// Split content by lines
 		$lines = explode ("\n", $content);
 
 		// Initial output
 		$output = '';
 
-		// Run through the lines
+		// Run through lines
 		foreach ($lines as $line) {
 			// RFC 821 section 4.5.2
 			if (!empty ($line) and $line[0] === '.') {
@@ -145,6 +145,7 @@ class SMTP
 			$output .= $line . "\r\n";
 		}
 
+		// And return final output
 		return $output;
 	}
 
@@ -163,10 +164,11 @@ class SMTP
 		// Make text comply to RFC-821
 		$text = $this->rfc ($text);
 
+		// And return text
 		return $text;
 	}
 
-	// Sets the message body to plain text
+	// Sets message body to plain text
 	public function text ($text)
 	{
 		// Set text property
@@ -176,13 +178,13 @@ class SMTP
 		$this->type = 'text';
 	}
 
-	// Sets the message body to HTML
+	// Sets message body to HTML
 	public function html ($html)
 	{
-		// Set body property
+		// Conform HTML to comply with RFC-821
 		$this->html = $this->rfc ($html);
 
-		// Set automatic text version of the message
+		// Set automatic text version of message
 		if (empty ($this->text)) {
 			$this->text = $this->plainText ($html);
 		}
@@ -191,7 +193,7 @@ class SMTP
 		$this->type = 'html';
 	}
 
-	// Sets the message body
+	// Sets message body
 	public function body ($text, $html = false)
 	{
 		// Set body as HTML if told to
@@ -220,22 +222,24 @@ class SMTP
 			}
 		}
 
+		// And return response
 		return $response;
 	}
 
 	// Gets code from connection response
 	protected function getCode ()
 	{
-		// Get the response code
+		// Get response code
 		$response = $this->getResponse ();
 
-		// Filter the code from the response
+		// Filter code from response
 		$code = substr ($response, 0, 3);
 
+		// And return code as integer
 		return (int) ($code);
 	}
 
-	// Sends request data to the SMTP server
+	// Sends request data to SMTP server
 	protected function request ($data)
 	{
 		fwrite ($this->fp, $data . "\r\n");
@@ -274,12 +278,12 @@ class SMTP
 			);
 		}
 
-		// Return false if the connection is not a resource
+		// Return false if connection is not a resource
 		if (!is_resource ($this->fp)) {
 			return false;
 		}
 
-		// Return false if the connection failed
+		// Return false if connection failed
 		if ($this->getCode () !== 220) {
 			return false;
 		}
@@ -290,7 +294,7 @@ class SMTP
 		// Send greeting to server
 		$this->request ($greeting . ' ' . $this->localhost);
 
-		// Return false if the greeting failed
+		// Return false if greeting failed
 		if ($this->getCode () !== 250) {
 			return false;
 		}
@@ -300,12 +304,12 @@ class SMTP
 			// If so, send TLS handshake to server
 			$this->request ('STARTTLS');
 
-			// Return false if the TLS handshake failed
+			// Return false if TLS handshake failed
 			if ($this->getCode () !== 220) {
 				return false;
 			}
 
-			// Type of encryption on the stream
+			// Type of encryption of stream
 			$crypto_type = STREAM_CRYPTO_METHOD_TLS_CLIENT;
 
 			// PHP 5.6 backwards compatibility
@@ -320,7 +324,7 @@ class SMTP
 			// Send greeting again
 			$this->request ($greeting . ' ' . $this->localhost);
 
-			// Return false if the greeting failed
+			// Return false if greeting failed
 			if ($this->getCode () !== 250) {
 				return false;
 			}
@@ -331,7 +335,7 @@ class SMTP
 			// If so, send request for login
 			$this->request ('AUTH LOGIN');
 
-			// Return false if the login authentication failed
+			// Return false if login authentication failed
 			if ($this->getCode () !== 334) {
 				return false;
 			}
@@ -339,7 +343,7 @@ class SMTP
 			// Send user name for login
 			$this->request (base64_encode ($this->user));
 
-			// Return false if the user name login failed
+			// Return false if user name login failed
 			if ($this->getCode () !== 334) {
 				return false;
 			}
@@ -347,25 +351,33 @@ class SMTP
 			// Send password for login
 			$this->request (base64_encode ($this->password));
 
-			// Return false if the password login failed
+			// Return false if password login failed
 			if ($this->getCode () !== 235) {
 				return false;
 			}
 		}
 
+		// Otherwise, return true
 		return true;
 	}
 
 	// Converts to/from/reply-to to a formatted string
 	public function format (array $recipient)
 	{
-		// If a name was given in "name <e-mail>" format
+		// Check if a name was given
 		if (!empty ($recipient['name'])) {
-			return $recipient['name'] . ' <' . $recipient['email'] . '>';
+			// If so, get name
+			$name = $recipient['name'];
+
+			// And construct email address in "name <email>" format
+			$address = $name . ' <' . $recipient['email'] . '>';
+		} else {
+			// If not, use email address as-is
+			$address = $recipient['email'];
 		}
 
-		// Otherwise, e-mail address as-is
-		return $recipient['email'];
+		// And return email address
+		return $address;
 	}
 
 	// Creates SMTP transport
@@ -383,9 +395,9 @@ class SMTP
 		$headers[] = 'Subject: ' . $this->subject;
 		$headers[] = 'Date: ' . date ('r');
 
-		// Check if the message type is text
+		// Check if message type is text
 		if ($this->type === 'text') {
-			// If so, only add headers for the text version
+			// If so, only add headers for text version
 			$headers[] = 'Content-Type: text/plain; charset="UTF-8"';
 			$headers[] = '';
 			$headers[] = $this->text;
@@ -401,7 +413,7 @@ class SMTP
 			// Start multipart boundary
 			$headers[] = '--' . $boundary;
 
-			// Add headers for the text version
+			// Add headers for text version
 			$headers[] = 'Content-Type: text/plain; charset="UTF-8"';
 			$headers[] = '';
 			$headers[] = $this->text;
@@ -409,7 +421,7 @@ class SMTP
 			// Add another multipart boundary
 			$headers[] = '--' . $boundary;
 
-			// Add headers for the HTML version
+			// Add headers for HTML version
 			$headers[] = 'Content-Type: text/html; charset="UTF-8"';
 			$headers[] = '';
 			$headers[] = $this->html;
@@ -418,30 +430,31 @@ class SMTP
 			$headers[] = '--' . $boundary . '--';
 		}
 
-		// Add final period to end the message data
+		// Add final period to end message data
 		$headers[] = '.';
 
 		// Convert headers to string
 		$transport = implode ("\r\n", $headers);
 
+		// And return final headers for transport
 		return $transport;
 	}
 
 	// Sends full SMTP request
 	protected function smtpDeliver ()
 	{
-		// Send who the e-mail is coming from
+		// Send who email is coming from
 		$this->request ('MAIL FROM: <' . $this->from['email'] . '>');
 
-		// Return false if the sender address failed
+		// Return false if sender address failed
 		if ($this->getCode () !== 250) {
 			return false;
 		}
 
-		// Send recipient e-mail address
+		// Send recipient email address
 		$this->request ('RCPT TO: <' . $this->to['email'] . '>');
 
-		// Return false if the recipient address failed
+		// Return false if recipient address failed
 		if ($this->getCode () !== 250) {
 			return false;
 		}
@@ -449,7 +462,7 @@ class SMTP
 		// Send intent to begin data
 		$this->request ('DATA');
 
-		// Return false if the data intent failed
+		// Return false if data intent failed
 		if ($this->getCode () !== 354) {
 			return false;
 		}
@@ -457,47 +470,49 @@ class SMTP
 		// Send message data
 		$this->request ($this->smtpTransport ());
 
-		// Return false if the message data failed
+		// Return false if message data failed
 		if ($this->getCode () === 250) {
 			return false;
 		}
 
+		// Otherwise, return ture
 		return true;
 	}
 
 	// Disconnects from server
 	protected function smtpDisconnect ()
 	{
-		// Do nothing if the connection is not a resource
+		// Do nothing if connection is not a resource
 		if (!is_resource ($this->fp)) {
 			return;
 		}
 
-		// Send intent to close the connection
+		// Send intent to close connection
 		$this->request ('QUIT');
 
 		// Ignore response
 		$this->getResponse ();
 
-		// And close the connection
+		// And close connection
 		fclose ($this->fp);
 	}
 
-	// Sends an e-mail
+	// Sends an email
 	public function send ()
 	{
-		// Check if we can connect to the server
+		// Check if we can connect to server
 		if ($this->smtpConnect () === true) {
-			// If so, send the e-mail
+			// If so, send email
 			$result = $this->smtpDeliver ();
 		} else {
 			// If not, assume failure
 			$result = false;
 		}
 
-		// Disconnect from the server
+		// Disconnect from server
 		$this->smtpDisconnect ();
 
+		// And return SMTP delivery result
 		return $result;
 	}
 }

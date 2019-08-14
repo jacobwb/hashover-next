@@ -1,14 +1,14 @@
 // Posts comments via AJAX (postrequest.js)
 HashOver.prototype.postRequest = function (destination, form, button, callback, type, permalink, close, isReply, isEdit)
 {
+	// Reference to this object
+	var hashover = this;
+
 	// Form inputs
 	var inputs = form.elements;
 
 	// Initial request queries
 	var queries = [];
-
-	// Reference to this object
-	var hashover = this;
 
 	// AJAX response handler
 	function commentHandler (json)
@@ -35,16 +35,18 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 
 			// And clear the comment form
 			form.comment.value = '';
+
+			// Re-enable button on success
+			setTimeout (function () {
+				button.disabled = false;
+			}, 1000);
 		} else {
-			// If not, display the message return instead
+			// If not, display message returned instead
 			hashover.showMessage (json.message, type, permalink, (json.type === 'error'), isReply, isEdit);
+
+			// And return false
 			return false;
 		}
-
-		// Re-enable button on success
-		setTimeout (function () {
-			button.disabled = false;
-		}, 1000);
 	}
 
 	// Sends a request to post a comment
@@ -91,10 +93,10 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 	{
 		// If so, check if the user is logged in
 		if (this.setup['user-is-logged-in'] !== true || isEdit === true) {
-			// If not, send a login request
+			// If not, create login request queries
 			var loginQueries = queries.concat ([ 'login=Login' ]);
 
-			// Send post comment request after login
+			// Send post comment request after login request
 			this.ajax ('POST', form.action, loginQueries, sendRequest, true);
 		} else {
 			// If so, send post comment request normally
@@ -110,5 +112,6 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 		button.disabled = false;
 	}, 10000);
 
+	// And return false
 	return false;
 };

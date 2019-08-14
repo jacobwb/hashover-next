@@ -24,5 +24,6 @@ HashOver.prototype.postComment = function (destination, form, button, callback, 
 		button.disabled = false;
 	}, 10000);
 
+	// And return true
 	return true;
 };

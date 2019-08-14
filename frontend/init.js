@@ -145,10 +145,10 @@ HashOver.prototype.init = function (id)
 	// Parse all of the initial comments
 	this.htmlTime = this.parseAll (comments, sortSection, this.setup['collapses-comments']);
 
-	// Create uncollapse UI hyperlink if enabled
+	// Create show interface hyperlink if enabled
 	this.optionalMethod ('uncollapseInterfaceLink');
 
-	// Create uncollapse comments hyperlink if enabled
+	// Create show more comments hyperlink if enabled
 	this.optionalMethod ('uncollapseCommentsLink');
 
 	// Attach click event to formatting revealer hyperlink
@@ -187,7 +187,7 @@ HashOver.prototype.init = function (id)
 				// If so, get the select div
 				var sortSelectDiv = hashover.getElement ('sort');
 
-				// And uncollapse the comments before sorting
+				// And show comments before sorting
 				hashover.showMoreComments (sortSelectDiv, function () {
 					hashover.sortPrimary (sortSelect.value);
 				}, false);

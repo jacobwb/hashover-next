@@ -24,7 +24,7 @@ HashOver.prototype.commentValidator = function (form, skipComment, isReply)
 				]);
 			}
 
-			// Remove class indicating a failed post
+			// And remove class indicating a failed post
 			this.classes.remove (form[field], 'hashover-emphasized-input');
 		}
 	}
@@ -45,6 +45,7 @@ HashOver.prototype.commentValidator = function (form, skipComment, isReply)
 		return errorMessage;
 	}
 
+	// And return true
 	return true;
 };
 
@@ -55,12 +56,15 @@ HashOver.prototype.validateComment = function (skipComment, form, type, permalin
 	type = type || 'main';
 	permalink = permalink || '';
 
-	// Validate comment form
+	// Attempt to validate comment
 	var message = this.commentValidator (form, skipComment, isReply);
 
-	// Display the validator's message
+	// Check if comment is invalid
 	if (message !== true) {
+		// If so, display validator's message
 		this.showMessage (message, type, permalink, true, isReply, isEdit);
+
+		// And return false
 		return false;
 	}
 
@@ -72,5 +76,6 @@ HashOver.prototype.validateComment = function (skipComment, form, type, permalin
 		}
 	}
 
+	// And return true
 	return true;
 };

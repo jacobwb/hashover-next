@@ -80,7 +80,7 @@ class Login extends Secrets
 			$this->loginMethod->password = '';
 		}
 
-		// Check that login hash cookie is not set
+		// Check if login hash is not set
 		if ($this->cookies->getValue ('login') === null) {
 			// If so, generate a random password
 			$random_password = bin2hex (openssl_random_pseudo_bytes (16));
@@ -220,6 +220,7 @@ class Login extends Secrets
 		// Check if the hashes match
 		$match = ($this->loginHash === $hash);
 
+		// And return match
 		return $match;
 	}
 
@@ -232,6 +233,7 @@ class Login extends Secrets
 		// Check if passwords match
 		$match = $this->crypto->verifyHash ($this->adminPassword, $password);
 
+		//  And return match
 		return $match;
 	}
 

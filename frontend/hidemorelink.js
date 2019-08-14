@@ -13,6 +13,7 @@ HashOver.prototype.hideMoreLink = function (callback)
 	// Add class to hide the more hyperlink
 	this.classes.add (this.instance['more-link'], 'hashover-hide-more-link');
 
+	// Wait for hiding transition to end
 	setTimeout (function () {
 		// Remove the more hyperlink from page
 		moreLink.parentNode.removeChild (moreLink);

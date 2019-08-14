@@ -15,91 +15,93 @@ HashOver.prototype.editComment = function (comment)
 	// Get file
 	var file = this.permalinkFile (permalink);
 
-	// Get and clean comment body
-	var body = comment.body.replace (this.rx.links, '$1');
-
-	// Get edit form placeholder
-	var placeholder = this.getElement ('placeholder-edit-form-' + permalink);
-
 	// Get edit link element
 	var link = this.getElement ('edit-link-' + permalink);
 
-	// Create edit form element
-	var form = this.createElement ('form', {
-		id: this.prefix ('edit-' + permalink),
-		className: 'hashover-edit-form',
-		action: this.setup['http-backend'] + '/form-actions.php',
-		method: 'post'
-	});
+		// Get and clean comment body
+		var body = comment.body.replace (this.rx.links, '$1');
 
-	// Place edit form fields into form
-	form.innerHTML = this.strings.parseTemplate (
-		this.ui['edit-form'], {
-			hashover: this.prefix (),
-			permalink: permalink,
-			url: this.instance['page-url'],
-			thread: this.instance['thread-name'],
-			title: this.instance['page-title'],
-			file: file,
-			name: comment.name || '',
-			website: comment.website || '',
-			body: body
-		}
-	);
+		// Get edit form placeholder
+		var placeholder = this.getElement ('placeholder-edit-form-' + permalink);
 
-	// Prevent input submission
-	this.preventSubmit (form);
-
-	// Add edit form to placeholder
-	placeholder.appendChild (form);
-
-	// Set status dropdown menu option to comment status
-	this.elementExists ('edit-status-' + permalink, function (status) {
+		// Available comment status options
 		var statuses = [ 'approved', 'pending', 'deleted' ];
 
-		if (comment.status !== undefined) {
-			status.selectedIndex = statuses.indexOf (comment.status);
-		}
-	});
+		// Create edit form element
+		var form = this.createElement ('form', {
+			id: this.prefix ('edit-' + permalink),
+			className: 'hashover-edit-form',
+			action: this.setup['http-backend'] + '/form-actions.php',
+			method: 'post'
+		});
 
-	// Blank out password field
-	setTimeout (function () {
-		if (form.password !== undefined) {
-			form.password.value = '';
-		}
-	}, 100);
+		// Place edit form fields into form
+		form.innerHTML = this.strings.parseTemplate (
+			this.ui['edit-form'], {
+				hashover: this.prefix (),
+				permalink: permalink,
+				url: this.instance['page-url'],
+				thread: this.instance['thread-name'],
+				title: this.instance['page-title'],
+				file: file,
+				name: comment.name || '',
+				website: comment.website || '',
+				body: body
+			}
+		);
 
-	// Uncheck subscribe checkbox if user isn't subscribed
-	this.elementExists ('edit-subscribe-' + permalink, function (sub) {
-		if (comment.subscribed !== true) {
-			sub.checked = null;
-		}
-	});
+		// Prevent input submission
+		this.preventSubmit (form);
 
-	// Get delete button
-	var editDelete = this.getElement('edit-delete-' + permalink);
+		// Add edit form to placeholder
+		placeholder.appendChild (form);
 
-	// Get "Save Edit" button
-	var saveEdit = this.getElement ('edit-post-' + permalink);
+		// Set status dropdown menu option to comment status
+		this.elementExists ('edit-status-' + permalink, function (status) {
+			if (comment.status !== undefined) {
+				status.selectedIndex = statuses.indexOf (comment.status);
+			}
+		});
 
-	// Get the element of comment being replied to
-	var destination = this.getElement (permalink);
+		// Blank out password field
+		setTimeout (function () {
+			if (form.password !== undefined) {
+				form.password.value = '';
+			}
+		}, 100);
 
-	// Change "Edit" link to "Cancel" link
-	this.cancelSwitcher ('edit', link, placeholder, permalink);
+		// Uncheck subscribe checkbox if user isn't subscribed
+		this.elementExists ('edit-subscribe-' + permalink, function (sub) {
+			if (comment.subscribed !== true) {
+				sub.checked = null;
+			}
+		});
 
-	// Displays confirmation dialog for comment deletion
-	editDelete.onclick = function () {
-		return confirm (hashover.locale['delete-comment']);
-	};
+		// Get delete button
+		var editDelete = this.getElement('edit-delete-' + permalink);
 
-	// Attach click event to formatting revealer hyperlink
-	this.formattingOnclick ('edit', permalink);
+		// Get "Save Edit" button
+		var saveEdit = this.getElement ('edit-post-' + permalink);
 
-	// Set onclick and onsubmit event handlers
-	this.duplicateProperties (saveEdit, [ 'onclick', 'onsubmit' ], function () {
-		return hashover.postComment (destination, form, this, hashover.AJAXEdit, 'edit', permalink, link.onclick, false, true);
-	});
+		// Get the element of comment being replied to
+		var destination = this.getElement (permalink);
 
+		// Change "Edit" link to "Cancel" link
+		this.cancelSwitcher ('edit', link, placeholder, permalink);
+
+		// Displays confirmation dialog for comment deletion
+		editDelete.onclick = function () {
+			return confirm (hashover.locale['delete-comment']);
+		};
+
+		// Attach click event to formatting revealer hyperlink
+		this.formattingOnclick ('edit', permalink);
+
+		// Set onclick and onsubmit event handlers
+		this.duplicateProperties (saveEdit, [ 'onclick', 'onsubmit' ], function () {
+			return hashover.postComment (destination, form, this, hashover.AJAXEdit, 'edit', permalink, link.onclick, false, true);
+		});
+
+	// And return false
 	return false;
 };

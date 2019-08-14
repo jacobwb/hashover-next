@@ -176,21 +176,18 @@ try {
 	);
 
 	// Count according to `$showsReplyCount` setting
-	$show_number_comments = $hashover->getCommentCount ('show-number-comments');
+	$show_comments = $hashover->getCommentCount ('show-number-comments');
 
-	// Add locales for UI uncollapse button
+	// Add locales for show interface button
 	if ($hashover->setup->collapsesInterface !== false) {
-		$data['instance']['show-number-comments'] = $show_number_comments;
 		$data['instance']['post-comment-on'] = $hashover->ui->postCommentOn;
+		$data['instance']['show-number-comments'] = $show_comments;
 	}
 
 	// Text for "Show X Other Comment(s)" link
 	if ($hashover->setup->collapsesComments !== false) {
 		// Check if at least 1 comment is to be shown
 		if ($hashover->setup->collapseLimit >= 1) {
-			// If so, use the "Show X Other Comments" locale
-			$more_link_locale = $hashover->locale->text['show-other-comments'];
-
 			// Shorter variables
 			$total_count = $hashover->thread->totalCount;
 			$collapse_limit = $hashover->setup->collapseLimit;
@@ -203,15 +200,20 @@ try {
 				$other_count -= $hashover->thread->collapsedDeletedCount;
 			}
 
-			// Decide if count is pluralized
-			$more_link_plural = ($other_count !== 1) ? 1 : 0;
-			$more_link_text = $more_link_locale[$more_link_plural];
+			// Check if there is more than one other comment
+			if ($other_count !== 1) {
+				// If so, use the "Show X Other Comments" locale
+				$more_link_text = $hashover->locale->text['show-other-comment'][1];
+			} else {
+				// If not, use the "Show X Other Comment" locale
+				$more_link_text = $hashover->locale->text['show-other-comment'][0];
+			}
 
 			// And inject the count into the locale string
 			$more_link_text = sprintf ($more_link_text, $other_count);
 		} else {
 			// If not, show count according to `$showsReplyCount` setting
-			$more_link_text = $show_number_comments;
+			$more_link_text = $show_comments;
 		}
 
 		// Add "Show X Other Comment(s)" link to instance

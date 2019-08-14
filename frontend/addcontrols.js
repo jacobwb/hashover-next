@@ -68,7 +68,7 @@ HashOverConstructor.prototype.addControls = function (comment)
 
 			// Check if collapsed comments are enabled
 			if (hashover.setup['collapses-comments'] !== false) {
-				// If so, show uncollapse comments
+				// If so, show uncollapsed comments
 				hashover.showMoreComments (threadLink, callback);
 			} else {
 				// If not, execute callback directly

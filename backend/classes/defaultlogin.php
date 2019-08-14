@@ -38,12 +38,15 @@ class DefaultLogin
 		$this->cookies = $cookies;
 		$this->locale = $locale;
 
-		// Instantiate Encryption class
+		// Instantiate Crypto class
 		$this->crypto = new Crypto ();
 
-		// Disable login if cookies are disabled
+		// Check if cookies are disabled
 		if ($setup->setsCookies === false) {
+			// If so, disable login method
 			$this->enabled = false;
+
+			// Disable login setting
 			$setup->allowsLogin = false;
 			$setup->syncSettings ();
 		}
@@ -59,14 +62,14 @@ class DefaultLogin
 
 		// Check if an email was given
 		if (!empty ($this->email)) {
-			// If so, generate encrypted string / decryption keys from e-mail
+			// If so, generate encrypted string / decryption keys from email
 			$email = $this->crypto->encrypt ($this->email);
 
-			// And set e-mail and encryption cookies
+			// And set email and encryption cookies
 			$this->cookies->set ('email', $email['encrypted']);
 			$this->cookies->set ('encryption', $email['keys']);
 		} else {
-			// If not, expire e-mail and encryption cookies
+			// If not, expire email and encryption cookies
 			$this->cookies->expireCookie ('email');
 			$this->cookies->expireCookie ('encryption');
 		}
@@ -86,7 +89,7 @@ class DefaultLogin
 		$encryption = $this->cookies->getValue ('encryption', true);
 		$email = $this->crypto->decrypt ($encrypted_email, $encryption);
 
-		// Validate e-mail address
+		// Validate email address
 		if (filter_var ($email, FILTER_VALIDATE_EMAIL)) {
 			$this->email = trim ($email, " \r\n\t");
 		}

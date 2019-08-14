@@ -103,6 +103,7 @@ class Misc
 		// Make error message XSS safe
 		$xss_safe = self::makeXSSsafe ($error);
 
+		// Decide how to display error
 		switch ($mode) {
 			// Minimal JavaScript to display error message on page
 			case 'javascript': {

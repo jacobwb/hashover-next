@@ -183,12 +183,6 @@ class WriteComments extends Secrets
 		}
 	}
 
-	// Encodes HTML entities
-	protected function encodeHTML ($value)
-	{
-		return htmlentities ($value, ENT_COMPAT, 'UTF-8', false);
-	}
-
 	// Sets header to redirect user back to the previous page
 	protected function kickback ($anchor = 'comments')
 	{
@@ -340,6 +334,12 @@ class WriteComments extends Secrets
 		return true;
 	}
 
+	// Encodes HTML entities
+	protected function encodeHTML ($value)
+	{
+		return htmlentities ($value, ENT_COMPAT, 'UTF-8', false);
+	}
+
 	// Sets up necessary login data
 	protected function setupLogin ()
 	{
@@ -397,6 +397,7 @@ class WriteComments extends Secrets
 			$auth['authorized'] = true;
 		}
 
+		// And return authorization data
 		return $auth;
 	}
 
@@ -410,48 +411,53 @@ class WriteComments extends Secrets
 		}
 
 		try {
-			// Authenticate user password
-			$auth = $this->commentAuthentication ();
+		// Authenticate user password
+		$auth = $this->commentAuthentication ();
 
-			// Check if user is authorized
-			if ($auth['authorized'] === true) {
-				// If so, strictly verify admin login
-				$user_is_admin = $this->login->verifyAdmin ($this->password);
+		// Check if user is authorized
+		if ($auth['authorized'] === true) {
+			// If so, strictly verify admin login
+			$user_is_admin = $this->login->verifyAdmin ($this->password);
 
-				// Unlink comment file indicator
-				$unlinks_files = ($this->setup->unlinksFiles === true);
-				$unlink_comment = ($unlinks_files or $user_is_admin);
+			// Unlink comment file indicator
+			$unlink = ($user_is_admin or $this->setup->unlinksFiles === true);
 
-				// Attempt to delete comment file
-				if ($this->thread->data->delete ($this->formData->file, $unlink_comment)) {
-					// If successful, remove comment from latest comments metadata
-					if ($unlink_comment === true) {
-						$this->thread->data->removeFromLatest ($this->formData->file);
-					}
+			// Attempt to delete comment file
+			$deleted = $this->thread->data->delete ($this->formData->file, $unlink);
 
-					// And kick visitor back with comment deletion message
-					$this->displayMessage ($this->locale->text['comment-deleted']);
-
-					return true;
+			// Check if comment file was deleted successfully
+			if ($deleted === true) {
+				// If so, remove comment from latest comments metadata
+				if ($unlink_comment === true) {
+					$this->thread->data->removeFromLatest ($this->formData->file);
 				}
+
+				// And kick visitor back with comment deletion message
+				$this->displayMessage ($this->locale->text['comment-deleted']);
+
+				// And return true
+				return true;
 			}
+		}
 
-			// Otherwise sleep for 5 seconds
-			sleep (5);
+		// Otherwise, sleep for 5 seconds
+		sleep (5);
 
-			// Then kick visitor back with comment posting error
-			$this->displayMessage ($this->locale->text['post-fail'], true);
+		// Then kick visitor back with comment posting error
+		$this->displayMessage ($this->locale->text['post-fail'], true);
 
 		} catch (\Exception $error) {
 			$this->displayMessage ($error->getMessage (), true);
 		}
 
+		// And return false
 		return false;
 	}
 
 	// Closes all allowed HTML tags
 	public function tagCloser ($tags, $html)
 	{
+		// Run through tags
 		for ($tc = 0, $tcl = count ($tags); $tc < $tcl; $tc++) {
 			// Count opening and closing tags
 			$open_tags = mb_substr_count ($html, '<' . $tags[$tc] . '>');
@@ -473,6 +479,7 @@ class WriteComments extends Secrets
 			}
 		}
 
+		// And return HTML with closed tags
 		return $html;
 	}
 
@@ -493,11 +500,17 @@ class WriteComments extends Secrets
 
 		// Unescape allowed HTML tags
 		foreach ($this->htmlTagSearch as $tag) {
+			// Create search array of escaped opening and closing tags
 			$escaped_tags = array ('&lt;' . $tag . '&gt;', '&lt;/' . $tag . '&gt;');
+
+			// Create search array of opening and closing tags
 			$text_tags = array ('<' . $tag . '>', '</' . $tag . '>');
+
+			// Unescape opening and closed tags
 			$code = str_ireplace ($escaped_tags, $text_tags, $code);
 		}
 
+		// And return new HTML
 		return $code;
 	}
 
@@ -692,69 +705,79 @@ class WriteComments extends Secrets
 		}
 
 		try {
-			// Authenticate user password
-			$auth = $this->commentAuthentication ();
+		// Authenticate user password
+		$auth = $this->commentAuthentication ();
 
-			// Check if user is authorized
-			if ($auth['authorized'] === true) {
-				// Login normal user with edited credentials
-				if ($this->login->userIsAdmin === false) {
-					$this->login (false);
-				}
+		// Check if user is authorized
+		if ($auth['authorized'] === true) {
+			// Login normal user with edited credentials
+			if ($this->login->userIsAdmin === false) {
+				$this->login (false);
+			}
 
-				// Set initial fields for update
-				$update_fields = $this->editableFields;
+			// Set initial fields for update
+			$update_fields = $this->editableFields;
 
-				// Setup necessary comment data
-				$this->setupCommentData (true);
+			// Get file from form data
+			$file = $this->formData->file;
 
-				// Add status to editable fields if a new status is set
-				if (!empty ($this->data['status'])) {
-					$update_fields[] = 'status';
-				}
+			// Setup necessary comment data
+			$this->setupCommentData (true);
 
-				// Only set protected fields for update if passwords match
-				if ($auth['user-owned'] === true) {
-					$update_fields = array_merge ($update_fields, $this->protectedFields);
-				}
+			// Add status to editable fields if a new status is set
+			if (!empty ($this->data['status'])) {
+				$update_fields[] = 'status';
+			}
 
-				// Update login information and comment
-				foreach ($update_fields as $key) {
-					if (!empty ($this->data[$key])) {
-						$auth['comment'][$key] = $this->data[$key];
-					} else {
-						unset ($auth['comment'][$key]);
-					}
-				}
+			// Only set protected fields for update if passwords match
+			if ($auth['user-owned'] === true) {
+				$update_fields = array_merge ($update_fields, $this->protectedFields);
+			}
 
-				// Attempt to write edited comment
-				if ($this->thread->data->save ($this->formData->file, $auth['comment'], true)) {
-					// If successful, check if request is via AJAX
-					if ($this->formData->viaAJAX === true) {
-						// If so, return the comment data
-						return array (
-							'file' => $this->formData->file,
-							'comment' => $auth['comment']
-						);
-					}
-
-					// Otherwise kick visitor back to posted comment
-					$this->kickback ($this->filePermalink ($this->formData->file));
-
-					return true;
+			// Run through update fields
+			foreach ($update_fields as $key) {
+				// Check if field exists
+				if (!empty ($this->data[$key])) {
+					// If so, update comment data
+					$auth['comment'][$key] = $this->data[$key];
+				} else {
+					// If not, remove it from comment data
+					unset ($auth['comment'][$key]);
 				}
 			}
 
-			// Otherwise sleep for 5 seconds
-			sleep (5);
+			// Attempt to write edited comment
+			$saved = $this->thread->data->save ($file, $auth['comment'], true);
 
-			// Then kick visitor back with comment posting error
-			$this->displayMessage ($this->locale->text['post-fail'], true);
+			// Check if edited comment saved successfully
+			if ($saved === true) {
+				// If successful, check if request is via AJAX
+				if ($this->formData->viaAJAX === true) {
+					// If so, return the comment data
+					return array (
+						'file' => $this->formData->file,
+						'comment' => $auth['comment']
+					);
+				}
+
+				// Otherwise kick visitor back to posted comment
+				$this->kickback ($this->filePermalink ($this->formData->file));
+
+				return true;
+			}
+		}
+
+		// Otherwise, sleep for 5 seconds
+		sleep (5);
+
+		// Then kick visitor back with comment posting error
+		$this->displayMessage ($this->locale->text['post-fail'], true);
 
 		} catch (\Exception $error) {
 			$this->displayMessage ($error->getMessage (), true);
 		}
 
+		// And return empty array
 		return false;
 	}
 
@@ -784,6 +807,7 @@ class WriteComments extends Secrets
 		// Convert paragraphs back to a string
 		$text = implode ("\r\n\r\n", $paragraphs);
 
+		// And return indented text
 		return $text;
 	}
 
@@ -811,6 +835,7 @@ class WriteComments extends Secrets
 		// Convert paragraphs array to string
 		$html = implode ("\r\n\r\n" . $indention, $paragraphs);
 
+		// And return paragraphs HTML
 		return $html;
 	}
 
@@ -975,20 +1000,23 @@ class WriteComments extends Secrets
 			$this->sendNotifications ($comment_file);
 
 			// Set/update user login cookie
-			if ($this->setup->usesAutoLogin !== false
-			    and $this->login->userIsLoggedIn !== true)
-			{
-				$this->login (false);
+			if ($this->setup->usesAutoLogin !== false) {
+				if ($this->login->userIsLoggedIn !== true) {
+					$this->login (false);
+				}
 			}
 
-			// Check if we're on AJAX
+			// Increase comment count(s) if request is AJAX
 			if ($this->formData->viaAJAX === true) {
 				// If so, increase comment count(s)
 				$this->thread->countComment ($comment_file);
 
-				// And return the comment data
+				// And return comment information
 				return array (
+					// Comment filename
 					'file' => $comment_file,
+
+					// Comment data
 					'comment' => $this->data
 				);
 			}
@@ -1018,33 +1046,34 @@ class WriteComments extends Secrets
 		}
 
 		try {
-			// Test for necessary comment data
-			$this->setupCommentData ();
+		// Test for necessary comment data
+		$this->setupCommentData ();
 
-			// Set comment file name
-			if (isset ($this->formData->replyTo)) {
-				// Verify file exists
-				$this->verifyFile ('reply-to');
+		// Set comment file name
+		if (isset ($this->formData->replyTo)) {
+			// Verify file exists
+			$this->verifyFile ('reply-to');
 
-				// Comment number
-				$comment_number = $this->thread->threadCount[$this->formData->replyTo];
+			// Comment number
+			$comment_number = $this->thread->threadCount[$this->formData->replyTo];
 
-				// Rename file for reply
-				$comment_file = $this->formData->replyTo . '-' . $comment_number;
-			} else {
-				$comment_file = (string)($this->thread->primaryCount);
-			}
+			// Rename file for reply
+			$comment_file = $this->formData->replyTo . '-' . $comment_number;
+		} else {
+			$comment_file = (string)($this->thread->primaryCount);
+		}
 
-			// Check if comment thread exists
-			$this->thread->data->checkThread ();
+		// Check if comment thread exists
+		$this->thread->data->checkThread ();
 
-			// Write the comment file
-			$status = $this->writeComment ($comment_file);
+		// Write comment file
+		$status = $this->writeComment ($comment_file);
 
 		} catch (\Exception $error) {
 			$this->displayMessage ($error->getMessage (), true);
 		}
 
+		// And return result of comment file write
 		return $status;
 	}
 }

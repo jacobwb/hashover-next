@@ -56,9 +56,9 @@ class CommentsUI extends FormUI
 			case 'a': {
 				// A hyperlink pointing to the user's input URL
 				$name_link = new HTMLTag ('a', array (
+					'rel' => 'noopener noreferrer',
 					'href' => $href,
 					'id' => $this->prefix ('name-' . $permalink),
-					'rel' => 'noopener noreferrer',
 					'target' => '_blank',
 					'title' => $name,
 					'innerHTML' => $name
@@ -375,9 +375,9 @@ class CommentsUI extends FormUI
 			}
 		}
 
-		// Create and add accepted HTML revealer hyperlink
+		// Create and add allowed HTML revealer hyperlink
 		if ($this->mode !== 'php') {
-			$reply_form_links_wrapper->appendChild ($this->acceptedFormatting ('reply', $permalink));
+			$reply_form_links_wrapper->appendChild ($this->formatting ('reply', $permalink));
 		}
 
 		// Add reply form links wrapper to reply form footer element
@@ -564,9 +564,9 @@ class CommentsUI extends FormUI
 			$edit_form_links_wrapper->appendChild ($subscribe_label);
 		}
 
-		// Create and add accepted HTML revealer hyperlink
+		// Create and add allowed HTML revealer hyperlink
 		if ($this->mode !== 'php') {
-			$edit_form_links_wrapper->appendChild ($this->acceptedFormatting ('edit', $permalink));
+			$edit_form_links_wrapper->appendChild ($this->formatting ('edit', $permalink));
 		}
 
 		// Add edit form links wrapper to edit form footer element

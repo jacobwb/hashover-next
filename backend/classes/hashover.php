@@ -83,12 +83,14 @@ class HashOver
 			$total_count -= $this->thread->totalDeletedCount;
 		}
 
-		// Decide if comment count is pluralized
-		$prime_plural = ($primary_count !== 2) ? 1 : 0;
-
-		// Get appropriate locale
-		$showing_comments_locale = $this->locale->text[$locale_key];
-		$showing_comments = $showing_comments_locale[$prime_plural];
+		// Check if there is more than one primary comment
+		if ($primary_count !== 2) {
+			// If so, use pluralized locale string
+			$showing_comments = $this->locale->text[1];
+		} else {
+			// If not, use singular locale string
+			$showing_comments = $this->locale->text[0];
+		}
 
 		// Whether to show reply count separately
 		if ($this->setup->showsReplyCount === true) {
@@ -97,12 +99,14 @@ class HashOver
 
 			// Check if there are any replies
 			if ($total_count !== $primary_count) {
-				// If so, decide if reply count is pluralized
-				$count_diff = $total_count - $primary_count;
-				$reply_plural = ($count_diff !== 1) ? 1 : 0;
-
-				// Get appropriate locale
-				$reply_locale = $this->locale->text['count-replies'][$reply_plural];
+				// If so, check if there is more than one primary comment
+				if ($total_count - $primary_count !== 1) {
+					// If so, use use "X counting replies" locale string
+					$reply_locale = $this->locale->text['count-replies'][1];
+				} else {
+					// If not, use use "X counting reply" locale string
+					$reply_locale = $this->locale->text['count-replies'][0];
+				}
 
 				// Inject total comment count into reply count locale string
 				$reply_count = sprintf ($reply_locale, $total_count - 1);

@@ -65,7 +65,7 @@ class FormUI
 		$post_comment_on = $this->locale->text['post-comment-on'];
 		$this->postCommentOn = $post_comment_on[0];
 
-		// Add optional "on <page title>" to "Post a comment" title
+		// Use "Post a comment on <page title>" locale instead if configured to
 		if ($this->setup->displaysTitle !== false and !empty ($this->pageTitle)) {
 			$this->postCommentOn = sprintf ($post_comment_on[1], $this->pageTitle);
 		}
@@ -303,18 +303,18 @@ class FormUI
 		return $subscribe_label;
 	}
 
-	// Creates a table-like cell for the accepted HTML/markdown panel
-	protected function acceptedFormatCell ($format, $locale_key)
+	// Creates a table-like cell for the allowed HTML/markdown panel
+	protected function formatCell ($format, $locale_key)
 	{
 		// Create cell title
 		$title = new HTMLTag ('p', array ('class' => 'hashover-title'));
 
-		// "Accepted HTML/Markdown" locale string
+		// "Allowed HTML/Markdown" locale string
 		$title->innerHTML (sprintf (
 			$this->locale->text['accepted-format'], $format
 		));
 
-		// Create accepted HTML/markdown text paragraph
+		// Create allowed HTML/markdown text paragraph
 		$paragraph = new HTMLTag ('p', array (
 			'innerHTML' => $this->locale->text[$locale_key])
 		);
@@ -390,38 +390,38 @@ class FormUI
 			$form->appendChild ($message);
 		}
 
-		// Create accepted HTML message element
-		$accepted_formatting_message = new HTMLTag ('div', array (
+		// Create allowed HTML message element
+		$allowed_formatting_message = new HTMLTag ('div', array (
 			'id' => $this->prefix ($type . '-formatting-message' . $permalink, $is_form),
 			'class' => 'hashover-formatting-message'
 		));
 
 		// Create formatting table
-		$accepted_formatting_table = new HTMLTag ('div', array (
+		$allowed_formatting_table = new HTMLTag ('div', array (
 			'class' => 'hashover-formatting-table',
 
 			'children' => array (
-				$this->acceptedFormatCell ('HTML', 'accepted-html')
+				$this->formatCell ('HTML', 'accepted-html')
 			)
 		));
 
 		// Append Markdown cell if Markdown is enabled
 		if ($this->setup->usesMarkdown !== false) {
-			$markdown_cell = $this->acceptedFormatCell ('Markdown', 'accepted-markdown');
-			$accepted_formatting_table->appendChild ($markdown_cell);
+			$markdown_cell = $this->formatCell ('Markdown', 'accepted-markdown');
+			$allowed_formatting_table->appendChild ($markdown_cell);
 		}
 
 		// Append formatting table to formatting message
-		$accepted_formatting_message->appendChild ($accepted_formatting_table);
+		$allowed_formatting_message->appendChild ($allowed_formatting_table);
 
-		// Ensure the accepted HTML message is open in PHP mode
+		// Ensure the allowed HTML message is open in PHP mode
 		if ($this->mode === 'php') {
-			$accepted_formatting_message->appendAttribute ('class', 'hashover-message-open');
-			$accepted_formatting_message->appendAttribute ('class', 'hashover-php-message-open');
+			$allowed_formatting_message->appendAttribute ('class', 'hashover-message-open');
+			$allowed_formatting_message->appendAttribute ('class', 'hashover-php-message-open');
 		}
 
-		// Add accepted HTML message element to form element
-		$form->appendChild ($accepted_formatting_message);
+		// Add allowed HTML message element to form element
+		$form->appendChild ($allowed_formatting_message);
 	}
 
 	// Creates hidden page info fields, ie. page URL, title, reply comment
@@ -471,8 +471,8 @@ class FormUI
 		}
 	}
 
-	// Creates "Formatting" link to open the accepted HTML/markdown panel
-	protected function acceptedFormatting ($type, $permalink = '')
+	// Creates "Formatting" link to open the allowed HTML/markdown panel
+	protected function formatting ($type, $permalink = '')
 	{
 		// Reply/edit form indicator
 		$is_form = !empty ($permalink);
@@ -481,18 +481,18 @@ class FormUI
 		$permalink = $is_form ? '-' . $permalink : '';
 
 		// "Formatting" hyperlink locale
-		$accepted_format = $this->locale->text['comment-formatting'];
+		$allowed_format = $this->locale->text['comment-formatting'];
 
-		// Create accepted HTML message revealer hyperlink
-		$accepted_formatting = new HTMLTag ('span', array (
+		// Create allowed HTML message revealer hyperlink
+		$allowed_formatting = new HTMLTag ('span', array (
 			'id' => $this->prefix ($type . '-formatting' . $permalink, $is_form),
 			'class' => 'hashover-fake-link hashover-formatting',
-			'title' => $accepted_format,
-			'innerHTML' => $accepted_format
+			'title' => $allowed_format,
+			'innerHTML' => $allowed_format
 		));
 
 		// Return the hyperlink
-		return $accepted_formatting;
+		return $allowed_formatting;
 	}
 
 	// Re-encode a URL
@@ -707,8 +707,8 @@ class FormUI
 
 				// Create link to user's website
 				$main_form_hyperlink = new HTMLTag ('a', array (
-					'href' => $user_website,
 					'rel' => 'noopener noreferrer',
+					'href' => $user_website,
 					'target' => '_blank',
 					'title' => $user_name,
 					'innerHTML' => $user_name
@@ -826,9 +826,9 @@ class FormUI
 			}
 		}
 
-		// Create and add accepted HTML revealer hyperlink
+		// Create and add allowed HTML revealer hyperlink
 		if ($this->mode !== 'php') {
-			$main_form_links_wrapper->appendChild ($this->acceptedFormatting ('main'));
+			$main_form_links_wrapper->appendChild ($this->formatting ('main'));
 		}
 
 		// Add main form links wrapper to main form footer element
@@ -927,10 +927,14 @@ class FormUI
 				'class' => 'hashover-title'
 			));
 
-			// Add popular comments title text
-			$popular_plural = ($this->commentCounts['popular'] !== 1) ? 1 : 0;
-			$popular_comments_locale = $this->locale->text['most-popular-comments'];
-			$pop_count_element->innerHTML ($popular_comments_locale[$popular_plural]);
+			// Check if there is more than one popular comment
+			if ($this->commentCounts['popular'] !== 1) {
+				// If so, use "Most Popular Comments" locale string
+				$pop_count_element->innerHTML ($this->locale->text['most-popular-comments'][1]);
+			} else {
+				// If not, use "Most Popular Comment" locale string
+				$pop_count_element->innerHTML ($this->locale->text['most-popular-comments'][0]);
+			}
 
 			// Add popular comments title element to wrapper element
 			$pop_count_wrapper->appendChild ($pop_count_element);
@@ -1177,9 +1181,9 @@ class FormUI
 
 		// Create link to HashOver source code
 		$source_link = new HTMLTag ('a', array (
+			'rel' => 'nofollow',
 			'href' => $this->setup->getBackendPath ('source-viewer.php'),
 			'class' => 'hashover-source-link',
-			'rel' => 'nofollow',
 			'target' => '_blank',
 			'title' => $source_link_text,
 			'innerHTML' => $source_link_text

@@ -39,9 +39,9 @@ if (isset ($_GET['jsonp'])) {
 }
 
 // Handles posted comment data
-function displayJson (\HashOver $hashover, $data)
+function display_json (\HashOver $hashover, $data)
 {
-	// Otherwise, slit file into parts
+	// Otherwise, split file into parts
 	$key_parts = explode ('-', $data['file']);
 
 	// Parse comment data
@@ -49,7 +49,7 @@ function displayJson (\HashOver $hashover, $data)
 		$data['comment'], $data['file'], $key_parts
 	);
 
-	// Return JSON or JSONP function call
+	// And return JSON or JSONP function call
 	return Misc::jsonData (array (
 		// Current comment count
 		'count' => $hashover->getCommentCount (),
@@ -112,7 +112,7 @@ try {
 
 			// Display JSON for AJAX requests
 			if (isset ($request['ajax']) and is_array ($data)) {
-				echo displayJson ($hashover, $data);
+				echo display_json ($hashover, $data);
 			}
 
 			break;
@@ -128,7 +128,7 @@ try {
 
 			// Display JSON for AJAX requests
 			if (isset ($request['ajax']) and is_array ($data)) {
-				echo displayJson ($hashover, $data);
+				echo display_json ($hashover, $data);
 			}
 
 			break;

@@ -248,7 +248,7 @@ try {
 		'include' => $setup->appendsRss
 	));
 
-	// Register uncollapse interface method
+	// Register show interface method
 	$javascript->registerFile ('uncollapseinterfacelink.js', array (
 		'include' => $setup->collapsesInterface,
 
@@ -257,7 +257,7 @@ try {
 		)
 	));
 
-	// Register uncollapse comments method
+	// Register show comments method
 	$javascript->registerFile ('uncollapsecommentslink.js', array (
 		'include' => $setup->collapsesComments
 	));

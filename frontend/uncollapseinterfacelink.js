@@ -1,4 +1,4 @@
-// Creates the interface uncollapse button (uncollapseinterfacelink.js)
+// Creates show interface button (uncollapseinterfacelink.js)
 HashOver.prototype.uncollapseInterfaceLink = function ()
 {
 	// Reference to this object
@@ -16,7 +16,7 @@ HashOver.prototype.uncollapseInterfaceLink = function ()
 		var text = this.instance['post-comment-on'];
 	}
 
-	// Create hyperlink to uncollapse the interface
+	// Create hyperlink that shows interface
 	main.appendChild (this.createElement ('a', {
 		id: this.prefix ('uncollapse-interface-link'),
 		className: 'hashover-more-link',
@@ -24,7 +24,7 @@ HashOver.prototype.uncollapseInterfaceLink = function ()
 		title: text,
 		text: text,
 
-		// Uncollapse the interface when clicked
+		// Show interface when clicked
 		onclick: function () {
 			hashover.uncollapseInterface ();
 			return false;

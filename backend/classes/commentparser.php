@@ -70,9 +70,9 @@ class CommentParser
 
 		// Known short date interval locales
 		$this->shortDateLocales = array (
-			'y' => $this->locale->text['date-years'],
-			'm' => $this->locale->text['date-months'],
-			'd' => $this->locale->text['date-days']
+			'y' => 'date-years',
+			'm' => 'date-months',
+			'd' => 'date-days'
 		);
 
 		// Short date when a comment was posted today
@@ -118,17 +118,26 @@ class CommentParser
 		$interval = $datetime->diff ($this->currentDate);
 
 		// Attempt to get a day, month, or year interval
-		foreach ($this->shortDateLocales as $i => $locale) {
-			// Check if a desired interval is non-zero
-			if ($interval->$i > 0) {
-				// If so, get plural key
-				$plural = ($interval->$i !== 1) ? 1 : 0;
-
-				// Inject interval into locale string
-				$date = sprintf ($locale[$plural], $interval->$i);
-
-				return $date;
+		foreach ($this->shortDateLocales as $i => $key) {
+			// Skip intervals that are zero
+			if ($interval->$i <= 0) {
+				continue;
 			}
+
+			// Otherwise, check if interval is more than one
+			if ($interval->$i !== 1) {
+				// If so, use plural locale string
+				$locale = $this->locale->text[1];
+			} else {
+				// If not, use singlur locale string
+				$locale = $this->locale->text[0];
+			}
+
+			// Inject interval into locale string
+			$date = sprintf ($locale, $interval->$i);
+
+			// And return short date
+			return $date;
 		}
 
 		// Otherwise, inject time into today locale string
@@ -140,7 +149,7 @@ class CommentParser
 	// Parse comment files
 	public function parse (array $comment, $key, $key_parts, $popular = false)
 	{
-		// Initial parsed comment date output
+		// Initial parsed comment data output
 		$output = array ();
 
 		// Get post date as-is
@@ -302,25 +311,40 @@ class CommentParser
 		// Add comment body to output
 		$output['body'] = $comment['body'];
 
+		// And return parsed comment data
 		return $output;
 	}
 
 	// Function for adding notices to output
 	public function notice ($type, $key, &$last_date)
 	{
+		// Initial notice data output
 		$output = array ();
+
+		// Set notice name as comment title
 		$output['title'] = $this->locale->text[$type . '-name'];
+
+		// Increase fallback last comment date
 		$last_date++;
 
+		// Add notice icon if icons are enabled
 		if ($this->setup->iconMode !== 'none') {
 			$output['avatar'] = $this->setup->getImagePath ($type . '-icon');
 		}
 
+		// Add notice permalink to notice data
 		$output['permalink'] = 'c' . str_replace ('-', 'r', $key);
+
+		// Add notice text to notice data
 		$output['notice'] = $this->locale->text[$type . '-note'];
+
+		// Add notice class to notice data
 		$output['notice-class'] = 'hashover-' . $type;
+
+		// Add last comment date as notice timestamp
 		$output['timestamp'] = (int)($last_date);
 
+		// And return notice data
 		return $output;
 	}
 }

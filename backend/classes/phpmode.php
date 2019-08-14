@@ -307,9 +307,14 @@ class PHPMode
 				// Add likes to HTML template
 				$template['likes'] = $comment['likes'];
 
-				// Get "X Like(s)" locale
-				$plural = ($comment['likes'] === 1 ? 0 : 1);
-				$like_count = $comment['likes'] . ' ' . $this->locale->text['like'][$plural];
+				// Check if there is more than one like
+				if ($comment['likes'] !== 1) {
+					// If so, use "X Likes" locale
+					$like_count = $comment['likes'] . ' ' . $this->locale->text['like'][1];
+				} else {
+					// If not, use "X Like" locale
+					$like_count = $comment['likes'] . ' ' . $this->locale->text['like'][0];
+				}
 
 				// Add like count to HTML template
 				$template['like-count'] = $this->ui->likeCount ('likes', $permalink, $like_count);
@@ -322,9 +327,14 @@ class PHPMode
 				// Add likes to HTML template
 				$template['dislikes'] = $comment['dislikes'];
 
-				// Get "X Dislike(s)" locale
-				$plural = ($comment['dislikes'] === 1 ? 0 : 1);
-				$dislike_count = $comment['dislikes'] . ' ' . $this->locale->text['dislike'][$plural];
+				// Check if there is more than one dislike
+				if ($comment['dislikes'] !== 1) {
+					// If so, use "X Dislikes" locale
+					$dislike_count = $comment['dislikes'] . ' ' . $this->locale->text['dislike'][1];
+				} else {
+					// If not, use "X Dislike" locale
+					$dislike_count = $comment['dislikes'] . ' ' . $this->locale->text['dislike'][0];
+				}
 
 				// Add dislike count to HTML template
 				$template['dislike-count'] = $this->ui->likeCount ('dislikes', $permalink, $dislike_count);

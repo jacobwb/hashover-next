@@ -59,5 +59,6 @@ HashOver.prototype.replyToComment = function (permalink)
 	// Focus comment field
 	form.comment.focus ();
 
+	// And return false
 	return true;
 };
