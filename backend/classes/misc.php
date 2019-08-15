@@ -103,6 +103,11 @@ class Misc
 		// Make error message XSS safe
 		$xss_safe = self::makeXSSsafe ($error);
 
+		// Treat JSONP as JavaScript
+		if ($mode === 'json' and isset ($_GET['jsonp'])) {
+			$mode = 'javascript';
+		}
+
 		// Decide how to display error
 		switch ($mode) {
 			// Minimal JavaScript to display error message on page
