@@ -20,18 +20,16 @@
 class WriteComments extends Secrets
 {
 	protected $setup;
-	protected $thread;
 	protected $formData;
+	protected $thread;
 	protected $locale;
 	protected $cookies;
 	protected $login;
-	protected $spamCheck;
 	protected $metadata;
 	protected $crypto;
 	protected $avatar;
 	protected $templater;
 	protected $mail;
-	protected $referer;
 	protected $name = '';
 	protected $password = '';
 	protected $loginHash = '';
@@ -39,15 +37,6 @@ class WriteComments extends Secrets
 	protected $website = '';
 	protected $data = array ();
 	protected $urls = array ();
-
-	// Fake inputs used as spam trap fields
-	protected $trapFields = array (
-		'summary',
-		'age',
-		'lastname',
-		'address',
-		'zip'
-	);
 
 	// Characters to search for and replace with in comments
 	protected $dataSearch = array (
@@ -136,18 +125,17 @@ class WriteComments extends Secrets
 		'deleted'
 	);
 
-	public function __construct (Setup $setup, Thread $thread)
+	public function __construct (Setup $setup, FormData $form_data, Thread $thread)
 	{
 		// Store parameters as properties
 		$this->setup = $setup;
+		$this->formData = $form_data;
 		$this->thread = $thread;
 
 		// Instantiate various classes
-		$this->formData = new FormData ();
 		$this->locale = new Locale ($setup);
 		$this->cookies = new Cookies ($setup);
 		$this->login = new Login ($setup);
-		$this->spamCheck = new SpamCheck ($setup);
 		$this->crypto = new Crypto ();
 		$this->avatars = new Avatars ($setup);
 		$this->templater = new Templater ($setup);
@@ -155,62 +143,6 @@ class WriteComments extends Secrets
 
 		// Setup initial login data
 		$this->setupLogin ();
-
-		// Get regular expression escaped admin path
-		$admin_path = preg_quote ($this->setup->getHttpPath ('admin'), '/');
-
-		// Attempt to get referer
-		$referer = Misc::getArrayItem ($_SERVER, 'HTTP_REFERER');
-
-		// Check if we're coming from an admin page
-		if (preg_match ('/' . $admin_path . '/i', $referer)) {
-			// If so, use it as the kickback URL
-			$this->referer = $_SERVER['HTTP_REFERER'];
-		} else {
-			// If not, check if posting from remote domain
-			if ($this->formData->remoteAccess === true) {
-				// If so, use absolute path
-				$this->referer = $setup->pageURL;
-			} else {
-				// If not, use relative path
-				$this->referer = $setup->filePath;
-			}
-
-			// Add URL queries to kickback URL
-			if (!empty ($setup->urlQueries)) {
-				$this->referer .= '?' . $setup->urlQueries;
-			}
-		}
-	}
-
-	// Sets header to redirect user back to the previous page
-	protected function kickback ($anchor = 'comments')
-	{
-		if ($this->formData->viaAJAX === false) {
-			header ('Location: ' . $this->referer . '#' . $anchor);
-		}
-	}
-
-	// Displays message to visitor, via AJAX or redirect
-	protected function displayMessage ($text, $error = false)
-	{
-		// Message type as string
-		$message_type = ($error === true) ? 'error' : 'message';
-
-		// Check if request is AJAX
-		if ($this->formData->viaAJAX === true) {
-			// If so, display JSON for JavaScript frontend
-			echo Misc::jsonData (array (
-				'message' => $text,
-				'type' => $message_type
-			));
-		} else {
-			// If not, set cookie to specified message
-			$this->cookies->set ($message_type, $text);
-
-			// And redirect user to previous page
-			$this->kickback ('hashover-form-section');
-		}
 	}
 
 	// Confirms attempted actions are to existing comments
@@ -239,99 +171,6 @@ class WriteComments extends Secrets
 		throw new \Exception (
 			$this->locale->text['comment-needed']
 		);
-	}
-
-	// Checks user IP against spam databases
-	public function checkForSpam ($mode = 'javascript')
-	{
-		// Block user if they fill any trap fields
-		foreach ($this->trapFields as $name) {
-			if ($this->setup->getRequest ($name)) {
-				throw new \Exception ('You are blocked!');
-			}
-		}
-
-		// Check user's IP address against local blocklist
-		if ($this->spamCheck->checkList () === true) {
-			throw new \Exception ('You are blocked!');
-		}
-
-		// Whether to check for spam in current mode
-		if ($this->setup->spamCheckModes === $mode
-		    or $this->setup->spamCheckModes === 'both')
-		{
-			// Check user's IP address against local or remote database
-			if ($this->spamCheck->{$this->setup->spamDatabase}() === true) {
-				throw new \Exception ('You are blocked!');
-			}
-
-			// Throw any error message as exception
-			if (!empty ($this->spamCheck->error)) {
-				throw new \Exception ($this->spamCheck->error);
-			}
-		}
-
-		return true;
-	}
-
-	// Checks login requirements
-	protected function loginRequirements ()
-	{
-		// Check if a login is required
-		if ($this->setup->requiresLogin === true) {
-			// If so, return false if user is not logged in
-			if ($this->login->userIsLoggedIn === false) {
-				return false;
-			}
-		}
-
-		// Otherwise, login requirements are met
-		return true;
-	}
-
-	// Sets cookies
-	public function login ($kickback = true)
-	{
-		// Check login requirements
-		if ($this->loginRequirements () === false) {
-			$this->displayMessage ('Normal login not allowed!', true);
-			return false;
-		}
-
-		try {
-			// Log the user in
-			if ($this->setup->allowsLogin !== false) {
-				$this->login->setLogin ();
-			}
-
-			// Kick visitor back if told to
-			if ($kickback !== false) {
-				$this->displayMessage ($this->locale->text['logged-in']);
-			}
-		} catch (\Exception $error) {
-			// Kick visitor back with exception if told to
-			if ($kickback !== false) {
-				$this->displayMessage ($error->getMessage (), true);
-				return true;
-			}
-
-			// Otherwise, throw exception as-is
-			throw $error;
-		}
-
-		return true;
-	}
-
-	// Expires cookies
-	public function logout ()
-	{
-		// Log the user out
-		$this->login->clearLogin ();
-
-		// Kick visitor back
-		$this->displayMessage ($this->locale->text['logged-out']);
-
-		return true;
 	}
 
 	// Encodes HTML entities
@@ -405,10 +244,7 @@ class WriteComments extends Secrets
 	public function deleteComment ()
 	{
 		// Check login requirements
-		if ($this->loginRequirements () === false) {
-			$this->displayMessage ('You must be logged in to delete a comment!', true);
-			return false;
-		}
+		$this->login->checkRequirements ('You must be logged in to delete a comment!');
 
 		try {
 		// Authenticate user password
@@ -433,7 +269,7 @@ class WriteComments extends Secrets
 				}
 
 				// And kick visitor back with comment deletion message
-				$this->displayMessage ($this->locale->text['comment-deleted']);
+				$this->formData->displayMessage ($this->locale->text['comment-deleted']);
 
 				// And return true
 				return true;
@@ -444,10 +280,10 @@ class WriteComments extends Secrets
 		sleep (5);
 
 		// Then kick visitor back with comment posting error
-		$this->displayMessage ($this->locale->text['post-fail'], true);
+		$this->formData->displayMessage ($this->locale->text['post-fail'], true);
 
 		} catch (\Exception $error) {
-			$this->displayMessage ($error->getMessage (), true);
+			$this->formData->displayMessage ($error->getMessage (), true);
 		}
 
 		// And return false
@@ -699,10 +535,7 @@ class WriteComments extends Secrets
 	public function editComment ()
 	{
 		// Check login requirements
-		if ($this->loginRequirements () === false) {
-			$this->displayMessage ('You must be logged in to edit a comment!', true);
-			return false;
-		}
+		$this->login->checkRequirements ('You must be logged in to edit a comment!');
 
 		try {
 		// Authenticate user password
@@ -761,7 +594,7 @@ class WriteComments extends Secrets
 				}
 
 				// Otherwise kick visitor back to posted comment
-				$this->kickback ($this->filePermalink ($this->formData->file));
+				$this->formData->kickback ($this->filePermalink ($this->formData->file));
 
 				return true;
 			}
@@ -771,10 +604,10 @@ class WriteComments extends Secrets
 		sleep (5);
 
 		// Then kick visitor back with comment posting error
-		$this->displayMessage ($this->locale->text['post-fail'], true);
+		$this->formData->displayMessage ($this->locale->text['post-fail'], true);
 
 		} catch (\Exception $error) {
-			$this->displayMessage ($error->getMessage (), true);
+			$this->formData->displayMessage ($error->getMessage (), true);
 		}
 
 		// And return empty array
@@ -1002,7 +835,7 @@ class WriteComments extends Secrets
 			// Set/update user login cookie
 			if ($this->setup->usesAutoLogin !== false) {
 				if ($this->login->userIsLoggedIn !== true) {
-					$this->login (false);
+					$this->login->setLogin ();
 				}
 			}
 
@@ -1022,13 +855,13 @@ class WriteComments extends Secrets
 			}
 
 			// Otherwise, kick visitor back to comment
-			$this->kickback ($this->filePermalink ($comment_file));
+			$this->formData->kickback ($this->filePermalink ($comment_file));
 
 			return true;
 		}
 
 		// If not, kick visitor back with an error
-		$this->displayMessage ($this->locale->text['post-fail'], true);
+		$this->formData->displayMessage ($this->locale->text['post-fail'], true);
 
 		return false;
 	}
@@ -1040,10 +873,7 @@ class WriteComments extends Secrets
 		$status = false;
 
 		// Check login requirements
-		if ($this->loginRequirements () === false) {
-			$this->displayMessage ('You must be logged in to comment!', true);
-			return $status;
-		}
+		$this->login->checkRequirements ('You must be logged in to comment!');
 
 		try {
 		// Test for necessary comment data
@@ -1070,7 +900,7 @@ class WriteComments extends Secrets
 		$status = $this->writeComment ($comment_file);
 
 		} catch (\Exception $error) {
-			$this->displayMessage ($error->getMessage (), true);
+			$this->formData->displayMessage ($error->getMessage (), true);
 		}
 
 		// And return result of comment file write

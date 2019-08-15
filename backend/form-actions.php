@@ -75,6 +75,9 @@ try {
 	// Set thread name from POST/GET data
 	$hashover->setup->setThreadName ('request');
 
+	// Instantiate FormData class
+	$form_data = new FormData ($hashover->setup);
+
 	// Initiate and finalize comment processing
 	$hashover->initiate ();
 	$hashover->finalize ();
@@ -82,6 +85,7 @@ try {
 	// Instantiate class for writing and editing comments
 	$write_comments = new WriteComments (
 		$hashover->setup,
+		$form_data,
 		$hashover->thread
 	);
 
