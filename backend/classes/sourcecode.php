@@ -212,11 +212,6 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
-			'name' => 'Metadata',
-			'path' => 'backend/classes/metadata.php'
-		),
-		array (
-			'type' => 'Class',
 			'name' => 'Misc',
 			'path' => 'backend/classes/misc.php'
 		),
@@ -312,50 +307,50 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/da.php'
+			'path' => 'backend/locales/da-dk.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/de.php'
+			'path' => 'backend/locales/de-de.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/el.php'
+			'path' => 'backend/locales/el-el.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/en.php'
+			'path' => 'backend/locales/en-us.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/es.php'
+			'path' => 'backend/locales/es-es.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/fa.php'
+			'path' => 'backend/locales/fa-ir.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/fr.php'
+			'path' => 'backend/locales/fr-fr.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/jp.php'
+			'path' => 'backend/locales/ja-jp.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/ko.php'
+			'path' => 'backend/locales/ko-kr.php'
 		),array (
 			'type' => 'Script',
-			'path' => 'backend/locales/lt.php'
+			'path' => 'backend/locales/lt-lt.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/nl.php'
+			'path' => 'backend/locales/nl-nl.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/pl.php'
+			'path' => 'backend/locales/pl-pl.php'
 		),
 		array (
 			'type' => 'Script',
@@ -363,11 +358,11 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/ro.php'
+			'path' => 'backend/locales/ro-ro.php'
 		),
 		array (
 			'type' => 'Script',
-			'path' => 'backend/locales/tr.php'
+			'path' => 'backend/locales/tr-tr.php'
 		),
 		array (
 			'type' => 'Script',
