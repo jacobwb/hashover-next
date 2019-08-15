@@ -59,7 +59,9 @@ HashOver.prototype.postRequest = function (form, button, type, permalink, callba
 	function sendRequest ()
 	{
 		// Create post comment request queries
-		var postQueries = queries.concat ([ 'post=' + encodeURIComponent (form.post.value) ]);
+		var postQueries = queries.concat ([
+			button.name + '=' + encodeURIComponent (button.value)
+		]);
 
 		// Send request to post a comment
 		hashover.ajax ('POST', form.action, postQueries, commentHandler, true);
