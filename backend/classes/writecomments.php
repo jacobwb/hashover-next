@@ -246,7 +246,6 @@ class WriteComments extends Secrets
 		// Check login requirements
 		$this->login->checkRequirements ('You must be logged in to delete a comment!');
 
-		try {
 		// Authenticate user password
 		$auth = $this->commentAuthentication ();
 
@@ -268,9 +267,6 @@ class WriteComments extends Secrets
 					$this->thread->data->removeFromLatest ($this->formData->file);
 				}
 
-				// And kick visitor back with comment deletion message
-				$this->formData->displayMessage ($this->locale->text['comment-deleted']);
-
 				// And return true
 				return true;
 			}
@@ -278,13 +274,6 @@ class WriteComments extends Secrets
 
 		// Otherwise, sleep for 5 seconds
 		sleep (5);
-
-		// Then kick visitor back with comment posting error
-		$this->formData->displayMessage ($this->locale->text['post-fail'], true);
-
-		} catch (\Exception $error) {
-			$this->formData->displayMessage ($error->getMessage (), true);
-		}
 
 		// And return false
 		return false;
@@ -521,8 +510,6 @@ class WriteComments extends Secrets
 				$this->data['ipaddr'] = $ip;
 			}
 		}
-
-		return true;
 	}
 
 	// Converts a file name (1-2) to a permalink (hashover-c1r1)
@@ -537,7 +524,6 @@ class WriteComments extends Secrets
 		// Check login requirements
 		$this->login->checkRequirements ('You must be logged in to edit a comment!');
 
-		try {
 		// Authenticate user password
 		$auth = $this->commentAuthentication ();
 
@@ -584,34 +570,22 @@ class WriteComments extends Secrets
 
 			// Check if edited comment saved successfully
 			if ($saved === true) {
-				// If successful, check if request is via AJAX
-				if ($this->formData->viaAJAX === true) {
-					// If so, return the comment data
-					return array (
-						'file' => $this->formData->file,
-						'comment' => $auth['comment']
-					);
-				}
+				// If so, return comment information
+				return array (
+					// Comment filename
+					'file' => $file,
 
-				// Otherwise kick visitor back to posted comment
-				$this->formData->kickback ($this->filePermalink ($this->formData->file));
-
-				return true;
+					// Comment data
+					'comment' => $auth['comment']
+				);
 			}
 		}
 
 		// Otherwise, sleep for 5 seconds
 		sleep (5);
 
-		// Then kick visitor back with comment posting error
-		$this->formData->displayMessage ($this->locale->text['post-fail'], true);
-
-		} catch (\Exception $error) {
-			$this->formData->displayMessage ($error->getMessage (), true);
-		}
-
 		// And return empty array
-		return false;
+		return array ();
 	}
 
 	// Wordwraps text after adding indentation
@@ -841,41 +815,29 @@ class WriteComments extends Secrets
 
 			// Increase comment count(s) if request is AJAX
 			if ($this->formData->viaAJAX === true) {
-				// If so, increase comment count(s)
 				$this->thread->countComment ($comment_file);
-
-				// And return comment information
-				return array (
-					// Comment filename
-					'file' => $comment_file,
-
-					// Comment data
-					'comment' => $this->data
-				);
 			}
 
-			// Otherwise, kick visitor back to comment
-			$this->formData->kickback ($this->filePermalink ($comment_file));
+			// And return comment information
+			return array (
+				// Comment filename
+				'file' => $comment_file,
 
-			return true;
+				// Comment data
+				'comment' => $this->data
+			);
 		}
 
-		// If not, kick visitor back with an error
-		$this->formData->displayMessage ($this->locale->text['post-fail'], true);
-
-		return false;
+		// Otherwise, return empty array
+		return array ();
 	}
 
 	// Posts a comment
 	public function postComment ()
 	{
-		// Initial status
-		$status = false;
-
 		// Check login requirements
 		$this->login->checkRequirements ('You must be logged in to comment!');
 
-		try {
 		// Test for necessary comment data
 		$this->setupCommentData ();
 
@@ -898,10 +860,6 @@ class WriteComments extends Secrets
 
 		// Write comment file
 		$status = $this->writeComment ($comment_file);
-
-		} catch (\Exception $error) {
-			$this->formData->displayMessage ($error->getMessage (), true);
-		}
 
 		// And return result of comment file write
 		return $status;

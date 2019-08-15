@@ -22,25 +22,34 @@ if (isset ($_GET['jsonp'])) {
 	// If so, setup HashOver for JavaScript
 	require ('javascript-setup.php');
 
-	// Set mode as JavaScript
-	$mode = 'javascript';
-
 	// Get data from GET request
 	$request = $_GET;
 } else {
 	// If not, setup HashOver for JSON
 	require ('json-setup.php');
 
-	// Set mode as JSON
-	$mode = 'json';
-
 	// Get data from POST request
 	$request = $_POST;
 }
 
-// Handles posted comment data
-function display_json (\HashOver $hashover, $data)
+// Converts a file name (1-2) to a permalink (hashover-c1r1)
+function file_permalink ($file)
 {
+	return 'hashover-c' . str_replace ('-', 'r', $file);
+}
+
+// Handles posted comment data
+function display_json (\HashOver $hashover, FormData $form_data, $data)
+{
+	// Check if request is HTTP
+	if ($form_data->viaAJAX === false) {
+		// If so, convert file to permalink
+		$permalink = file_permalink ($data['file']);
+
+		// And redirect to comment
+		return $form_data->kickback ($permalink);
+	}
+
 	// Otherwise, split file into parts
 	$key_parts = explode ('-', $data['file']);
 
@@ -61,7 +70,7 @@ function display_json (\HashOver $hashover, $data)
 
 try {
 	// Instantiate HashOver class
-	$hashover = new \HashOver ($mode);
+	$hashover = new \HashOver ('json');
 
 	// Throw exception if requested by remote server
 	$hashover->setup->refererCheck ();
@@ -82,12 +91,18 @@ try {
 	if (isset ($request['login'])) {
 		// Log the user in
 		$hashover->login->setLogin ();
+
+		// Kick visitor back if told to
+		$form_data->displayMessage ('logged-in');
 	}
 
 	// Handle user logout
 	if (isset ($request['logout'])) {
 		// Log the user out
 		$hashover->login->clearLogin ();
+
+		// Kick visitor back
+		$form_data->displayMessage ('logged-out');
 	}
 
 	// Initiate and finalize comment processing
@@ -100,6 +115,9 @@ try {
 		$form_data,
 		$hashover->thread
 	);
+
+	// Decide SPAM check mode
+	$mode = $form_data->viaAJAX ? 'javascript' : 'php';
 
 	// Handle new comment post
 	if (isset ($request['post'])) {
@@ -115,9 +133,10 @@ try {
 		// Check if comment saved successfully
 		if (!empty ($data)) {
 			// If so, display comment as JSON data
-			echo display_json ($hashover, $data);
+			echo display_json ($hashover, $form_data, $data);
 		} else {
-			// TODO
+			// If not, redirect to failure message
+			$form_data->displayMessage ('post-fail');
 		}
 	}
 
@@ -132,9 +151,10 @@ try {
 		// Check if edited comment saved successfully
 		if (!empty ($data)) {
 			// If so, display comment as JSON data
-			echo display_json ($hashover, $data);
+			echo display_json ($hashover, $form_data, $data);
 		} else {
-			// TODO
+			// If not, redirect to failure message
+			$form_data->displayMessage ('post-fail');
 		}
 	}
 
@@ -148,11 +168,13 @@ try {
 
 		// Check if comment was deleted successfully
 		if ($deleted === true) {
-			// If so, TODO
+			// If so, redirect to deletion message
+			$form_data->displayMessage ('comment-deleted');
 		} else {
-			// If not, TODO
+			// If not, redirect to failure message
+			$form_data->displayMessage ('post-fail');
 		}
 	}
 } catch (\Exception $error) {
-	echo Misc::displayException ($error, $mode);
+	echo Misc::displayException ($error, 'json');
 }
