@@ -19,8 +19,8 @@ HashOver.prototype.likeComment = function (action, permalink)
 	// Set request queries
 	var queries = [
 		'url=' + encodeURIComponent (this.instance['page-url']),
-		'thread=' + this.instance['thread-name'],
-		'comment=' + file,
+		'thread=' + encodeURIComponent (this.instance['thread-name']),
+		'comment=' + encodeURIComponent (file),
 		'action=' + action
 	];
 
@@ -34,7 +34,7 @@ HashOver.prototype.likeComment = function (action, permalink)
 
 		// If an error is returned display a standard error to the user
 		if (likeResponse.error !== undefined) {
-			alert ('Error! Something went wrong!');
+			alert (likeResponse.error);
 			return;
 		}
 
