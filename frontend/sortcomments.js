@@ -218,13 +218,8 @@ HashOver.prototype.sortPrimary = function (method)
 	// Parse the sorted comments
 	var htmlTime = this.parseAll (sorted, dest);
 
-	// Log execution time and memory usage in JavaScript console
-	if (window.console) {
-		console.log (this.strings.sprintf (
-			'HashOver: sorting %d ms, HTML %d ms', [
-				sortTime,
-				htmlTime
-			]
-		));
-	}
+	// Log execution time in console
+	console.log (this.strings.sprintf (
+		'HashOver: sorting %d ms, HTML %d ms', [ sortTime, htmlTime ]
+	));
 };

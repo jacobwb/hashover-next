@@ -203,71 +203,51 @@ HashOver.prototype.init = function (id)
 		// If so, get the permalink from form request URL query
 		var permalink = pageURL.replace (/.*?hashover-(edit|reply)=(c[0-9r\-pop]+).*?/, '$2');
 
-		// Check if the reply form is requested
-		if (pageURL.match ('hashover-reply=')) {
-			// If so, define a callback to execute after showing comments
-			var callback = function ()
-			{
-				// Open the reply form
+		// Callback to execute after showing comments
+		var callback = function ()
+		{
+			// Check if reply form is requested
+			if (pageURL.match ('hashover-reply=')) {
+				// If so, open reply form
 				hashover.replyToComment (permalink);
 
-				// Then scroll to reply form
+				// And scroll to reply form
 				scrollToElement (pageHash);
-			};
-
-			// Check if the comments are collapsed
-			if (hashover.setup['collapses-comments'] !== false) {
-				// If so, show more comments before executing callback
-				this.showMoreComments (this.instance['more-link'], callback);
 			} else {
-				// If not, execute callback directly
-				callback ();
-			}
-		} else {
-			// If not, indicate if the comment is popular
-			var isPop = permalink.match ('-pop');
+				// If not, indicate if comment is popular
+				var isPop = permalink.match ('-pop');
 
-			// Define a callback to execute after showing comments
-			var callback = function ()
-			{
 				// Decide appropriate array to get comment from
 				var comments = hashover.instance.comments[isPop ? 'popular' : 'primary'];
 
-				// Get the comment being edited
+				// Get comment being edited
 				var edit = hashover.permalinkComment (permalink, comments);
 
 				// Open comment edit form
 				hashover.editComment (edit);
 
-				// Then scroll to edit form
+				// And scroll to comment edit form
 				scrollToElement (pageHash);
-			};
-
-			// Check if the comments are collapsed
-			if (hashover.setup['collapses-comments'] !== false) {
-				// If so, show more comments before executing callback
-				this.showMoreComments (this.instance['more-link'], callback);
-			} else {
-				// If not, execute callback directly
-				callback ();
 			}
+		};
+
+		// Check if the comments are collapsed
+		if (hashover.setup['collapses-comments'] !== false) {
+			// If so, show more comments before executing callback
+			this.showMoreComments (this.instance['more-link'], callback);
+		} else {
+			// If not, execute callback directly
+			callback ();
 		}
 	}
 
 	// Execution end time
 	this.execTime = Math.abs (Date.now () - execStart - this.htmlTime);
 
-	// Log execution time and memory usage in JavaScript console
-	if (window.console) {
-		console.log (this.strings.sprintf (
-			'HashOver: front-end %d ms, HTML %d ms, backend %d ms, %s', [
-				this.execTime,
-				this.htmlTime,
-				this.statistics['execution-time'],
-				this.statistics['script-memory']
-			]
-		));
-	}
+	// Log execution time in console
+	console.log (this.strings.sprintf (
+		'HashOver: front-end %d ms, HTML %d ms', [ this.execTime, this.htmlTime ]
+	));
 
 	// Page onload compatibility wrapper
 	if (window.addEventListener) {

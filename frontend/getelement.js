@@ -7,6 +7,7 @@ HashOverConstructor.prototype.getElement = function (id, asIs)
 	// Attempt to get the element by its ID
 	var element = document.getElementById (id);
 
+	// And return element
 	return element;
 };
 
@@ -21,5 +22,6 @@ HashOverConstructor.prototype.elementExists = function (id, callback, asIs)
 		return callback (element);
 	}
 
+	// Otherwise, return false
 	return false;
 };

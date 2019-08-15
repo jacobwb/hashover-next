@@ -53,6 +53,14 @@ HashOver.instantiator = function (id, options, instance)
 		// Backend execution time and memory usage statistics
 		hashover.statistics = json.statistics;
 
+		// And log backend execution time and memory usage in console
+		console.log (hashover.strings.sprintf (
+			'HashOver: backend %d ms, %s', [
+				json.statistics['execution-time'],
+				json.statistics['script-memory']
+			]
+		));
+
 		// Initiate HashOver
 		hashover.init (id);
 	}, true);

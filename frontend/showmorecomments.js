@@ -1,17 +1,64 @@
-// onClick event for more button (showmorecomments.js)
+// Loads all comments and executes a callback to handle them (showmorecomments.js)
+HashOver.prototype.loadAllComments = function (element, callback)
+{
+	// Just execute callback  if all comments are already loaded
+	if (this.instance['comments-loaded'] === true) {
+		return callback ();
+	}
+
+	// Otherwise, set request path
+	var requestPath = this.setup['http-backend'] + '/load-comments.php';
+
+	// Set URL queries
+	var queries = this.queries.concat ([
+		// Add current client time
+		'time=' + HashOver.getClientTime (),
+
+		// Add AJAX indicator
+		'ajax=yes'
+	]);
+
+	// Set class on element to indicate loading
+	this.classes.add (element, 'hashover-loading');
+
+	// Handle AJAX request return data
+	this.ajax ('POST', requestPath, queries, function (json) {
+		// Remove loading class from element
+		hashover.classes.remove (element, 'hashover-loading');
+
+		// Replace initial comments
+		hashover.instance.comments.primary = json.primary;
+
+		// And log backend execution time and memory usage in console
+		console.log (hashover.strings.sprintf (
+			'HashOver: backend %d ms, %s', [
+				json.statistics['execution-time'],
+				json.statistics['script-memory']
+			]
+		));
+
+		// Execute callback
+		callback ();
+	}, true);
+
+	// Set all comments as loaded
+	this.instance['comments-loaded'] = true;
+};
+
+// Click event handler for show more comments button (showmorecomments.js)
 HashOver.prototype.showMoreComments = function (element, callback, append)
 {
 	// Reference to this object
 	var hashover = this;
 
-	// Do nothing if already showing all comments
+	// Check if all comments are already shown
 	if (this.instance['showing-more'] === true) {
-		// Execute callback function
+		// If so, execute callback function
 		if (typeof (callback) === 'function') {
 			callback ();
 		}
 
-		// And return false to prevent default event
+		// And prevent default event
 		return false;
 	}
 
@@ -27,33 +74,15 @@ HashOver.prototype.showMoreComments = function (element, callback, append)
 		return false;
 	}
 
-	// Otherwise, set request path
-	var requestPath = this.setup['http-backend'] + '/load-comments.php';
-
-	// Set URL queries
-	var queries = this.queries.concat ([
-		// Add current client time
-		'time=' + HashOver.getClientTime (),
-
-		// Add AJAX indicator
-		'ajax=yes'
-	]);
-
-	// Handle AJAX request return data
-	this.ajax ('POST', requestPath, queries, function (json) {
-		// Remove loading class from element
-		hashover.classes.remove (element, 'hashover-loading');
-
-		// Hide the more hyperlink
+	// Otherwise, load all comments
+	this.loadAllComments (element, function () {
+		// Afterwards, hide show more comments hyperlink
 		hashover.hideMoreLink (function () {
 			// Afterwards, store start time
 			var execStart = Date.now ();
 
 			// Initial HTML parsing start time
 			var htmlTime = 0;
-
-			// Replace initial comments
-			hashover.instance.comments.primary = json.primary;
 
 			// Check if we are appending the comments
 			if (append !== false) {
@@ -72,26 +101,16 @@ HashOver.prototype.showMoreComments = function (element, callback, append)
 			// Store execution time
 			var execTime = Math.abs (Date.now () - execStart - htmlTime);
 
-			// And log execution time and memory usage in JavaScript console
-			if (window.console) {
-				console.log (hashover.strings.sprintf (
-					'HashOver: front-end %d ms, HTML %d ms, backend %d ms, %s', [
-						execTime,
-						htmlTime,
-						json.statistics['execution-time'],
-						json.statistics['script-memory']
-					]
-				));
-			}
+			// And log execution time in console
+			console.log (hashover.strings.sprintf (
+				'HashOver: front-end %d ms, HTML %d ms', [ execTime, htmlTime ]
+			));
 		});
-	}, true);
-
-	// Set class to indicate loading to element
-	this.classes.add (element, 'hashover-loading');
+	});
 
 	// Set all comments as shown
 	this.instance['showing-more'] = true;
 
-	// And return false to prevent default event
+	// And prevent default event
 	return false;
 };
