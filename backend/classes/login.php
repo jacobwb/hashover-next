@@ -170,17 +170,41 @@ class Login extends Secrets
 		return true;
 	}
 
+	// Checks login requirements
+	public function checkRequirements ($message)
+	{
+		// Check if a login is required
+		if ($this->setup->requiresLogin === true) {
+			// If so, throw exception if user is not logged in
+			if ($this->userIsLoggedIn === false) {
+				throw new \Exception ($message);
+			}
+		}
+
+		// Otherwise, login requirements are met
+		return true;
+	}
+
 	// Main login method
 	public function setLogin ()
 	{
-		// Set login method credentials
-		$this->setCredentials ();
+		// Do nothing if login is disabled
+		if ($this->setup->allowsLogin === false) {
+			return;
+		}
 
-		// Check if required fields have values
-		$this->validateFields ();
+		// Check login requirements
+		$this->checkRequirements ('Normal login not allowed!');
 
-		// Execute login method's setLogin
+		// Check if login method is enabled
 		if ($this->loginMethod->enabled === true) {
+			// If so, set login method credentials
+			$this->setCredentials ();
+
+			// Check if required fields have values
+			$this->validateFields ();
+
+			// Execute login method's setLogin
 			$this->loginMethod->setLogin ();
 		}
 	}
