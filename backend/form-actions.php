@@ -78,6 +78,18 @@ try {
 	// Instantiate FormData class
 	$form_data = new FormData ($hashover->setup);
 
+	// Handle user login
+	if (isset ($request['login'])) {
+		// Log the user in
+		$hashover->login->setLogin ();
+	}
+
+	// Handle user logout
+	if (isset ($request['logout'])) {
+		// Log the user out
+		$hashover->login->clearLogin ();
+	}
+
 	// Initiate and finalize comment processing
 	$hashover->initiate ();
 	$hashover->finalize ();
@@ -89,64 +101,56 @@ try {
 		$hashover->thread
 	);
 
-	// Run through POST/GET data
-	foreach (array_keys ($request) as $action) {
-		// Handle user login
-		if ($action === 'login') {
-			$write_comments->login ();
-			break;
+	// Handle new comment post
+	if (isset ($request['post'])) {
+		// Check IP address for spam
+		$form_data->checkForSpam ($mode);
+
+		// Save posted comment
+		$data = $write_comments->postComment ();
+
+		// Create/update page metadata
+		$hashover->defaultMetadata ();
+
+		// Check if comment saved successfully
+		if (!empty ($data)) {
+			// If so, display comment as JSON data
+			echo display_json ($hashover, $data);
+		} else {
+			// TODO
 		}
+	}
 
-		// Handle user logout
-		if ($action === 'logout') {
-			$write_comments->logout ();
-			break;
+	// Handle comment edit
+	if (isset ($request['edit'])) {
+		// Check IP address for spam
+		$form_data->checkForSpam ($mode);
+
+		// Save edited comment
+		$data = $write_comments->editComment ();
+
+		// Check if edited comment saved successfully
+		if (!empty ($data)) {
+			// If so, display comment as JSON data
+			echo display_json ($hashover, $data);
+		} else {
+			// TODO
 		}
+	}
 
-		// Handle new comment post
-		if ($action === 'post') {
-			// Check IP address for spam
-			$write_comments->checkForSpam ($mode);
+	// Handle comment deletion
+	if (isset ($request['delete'])) {
+		// Check IP address for spam
+		$form_data->checkForSpam ($mode);
 
-			// Save posted comment
-			$data = $write_comments->postComment ();
+		// Attempt to delete comment
+		$deleted = $write_comments->deleteComment ();
 
-			// Create/update page metadata
-			$hashover->defaultMetadata ();
-
-			// Display JSON for AJAX requests
-			if (isset ($request['ajax']) and is_array ($data)) {
-				echo display_json ($hashover, $data);
-			}
-
-			break;
-		}
-
-		// Handle comment edit
-		if ($action === 'edit') {
-			// Check IP address for spam
-			$write_comments->checkForSpam ($mode);
-
-			// Save edited comment
-			$data = $write_comments->editComment ();
-
-			// Display JSON for AJAX requests
-			if (isset ($request['ajax']) and is_array ($data)) {
-				echo display_json ($hashover, $data);
-			}
-
-			break;
-		}
-
-		// Handle comment deletion
-		if ($action === 'delete') {
-			// Check IP address for spam
-			$write_comments->checkForSpam ($mode);
-
-			// Delete comment
-			$write_comments->deleteComment ();
-
-			break;
+		// Check if comment was deleted successfully
+		if ($deleted === true) {
+			// If so, TODO
+		} else {
+			// If not, TODO
 		}
 	}
 } catch (\Exception $error) {
