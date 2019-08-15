@@ -1,8 +1,8 @@
 // Increase comment counts (ajaxpost.js)
-HashOver.prototype.incrementCounts = function (isReply)
+HashOver.prototype.incrementCounts = function (type)
 {
 	// Count top level comments
-	if (isReply === false) {
+	if (type !== 'reply') {
 		this.instance['primary-count']++;
 	}
 
@@ -11,10 +11,22 @@ HashOver.prototype.incrementCounts = function (isReply)
 };
 
 // For posting comments (ajaxpost.js)
-HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
+HashOver.prototype.AJAXPost = function (json, permalink, type)
 {
 	// Reference to this object
 	var hashover = this;
+
+	// Check if comment is a reply
+	if (type === 'reply') {
+		// If so, get element of comment being replied to
+		var dest = this.getElement (permalink);
+	} else {
+		// If not, use sort section element
+		var dest = this.instance['sort-section'];
+	}
+
+	// Get primary comments in order
+	var comments = this.instance.comments.primary;
 
 	// Check if there are no comments
 	if (this.instance['total-count'] === 0) {
@@ -25,7 +37,7 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 		dest.innerHTML = this.parseComment (json.comment);
 	} else {
 		// If not, add comment to comments array
-		this.addComments (json.comment, isReply);
+		this.addComments (json.comment, type);
 
 		// Fetch parent comment by its permalink
 		var parent = this.permalinkComment (
@@ -40,7 +52,7 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 		var elements = this.htmlChildren (comment);
 
 		// Check if the comment is a reply and has a permalink
-		if (isReply === true && permalink !== undefined) {
+		if (type === 'reply' && permalink !== undefined) {
 			// If so, store indicator of when comment is out of stream depth
 			var outOfDepth = (permalink.split ('r').length > this.setup['stream-depth']);
 
@@ -59,7 +71,7 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 	}
 
 	// Add class to indicate comment is out of order
-	if (isReply !== true && this.instance['showing-more'] === false) {
+	if (type !== 'reply' && this.instance['showing-more'] === false) {
 		this.elementExists (json.comment.permalink, function (comment) {
 			hashover.classes.add (comment, 'hashover-disjoined');
 		});
@@ -70,5 +82,5 @@ HashOver.prototype.AJAXPost = function (json, permalink, dest, isReply)
 
 	// Update comment count
 	this.getElement('count').textContent = json.count;
-	this.incrementCounts (isReply);
+	this.incrementCounts (type);
 };

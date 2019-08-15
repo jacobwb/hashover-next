@@ -1,5 +1,5 @@
 // Posts comments via AJAX (postrequest.js)
-HashOver.prototype.postRequest = function (destination, form, button, callback, type, permalink, close, isReply, isEdit)
+HashOver.prototype.postRequest = function (form, button, type, permalink, callback)
 {
 	// Reference to this object
 	var hashover = this;
@@ -15,12 +15,18 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 	{
 		// Check if JSON includes a comment
 		if (json.comment !== undefined) {
-			// If so, execute callback function
-			callback.apply (hashover, [ json, permalink, destination, isReply ]);
+			// If so, check if comment is anything other than an edit
+			if (type !== 'edit') {
+				// If so, execute primary comment post function
+				hashover.AJAXPost.apply (hashover, [ json, permalink, type ]);
+			} else {
+				// If so, execute comment edit function
+				hashover.AJAXEdit.apply (hashover, [ json, permalink ]);
+			}
 
 			// Execute callback function if one was provided
-			if (typeof (close) === 'function') {
-				close ();
+			if (typeof (callback) === 'function') {
+				callback ();
 			}
 
 			// Get the comment element by its permalink
@@ -42,7 +48,7 @@ HashOver.prototype.postRequest = function (destination, form, button, callback, 
 			}, 1000);
 		} else {
 			// If not, display message returned instead
-			hashover.showMessage (json.message, type, permalink, (json.type === 'error'), isReply, isEdit);
+			hashover.showMessage (json.message, type, permalink, true);
 
 			// And return false
 			return false;

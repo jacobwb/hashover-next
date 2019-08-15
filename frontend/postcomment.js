@@ -1,11 +1,8 @@
 // For posting comments, both traditionally and via AJAX (postcomment.js)
-HashOver.prototype.postComment = function (destination, form, button, callback, type, permalink, close, isReply, isEdit)
+HashOver.prototype.postComment = function (form, button, type, permalink, callback)
 {
-	type = type || 'main';
-	permalink = permalink || '';
-
 	// Return false if comment is invalid
-	if (this.validateComment (false, form, type, permalink, isReply, isEdit) === false) {
+	if (this.validateComment (form, type, permalink) === false) {
 		return false;
 	}
 

@@ -1,5 +1,5 @@
 // Handles display of various email warnings (validateemail.js)
-HashOver.prototype.emailValidator = function (form, subscribe, type, permalink, isReply, isEdit)
+HashOver.prototype.emailValidator = function (form, subscribe, type, permalink)
 {
 	// Do nothing if email form doesn't exist
 	if (form.email === undefined) {
@@ -40,7 +40,7 @@ HashOver.prototype.emailValidator = function (form, subscribe, type, permalink, 
 			var message = this.locale['invalid-email'];
 
 			// Show message
-			this.showMessage (message, type, permalink, true, isReply, isEdit);
+			this.showMessage (message, type, permalink, true);
 
 			// Focus email input
 			form.email.focus ();
@@ -55,21 +55,18 @@ HashOver.prototype.emailValidator = function (form, subscribe, type, permalink, 
 };
 
 // Validate a comment form e-mail field (validateemail.js)
-HashOver.prototype.validateEmail = function (type, permalink, form, isReply, isEdit)
+HashOver.prototype.validateEmail = function (type, permalink, form)
 {
-	type = type || 'main';
-	permalink = permalink || '';
-
 	// Subscribe checkbox ID
 	var subscribe = type + '-subscribe';
 
 	// Append permalink if form is a reply or edit
-	if (isReply === true || isEdit === true) {
+	if (type === 'reply' || type === 'edit') {
 		subscribe += '-' + permalink;
 	}
 
 	// Attempt to validate form fields
-	var valid = this.emailValidator (form, subscribe, type, permalink, isReply, isEdit);
+	var valid = this.emailValidator (form, subscribe, type, permalink);
 
 	// And return validity
 	return valid;

@@ -1,8 +1,8 @@
 // For adding new comments to comments array (addcomments.js)
-HashOver.prototype.addComments = function (comment, isReply)
+HashOver.prototype.addComments = function (comment, type)
 {
 	// Check if comment is a reply
-	if (isReply === true) {
+	if (type === 'reply') {
 		// If so, fetch parent comment by its permalink
 		var parent = this.permalinkComment (
 			this.permalinkParent (comment.permalink),

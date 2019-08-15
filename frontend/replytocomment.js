@@ -45,15 +45,12 @@ HashOver.prototype.replyToComment = function (permalink)
 	// Attach event listeners to "Post Reply" button
 	var postReply = this.getElement ('reply-post-' + permalink);
 
-	// Get the element of comment being replied to
-	var destination = this.getElement (permalink);
-
 	// Attach click event to formatting revealer hyperlink
 	this.formattingOnclick ('reply', permalink);
 
 	// Set onclick and onsubmit event handlers
 	this.duplicateProperties (postReply, [ 'onclick', 'onsubmit' ], function () {
-		return hashover.postComment (destination, form, this, hashover.AJAXPost, 'reply', permalink, link.onclick, true, false);
+		return hashover.postComment (form, this, 'reply', permalink, link.onclick);
 	});
 
 	// Focus comment field

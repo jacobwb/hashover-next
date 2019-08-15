@@ -160,7 +160,7 @@ HashOver.prototype.init = function (id)
 
 	// Set onclick and onsubmit event handlers
 	this.duplicateProperties (postButton, formEvents, function () {
-		return hashover.postComment (sortSection, formElement, postButton, hashover.AJAXPost);
+		return hashover.postComment (formElement, postButton, 'main');
 	});
 
 	// Check if login is enabled
@@ -172,7 +172,7 @@ HashOver.prototype.init = function (id)
 
 			// Set onclick and onsubmit event handlers
 			this.duplicateProperties (loginButton, formEvents, function () {
-				return hashover.validateComment (true, formElement);
+				return hashover.validateComment (formElement, 'main', null, true);
 			});
 		}
 	}

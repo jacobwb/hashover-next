@@ -83,9 +83,6 @@ HashOver.prototype.editComment = function (comment)
 		// Get "Save Edit" button
 		var saveEdit = this.getElement ('edit-post-' + permalink);
 
-		// Get the element of comment being replied to
-		var destination = this.getElement (permalink);
-
 		// Change "Edit" link to "Cancel" link
 		this.cancelSwitcher ('edit', link, placeholder, permalink);
 
@@ -99,7 +96,7 @@ HashOver.prototype.editComment = function (comment)
 
 		// Set onclick and onsubmit event handlers
 		this.duplicateProperties (saveEdit, [ 'onclick', 'onsubmit' ], function () {
-			return hashover.postComment (destination, form, this, hashover.AJAXEdit, 'edit', permalink, link.onclick, false, true);
+			return hashover.postComment (form, this, 'edit', permalink, link.onclick);
 		});
 
 	// And return false

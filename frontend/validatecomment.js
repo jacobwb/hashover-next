@@ -1,5 +1,5 @@
 // Validate a comment form (validatecomment.js)
-HashOver.prototype.commentValidator = function (form, skipComment, isReply)
+HashOver.prototype.commentValidator = function (form, type, skipComment)
 {
 	// Check each input field for if they are required
 	for (var field in this.setup['form-fields']) {
@@ -38,7 +38,7 @@ HashOver.prototype.commentValidator = function (form, skipComment, isReply)
 		form.comment.focus ();
 
 		// Error message to display to the user
-		var localeKey = (isReply === true) ? 'reply-needed' : 'comment-needed';
+		var localeKey = (type === 'reply') ? 'reply-needed' : 'comment-needed';
 		var errorMessage = this.locale[localeKey];
 
 		// Return a error message to display to the user
@@ -50,28 +50,24 @@ HashOver.prototype.commentValidator = function (form, skipComment, isReply)
 };
 
 // Validate required comment credentials (validatecomment.js)
-HashOver.prototype.validateComment = function (skipComment, form, type, permalink, isReply, isEdit)
+HashOver.prototype.validateComment = function (form, type, permalink, skipComment)
 {
-	skipComment = skipComment || false;
-	type = type || 'main';
-	permalink = permalink || '';
-
 	// Attempt to validate comment
-	var message = this.commentValidator (form, skipComment, isReply);
+	var message = this.commentValidator (form, type, skipComment);
 
 	// Check if comment is invalid
 	if (message !== true) {
 		// If so, display validator's message
-		this.showMessage (message, type, permalink, true, isReply, isEdit);
+		this.showMessage (message, type, permalink, true);
 
 		// And return false
 		return false;
 	}
 
 	// Validate e-mail if user isn't logged in or is editing
-	if (this.setup['user-is-logged-in'] === false || isEdit === true) {
+	if (this.setup['user-is-logged-in'] === false || type === 'edit') {
 		// Return false on any failure
-		if (this.validateEmail (type, permalink, form, isReply, isEdit) === false) {
+		if (this.validateEmail (type, permalink, form) === false) {
 			return false;
 		}
 	}

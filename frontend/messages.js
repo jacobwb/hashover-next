@@ -119,22 +119,19 @@ HashOver.prototype.closeMessage = function (element)
 };
 
 // Handle message element(s) (messages.js)
-HashOver.prototype.showMessage = function (messageText, type, permalink, error, isReply, isEdit)
+HashOver.prototype.showMessage = function (messageText, type, permalink, error)
 {
-	type = type || 'main';
-	permalink = permalink || '';
-
 	// Reference to this object
 	var hashover = this;
 
 	// Check if message is in an edit form
-	if (isEdit === true) {
+	if (type === 'edit') {
 		// If so, get message from edit form by permalink
 		var container = this.getElement ('edit-message-container-' + permalink);
 		var message = this.getElement ('edit-message-' + permalink);
 	} else {
 		// If not, check if message is anything other than a reply
-		if (isReply !== true) {
+		if (type !== 'reply') {
 			// If so, get primary message element
 			var container = this.getElement ('message-container');
 			var message = this.getElement ('message');
