@@ -707,7 +707,7 @@ class FormUI
 
 				// Create link to user's website
 				$main_form_hyperlink = new HTMLTag ('a', array (
-					'rel' => 'noopener noreferrer',
+					'rel' => 'noopener noreferrer nofollow',
 					'href' => $user_website,
 					'target' => '_blank',
 					'title' => $user_name,
@@ -1134,6 +1134,7 @@ class FormUI
 
 		// Create link back to HashOver homepage (fixme! get a real page!)
 		$homepage_link = new HTMLTag ('a', array (
+			'rel' => 'nofollow',
 			'href' => 'http://tildehash.com/?page=hashover',
 			'class' => 'hashover-home-link',
 			'target' => '_blank',
@@ -1195,6 +1196,7 @@ class FormUI
 		if ($this->mode !== 'php') {
 			// Create link to HashOver JavaScript source code
 			$javascript_link = new HTMLTag ('a', array (
+				'rel' => 'nofollow',
 				'href' => $this->setup->getHttpPath ('comments.php'),
 				'class' => 'hashover-javascript-link',
 				'target' => '_blank',

@@ -56,7 +56,7 @@ class CommentsUI extends FormUI
 			case 'a': {
 				// A hyperlink pointing to the user's input URL
 				$name_link = new HTMLTag ('a', array (
-					'rel' => 'noopener noreferrer',
+					'rel' => 'noopener noreferrer nofollow',
 					'href' => $href,
 					'id' => $this->prefix ('name-' . $permalink),
 					'target' => '_blank',
@@ -97,6 +97,7 @@ class CommentsUI extends FormUI
 
 		// And create hyperlink
 		$link = new HTMLTag ('a', array (
+			'rel' => 'nofollow',
 			'href' => $href
 		), false);
 
@@ -117,6 +118,7 @@ class CommentsUI extends FormUI
 
 		// Create hyperlink element
 		$thread_link->appendAttributes (array (
+			'rel' => 'nofollow',
 			'href' => '#' . $parent,
 			'id' => $this->prefix ('thread-link-' . $permalink),
 			'class' => 'hashover-thread-link',
@@ -162,6 +164,7 @@ class CommentsUI extends FormUI
 	{
 		// Create hyperlink element
 		$link = new HTMLTag ('a', array (
+			'rel' => 'nofollow',
 			'href' => '#',
 			'id' => $this->prefix ($type . '-' . $permalink),
 			'class' => $class,
@@ -253,6 +256,7 @@ class CommentsUI extends FormUI
 				// Avatars set to count
 				// Create element displaying comment number user will be
 				$comments_avatar = new HTMLTag ('a', array (
+					'rel' => 'nofollow',
 					'href' => '#' . $href,
 					'title' => 'Permalink',
 					'innerHTML' => $text
@@ -638,6 +642,7 @@ class CommentsUI extends FormUI
 	{
 		// Create hyperlink element
 		$thread_link = new HTMLTag ('a', array (
+			'rel' => 'nofollow',
 			'href' => $url,
 			'innerHTML' => $title
 		), false);

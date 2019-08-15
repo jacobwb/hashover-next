@@ -20,6 +20,7 @@ HashOver.prototype.showInterfaceLink = function ()
 	main.appendChild (this.createElement ('a', {
 		id: this.prefix ('show-interface-link'),
 		className: 'hashover-more-link',
+		rel: 'nofollow',
 		href: '#',
 		title: text,
 		text: text,

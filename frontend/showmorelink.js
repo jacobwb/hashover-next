@@ -8,8 +8,9 @@ HashOver.prototype.showMoreLink = function ()
 	if (this.instance['total-count'] > this.setup['collapse-limit']) {
 		// If so, create "More Comments" hyperlink
 		this.instance['more-link'] = this.createElement ('a', {
-			href: '#',
 			className: 'hashover-more-link',
+			rel: 'nofollow',
+			href: '#',
 			title: this.instance['more-link-text'],
 			textContent: this.instance['more-link-text'],
 
