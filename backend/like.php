@@ -125,7 +125,7 @@ function get_json_response ($hashover)
 		// Check if comment has a login ID
 		if (!empty ($comment['login_id'])) {
 			// If so, return error message if liker posted the comment
-			if ($hashover->cookies->getValue ('login') === $comment['login_id']) {
+			if ($hashover->login->loginHash === $comment['login_id']) {
 				return array ('message' => 'Practice altruism!');
 			}
 		}

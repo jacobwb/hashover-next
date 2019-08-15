@@ -81,7 +81,7 @@ class Login extends Secrets
 		}
 
 		// Check if login hash is not set
-		if ($this->cookies->getValue ('login') === null) {
+		if ($this->loginHash === null) {
 			// If so, generate a random password
 			$random_password = bin2hex (openssl_random_pseudo_bytes (16));
 
