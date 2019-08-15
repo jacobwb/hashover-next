@@ -27,11 +27,11 @@ class Login extends Secrets
 	protected $loginMethod;
 	protected $fieldNeeded;
 
-	public $name = '';
-	public $password = '';
-	public $loginHash = '';
-	public $email = '';
-	public $website = '';
+	public $name;
+	public $password;
+	public $loginHash;
+	public $email;
+	public $website;
 	public $userIsLoggedIn = false;
 	public $userIsAdmin = false;
 
@@ -41,7 +41,7 @@ class Login extends Secrets
 		$this->setup = $setup;
 
 		// Instantiate various classes
-		$this->formData = new FormData ();
+		$this->formData = new FormData ($setup);
 		$this->cookies = new Cookies ($setup);
 		$this->locale = new Locale ($setup);
 		$this->crypto = new Crypto ();
@@ -166,6 +166,7 @@ class Login extends Secrets
 			}
 		}
 
+		// Otherwise, fields are valid
 		return true;
 	}
 
