@@ -69,9 +69,17 @@ try {
 
 		// Run through HashOver files array
 		foreach ($source_code->files as $file) {
+			// Get HTTP relative path
 			$path = $hashover->setup->getHttpPath ($file['path']);
+
+			// Get file name
 			$name = Misc::getArrayItem ($file, 'name') ?: basename ($path);
+
+			// Initial hyperlink query to file path
 			$href = '?file=' . $file['path'];
+
+			// Get local absolute file path
+			$absolute = $hashover->setup->getAbsolutePath ($file['path']);
 
 			// Create row and columns
 			$tr = new HTMLTag ('tr', array (
@@ -82,26 +90,35 @@ try {
 				)
 			));
 
+			// Links to source files in various types
+			$type_links = array (
+				new HTMLTag ('a', array (
+					'href' => $href . '&amp;type=text',
+					'innerHTML' => $hashover->locale->text['text']
+				), false),
+
+				new HTMLTag ('a', array (
+					'href' => $href . '&amp;type=html',
+					'innerHTML' => 'HTML'
+				), false),
+
+				new HTMLTag ('a', array (
+					'href' => $href . '&amp;type=download',
+					'innerHTML' => $hashover->locale->text['download']
+				), false)
+			);
+
+			// Make source file type links red if file doesn't exist
+			if (!file_exists ($absolute)) {
+				foreach ($type_links as $link) {
+					$link->createAttribute ('style', 'color: #CC0000;');
+				}
+			}
+
 			// Append view formats column
 			$tr->appendChild (new HTMLTag ('td', array (
 				'class' => 'margin-right-children',
-
-				'children' => array (
-					new HTMLTag ('a', array (
-						'href' => $href . '&amp;type=text',
-						'innerHTML' => $hashover->locale->text['text']
-					), false),
-
-					new HTMLTag ('a', array (
-						'href' => $href . '&amp;type=html',
-						'innerHTML' => 'HTML'
-					), false),
-
-					new HTMLTag ('a', array (
-						'href' => $href . '&amp;type=download',
-						'innerHTML' => $hashover->locale->text['download']
-					), false)
-				)
+				'children' => $type_links
 			)));
 
 			// Append row to table
