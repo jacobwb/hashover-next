@@ -147,11 +147,6 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
-			'name' => 'CookiesLogin',
-			'path' => 'backend/classes/cookieslogin.php'
-		),
-		array (
-			'type' => 'Class',
 			'name' => 'Crypto',
 			'path' => 'backend/classes/crypto.php'
 		),
@@ -164,6 +159,11 @@ class SourceCode
 			'type' => 'Class',
 			'name' => 'DataFiles',
 			'path' => 'backend/classes/datafiles.php'
+		),
+		array (
+			'type' => 'Class',
+			'name' => 'DefaultLogin',
+			'path' => 'backend/classes/defaultlogin.php'
 		),
 		array (
 			'type' => 'Class',

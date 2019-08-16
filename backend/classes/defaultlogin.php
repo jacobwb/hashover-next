@@ -17,7 +17,7 @@
 // along with HashOver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class CookiesLogin
+class DefaultLogin
 {
 	protected $setup;
 	protected $cookies;
