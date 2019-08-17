@@ -223,11 +223,10 @@ HashOver.prototype.init = function (id)
 				// Get comment being edited
 				var edit = hashover.permalinkComment (permalink, comments);
 
-				// Open comment edit form
-				hashover.editComment (edit);
-
-				// And scroll to comment edit form
-				scrollToElement (pageHash);
+				// Open and scroll to comment edit form
+				hashover.editComment (edit, function () {
+					scrollToElement (pageHash);
+				});
 			}
 		};
 

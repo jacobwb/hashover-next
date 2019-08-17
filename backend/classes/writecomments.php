@@ -105,6 +105,9 @@ class WriteComments extends Secrets
 	protected $editableFields = array (
 		'body',
 		'name',
+		'email',
+		'encryption',
+		'email_hash',
 		'notifications',
 		'website'
 	);
@@ -112,10 +115,7 @@ class WriteComments extends Secrets
 	// Password protected fields
 	protected $protectedFields = array (
 		'password',
-		'login_id',
-		'email',
-		'encryption',
-		'email_hash'
+		'login_id'
 	);
 
 	// Possible comment status options
@@ -529,11 +529,6 @@ class WriteComments extends Secrets
 
 		// Check if user is authorized
 		if ($auth['authorized'] === true) {
-			// Login normal user with edited credentials
-			if ($this->login->userIsAdmin === false) {
-				$this->login (false);
-			}
-
 			// Set initial fields for update
 			$update_fields = $this->editableFields;
 

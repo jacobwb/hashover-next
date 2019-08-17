@@ -102,7 +102,7 @@ class FormUI
 	}
 
 	// Creates input elements for user login information
-	protected function loginInputs ($permalink = '', $edit_form = false, $name = '', $website = '')
+	protected function loginInputs ($permalink = '', $edit_form = false, $name = '', $email = '', $website = '')
 	{
 		// Reply/edit form indicator
 		$is_form = !empty ($permalink);
@@ -162,6 +162,7 @@ class FormUI
 			$login_input_attributes['name']['input-value'] = $name;
 			$login_input_attributes['password']['placeholder'] = $this->locale->text['confirm-password'];
 			$login_input_attributes['password']['input-title'] = $this->locale->text['confirm-password'];
+			$login_input_attributes['email']['input-value'] = $email;
 			$login_input_attributes['website']['input-value'] = $website;
 		}
 

@@ -432,7 +432,7 @@ class CommentsUI extends FormUI
 	}
 
 	// Creates a comment edit form
-	public function editForm ($permalink = '{permalink}', $url = '{url}', $thread = '{thread}', $title = '{title}', $file = '{file}', $name = '{name}', $website = '{website}', $body = '{body}', $status = '', $subscribed = true)
+	public function editForm ($permalink = '{permalink}', $url = '{url}', $thread = '{thread}', $title = '{title}', $file = '{file}', $name = '{name}', $email = '{email}', $website = '{website}', $body = '{body}', $status = '', $subscribed = true)
 	{
 		// "Edit Comment" locale string
 		$edit_comment = $this->locale->text['edit-comment'];
@@ -517,7 +517,7 @@ class CommentsUI extends FormUI
 		$edit_form->appendChild ($edit_form_title);
 
 		// Append default login inputs
-		$edit_login_inputs = $this->loginInputs ($permalink, true, $name, $website);
+		$edit_login_inputs = $this->loginInputs ($permalink, true, $name, $email, $website);
 		$edit_form->appendChild ($edit_login_inputs);
 
 		// Check if form labels are enabled

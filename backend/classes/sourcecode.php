@@ -375,6 +375,10 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
+			'path' => 'backend/comment-info.php'
+		),
+		array (
+			'type' => 'Script',
 			'path' => 'backend/comments-ajax.php'
 		),
 		array (

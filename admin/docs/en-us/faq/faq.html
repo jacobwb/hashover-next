@@ -63,4 +63,121 @@
 		eventually be supported as Markdown at least. HTML and Markdown may be
 		used together in comments.
 	</p>
+
+	<h2 id="email-notifications-not-sent">
+		Why am I not being sent email notifications?
+	</h2>
+
+	<p>
+		Before assuming HashOver is not sending email notifications, you should
+		first confirm that you are supposed to be receiving email notifications
+		about the comments being posted in the first place, as HashOver does not
+		send email notifications under some specific circumstances.
+	</p>
+
+	<p>
+		Email notifications are not sent when either of the following is true:
+	</p>
+
+	<ol>
+		<li>
+			<p>
+				A comment is posted with the same email address as the
+				notification email address. That is, the
+				<code><a href="../setup/#required-setup">$notificationEmail</a></code> setting.
+			</p>
+
+			<p>
+				This is done to prevent the admin from being sent
+				notification emails about comments they themselves posted.
+				In the same way as a normal user does not receive email
+				notifications about the comment they posted on your website,
+				neither should the admin receive email notifications about
+				comments they post on their own website. This is especially
+				useful in testing HashOver, as it allows you to post test
+				comments without receiving email notifications.
+			</p>
+		</li>
+		<li>
+			<p>
+				A reply is posted with the same email address as the comment
+				being replied to.
+			</p>
+
+			<p>
+				This is done to prevent normal users from being sent email
+				notifications when they reply to themselves. The admin will
+				receive an email notification in this case, as long as the
+				user posting the reply is not the admin.
+			</p>
+		</li>
+	</ol>
+
+	<p>
+		It is common for people testing HashOver to post comments using the
+		notification email address, in which case HashOver is not sending email
+		notifications. Ensure you are not doing this before assuming email
+		notifications are not working.
+	</p>
+
+	<p>
+		There are multiple reasons why you may not be receiving email
+		notifications: Hosting providers not allowing email to be sent from
+		their servers, ISPs blocking port 25 or otherwise restricting email
+		support, your email provider marking the notifications as junk or SPAM,
+		and/or incorrect server configurations. Any one of these things can
+		cause the email notifications to not be sent, received, or both.
+	</p>
+
+	<p>
+		If you are using a hosting provider with cPanel, you should be able to
+		see what email has been sent and received by the server by going to the
+		"Track Delivery" page under the "Email" section, from there you should
+		be able to see if the email notifications were rejected and why. If you
+		are not using cPanel, you can find useful information in the
+		<code>/var/log/mail.log</code> or <code>/var/log/mail.err</code> files (these
+		files are located in different places depending on what operating system
+		you're using) or by checking the mail for the <code>www-data</code> user.
+	</p>
+
+	<p>
+		You should test whether you can send email from your server at all. You
+		can do this at the command line with:
+	</p>
+
+	<div class="code block">
+		echo 'Test' | sendmail example@example.com
+	</div>
+
+	<p>
+		Or via PHP with the following code in a PHP file:
+	</p>
+
+	<div class="code block">
+		&lt;?php<br/><br/>
+
+		&nbsp; &nbsp; mail ('example@example.com', 'Test', 'Test');<br/><br/>
+
+		?&gt;
+	</div>
+
+	<p>
+		Change out "example@example.com" for the email address you're using in the
+		<code>$notificationEmail</code> setting.
+	</p>
+
+	<p>
+		If you cannot send email using
+		these examples, your hosting provider or ISP is preventing you from sending
+		email from the server. Fixing that problem is outside the scope of this
+		documentation. You might consider <a href="../setup/#smtp-setup">using SMTP</a>
+		to send the email notifications instead.
+	</p>
+
+	<p>
+		If you can send email using these examples or other software on your website
+		is able to send email, but HashOver is not sending email notifications,
+		please report it as a bug to me either by <a href="http://tildehash.com/?page=author" target="_blank">email</a>
+		or on <a href="https://github.com/jacobwb/hashover-next" target="_blank">GitHub</a>.
+	</p>
 </div>

@@ -99,6 +99,7 @@ class PHPMode
 			$body = preg_replace ($this->linkRegex, '\\1', $body);
 			$status = Misc::getArrayItem ($comment, 'status') ?: 'approved';
 			$name = Misc::getArrayItem ($comment, 'name') ?: '';
+			$email = Misc::getArrayItem ($comment, 'email') ?: '';
 			$website = Misc::getArrayItem ($comment, 'website') ?: '';
 			$subscribed = isset ($comment['subscribed']);
 
@@ -109,7 +110,7 @@ class PHPMode
 				'action' => $this->setup->getBackendPath ('form-actions.php')
 			), false);
 
-			$edit_form = $this->ui->editForm ($permalink, $this->setup->pageURL, $this->setup->threadName, $this->setup->pageTitle, $file, $name, $website, $body, $status, $subscribed);
+			$edit_form = $this->ui->editForm ($permalink, $this->setup->pageURL, $this->setup->threadName, $this->setup->pageTitle, $file, $name, $email, $website, $body, $status, $subscribed);
 
 			$form->innerHTML ($edit_form);
 

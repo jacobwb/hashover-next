@@ -1,5 +1,5 @@
 // Displays edit form (editcomment.js)
-HashOver.prototype.editComment = function (comment)
+HashOver.prototype.editComment = function (comment, callback)
 {
 	// Do nothing if the comment isn't editable
 	if (comment['editable'] !== true) {
@@ -9,82 +9,103 @@ HashOver.prototype.editComment = function (comment)
 	// Reference to this object
 	var hashover = this;
 
+	// Path to comment edit information backend script
+	var editInfo = HashOver.backendPath + '/comment-info.php';
+
 	// Get permalink from comment JSON object
 	var permalink = comment.permalink;
 
 	// Get file
 	var file = this.permalinkFile (permalink);
 
+	// Set request queries
+	var queries = [
+		'url=' + encodeURIComponent (this.instance['page-url']),
+		'thread=' + encodeURIComponent (this.instance['thread-name']),
+		'comment=' + encodeURIComponent (file)
+	];
+
 	// Get edit link element
 	var link = this.getElement ('edit-link-' + permalink);
 
+	// Set loading class to edit link
+	this.classes.add (link, 'hashover-loading');
+
+	// Send request for comment information
+	this.ajax ('post', editInfo, queries, function (info) {
+		// Check if request returned an error
+		if (info.error !== undefined) {
+			// If so, display error
+			alert (info.error);
+
+			// Remove loading class from edit link
+			hashover.classes.remove (link, 'hashover-loading');
+
+			// And do nothing else
+			return;
+		}
+
 		// Get and clean comment body
-		var body = comment.body.replace (this.rx.links, '$1');
+		var body = info.body.replace (hashover.rx.links, '$1');
 
 		// Get edit form placeholder
-		var placeholder = this.getElement ('placeholder-edit-form-' + permalink);
+		var placeholder = hashover.getElement ('placeholder-edit-form-' + permalink);
 
 		// Available comment status options
 		var statuses = [ 'approved', 'pending', 'deleted' ];
 
 		// Create edit form element
-		var form = this.createElement ('form', {
-			id: this.prefix ('edit-' + permalink),
+		var form = hashover.createElement ('form', {
+			id: hashover.prefix ('edit-' + permalink),
 			className: 'hashover-edit-form',
-			action: this.setup['http-backend'] + '/form-actions.php',
+			action: hashover.setup['http-backend'] + '/form-actions.php',
 			method: 'post'
 		});
 
 		// Place edit form fields into form
-		form.innerHTML = this.strings.parseTemplate (
-			this.ui['edit-form'], {
-				hashover: this.prefix (),
+		form.innerHTML = hashover.strings.parseTemplate (
+			hashover.ui['edit-form'], {
+				hashover: hashover.prefix (),
 				permalink: permalink,
-				url: this.instance['page-url'],
-				thread: this.instance['thread-name'],
-				title: this.instance['page-title'],
+				url: hashover.instance['page-url'],
+				thread: hashover.instance['thread-name'],
+				title: hashover.instance['page-title'],
 				file: file,
-				name: comment.name || '',
-				website: comment.website || '',
+				name: info.name || '',
+				email: info.email || '',
+				website: info.website || '',
 				body: body
 			}
 		);
 
 		// Prevent input submission
-		this.preventSubmit (form);
+		hashover.preventSubmit (form);
 
 		// Add edit form to placeholder
 		placeholder.appendChild (form);
 
 		// Set status dropdown menu option to comment status
-		this.elementExists ('edit-status-' + permalink, function (status) {
+		hashover.elementExists ('edit-status-' + permalink, function (status) {
 			if (comment.status !== undefined) {
 				status.selectedIndex = statuses.indexOf (comment.status);
 			}
 		});
 
-		// Blank out password field
-		setTimeout (function () {
-			if (form.password !== undefined) {
-				form.password.value = '';
-			}
-		}, 100);
-
 		// Uncheck subscribe checkbox if user isn't subscribed
-		this.elementExists ('edit-subscribe-' + permalink, function (sub) {
+		hashover.elementExists ('edit-subscribe-' + permalink, function (sub) {
 			if (comment.subscribed !== true) {
 				sub.checked = null;
 			}
 		});
 
 		// Get delete button
-		var editDelete = this.getElement('edit-delete-' + permalink);
+		var editDelete = hashover.getElement('edit-delete-' + permalink);
 
 		// Get "Save Edit" button
-		var saveEdit = this.getElement ('edit-post-' + permalink);
+		var saveEdit = hashover.getElement ('edit-post-' + permalink);
 
 		// Change "Edit" link to "Cancel" link
-		this.cancelSwitcher ('edit', link, placeholder, permalink);
+		hashover.cancelSwitcher ('edit', link, placeholder, permalink);
 
 		// Displays confirmation dialog for comment deletion
 		editDelete.onclick = function () {
@@ -92,12 +113,21 @@ HashOver.prototype.editComment = function (comment)
 		};
 
 		// Attach click event to formatting revealer hyperlink
-		this.formattingOnclick ('edit', permalink);
+		hashover.formattingOnclick ('edit', permalink);
 
 		// Set onclick and onsubmit event handlers
-		this.duplicateProperties (saveEdit, [ 'onclick', 'onsubmit' ], function () {
+		hashover.duplicateProperties (saveEdit, [ 'onclick', 'onsubmit' ], function () {
 			return hashover.postComment (form, this, 'edit', permalink, link.onclick);
 		});
+
+		// Remove loading class from edit link
+		hashover.classes.remove (link, 'hashover-loading');
+
+		// And execute callback if one was given
+		if (typeof (callback) === 'function') {
+			callback ();
+		}
+	}, true);
 
 	// And return false
 	return false;

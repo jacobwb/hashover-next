@@ -100,7 +100,7 @@ HashOver.prototype.postRequest = function (form, button, type, permalink, callba
 	    && this.setup['uses-auto-login'] !== false)
 	{
 		// If so, check if the user is logged in
-		if (this.setup['user-is-logged-in'] !== true || isEdit === true) {
+		if (this.setup['user-is-logged-in'] !== true) {
 			// If not, create login request queries
 			var loginQueries = queries.concat ([ 'login=Login' ]);
 

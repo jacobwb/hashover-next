@@ -1105,7 +1105,9 @@ conditions, unless such conditions are required by law.
 	background-attachment: scroll;
 	background-position: center center;
 	background-image: url('../../images/loading.gif');
+}
 
+.hashover .hashover-loading {
 	image-rendering: -o-crisp-edges;
 	image-rendering: -webkit-optimize-contrast;
 	image-rendering: -moz-crisp-edges;
@@ -1133,6 +1135,15 @@ conditions, unless such conditions are required by law.
 	margin-right: 8px;
 	margin-top: -8px;
 	margin-bottom: -6px;
+}
+
+.hashover .hashover-comment-edit.hashover-loading:before {
+	display: none;
+}
+
+.hashover .hashover-comment-edit.hashover-loading {
+	background-image: url('../../images/loading.gif') ! important;
+	background-position: 6px center;
 }
 
 .hashover .hashover-more-link.hashover-hide-more-link {
