@@ -84,7 +84,7 @@ class Settings extends SensitiveSettings
 		}
 
 		// Assume connection is HTTPS on standard SSL port
-		if (Misc::getArrayItem ($_SERVER, 'SERVER_PORT') === 443) {
+		if (Misc::getArrayItem ($_SERVER, 'SERVER_PORT') === '443') {
 			return true;
 		}
 
