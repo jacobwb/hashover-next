@@ -779,7 +779,7 @@ class WriteComments extends Secrets
 				$this->mail->from ($this->email);
 			} else {
 				// If not, set e-mail as coming from noreply e-mail
-				$this->mail->from ($this->setup->noreplyEmail);
+				$this->mail->from ($this->noreplyEmail);
 			}
 
 			// And actually send the message
