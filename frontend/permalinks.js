@@ -1,5 +1,5 @@
 // Returns the permalink of a comment's parent (permalinks.js)
-HashOverConstructor.prototype.permalinkParent = function (permalink, flatten)
+HashOverConstructor.prototype.permalinkParent = function (permalink)
 {
 	// Split permalink by reply 'r'
 	var parent = permalink.split ('r');
@@ -8,7 +8,7 @@ HashOverConstructor.prototype.permalinkParent = function (permalink, flatten)
 	var length = parent.length - 1;
 
 	// Limit depth if in stream mode
-	if (this.setup['stream-mode'] === true && flatten === true) {
+	if (this.setup['stream-mode'] === true) {
 		length = Math.min (this.setup['stream-depth'], length);
 	}
 

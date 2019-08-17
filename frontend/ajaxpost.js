@@ -39,42 +39,13 @@ HashOver.prototype.AJAXPost = function (json, permalink, type)
 		// If not, add comment to comments array
 		this.addComments (json.comment, type);
 
-		// Fetch parent comment by its permalink
-		var parent = this.permalinkComment (
-			this.permalinkParent (json.comment.permalink),
-			this.instance.comments.primary
-		);
-
-		// Parse comment
-		var comment = this.parseComment (json.comment, parent);
-
-		// Get comment child elements
-		var elements = this.htmlChildren (comment);
-
-		// Check if the comment is a reply and has a permalink
-		if (type === 'reply' && permalink !== undefined) {
-			// If so, store indicator of when comment is out of stream depth
-			var outOfDepth = (permalink.split ('r').length > this.setup['stream-depth']);
-
-			// Check if we are in stream mode and out of the allowed depth
-			if (this.setup['stream-mode'] === true && outOfDepth === true) {
-				// If so, append comment to parent element
-				dest.parentNode.insertBefore (elements[0], dest.nextSibling);
-			} else {
-				// If not, append to destination element
-				dest.appendChild (elements[0]);
-			}
-		} else {
-			// If not, append to destination element
-			dest.appendChild (elements[0]);
-		}
-	}
-
-	// Add class to indicate comment is out of order
-	if (type !== 'reply' && this.instance['showing-more'] === false) {
-		this.elementExists (json.comment.permalink, function (comment) {
-			hashover.classes.add (comment, 'hashover-disjoined');
+		// Sort comments if sort method drop down menu exists
+		this.elementExists ('sort-select', function (sortSelect) {
+			comments = hashover.sortComments (comments, sortSelect.value);
 		});
+
+		// And append comments
+		this.appendComments (comments);
 	}
 
 	// Add controls to the new comment
