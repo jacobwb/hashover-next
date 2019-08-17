@@ -257,6 +257,11 @@ class SourceCode
 		),
 		array (
 			'type' => 'Class',
+			'name' => 'SessionLogin',
+			'path' => 'backend/classes/sessionlogin.php'
+		),
+		array (
+			'type' => 'Class',
 			'name' => 'Settings',
 			'path' => 'backend/classes/settings.php'
 		),

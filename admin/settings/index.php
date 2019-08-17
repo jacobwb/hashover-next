@@ -362,7 +362,8 @@ function ui_array (Setup $setup, Locale $locale)
 				'value' => $setup->loginMethod,
 
 				'options' => array (
-					'DefaultLogin' => 'Cookies Login'
+					'DefaultLogin' => 'Cookies Login',
+					'SessionLogin' => 'Session Login'
 				)
 			),
 
