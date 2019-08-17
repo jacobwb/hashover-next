@@ -217,7 +217,10 @@ class Sendmail
 		// Get email headers
 		$headers = $this->getHeaders ($boundary);
 
+		// Set envelope sender address with -f option
+		$params = '-f' . $this->reply['email'];
+
 		// And actually send the email
-		mail ($to, $subject, $message, $headers);
+		mail ($to, $subject, $message, $headers, $params);
 	}
 }
