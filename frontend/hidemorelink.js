@@ -34,9 +34,6 @@ HashOver.prototype.hideMoreLink = function (callback)
 		// Remove hidden comment class from comments
 		hashover.eachClass (sortSection, 'hashover-hidden', classRemover);
 
-		// Remove out of order class from comments
-		hashover.eachClass (sortSection, 'hashover-disjoined', classRemover);
-
 		// Execute callback function
 		if (typeof (callback) === 'function') {
 			callback ();

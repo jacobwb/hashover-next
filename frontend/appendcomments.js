@@ -57,6 +57,9 @@ HashOver.prototype.appendComments = function (comments, dest, parent)
 		this.addControls (comment);
 	}
 
+	// Re-append more comments link
+	this.reappendMoreLink ();
+
 	// And return HTML parsing
 	return htmlTime;
 };
