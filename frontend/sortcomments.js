@@ -201,7 +201,7 @@ HashOver.prototype.sortComments = function (comments, method)
 };
 
 // Sort primary comments (sortcomments.js)
-HashOver.prototype.sortPrimary = function (method)
+HashOver.prototype.sortPrimary = function (method, collapse)
 {
 	// Sorted comment destination
 	var dest = this.instance['sort-section'];
@@ -212,11 +212,16 @@ HashOver.prototype.sortPrimary = function (method)
 	// Sort the primary comments
 	var sorted = this.sortComments (this.instance.comments.primary, method);
 
+	// Reset collapsed comments count if comments are to be collapsed
+	if (collapse === true) {
+		this.instance.collapseLimit = 0;
+	}
+
 	// Get comment sorting time
 	var sortTime = Date.now () - sortStart;
 
 	// Parse the sorted comments
-	var htmlTime = this.parseAll (sorted, dest);
+	var htmlTime = this.parseAll (sorted, dest, collapse);
 
 	// Log execution time in console
 	console.log (this.strings.sprintf (

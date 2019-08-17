@@ -188,8 +188,15 @@ HashOver.prototype.init = function (id)
 				var sortSelectDiv = hashover.getElement ('sort');
 
 				// And show comments before sorting
-				hashover.showMoreComments (sortSelectDiv, function () {
-					hashover.sortPrimary (sortSelect.value);
+				hashover.loadAllComments (sortSelectDiv, function () {
+					// Collapse comment indicator based on current collapse state
+					var collapse = !hashover.instance['showing-more'];
+
+					// Sort primary comments using selected sort method
+					hashover.sortPrimary (sortSelect.value, collapse);
+
+					// And reappend show more comments hyperlink
+					hashover.reappendMoreLink ();
 				}, false);
 			} else {
 				// If not, sort comments immediately

@@ -46,7 +46,7 @@ HashOver.prototype.loadAllComments = function (element, callback)
 };
 
 // Click event handler for show more comments button (showmorecomments.js)
-HashOver.prototype.showMoreComments = function (element, callback, append)
+HashOver.prototype.showMoreComments = function (element, callback)
 {
 	// Reference to this object
 	var hashover = this;
@@ -81,17 +81,23 @@ HashOver.prototype.showMoreComments = function (element, callback, append)
 			// Afterwards, store start time
 			var execStart = Date.now ();
 
-			// Initial HTML parsing start time
-			var htmlTime = 0;
+			// Get primary comments
+			var primary = hashover.instance.comments.primary;
 
-			// Check if we are appending the comments
-			if (append !== false) {
-				// If so, sort the comments
-				var sorted = hashover.sortComments (json.primary);
+			// Attempt to get sort method drop down menu
+			var sortSelect = hashover.getElement ('sort-select');
 
-				// And append the sorted comments
-				htmlTime = hashover.appendComments (sorted);
+			// Check if sort method drop down menu exists
+			if (sortSelect !== null) {
+				// If so, sort primary comments using select method
+				var sorted = hashover.sortComments (primary, sortSelect.value);
+			} else {
+				// If not, sort primary comment using default method
+				var sorted = hashover.sortComments (primary);
 			}
+
+			// Append sorted comments
+			var htmlTime = hashover.appendComments (sorted);
 
 			// Execute callback function
 			if (typeof (callback) === 'function') {
