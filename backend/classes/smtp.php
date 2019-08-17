@@ -158,11 +158,11 @@ class SMTP
 		// Convert HTML entities to normal characters
 		$text = html_entity_decode ($text, ENT_COMPAT, 'UTF-8');
 
-		// Wordwrap text to 70 characters
-		$text = wordwrap ($text, 70, "\n");
-
 		// Make text comply to RFC-821
 		$text = $this->rfc ($text);
+
+		// Encode text in quoted-printable format
+		$text = quoted_printable_encode ($text);
 
 		// And return text
 		return $text;
@@ -183,6 +183,9 @@ class SMTP
 	{
 		// Conform HTML to comply with RFC-821
 		$this->html = $this->rfc ($html);
+
+		// Encode HTML in quoted-printable format
+		$this->html = quoted_printable_encode ($this->html);
 
 		// Set automatic text version of message
 		if (empty ($this->text)) {
@@ -361,13 +364,19 @@ class SMTP
 		return true;
 	}
 
+	// Encodes given text as MIME "encoded word"
+	protected function encode ($text)
+	{
+		return mb_encode_mimeheader ($text);
+	}
+
 	// Converts to/from/reply-to to a formatted string
 	public function format (array $recipient)
 	{
 		// Check if a name was given
 		if (!empty ($recipient['name'])) {
-			// If so, get name
-			$name = $recipient['name'];
+			// If so, get encoded name
+			$name = $this->encode ($recipient['name']);
 
 			// And construct email address in "name <email>" format
 			$address = $name . ' <' . $recipient['email'] . '>';
@@ -392,13 +401,14 @@ class SMTP
 		$headers[] = 'To: ' . $this->format ($this->to);
 		$headers[] = 'From: ' . $this->format ($this->from);
 		$headers[] = 'Reply-To: ' . $this->format ($this->reply);
-		$headers[] = 'Subject: ' . $this->subject;
+		$headers[] = 'Subject: ' . $this->encode ($this->subject);
 		$headers[] = 'Date: ' . date ('r');
 
 		// Check if message type is text
 		if ($this->type === 'text') {
 			// If so, only add headers for text version
 			$headers[] = 'Content-Type: text/plain; charset="UTF-8"';
+			$headers[] = 'Content-Transfer-Encoding: quoted-printable';
 			$headers[] = '';
 			$headers[] = $this->text;
 		} else {
@@ -415,6 +425,7 @@ class SMTP
 
 			// Add headers for text version
 			$headers[] = 'Content-Type: text/plain; charset="UTF-8"';
+			$headers[] = 'Content-Transfer-Encoding: quoted-printable';
 			$headers[] = '';
 			$headers[] = $this->text;
 
@@ -423,6 +434,7 @@ class SMTP
 
 			// Add headers for HTML version
 			$headers[] = 'Content-Type: text/html; charset="UTF-8"';
+			$headers[] = 'Content-Transfer-Encoding: quoted-printable';
 			$headers[] = '';
 			$headers[] = $this->html;
 

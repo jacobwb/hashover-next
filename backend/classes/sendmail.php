@@ -62,17 +62,26 @@ class Sendmail
 		$this->subject = strip_tags ($text);
 	}
 
+	// Converts text to CRLF line ending format
+	protected function toCRLF ($text)
+	{
+		return preg_replace ('/\r\n|\r|\n/', "\r\n", $text);
+	}
+
 	// Converts message to plain text
 	protected function plainText ($text)
 	{
 		// Strip HTML tags
 		$text = strip_tags ($text);
 
+		// Convert to CRLF line ending format
+		$text = $this->toCRLF ($text);
+
 		// Convert HTML entities to normal characters
 		$text = html_entity_decode ($text, ENT_COMPAT, 'UTF-8');
 
-		// Wordwrap text to 70 characters
-		$text = wordwrap ($text, 70, "\n");
+		// Encode text in quoted-printable format
+		$text = quoted_printable_encode ($text);
 
 		// And return text
 		return $text;
@@ -91,8 +100,11 @@ class Sendmail
 	// Sets message body to HTML
 	public function html ($html)
 	{
-		// Set body property
-		$this->html = $html;
+		// Convert to CRLF line ending format
+		$this->html = $this->toCRLF ($html);
+
+		// Encode HTML in quoted-printable format
+		$this->html = quoted_printable_encode ($this->html);
 
 		// Set automatic text version of message
 		if (empty ($this->text)) {
@@ -113,6 +125,12 @@ class Sendmail
 
 		// Otherwise, set body as plain text
 		return $this->text ($text);
+	}
+
+	// Encodes given text as MIME "encoded word"
+	protected function encode ($text)
+	{
+		return mb_encode_mimeheader ($text);
 	}
 
 	// Converts to/from/reply-to to a formatted string
@@ -149,6 +167,7 @@ class Sendmail
 		if ($this->type === 'text') {
 			// If so, add plain text header
 			$data[] = 'Content-Type: text/plain; charset="UTF-8"';
+			$data[] = 'Content-Transfer-Encoding: quoted-printable';
 		} else {
 			// If not, add multipart header
 			$data[] = 'Content-Type: multipart/alternative; boundary="' . $boundary . '"';
@@ -177,6 +196,7 @@ class Sendmail
 
 			// Add text version
 			$data[] = 'Content-Type: text/plain; charset="UTF-8"';
+			$data[] = 'Content-Transfer-Encoding: quoted-printable';
 			$data[] = '';
 			$data[] = $this->text;
 
@@ -185,6 +205,7 @@ class Sendmail
 
 			// Add HTML version
 			$data[] = 'Content-Type: text/html; charset="UTF-8"';
+			$data[] = 'Content-Transfer-Encoding: quoted-printable';
 			$data[] = '';
 			$data[] = $this->html;
 
@@ -205,8 +226,8 @@ class Sendmail
 		// Get email address we're sending email to
 		$to = $this->to['email'];
 
-		// Get subject
-		$subject = $this->subject;
+		// Get quoted-printable encoded subject
+		$subject = $this->encode ($this->subject);
 
 		// Create unique boundary
 		$boundary = md5 (uniqid (time ()));
