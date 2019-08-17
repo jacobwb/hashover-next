@@ -20,9 +20,9 @@
 class Sendmail
 {
 	// Email data to send
-	protected $to;
-	protected $from;
-	protected $reply;
+	protected $to = array ();
+	protected $from = array ();
+	protected $reply = array ();
 	protected $subject;
 	protected $text;
 
@@ -30,33 +30,36 @@ class Sendmail
 	protected $type = 'text';
 
 	// Sets who we're sending email to
-	public function to ($email)
+	public function to ($email, $name = null)
 	{
-		$this->to = $email;
+		$this->to['email'] = $email;
+		$this->to['name'] = $name;
 	}
 
 	// Sets where recipient can reply to
-	public function replyTo ($email)
+	public function replyTo ($email, $name = null)
 	{
-		$this->reply = $email;
+		$this->reply['email'] = $email;
+		$this->reply['name'] = $name;
 	}
 
 	// Sets who email is coming from
-	public function from ($email)
+	public function from ($email, $name = null)
 	{
-		// Set "from" email address
-		$this->from = $email;
+		// Set "from" email address and name
+		$this->from['email'] = $email;
+		$this->from['name'] = $name;
 
 		// Set "reply-to" the same way
-		if (empty ($this->reply)) {
-			$this->replyTo ($email);
+		if (empty ($this->reply['email'])) {
+			$this->replyTo ($email, $name);
 		}
 	}
 
 	// Sets subject line
 	public function subject ($text)
 	{
-		$this->subject = $text;
+		$this->subject = strip_tags ($text);
 	}
 
 	// Converts message to plain text
@@ -112,6 +115,25 @@ class Sendmail
 		return $this->text ($text);
 	}
 
+	// Converts to/from/reply-to to a formatted string
+	public function format (array $recipient)
+	{
+		// Check if a name was given
+		if (!empty ($recipient['name'])) {
+			// If so, encode name
+			$name = $this->encode ($recipient['name']);
+
+			// And construct email address in "name <email>" format
+			$address = $name . ' <' . $recipient['email'] . '>';
+		} else {
+			// If not, use email address as-is
+			$address = $recipient['email'];
+		}
+
+		// And return email address
+		return $address;
+	}
+
 	// Creates mail headers
 	protected function getHeaders ($boundary)
 	{
@@ -120,8 +142,8 @@ class Sendmail
 
 		// Add recipient headers
 		$data[] = 'MIME-Version: 1.0';
-		$data[] = 'From: ' . $this->from;
-		$data[] = 'Reply-To: ' . $this->reply;
+		$data[] = 'From: ' . $this->format ($this->from);
+		$data[] = 'Reply-To: ' . $this->format ($this->reply);
 
 		// Check if message type is text
 		if ($this->type === 'text') {
@@ -181,7 +203,7 @@ class Sendmail
 	public function send ()
 	{
 		// Get email address we're sending email to
-		$to = $this->to;
+		$to = $this->to['email'];
 
 		// Get subject
 		$subject = $this->subject;
