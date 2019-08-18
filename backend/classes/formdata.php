@@ -60,26 +60,6 @@ class FormData
 		// Attempt to get referer
 		$referer = Misc::getArrayItem ($_SERVER, 'HTTP_REFERER');
 
-		// Check if we're coming from an admin page
-		if (preg_match ('/' . $admin_path . '/i', $referer)) {
-			// If so, use it as the kickback URL
-			$this->referer = $_SERVER['HTTP_REFERER'];
-		} else {
-			// If not, check if posting from remote domain
-			if ($this->remoteAccess === true) {
-				// If so, use absolute path
-				$this->referer = $setup->pageURL;
-			} else {
-				// If not, use relative path
-				$this->referer = $setup->filePath;
-			}
-
-			// Add URL queries to kickback URL
-			if (!empty ($setup->urlQueries)) {
-				$this->referer .= '?' . $setup->urlQueries;
-			}
-		}
-
 		// Set status
 		if (isset ($request['status'])) {
 			$this->data['status'] = $this->forceUTF8 ($request['status']);
@@ -128,6 +108,26 @@ class FormData
 		// Set indicator of AJAX requests
 		if (isset ($request['ajax'])) {
 			$this->viaAJAX = true;
+		}
+
+		// Check if we're coming from an admin page
+		if (preg_match ('/' . $admin_path . '/i', $referer)) {
+			// If so, use it as the kickback URL
+			$this->referer = $_SERVER['HTTP_REFERER'];
+		} else {
+			// If not, check if posting from remote domain
+			if ($this->remoteAccess === true) {
+				// If so, use absolute path
+				$this->referer = $setup->pageURL;
+			} else {
+				// If not, use relative path
+				$this->referer = $setup->filePath;
+			}
+
+			// Add URL queries to kickback URL
+			if (!empty ($setup->urlQueries)) {
+				$this->referer .= '?' . $setup->urlQueries;
+			}
 		}
 	}
 

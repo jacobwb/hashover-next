@@ -22,19 +22,21 @@ class WriteComments extends Secrets
 	protected $setup;
 	protected $formData;
 	protected $thread;
+
 	protected $locale;
 	protected $cookies;
 	protected $login;
-	protected $metadata;
 	protected $crypto;
 	protected $avatar;
 	protected $templater;
 	protected $mail;
+
 	protected $name = '';
 	protected $password = '';
 	protected $loginHash = '';
 	protected $email = '';
 	protected $website = '';
+
 	protected $data = array ();
 	protected $urls = array ();
 
