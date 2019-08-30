@@ -29,7 +29,7 @@
 class SafeSettings
 {
 	// Primary settings
-	public $language		= 'auto';			// UI language, for example 'en', 'de', etc. 'auto' to use system locale
+	public $language		= 'auto';			// UI language, for example 'en_US', 'de_DE', etc. 'auto' to use system locale
 	public $theme			= 'default';			// Comment Cascading Style Sheet (CSS)
 	public $allowsImages		= true;				// Whether external image URLs wrapped in [img] tags are embedded
 	public $allowsLikes		= true;				// Whether a "Like" link is displayed
