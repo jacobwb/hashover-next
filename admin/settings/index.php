@@ -51,6 +51,7 @@ function ui_array (Setup $setup, Locale $locale)
 					'pt_BR' => 'Brazilian Portuguese',
 					'da_DK' => 'Danish',
 					'nl_NL' => 'Dutch',
+					'eo'    => 'Esperanto',
 					'fr_FR' => 'French',
 					'de_DE' => 'German',
 					'el_EL' => 'Greek',
