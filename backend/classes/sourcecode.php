@@ -345,7 +345,8 @@ class SourceCode
 		array (
 			'type' => 'Script',
 			'path' => 'backend/locales/ko-kr.php'
-		),array (
+		),
+		array (
 			'type' => 'Script',
 			'path' => 'backend/locales/lt-lt.php'
 		),
@@ -364,6 +365,10 @@ class SourceCode
 		array (
 			'type' => 'Script',
 			'path' => 'backend/locales/ro-ro.php'
+		),
+		array (
+			'type' => 'Script',
+			'path' => 'backend/locales/ru-ru.php'
 		),
 		array (
 			'type' => 'Script',
