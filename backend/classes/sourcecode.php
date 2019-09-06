@@ -356,6 +356,10 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
+			'path' => 'backend/locales/eo-eo.php'
+		),
+		array (
+			'type' => 'Script',
 			'path' => 'backend/locales/pl-pl.php'
 		),
 		array (
