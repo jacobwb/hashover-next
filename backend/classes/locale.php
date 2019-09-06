@@ -44,7 +44,7 @@ class Locale
 		// Check if we are automatically selecting the locale
 		if ($this->setup->language === 'auto') {
 			// If so, get system locale
-			$ctype = mb_strtolower (setlocale (LC_CTYPE, 0));
+			$ctype = setlocale (LC_CTYPE, 0);
 
 			// Split locale by encoding
 			$ctype_parts = explode ('.', $ctype);
@@ -56,14 +56,24 @@ class Locale
 			$locale = $this->setup->language;
 		}
 
+		// Convert current locale code to lowercase
+		$locale = mb_strtolower ($locale);
+
 		// Get path to locales directory
 		$locales_path = $this->setup->getAbsolutePath ('backend/locales');
 
-		// Get dashed locale code (en-us, de-de, etc.)
-		$name = str_replace ('_', '-', mb_strtolower ($locale));
+		// Convert locale code to dashed format (en-us, de-de, etc.)
+		if (strpos ($locale, '_') !== false) {
+			$locale = str_replace ('_', '-', $locale);
+		}
+
+		// Convert locale code to dashed format if it isn't hyphenated
+		if (strpos ($locale, '-') === false) {
+			$locale .= '-' . $locale;
+		}
 
 		// Locale file path to try
-		$locale_file = $locales_path . '/' . $name . '.php';
+		$locale_file = $locales_path . '/' . $locale . '.php';
 
 		// Try to use locale file for current locale
 		if (file_exists ($locale_file)) {
@@ -75,7 +85,7 @@ class Locale
 		}
 
 		// Otherwise, set language setting to English
-		$this->setup->language = 'en_US';
+		$this->setup->language = 'en-us';
 
 		// And return path to English locale
 		return $locales_path . '/en-us.php';
