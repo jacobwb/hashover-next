@@ -1,5 +1,5 @@
 // Converts an object in a series of URL queries (cfgqueries.js)
-HashOver.cfgQueries = function (value, name, queries)
+HashOverConstructor.cfgQueries = function (value, name, queries)
 {
 	// Current URL query matrix
 	name = name || [];
@@ -24,7 +24,7 @@ HashOver.cfgQueries = function (value, name, queries)
 
 	// Otherwise, descend in setting object
 	for (var key in value) {
-		HashOver.cfgQueries (value[key], name.concat (key), queries);
+		HashOverConstructor.cfgQueries (value[key], name.concat (key), queries);
 	}
 
 	// And return settings URL queries
