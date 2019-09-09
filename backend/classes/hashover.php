@@ -21,19 +21,19 @@ class HashOver
 {
 	protected $mode;
 	protected $setupChecks;
-	protected $commentCount;
 	protected $sortComments;
 	protected $popularList = array ();
 	protected $popularCount = 0;
 	protected $rawComments = array ();
+	protected $commentCount;
 	protected $collapseCount = 0;
 
 	public $statistics;
 	public $setup;
-	public $locale;
 	public $login;
 	public $thread;
 	public $templater;
+	public $locale;
 	public $commentParser;
 	public $cookies;
 	public $markdown;
@@ -135,9 +135,6 @@ class HashOver
 		// Instantiate cookies class
 		$this->cookies = new HashOver\Cookies ($this->setup);
 
-		// Generate comment count
-		$this->commentCount = $this->getCommentCount ();
-
 		// Instantiate markdown class
 		$this->markdown = new HashOver\Markdown ();
 
@@ -146,6 +143,9 @@ class HashOver
 
 		// Read all comments
 		$this->rawComments = $this->thread->read ();
+
+		// Generate comment count
+		$this->commentCount = $this->getCommentCount ();
 	}
 
 	// Save various metadata about the page
