@@ -42,6 +42,15 @@ try {
 	// Register initial constructor
 	$javascript->registerFile ('constructor.js');
 
+	// Change to standard frontend directory
+	$javascript->changeDirectory ('frontend');
+
+	// Register frontend settings URL queries converter method
+	$javascript->registerFile ('cfgqueries.js');
+
+	// Change back to count link frontend directory
+	$javascript->changeDirectory ('api/frontends/count-link');
+
 	// Register comment count AJAX request getter method
 	$javascript->registerFile ('getcommentcount.js');
 

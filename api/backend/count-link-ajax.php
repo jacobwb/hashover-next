@@ -39,6 +39,12 @@ try {
 	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');
 
+	// User settings passed during instantiation
+	$settings = $hashover->setup->getRequest ('cfg');
+
+	// Load user settings
+	$hashover->setup->loadFrontendSettings ($settings);
+
 	// Initiate and finalize comment processing
 	$hashover->initiate ();
 	$hashover->finalize ();
