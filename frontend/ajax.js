@@ -18,10 +18,13 @@ HashOverConstructor.prototype.jsonp = function (method, path, data, callback, as
 	data.push ('jsonp_object=' + constructor || 'HashOver');
 
 	// Create request script
-	var script = this.createElement ('script', {
-		src: path + '?' + data.join ('&'),
-		async: async
-	});
+	var script = document.createElement ('script');
+
+	// Set request script path
+	script.src = path + '?' + data.join ('&');
+
+	// Set request script to load type
+	script.async = async;
 
 	// Append request script to page
 	document.body.appendChild (script);

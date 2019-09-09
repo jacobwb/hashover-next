@@ -59,11 +59,7 @@ try {
 	));
 
 	// Register AJAX-related methods
-	$javascript->registerFile ('ajax.js', array (
-		'dependencies' => array (
-			'createelement.js'
-		)
-	));
+	$javascript->registerFile ('ajax.js');
 
 	// Register HashOver ready state detection method
 	$javascript->registerFile ('onready.js', array (
