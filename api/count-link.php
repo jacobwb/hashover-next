@@ -58,14 +58,16 @@ try {
 		)
 	));
 
-	// Register HashOver ready state detection method
-	$javascript->registerFile ('onready.js');
-
 	// Register AJAX-related methods
 	$javascript->registerFile ('ajax.js', array (
 		'dependencies' => array (
 			'createelement.js'
 		)
+	));
+
+	// Register HashOver ready state detection method
+	$javascript->registerFile ('onready.js', array (
+		'include' => !isset ($_GET['nodefault'])
 	));
 
 	// Change back to count link frontend directory
