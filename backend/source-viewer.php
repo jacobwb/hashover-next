@@ -35,6 +35,9 @@ try {
 		// Instantiate HashOver class
 		$hashover = new \HashOver ();
 
+		// Instantiate Locale class
+		$hashover->locale = new Locale ($hashover->setup);
+
 		// Set header for search engines to ignore files
 		header ('X-Robots-Tag: noindex, nofollow');
 

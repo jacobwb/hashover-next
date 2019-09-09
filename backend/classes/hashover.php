@@ -57,9 +57,6 @@ class HashOver
 		//Instantiate setup checks class
 		$this->setupChecks = new HashOver\SetupChecks ($this->setup);
 
-		// Instantiate locales class
-		$this->locale = new HashOver\Locale ($this->setup);
-
 		// Instantiate login class
 		$this->login = new HashOver\Login ($this->setup);
 
@@ -126,11 +123,8 @@ class HashOver
 	// Begin initialization work
 	public function initiate ()
 	{
-		// Query a list of comments
-		$this->thread->queryComments ();
-
-		// Read all comments
-		$this->rawComments = $this->thread->read ();
+		// Instantiate locales class
+		$this->locale = new HashOver\Locale ($this->setup);
 
 		// Instantiate comment parser class
 		$this->commentParser = new HashOver\CommentParser ($this->setup);
@@ -146,6 +140,12 @@ class HashOver
 
 		// Instantiate markdown class
 		$this->markdown = new HashOver\Markdown ();
+
+		// Query a list of comments
+		$this->thread->queryComments ();
+
+		// Read all comments
+		$this->rawComments = $this->thread->read ();
 	}
 
 	// Save various metadata about the page

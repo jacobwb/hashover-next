@@ -23,6 +23,9 @@ setup_autoloader ();
 // Instantiate HashOver class
 $hashover = new \HashOver ();
 
+// Instantiate Locale class
+$hashover->locale = new Locale ($hashover->setup);
+
 // Instantiate FileWriter class
 $data_files = new DataFiles ($hashover->setup);
 
