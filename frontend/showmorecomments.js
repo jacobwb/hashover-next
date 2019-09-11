@@ -1,6 +1,9 @@
 // Loads all comments and executes a callback to handle them (showmorecomments.js)
 HashOver.prototype.loadAllComments = function (element, callback)
 {
+	// Reference to this object
+	var hashover = this;
+
 	// Just execute callback  if all comments are already loaded
 	if (this.instance['comments-loaded'] === true) {
 		return callback ();
