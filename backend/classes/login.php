@@ -20,8 +20,8 @@
 class Login extends Secrets
 {
 	protected $setup;
-	protected $formData;
 	protected $cookies;
+	protected $formData;
 	protected $locale;
 	protected $crypto;
 	protected $loginMethod;
@@ -41,8 +41,8 @@ class Login extends Secrets
 		$this->setup = $setup;
 
 		// Instantiate various classes
-		$this->formData = new FormData ($setup);
 		$this->cookies = new Cookies ($setup);
+		$this->formData = new FormData ($setup);
 		$this->locale = new Locale ($setup);
 		$this->crypto = new Crypto ();
 

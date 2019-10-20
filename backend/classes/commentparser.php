@@ -22,9 +22,9 @@ class CommentParser
 {
 	protected $setup;
 	protected $login;
+	protected $cookies;
 	protected $locale;
 	protected $avatars;
-	protected $cookies;
 
 	protected $timeModify;
 	protected $currentDate;
@@ -40,9 +40,9 @@ class CommentParser
 
 		// Instantiate various classes
 		$this->login = new Login ($setup);
+		$this->cookies = new Cookies ($setup);
 		$this->locale = new Locale ($setup);
 		$this->avatars = new Avatars ($setup);
-		$this->cookies = new Cookies ($setup);
 
 		// Get current time
 		$current_time = new \DateTime ();

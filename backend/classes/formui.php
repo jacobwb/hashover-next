@@ -26,8 +26,8 @@ class FormUI
 	protected $locale;
 	protected $avatars;
 	protected $misc;
-	protected $cookies;
 	protected $login;
+	protected $cookies;
 	protected $pageTitle;
 	protected $pageURL;
 
@@ -48,8 +48,8 @@ class FormUI
 		// Instantiate various classes
 		$this->locale = new Locale ($setup);
 		$this->login = new Login ($setup);
-		$this->avatars = new Avatars ($setup);
 		$this->cookies = new Cookies ($setup);
+		$this->avatars = new Avatars ($setup);
 		$this->pageTitle = $this->setup->pageTitle;
 		$this->pageURL = $this->setup->pageURL;
 

@@ -31,11 +31,11 @@ class HashOver
 	public $statistics;
 	public $setup;
 	public $login;
+	public $cookies;
 	public $thread;
 	public $templater;
 	public $locale;
 	public $commentParser;
-	public $cookies;
 	public $markdown;
 	public $comments = array ();
 	public $ui;

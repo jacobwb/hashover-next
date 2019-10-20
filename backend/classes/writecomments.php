@@ -24,8 +24,8 @@ class WriteComments extends Secrets
 	protected $thread;
 
 	protected $locale;
-	protected $cookies;
 	protected $login;
+	protected $cookies;
 	protected $crypto;
 	protected $avatar;
 	protected $templater;
@@ -136,8 +136,8 @@ class WriteComments extends Secrets
 
 		// Instantiate various classes
 		$this->locale = new Locale ($setup);
-		$this->cookies = new Cookies ($setup);
 		$this->login = new Login ($setup);
+		$this->cookies = new Cookies ($setup);
 		$this->crypto = new Crypto ();
 		$this->avatars = new Avatars ($setup);
 		$this->templater = new Templater ($setup);

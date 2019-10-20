@@ -20,6 +20,7 @@
 class Cookies
 {
 	protected $setup;
+
 	protected $domain;
 	protected $secure = false;
 
@@ -27,6 +28,8 @@ class Cookies
 	{
 		// Store parameters as properties
 		$this->setup = $setup;
+
+		// Store domain from setup locally
 		$this->domain = $setup->domain;
 
 		// Remove port from domain
