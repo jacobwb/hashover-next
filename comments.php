@@ -27,11 +27,8 @@ try {
 	// Throw exception if requested by remote server
 	$setup->refererCheck ();
 
-	// User settings passed during instantiation
-	$settings = $setup->getRequest ('cfg');
-
 	// Load user settings
-	$setup->loadFrontendSettings ($settings);
+	$setup->loadFrontendSettings ();
 
 	// Instantiate HashOver statistics class
 	$statistics = new Statistics ('javascript');

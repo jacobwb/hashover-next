@@ -258,11 +258,21 @@ class Settings extends SensitiveSettings
 	}
 
 	// Override default settings by with cfg URL queries
-	public function loadFrontendSettings ($settings)
+	public function loadFrontendSettings ()
 	{
-		// Override settings if cfg queries is an array
-		if (is_array ($settings)) {
-			// Type juggle cfg queries
+		// Attempt to get user settings from GET data
+		if (!empty ($_GET['cfg'])) {
+			$settings = $_GET['cfg'];
+		}
+
+		// Attempt to get user settings from POST data
+		if (!empty ($_POST['cfg'])) {
+			$settings = $_POST['cfg'];
+		}
+
+		// Check if cfg queries is an array
+		if (!empty ($settings) and is_array ($settings)) {
+			// If so, type juggle cfg queries
 			$settings = $this->juggleStringArray ($settings);
 
 			// Only override settings safe to expose to the frontend

@@ -48,11 +48,8 @@ try {
 	// Set instance from POST/GET data
 	$hashover->setup->setInstance ('request');
 
-	// User settings passed during instantiation
-	$settings = $hashover->setup->getRequest ('cfg');
-
 	// Load user settings
-	$hashover->setup->loadFrontendSettings ($settings);
+	$hashover->setup->loadFrontendSettings ();
 
 	// Initiate, parse, and finalize comment processing
 	$hashover->initiate ();
