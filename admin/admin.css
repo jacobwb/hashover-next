@@ -313,6 +313,24 @@ table, .table, dl, .paragraph {
 	z-index: 1;
 }
 
+.docs-link {
+	display: inline-block;
+	border: 1px solid rgba(128, 128, 128, 0.5);
+	font-size: 14px;
+	line-height: 20px;
+	padding: 0px;
+	width: 1.5em;
+	height: 1.5em;
+	text-align: center;
+	border-radius: 2em;
+	vertical-align: top;
+	font-weight: bold;
+}
+
+a.docs-link:hover {
+	text-decoration: none;
+}
+
 .message:nth-child(n) {
 	position: relative;
 	font-weight: bold;

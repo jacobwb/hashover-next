@@ -550,27 +550,26 @@ function create_paragraph ($hashover, $name, array $setting)
 	// Setting description locale string
 	$text = $hashover->locale->text['setting-' . $name];
 
-	// Check for documentation URL
-	if (!empty ($setting['documentation'])) {
-		// If so, get lower case documentation locale string
-		$docs = mb_strtolower ($hashover->locale->text['documentation']);
-
-		// Create documentation link
-		$docs = new HTMLTag ('a', array (
-			'href' => $setting['documentation'],
-			'target' => '_blank',
-			'innerHTML' => $docs
-		), false);
-
-		// And append documentation link to description label text
-		$text .= sprintf (' (%s)', $docs->asHTML ());
-	}
-
 	// Create description label
 	$label = new HTMLTag ('label', array (
 		'for' => $name,
 		'innerHTML' => $text
 	), false);
+
+	// Get documentation locale string
+	$docs = $hashover->locale->text['documentation'];
+
+	// Create documentation link
+	$docs_link = new HTMLTag ('a', array (
+		'class' => 'docs-link',
+		'href' => '../docs/en-us/settings/#' . $name,
+		'target' => '_blank',
+		'title' => $docs,
+		'innerHTML' => '?'
+	), false);
+
+	// Append documentation link to description label
+	$label->appendChild ($docs_link);
 
 	// Handle specific setting types
 	switch ($setting['type']) {
