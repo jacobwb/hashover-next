@@ -39,7 +39,7 @@ class Cookies
 
 		// Transmit cookies over HTTPS if set so in Settings
 		if ($setup->secureCookies === true) {
-			$this->secure = !empty ($_SERVER['HTTPS']) ? true : false;
+			$this->secure = $setup->isHTTPS ();
 		}
 	}
 
