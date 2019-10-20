@@ -176,5 +176,5 @@ try {
 		}
 	}
 } catch (\Exception $error) {
-	echo Misc::displayException ($error, 'json');
+	$form_data->displayMessage ($error->getMessage ());
 }
