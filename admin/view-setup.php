@@ -23,6 +23,9 @@ setup_autoloader ();
 // Instantiate HashOver class
 $hashover = new \HashOver ();
 
+// Ensure cookies are enabled
+$hashover->setup->setsCookies = true;
+
 // Instantiate Locale class
 $hashover->locale = new Locale ($hashover->setup);
 

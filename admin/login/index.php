@@ -27,7 +27,7 @@ try {
 	// Check if the user submitted login information
 	if (!empty ($_POST['name']) and !empty ($_POST['password'])) {
 		// If so, attempt to log them in
-		$hashover->login->setLogin ();
+		$hashover->login->setAdminLogin ();
 
 		// Check if user is admin
 		if ($hashover->login->isAdmin () === true) {

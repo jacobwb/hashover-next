@@ -48,7 +48,7 @@ class FormUI
 		// Instantiate various classes
 		$this->locale = new Locale ($setup);
 		$this->login = new Login ($setup);
-		$this->cookies = new Cookies ($setup);
+		$this->cookies = new Cookies ($setup, $this->login);
 		$this->avatars = new Avatars ($setup);
 		$this->pageTitle = $this->setup->pageTitle;
 		$this->pageURL = $this->setup->pageURL;

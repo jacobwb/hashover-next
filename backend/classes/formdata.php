@@ -41,7 +41,7 @@ class FormData
 		'zip'
 	);
 
-	public function __construct (Setup $setup)
+	public function __construct (Setup $setup, Cookies $cookies)
 	{
 		// Store parameters as properties
 		$this->setup = $setup;
@@ -49,7 +49,7 @@ class FormData
 		// Instantiate various classes
 		$this->locale = new Locale ($setup);
 		$this->spamCheck = new SpamCheck ($setup);
-		$this->cookies = new Cookies ($setup);
+		$this->cookies = $cookies;
 
 		// Use POST or GET based on whether request is for JSONP
 		$request = isset ($_GET['jsonp']) ? $_GET : $_POST;

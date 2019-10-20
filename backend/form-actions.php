@@ -85,7 +85,7 @@ try {
 	$hashover->setup->setThreadName ('request');
 
 	// Instantiate FormData class
-	$form_data = new FormData ($hashover->setup);
+	$form_data = new FormData ($hashover->setup, $hashover->cookies);
 
 	// Handle user login
 	if (isset ($request['login'])) {

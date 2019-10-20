@@ -60,6 +60,9 @@ class HashOver
 		// Instantiate login class
 		$this->login = new HashOver\Login ($this->setup);
 
+		// Instantiate cookies class
+		$this->cookies = new HashOver\Cookies ($this->setup, $this->login);
+
 		// Instantiate class for reading comments
 		$this->thread = new HashOver\Thread ($this->setup);
 
@@ -131,9 +134,6 @@ class HashOver
 
 		// Instantiate comment sorting class
 		$this->sortComments = new HashOver\SortComments ($this->setup);
-
-		// Instantiate cookies class
-		$this->cookies = new HashOver\Cookies ($this->setup);
 
 		// Instantiate markdown class
 		$this->markdown = new HashOver\Markdown ();

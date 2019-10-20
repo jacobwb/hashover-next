@@ -40,7 +40,7 @@ class CommentParser
 
 		// Instantiate various classes
 		$this->login = new Login ($setup);
-		$this->cookies = new Cookies ($setup);
+		$this->cookies = new Cookies ($setup, $this->login);
 		$this->locale = new Locale ($setup);
 		$this->avatars = new Avatars ($setup);
 

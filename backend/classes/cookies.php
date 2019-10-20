@@ -20,14 +20,17 @@
 class Cookies
 {
 	protected $setup;
+	protected $login;
 
 	protected $domain;
+	protected $enabled = true;
 	protected $secure = false;
 
-	public function __construct (Setup $setup)
+	public function __construct (Setup $setup, Login $login)
 	{
 		// Store parameters as properties
 		$this->setup = $setup;
+		$this->login = $login;
 
 		// Store domain from setup locally
 		$this->domain = $setup->domain;
@@ -78,8 +81,12 @@ class Cookies
 		// Use specific expiration date or configured date
 		$date = $date ?: $this->getCookieExpiration ();
 
-		// Set the cookie if cookies are enabled
-		if ($this->setup->setsCookies !== false) {
+		// Shorter variables for cleaner code
+		$set_cookie = $this->setup->setsCookies;
+		$is_admin = $this->login->userIsAdmin;
+
+		// Set cookie only if they are enable or user is Admin
+		if ($set_cookie === true or $is_admin === true) {
 			setcookie ($name, $value, $date, '/', $this->domain, $this->secure, true);
 		}
 	}

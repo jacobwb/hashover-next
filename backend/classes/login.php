@@ -41,8 +41,8 @@ class Login extends Secrets
 		$this->setup = $setup;
 
 		// Instantiate various classes
-		$this->cookies = new Cookies ($setup);
-		$this->formData = new FormData ($setup);
+		$this->cookies = new Cookies ($setup, $this);
+		$this->formData = new FormData ($setup, $this->cookies);
 		$this->locale = new Locale ($setup);
 		$this->crypto = new Crypto ();
 
@@ -211,6 +211,16 @@ class Login extends Secrets
 		$this->loginMethod->setLogin ();
 	}
 
+	// Admin login method
+	public function setAdminLogin ()
+	{
+		// Set login method credentials
+		$this->setCredentials ();
+
+		// Execute login method's setLogin
+		$this->loginMethod->setLogin ();
+	}
+
 	// Weak verification of an admin login
 	public function isAdmin ()
 	{
@@ -243,9 +253,6 @@ class Login extends Secrets
 
 		// Update login credentials
 		$this->updateCredentials ();
-
-		// Check if required fields have values
-		$this->validateFields ();
 
 		// And login method's setLogin
 		$this->loginMethod->setLogin ();
