@@ -193,20 +193,35 @@ class Login extends Secrets
 			return;
 		}
 
-		// Check login requirements
+		// Do nothing if login method is disabled
+		if ($this->loginMethod->enabled === false) {
+			return;
+		}
+
+		// Otherwise, throw exception if a non-HashOver login is required
 		$this->checkRequirements ('Normal login not allowed!');
 
-		// Check if login method is enabled
-		if ($this->loginMethod->enabled === true) {
-			// If so, set login method credentials
-			$this->setCredentials ();
+		// Set login method credentials
+		$this->setCredentials ();
 
-			// Check if required fields have values
-			$this->validateFields ();
+		// Check if required fields have values
+		$this->validateFields ();
 
-			// Execute login method's setLogin
-			$this->loginMethod->setLogin ();
-		}
+		// Execute login method's setLogin
+		$this->loginMethod->setLogin ();
+	}
+
+	// Weak verification of an admin login
+	public function isAdmin ()
+	{
+		// Create login hash
+		$hash = hash ('ripemd160', $this->adminName . $this->adminPassword);
+
+		// Check if the hashes match
+		$match = ($this->loginHash === $hash);
+
+		// And return match
+		return $match;
 	}
 
 	// Logs user in as admin
@@ -234,19 +249,6 @@ class Login extends Secrets
 
 		// And login method's setLogin
 		$this->loginMethod->setLogin ();
-	}
-
-	// Weak verification of an admin login
-	public function isAdmin ()
-	{
-		// Create login hash
-		$hash = hash ('ripemd160', $this->adminName . $this->adminPassword);
-
-		// Check if the hashes match
-		$match = ($this->loginHash === $hash);
-
-		// And return match
-		return $match;
 	}
 
 	// Strict verification of an admin login

@@ -38,7 +38,10 @@ if (isset ($_GET['jsonp'])) {
 // Sets cookie indicating what comment was liked
 function set_like (&$hashover, $like_hash, $set, &$likes)
 {
+	// Set cookie
 	$hashover->cookies->set ($like_hash, $set, mktime (0, 0, 0, 11, 26, 3468));
+
+	// Increase like count
 	$likes = $likes + 1;
 }
 

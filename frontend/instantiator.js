@@ -21,6 +21,13 @@ HashOver.instantiator = function (id, options, instance)
 		'time=' + HashOver.getClientTime ()
 	]);
 
+	// Set instance number
+	this.instanceNumber = instance;
+
+	// Store options and backend queries
+	this.options = options;
+	this.queries = backendQueries;
+
 	// Handle backend request
 	this.ajax ('POST', requestPath, queries, function (json) {
 		// Handle error messages
@@ -64,13 +71,6 @@ HashOver.instantiator = function (id, options, instance)
 		// Initiate HashOver
 		hashover.init (id);
 	}, true);
-
-	// Set instance number
-	this.instanceNumber = instance;
-
-	// Store options and backend queries
-	this.options = options;
-	this.queries = backendQueries;
 
 	// And increment instance count where appropriate
 	if (specific === false) {

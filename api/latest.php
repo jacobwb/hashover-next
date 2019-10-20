@@ -48,11 +48,11 @@ try {
 	// Change to standard frontend directory
 	$javascript->changeDirectory ('frontend');
 
-	// Register client time getter method
-	$javascript->registerFile ('getclienttime.js');
-
 	// Register HashOver script tag getter method
 	$javascript->registerFile ('script.js');
+
+	// Register client time getter method
+	$javascript->registerFile ('getclienttime.js');
 
 	// Register backend path setter
 	$javascript->registerFile ('backendpath.js', array (

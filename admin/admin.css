@@ -184,7 +184,7 @@ table, .table, dl, .paragraph {
 }
 
 .navigation.steps {
-	margin-bottom: 2em;
+	margin-bottom: 3em;
 	border: 1px solid #CCCCCC;
 	text-align: center;
 	white-space: nowrap;
