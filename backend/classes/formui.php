@@ -196,15 +196,15 @@ class FormUI
 				$input_cell->appendChild ($label);
 			}
 
+			// Add a class for indicating a required field
+			if ($this->setup->formFields[$field] === 'required') {
+				$input_cell->appendAttribute ('class', 'hashover-required-input');
+			}
+
 			// Create wrapper element for input
 			$input_wrapper = new HTMLTag ('div', array (
 				'class' => $attributes['wrapper-class']
 			));
-
-			// Add a class for indicating a required field
-			if ($this->setup->formFields[$field] === 'required') {
-				$input_wrapper->appendAttribute ('class', 'hashover-required-input');
-			}
 
 			// Add a class for indicating a post failure
 			if ($this->emphasizedField === $field) {
