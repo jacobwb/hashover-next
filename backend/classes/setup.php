@@ -39,7 +39,7 @@ class Setup extends Settings
 
 	// Required extensions to check for
 	protected $extensions = array (
-		'date', 'dom', 'json', 'mbstring', 'openssl', 'pcre'
+		'date', 'dom', 'json', 'mbstring', 'openssl', 'pcre', 'intl'
 	);
 
 	// Characters to convert to dashes in thread names
