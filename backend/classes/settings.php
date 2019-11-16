@@ -211,6 +211,9 @@ class Settings extends SensitiveSettings
 		if (is_array ($settings)) {
 			// If so, use it to override settings
 			$this->overrideSettings ($settings, 'Settings');
+		} else {
+			// If not, just synchronize settings
+			$this->syncSettings ();
 		}
 	}
 
