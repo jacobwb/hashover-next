@@ -987,6 +987,11 @@ class FormUI
 		// Add comment count element to wrapper element
 		$count_sort_wrapper->appendChild ($count_element);
 
+		// Hide comment count if there are no comments
+		if ($this->commentCounts['total'] <= 1) {
+			$count_sort_wrapper->createAttribute ('style', 'display: none;');
+		}
+
 		// JavaScript mode specific HTML
 		if ($this->mode !== 'php') {
 			// Hide wrapper if comments are to be initially hidden
@@ -994,8 +999,8 @@ class FormUI
 				$comments_section->createAttribute ('style', 'display: none;');
 			}
 
-			// Hide comment count if collapse limit is set at zero
-			if ($this->setup->collapseLimit <= 0 or $this->commentCounts['total'] <= 1) {
+			// Hide comment count if collapse limit is set to zero
+			if ($this->setup->collapseLimit <= 0) {
 				$count_sort_wrapper->createAttribute ('style', 'display: none;');
 			}
 
