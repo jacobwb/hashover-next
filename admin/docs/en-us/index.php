@@ -30,7 +30,7 @@ try {
 	);
 
 	// Load and parse HTML template
-	echo parse_templates ('../admin', 'index.html', $template, $hashover);
+	echo parse_templates ('../admin', 'en-us.html', $template, $hashover);
 
 } catch (\Exception $error) {
 	echo Misc::displayException ($error);
