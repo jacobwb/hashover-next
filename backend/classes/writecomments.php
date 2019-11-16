@@ -768,8 +768,8 @@ class WriteComments extends Secrets
 		// Otherwise, decrypt reply e-mail address
 		$reply_email = $this->crypto->decrypt ($reply['email'], $reply['encryption']);
 
-		// Check if reply e-mail is different than login's
-		if ($reply_email !== $this->email) {
+		// Check if reply e-mail is different than login's and admin's
+		if ($reply_email !== $this->email and $reply_email !== $this->notificationEmail) {
 			// If so, set message to be sent to reply comment e-mail
 			$this->mail->to ($reply_email);
 
