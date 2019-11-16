@@ -141,6 +141,11 @@ try {
 		// If so, attempt to get array of websites
 		$websites = $hashover->thread->queryWebsites ();
 
+		// Add domain to array of websites if it isn't present
+		if (!in_array ($hashover->setup->domain, $websites)) {
+			$websites[] = $hashover->setup->domain;
+		}
+
 		// Check if other websites exist
 		if (count ($websites) > 1) {
 			// If so, create comment thread table
