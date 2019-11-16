@@ -669,7 +669,7 @@ class WriteComments extends Secrets
 		$data['name'] = $name;
 
 		// Add domain name to data
-		$data['domain'] = $this->setup->domain;
+		$data['domain'] = $this->setup->website;
 
 		// Add plain text comment to data
 		$data['text-comment'] = $this->indentWordwrap ($this->data['body']);
@@ -692,7 +692,7 @@ class WriteComments extends Secrets
 		$data['title'] = $this->setup->pageTitle;
 
 		// Add message about what website is sending the e-mail to data
-		$data['sent-by'] = sprintf ($this->locale->text['sent-by'], $this->setup->domain);
+		$data['sent-by'] = sprintf ($this->locale->text['sent-by'], $this->setup->website);
 
 		// Attempt to read reply comment
 		$reply = $this->thread->data->read ($this->formData->replyTo);
@@ -721,7 +721,7 @@ class WriteComments extends Secrets
 		$text_body = $this->templater->parseTheme ('email-notification.txt', $data);
 
 		// Set subject to "New Comment - <domain here>"
-		$this->mail->subject ($new_comment . ' - ' . $this->setup->domain);
+		$this->mail->subject ($new_comment . ' - ' . $this->setup->website);
 
 		// Set plain text version of the message
 		$this->mail->text ($text_body);
