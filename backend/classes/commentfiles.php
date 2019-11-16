@@ -38,7 +38,7 @@ class CommentFiles extends DataFiles
 	{
 		// Use thread directory path if told to
 		if ($thread !== 'auto') {
-			return $this->setup->threadsPath . '/' . $thread;
+			return $this->setup->joinPaths ($this->setup->threadsPath, $thread);
 		}
 
 		// Otherwise, use thread from setup
@@ -52,7 +52,7 @@ class CommentFiles extends DataFiles
 		$thread = $this->getThreadRoot ($thread);
 
 		// Construct full file path
-		$path = $thread . '/' . $file . '.' . $extension;
+		$path = $this->setup->joinPaths ($thread, $file . '.' . $extension);
 
 		return $path;
 	}
@@ -104,7 +104,7 @@ class CommentFiles extends DataFiles
 		$directory = $this->getMetaDirectory ($thread, $global);
 
 		// Metadata file path
-		$path = $directory . '/' . $name . '.json';
+		$path = $this->setup->joinPaths ($directory, $name . '.json');
 
 		// Return metadata file path
 		return $path;
@@ -292,7 +292,7 @@ class CommentFiles extends DataFiles
 	{
 		// Add thread to file if metadata is global
 		if ($global === true) {
-			$file = $this->setup->threadName . '/' . $file;
+			$file = $this->setup->joinPaths ($this->setup->threadName, $file);
 		}
 
 		// Initial latest comments metadata array
@@ -324,7 +324,7 @@ class CommentFiles extends DataFiles
 	{
 		// Add thread to file if metadata is global
 		if ($global === true) {
-			$file = $this->setup->threadName . '/' . $file;
+			$file = $this->setup->joinPaths ($this->setup->threadName, $file);
 		}
 
 		// Get metadata file path

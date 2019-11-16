@@ -184,7 +184,7 @@ class Setup extends Settings
 		$host = $this->isLocalhost ($host) ? 'localhost' : $host;
 
 		// Append website host to comments directory path
-		$this->commentsPath = $this->commentsRoot . '/' . $host;
+		$this->commentsPath = $this->joinPaths ($this->commentsRoot, $host);
 
 		// Set threads directory path
 		$this->threadsPath = $this->commentsPath . '/threads';
@@ -225,7 +225,7 @@ class Setup extends Settings
 		$this->remoteAccess = true;
 
 		// Make HTTP root path absolute
-		$this->httpRoot = $this->absolutePath . $this->httpRoot;
+		$this->httpRoot = $this->joinPaths ($this->absolutePath, $this->httpRoot);
 
 		// Synchronize settings
 		$this->syncSettings ();
@@ -462,7 +462,7 @@ class Setup extends Settings
 		$name = $this->getSafeThreadName ($name);
 
 		// Set thread directory path
-		$this->threadPath = $this->threadsPath . '/' . $name;
+		$this->threadPath = $this->joinPaths ($this->threadsPath, $name);
 
 		// And set thread name
 		$this->threadName = $name;

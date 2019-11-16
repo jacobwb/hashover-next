@@ -63,16 +63,35 @@ class Settings extends SensitiveSettings
 		$this->httpRoot = $http_directory;
 
 		// Backend directory for HTTP
-		$this->httpBackend = $http_directory . '/backend';
+		$this->httpBackend = $this->joinPaths ($http_directory, 'backend');
 
 		// Image directory for HTTP
-		$this->httpImages = $http_directory . '/images';
+		$this->httpImages = $this->joinPaths ($http_directory, 'images');
 
 		// Domain name for refer checking & notifications
 		$this->domain = Misc::getArrayItem ($_SERVER, 'HTTP_HOST') ?: 'localhost';
 
 		// Load JSON settings
 		$this->loadSettingsFile ();
+	}
+
+	// Joins to paths together with proper slashes in between
+	public function joinPaths ($path1, $path2)
+	{
+		// Remove trailing slashes from first path
+		$path1 = rtrim ($path1, '/');
+
+		// Remove leading and trailing slashes from second path
+		$path2 = trim ($path2, '/');
+
+		// Construct new path
+		$path = $path1 . '/' . $path2;
+
+		// Remove trailing slashes from new path
+		$path = rtrim ($path, '/');
+
+		// And return new path
+		return $path;
 	}
 
 	// Checks if connection is on HTTPS/SSL
@@ -156,10 +175,10 @@ class Settings extends SensitiveSettings
 		}
 
 		// Backend directory for HTTP
-		$this->httpBackend = $this->httpRoot . '/backend';
+		$this->httpBackend = $this->joinPaths ($this->httpRoot, 'backend');
 
 		// Image directory for HTTP
-		$this->httpImages = $this->httpRoot . '/images';
+		$this->httpImages = $this->joinPaths ($this->httpRoot, 'images');
 	}
 
 	// Accepts an array of settings to override default settings
@@ -283,25 +302,25 @@ class Settings extends SensitiveSettings
 	// Returns a server-side absolute file path
 	public function getAbsolutePath ($file)
 	{
-		return $this->rootDirectory . '/' . trim ($file, '/');
+		return $this->joinPaths ($this->rootDirectory, $file);
 	}
 
 	// Returns a client-side path for a file within the HashOver root
 	public function getHttpPath ($file)
 	{
-		return $this->httpRoot . '/' . trim ($file, '/');
+		return $this->joinPaths ($this->httpRoot, $file);
 	}
 
 	// Returns a client-side path for a file within the backend directory
 	public function getBackendPath ($file)
 	{
-		return $this->httpBackend . '/' . trim ($file, '/');
+		return $this->joinPaths ($this->httpBackend, $file);
 	}
 
 	// Returns a client-side path for a file within the images directory
 	public function getImagePath ($filename)
 	{
-		$path  = $this->httpImages . '/' . trim ($filename, '/');
+		$path  = $this->joinPaths ($this->httpImages, $filename);
 		$path .= '.' . $this->imageFormat;
 
 		return $path;
@@ -311,7 +330,7 @@ class Settings extends SensitiveSettings
 	public function getThemePath ($file, $http = true)
 	{
 		// Path to the requested file in the configured theme
-		$theme_file = $this->themePath . '/' . $file;
+		$theme_file = $this->joinPaths ($this->themePath, $file);
 
 		// Use the same file from the default theme if it doesn't exist
 		if (!file_exists ($this->getAbsolutePath ($theme_file))) {

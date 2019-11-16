@@ -72,7 +72,7 @@ function parse_templates ($template, $fragment, array $data, \HashOver $hashover
 	// Merge some default informatin into template data
 	$data = array_merge ($data, array (
 		// HTTP root directory
-		'root' => $hashover->setup->httpRoot,
+		'root' => rtrim ($hashover->setup->httpRoot, '/'),
 
 		// HTTP admin root directory
 		'admin' => $hashover->setup->getHttpPath ('admin'),
