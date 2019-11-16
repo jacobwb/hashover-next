@@ -20,6 +20,11 @@ conditions, unless such conditions are required by law.
 	color: #222222;
 }
 
+.hashover,
+.hashover textarea {
+	line-height: 1.5em;
+}
+
 .hashover > div {
 	display: block;
 }
@@ -410,6 +415,10 @@ conditions, unless such conditions are required by law.
 	color: #FCFCFC;
 }
 
+.hashover .hashover-footer {
+	line-height: 1em;
+}
+
 .hashover .hashover-footer *,
 .hashover .hashover-form-footer * {
 	vertical-align: top;
@@ -625,6 +634,7 @@ conditions, unless such conditions are required by law.
 }
 
 .hashover select {
+	min-height: auto;
 	height: 24px;
 }
 
@@ -940,6 +950,9 @@ conditions, unless such conditions are required by law.
 
 .hashover code.hashover-inline {
 	display: inline;
+	font-family: inherit;
+	font-size: inherit;
+	vertical-align: initial;
 	padding: 1px 4px;
 }
 
