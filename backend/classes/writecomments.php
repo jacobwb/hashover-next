@@ -693,7 +693,7 @@ class WriteComments extends Secrets
 		// Add page URL to data
 		$data['title'] = $this->setup->pageTitle;
 
-		// Add message about where the e-mail is coming from to data
+		// Add message about what website is sending the e-mail to data
 		$data['sent-by'] = sprintf ($this->locale->text['sent-by'], $this->setup->domain);
 
 		// Attempt to read reply comment
@@ -752,30 +752,30 @@ class WriteComments extends Secrets
 			$this->mail->send ();
 		}
 
-		// Do nothing else if the reply comment failed to read
+		// Do nothing else if reply comment failed to read
 		if ($reply === false) {
 			return;
 		}
 
-		// Do nothing else if the reply comment lacks e-mail and decrypt info
+		// Do nothing else if reply comment lacks e-mail and decrypt info
 		if (empty ($reply['email']) or empty ($reply['encryption'])) {
 			return;
 		}
 
-		// Do nothing else if the reply comment poster disabled notifications
-		if (!empty ($reply['notifications']) and $reply['notifications'] === 'no') {
+		// Do nothing else if reply comment poster disabled notifications
+		if (Misc::getArrayItem ($reply, 'notifications') === 'no') {
 			return;
 		}
 
-		// Otherwise, decrypt the reply e-mail address
+		// Otherwise, decrypt reply e-mail address
 		$reply_email = $this->crypto->decrypt ($reply['email'], $reply['encryption']);
 
-		// Check if the reply e-mail is different than the one logged in
+		// Check if reply e-mail is different than login's
 		if ($reply_email !== $this->email) {
-			// If not, set message to be sent to reply comment e-mail
+			// If so, set message to be sent to reply comment e-mail
 			$this->mail->to ($reply_email);
 
-			// If so, check if users are allowed to reply by email
+			// Check if users are allowed to reply by email
 			if ($this->setup->allowsUserReplies === true) {
 				// If so, set e-mail as coming from posting user
 				$this->mail->from ($this->email);

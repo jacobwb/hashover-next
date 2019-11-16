@@ -94,23 +94,6 @@ class Settings extends SensitiveSettings
 		return $path;
 	}
 
-	// Checks if connection is on HTTPS/SSL
-	public function isHTTPS ()
-	{
-		// The connection is HTTPS if server says so
-		if (!empty ($_SERVER['HTTPS']) and $_SERVER['HTTPS'] !== 'off') {
-			return true;
-		}
-
-		// Assume connection is HTTPS on standard SSL port
-		if (Misc::getArrayItem ($_SERVER, 'SERVER_PORT') === '443') {
-			return true;
-		}
-
-		// Otherwise, assume connection is HTTP
-		return false;
-	}
-
 	// Synchronizes specific settings after remote changes
 	public function syncSettings ()
 	{
@@ -224,8 +207,9 @@ class Settings extends SensitiveSettings
 		// Parse JSON data
 		$settings = @json_decode ($json, true);
 
-		// Load setting only if data is an array
+		// Check if JSON data parsed as an array
 		if (is_array ($settings)) {
+			// If so, use it to override settings
 			$this->overrideSettings ($settings, 'Settings');
 		}
 	}
@@ -343,6 +327,23 @@ class Settings extends SensitiveSettings
 		}
 
 		return $theme_file;
+	}
+
+	// Checks if connection is on HTTPS/SSL
+	public function isHTTPS ()
+	{
+		// The connection is HTTPS if server says so
+		if (!empty ($_SERVER['HTTPS']) and $_SERVER['HTTPS'] !== 'off') {
+			return true;
+		}
+
+		// Assume connection is HTTPS on standard SSL port
+		if (Misc::getArrayItem ($_SERVER, 'SERVER_PORT') === '443') {
+			return true;
+		}
+
+		// Otherwise, assume connection is HTTP
+		return false;
 	}
 
 	// Check if a given API format is enabled
