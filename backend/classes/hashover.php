@@ -450,7 +450,8 @@ class HashOver
 		$phpmode = new HashOver\PHPMode (
 			$this->setup,
 			$this->ui,
-			$this->comments
+			$this->comments,
+			$this->rawComments
 		);
 
 		// Check if we have popular comments

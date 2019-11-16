@@ -22,6 +22,8 @@ class PHPMode
 	protected $setup;
 	protected $ui;
 	protected $comments;
+	protected $rawComments;
+	protected $crypto;
 	protected $locale;
 	protected $templater;
 	protected $markdown;
@@ -40,14 +42,16 @@ class PHPMode
 	protected $paragraphRegex = '/(?:\r\n|\r|\n){2}/S';
 	protected $lineRegex = '/(?:\r\n|\r|\n)/S';
 
-	public function __construct (Setup $setup, CommentsUI $ui, array $comments)
+	public function __construct (Setup $setup, CommentsUI $ui, array $comments, array $raw)
 	{
 		// Store parameters as properties
 		$this->setup = $setup;
 		$this->ui = $ui;
 		$this->comments = $comments;
+		$this->rawComments = $raw;
 
 		// Instantiate various classes
+		$this->crypto = new Crypto ();
 		$this->locale = new Locale ($setup);
 		$this->templater = new Templater ($setup);
 		$this->markdown = new Markdown ();
@@ -99,9 +103,17 @@ class PHPMode
 			$body = preg_replace ($this->linkRegex, '\\1', $body);
 			$status = Misc::getArrayItem ($comment, 'status') ?: 'approved';
 			$name = Misc::getArrayItem ($comment, 'name') ?: '';
-			$email = Misc::getArrayItem ($comment, 'email') ?: '';
 			$website = Misc::getArrayItem ($comment, 'website') ?: '';
 			$subscribed = isset ($comment['subscribed']);
+
+			if (!empty ($this->rawComments[$file])) {
+				$raw_comment = $this->rawComments[$file];
+				$email = Misc::getArrayItem ($raw_comment, 'email') ?: '';
+				$encryption = Misc::getArrayItem ($raw_comment, 'encryption') ?: '';
+				$email = $this->crypto->decrypt ($email, $encryption);
+			} else {
+				$email = '';
+			}
 
 			$form = new HTMLTag ('form', array (
 				'id' => $this->ui->prefix ('edit-' . $permalink),
