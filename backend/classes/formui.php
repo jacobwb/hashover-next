@@ -1133,10 +1133,10 @@ class FormUI
 		// HashOver Comments hyperlink text
 		$homepage_link_text = $this->locale->text['hashover-comments'];
 
-		// Create link back to HashOver homepage (fixme! get a real page!)
+		// Create link back to HashOver homepage
 		$homepage_link = new HTMLTag ('a', array (
 			'rel' => 'nofollow',
-			'href' => 'http://tildehash.com/?page=hashover',
+			'href' => 'https://www.barkdull.org/software/hashover',
 			'class' => 'hashover-home-link',
 			'target' => '_blank',
 			'title' => $homepage_link_text,
