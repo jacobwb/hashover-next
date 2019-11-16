@@ -160,8 +160,16 @@ class Sendmail
 
 		// Add recipient headers
 		$data[] = 'MIME-Version: 1.0';
-		$data[] = 'From: ' . $this->format ($this->from);
-		$data[] = 'Reply-To: ' . $this->format ($this->reply);
+
+		// Set From address if one is present
+		if (!empty ($this->from['email'])) {
+			$data[] = 'From: ' . $this->format ($this->from);
+		}
+
+		// Set Reply-To address if one is present
+		if (!empty ($this->reply['email'])) {
+			$data[] = 'Reply-To: ' . $this->format ($this->reply);
+		}
 
 		// Check if message type is text
 		if ($this->type === 'text') {
@@ -238,10 +246,16 @@ class Sendmail
 		// Get email headers
 		$headers = $this->getHeaders ($boundary);
 
-		// Set envelope sender address with -f option
-		$params = '-f' . $this->reply['email'];
+		// Check if a From email address is set
+		if (!empty ($this->from['email'])) {
+			// If so, set envelope sender address with -f option
+			$params = '-f ' . $this->from['email'];
 
-		// And actually send the email
-		mail ($to, $subject, $message, $headers, $params);
+			// And actually send the email
+			mail ($to, $subject, $message, $headers, $params);
+		} else {
+			// If not, send email normally
+			mail ($to, $subject, $message, $headers);
+		}
 	}
 }
