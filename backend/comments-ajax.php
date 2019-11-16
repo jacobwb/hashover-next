@@ -128,6 +128,7 @@ try {
 			'stream-mode'		=> ($hashover->setup->replyMode === 'stream'),
 			'stream-depth'		=> $hashover->setup->streamDepth,
 			'theme-css'		=> $hashover->setup->getThemePath ('comments.css'),
+			'rss-api'		=> $hashover->setup->getHttpPath ('api/rss.php'),
 			'image-format'		=> $hashover->setup->imageFormat,
 			'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
 			'collapses-interface'	=> $hashover->setup->collapsesInterface,

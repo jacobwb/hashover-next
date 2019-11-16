@@ -10,7 +10,7 @@ HashOver.prototype.appendRSS = function ()
 	// Create link element for comment RSS feed
 	var rss = this.createElement ('link', {
 		rel: 'alternate',
-		href: this.setup['http-root'] + '/api/rss.php?url=' + pageURL,
+		href: this.setup['rss-api'] + '?url=' + pageURL,
 		type: 'application/rss+xml',
 		title: 'Comments'
 	});
