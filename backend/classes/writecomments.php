@@ -265,9 +265,7 @@ class WriteComments extends Secrets
 			// Check if comment file was deleted successfully
 			if ($deleted === true) {
 				// If so, remove comment from latest comments metadata
-				if ($unlink_comment === true) {
-					$this->thread->data->removeFromLatest ($this->formData->file);
-				}
+				$this->thread->data->removeFromLatest ($this->formData->file);
 
 				// And return true
 				return true;
