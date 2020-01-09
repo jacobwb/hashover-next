@@ -116,4 +116,4 @@ HashOver on Windows, please report them.
 
 Information and Documentation
 ---
-Forthcoming.
+[Official HashOver 2.0 Documentation](https://docs.barkdull.org/hashover-v2)
