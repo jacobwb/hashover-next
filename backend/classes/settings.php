@@ -117,6 +117,9 @@ class Settings extends SensitiveSettings
 			}
 		}
 
+		// Convert timezone to ICU-style title case format, eg. America/Los_Angeles
+		$this->serverTimezone = ucwords ($this->serverTimezone, '/_');
+
 		// Disable likes and dislikes if cookies are disabled
 		if ($this->setsCookies === false) {
 			$this->allowsLikes = false;
