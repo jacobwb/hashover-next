@@ -150,19 +150,10 @@ try {
 
 	// Register append comments method
 	$javascript->registerFile ('appendcomments.js', array (
-		'include' => $setup->collapsesComments and $setup->usesAjax,
+		'include' => $setup->usesAjax,
 
 		'dependencies' => array (
 			'htmlchildren.js'
-		)
-	));
-
-	// Register show more comments method
-	$javascript->registerFile ('showmorecomments.js', array (
-		'include' => $setup->collapsesComments,
-
-		'dependencies' => array (
-			'hidemorelink.js'
 		)
 	));
 
@@ -256,7 +247,12 @@ try {
 
 	// Register show comments method
 	$javascript->registerFile ('showmorelink.js', array (
-		'include' => $setup->collapsesComments
+		'include' => $setup->collapsesComments,
+
+		'dependencies' => array (
+			'showmorecomments.js',
+			'hidemorelink.js'
+		)
 	));
 
 	// Register initialization method
