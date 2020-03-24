@@ -634,6 +634,7 @@ function create_paragraph ($hashover, $name, array $setting)
 		$paragraph->appendChild ($element);
 	}
 
+	// And return paragraph element
 	return $paragraph;
 }
 

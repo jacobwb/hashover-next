@@ -175,14 +175,6 @@ try {
 	// Register comment validator event handler method
 	$javascript->registerFile ('validatecomment.js');
 
-	// Register AJAX comment post request method
-	$javascript->registerFile ('postrequest.js', array (
-		'include' => $setup->usesAjax
-	));
-
-	// Register comment post method
-	$javascript->registerFile ('postcomment.js');
-
 	// Register AJAX post comment event handler method
 	$javascript->registerFile ('ajaxpost.js', array (
 		'include' => $setup->usesAjax,
@@ -201,6 +193,14 @@ try {
 			'htmlchildren.js'
 		)
 	));
+
+	// Register AJAX comment post request method
+	$javascript->registerFile ('postrequest.js', array (
+		'include' => $setup->usesAjax
+	));
+
+	// Register comment post method
+	$javascript->registerFile ('postcomment.js');
 
 	// Register file from permalink method
 	$javascript->registerFile ('permalinkfile.js');
