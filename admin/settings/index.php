@@ -568,9 +568,6 @@ function create_paragraph ($hashover, $name, array $setting)
 		'innerHTML' => '?'
 	), false);
 
-	// Append documentation link to description label
-	$label->appendChild ($docs_link);
-
 	// Handle specific setting types
 	switch ($setting['type']) {
 		// Create checkbox for enabling/disabling the setting
@@ -626,8 +623,14 @@ function create_paragraph ($hashover, $name, array $setting)
 
 		// Then append label element to paragraph
 		$paragraph->appendChild ($label);
+
+		// Append documentation link to description and value paragraph
+		$paragraph->appendChild ($docs_link);
 	} else {
-		// If not, append label element to paragraph
+		// If not, append documentation link to description label
+		$label->appendChild ($docs_link);
+
+		// Append label element to paragraph
 		$paragraph->appendChild ($label);
 
 		// Then append setting value element to paragraph
