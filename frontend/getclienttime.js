@@ -10,4 +10,4 @@ HashOverConstructor.getClientTime = function ()
 	var time = hours + ':' + minutes;
 
 	return time;
-}
+};
