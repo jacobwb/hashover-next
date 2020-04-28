@@ -284,34 +284,35 @@ class Setup extends Settings
 		);
 	}
 
+	// Processes POST or GET data depending on its type
+	protected function processRequest ($request)
+	{
+		// Check if GET or POST data is type string
+		if (gettype ($request) === 'string') {
+			// If so, strip escape slashes if enabled
+			if (get_magic_quotes_gpc ()) {
+				$request = stripslashes ($request);
+			}
+
+			// URL decode value
+			$request = urldecode ($request);
+		}
+
+		// And return POST or GET data
+		return $request;
+	}
+
 	// Gets value from POST or GET data
 	public function getRequest ($key, $default = false)
 	{
-		// Attempt to obtain GET data
-		if (!empty ($_GET[$key])) {
-			$request = $_GET[$key];
-		}
-
-		// Attempt to obtain POST data
+		// Attempt to get and process POST data
 		if (!empty ($_POST[$key])) {
-			$request = $_POST[$key];
+			return $this->processRequest ($_POST[$key]);
 		}
 
-		// Check if we got a value from POST or GET
-		if (!empty ($request)) {
-			// Check if GET or POST data is type string
-			if (gettype ($request) === 'string') {
-				// If so, strip escape slashes if enabled
-				if (get_magic_quotes_gpc ()) {
-					$request = stripslashes ($request);
-				}
-
-				// URL decode value
-				$request = urldecode ($request);
-			}
-
-			// And return POST or GET data
-			return $request;
+		// Attempt to get and process GET data
+		if (!empty ($_GET[$key])) {
+			return $this->processRequest ($_GET[$key]);
 		}
 
 		// Otherwise, return default
