@@ -122,10 +122,8 @@ class Cookies
 			// If so, store as value for cleaner code
 			$value = $_COOKIE[$name];
 
-			// Strip escaping backslashes from cookie value
-			if (get_magic_quotes_gpc ()) {
-				$value = stripslashes ($value);
-			}
+			// Strip escape slashes from cookie value
+			$value = $this->setup->stripMagicQuotes ($value);
 
 			// Return trimmed value if told to
 			if ($trim === true) {

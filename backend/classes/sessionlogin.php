@@ -74,10 +74,8 @@ class SessionLogin
 			// If so, store as value for cleaner code
 			$value = $_SESSION[$name];
 
-			// Strip escaping backslashes from session value
-			if (get_magic_quotes_gpc ()) {
-				$value = stripslashes ($value);
-			}
+			// Strip escape slashes from session value
+			$value = $this->setup->stripMagicQuotes ($value);
 
 			// Return trimmed value if told to
 			if ($trim === true) {

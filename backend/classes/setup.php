@@ -284,15 +284,28 @@ class Setup extends Settings
 		);
 	}
 
+	// Strips magic quote escape slashes from string if present
+	public function stripMagicQuotes ($data)
+	{
+		// Check if magic quotes are supported
+		if (function_exists ('get_magic_quotes_gpc')) {
+			// If so, strip escape slashes from string if they are enabled
+			if (@get_magic_quotes_gpc ()) {
+				$data = stripslashes ($data);
+			}
+		}
+
+		// And return data
+		return $data;
+	}
+
 	// Processes POST or GET data depending on its type
 	protected function processRequest ($request)
 	{
 		// Check if GET or POST data is type string
 		if (gettype ($request) === 'string') {
 			// If so, strip escape slashes if enabled
-			if (get_magic_quotes_gpc ()) {
-				$request = stripslashes ($request);
-			}
+			$request = $this->stripMagicQuotes ($request);
 
 			// URL decode value
 			$request = urldecode ($request);
