@@ -134,6 +134,7 @@ try {
 		'sub-title'	=> $hashover->locale->text['moderation-sub'],
 		'left-id'	=> 'threads-column',
 		'threads'	=> $threads_table->asHTML ("\t\t\t\t"),
+		'import-bt'	=> $hashover->locale->text['import-bt'],
 	);
 
 	// Check if multiple website support is enabled

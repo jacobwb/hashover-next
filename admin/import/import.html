@@ -1,0 +1,21 @@
+
+<div>
+	<div style="color:green;">{success_msg}</div>
+	<div style="color:red;">{error_msg}</div>
+</div>
+
+
+<form method="post" class="general-style" enctype="multipart/form-data" style="display:{form_display}">
+	<input type="hidden" name="op" value="import_disqus_comments" />
+	
+	<p>
+		{import-file-desc}<br /><br />
+		<input name="zip_file" type="file" />
+	</p>
+
+	<p>
+		<br /><input id="save-button" type="submit" name="save" value="{import-bt}">
+	</p>
+	
+	<div>{foobar}</div>
+</form>

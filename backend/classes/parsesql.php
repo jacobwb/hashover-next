@@ -224,4 +224,11 @@ class ParseSQL extends Database
 
 		return $status;
 	}
+	
+	// Saves a comment into database
+	public function SQL ($sql, $data = null)
+	{
+		return $this->executeStatement ($sql, $data);
+	}
+	
 }

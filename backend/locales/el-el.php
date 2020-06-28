@@ -239,4 +239,9 @@ $locale = array (
 	'setting-password-field'		=> 'Πεδίο κωδικού χρήστη, για επεξεργασία δικαιωμάτων',
 	'setting-email-field'			=> 'Πεδίο ηλεκτρονικού ταχυδρομείου ειδοποίησης χρήστη',
 	'setting-website-field'			=> 'Πεδίο διεύθυνσης URL ιστοτόπου χρήστη'
+	
+	// [2020-06-25 caos30] for import comments from Disqus (by now)
+	'import-bt'				=> 'Import',
+	'import-desc'			=> 'Import comments from Disqus (by now).',
+	'import-file-desc'		=> 'ZIP file <a>exported from Disqus</a> (if it\'s GZ you must convert it to ZIP):',
 );

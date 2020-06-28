@@ -239,4 +239,9 @@ $locale = array (
 	'setting-password-field'		=> 'کاربر رمز عبور، برای ویرایش امتیازات',
 	'setting-email-field'			=> 'نامه پست الکترونیکی اطلاع رسانی کاربر',
 	'setting-website-field'			=> 'نشانی اینترنتی وب سایت کاربر'
+	
+	// [2020-06-25 caos30] for import comments from Disqus (by now)
+	'import-bt'				=> 'Import',
+	'import-desc'			=> 'Import comments from Disqus (by now).',
+	'import-file-desc'		=> 'ZIP file <a>exported from Disqus</a> (if it\'s GZ you must convert it to ZIP):',
 );

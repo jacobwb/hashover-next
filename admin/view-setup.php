@@ -83,6 +83,7 @@ function parse_templates ($template, $fragment, array $data, \HashOver $hashover
 		'url-filtering' => $hashover->locale->text['filter-url-queries'],
 		'settings' => $hashover->locale->text['settings'],
 		'updates' => $hashover->locale->text['check-for-updates'],
+		'import-bt' => $hashover->locale->text['import-bt'],
 		'docs' => $hashover->locale->text['documentation'],
 		'logout' => $hashover->locale->text['logout'],
 

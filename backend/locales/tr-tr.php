@@ -239,4 +239,9 @@ $locale = array (
 	'setting-password-field'		=> 'Ayrıcalıkları düzenlemek için kullanıcı şifresi alanı',
 	'setting-email-field'			=> 'Kullanıcı bildirimi e-posta alanı',
 	'setting-website-field'			=> 'Kullanıcı web sitesi URL alanı'
+	
+	// [2020-06-25 caos30] for import comments from Disqus (by now)
+	'import-bt'				=> 'Import',
+	'import-desc'			=> 'Import comments from Disqus (by now).',
+	'import-file-desc'		=> 'ZIP file <a>exported from Disqus</a> (if it\'s GZ you must convert it to ZIP):',
 );

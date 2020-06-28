@@ -239,4 +239,9 @@ $locale = array (
 	'setting-password-field'		=> '편집 권한을위한 사용자 암호 필드',
 	'setting-email-field'			=> '사용자 통지 전자 우편 필드',
 	'setting-website-field'			=> '사용자 웹 사이트 URL 필드'
+	
+	// [2020-06-25 caos30] for import comments from Disqus (by now)
+	'import-bt'				=> 'Import',
+	'import-desc'			=> 'Import comments from Disqus (by now).',
+	'import-file-desc'		=> 'ZIP file <a>exported from Disqus</a> (if it\'s GZ you must convert it to ZIP):',
 );

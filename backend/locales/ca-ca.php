@@ -238,5 +238,11 @@ $locale = array (
 	'setting-name-field'			=> 'Camp de nom d\'usuari',
 	'setting-password-field'		=> 'Camp de contrasenya d\'usuari, per privilegis d\'edició',
 	'setting-email-field'			=> 'Camp de correu electrònic de l\'usuari per enviar-li notificacions',
-	'setting-website-field'			=> 'Camp de URL del lloc web de l\'usuari'
+	'setting-website-field'			=> 'Camp de URL del lloc web de l\'usuari',
+	
+	// [2020-06-25 caos30] for import comments from Disqus (by now)
+	'import-bt'				=> 'Importar',
+	'import-desc'			=> 'Importar comentaris des de Disqus (de moment).',
+	'import-file-desc'		=> 'Fitxer ZIP <a>exportat des de Disqus</a> (si és GZ cal convertir-ho a ZIP):',
+	
 );

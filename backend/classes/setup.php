@@ -438,7 +438,7 @@ class Setup extends Settings
 	}
 
 	// Gets an OS-agnostic safe directory name
-	protected function getSafeThreadName ($name)
+	public function getSafeThreadName ($name)
 	{
 		// Replace reserved characters with dashes
 		$name = str_replace ($this->dashFromThreads, '-', $name);

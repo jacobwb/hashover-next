@@ -239,4 +239,10 @@ $locale = array (
 	'setting-password-field'		=> 'Campo de contraseña de usuario, para privilegios de edición',
 	'setting-email-field'			=> 'Campo de correo electrónico del usuario para enviarle notificaciones',
 	'setting-website-field'			=> 'Campo de URL del sitio web del usuario'
+
+	// [2020-06-25 caos30] for import comments from Disqus (by now)
+	'import-bt'				=> 'Importar',
+	'import-desc'			=> 'Importar comentarios desde Disqus (de momento).',
+	'import-file-desc'		=> 'Archivo ZIP <a>exportado desde Disqus</a> (si es GZ hace falta convertirlo a ZIP):',
+	
 );

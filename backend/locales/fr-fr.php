@@ -246,4 +246,9 @@ $locale = array (
 	'setting-password-field'		=> 'Champ de mot de passe utilisateur, pour modifier les privilèges',
 	'setting-email-field'			=> 'Champ e-mail de notification de l\'utilisateur',
 	'setting-website-field'			=> 'Champ URL du site Web de l\'utilisateur.'
+	
+	// [2020-06-25 caos30] for import comments from Disqus (by now)
+	'import-bt'				=> 'Import',
+	'import-desc'			=> 'Import comments from Disqus (by now).',
+	'import-file-desc'		=> 'ZIP file <a>exported from Disqus</a> (if it\'s GZ you must convert it to ZIP):',
 );
