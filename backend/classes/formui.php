@@ -120,7 +120,8 @@ class FormUI
 				'input-type'		=> 'text',
 				'input-name'		=> 'name',
 				'input-title'		=> $this->locale->text['name-tip'],
-				'input-value'		=> Misc::makeXSSsafe ($this->login->name)
+				'input-value'		=> Misc::makeXSSsafe ($this->login->name),
+				'autocomplete'		=> 'username'
 			),
 
 			'password' => array (
@@ -131,7 +132,8 @@ class FormUI
 				'input-type'		=> 'password',
 				'input-name'		=> 'password',
 				'input-title'		=> $this->locale->text['password-tip'],
-				'input-value'		=> ''
+				'input-value'		=> '',
+				'autocomplete'		=> 'current-password'
 			),
 
 			'email' => array (
@@ -142,7 +144,8 @@ class FormUI
 				'input-type'		=> 'email',
 				'input-name'		=> 'email',
 				'input-title'		=> $this->locale->text['email-tip'],
-				'input-value'		=> Misc::makeXSSsafe ($this->login->email)
+				'input-value'		=> Misc::makeXSSsafe ($this->login->email),
+				'autocomplete'		=> 'off'
 			),
 
 			'website' => array (
@@ -153,7 +156,8 @@ class FormUI
 				'input-type'		=> 'url',
 				'input-name'		=> 'website',
 				'input-title'		=> $this->locale->text['website-tip'],
-				'input-value'		=> Misc::makeXSSsafe ($this->login->website)
+				'input-value'		=> Misc::makeXSSsafe ($this->login->website),
+				'autocomplete'		=> 'off'
 			)
 		);
 
@@ -218,6 +222,7 @@ class FormUI
 				'type' => $attributes['input-type'],
 				'name' => $attributes['input-name'],
 				'value' => $attributes['input-value'],
+				'autocomplete' => $attributes['autocomplete'],
 				'title' => $attributes['input-title'],
 				'placeholder' => $attributes['placeholder']
 			), false, true);
