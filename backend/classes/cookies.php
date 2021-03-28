@@ -85,7 +85,7 @@ class Cookies
 		$set_cookie = $this->setup->setsCookies;
 		$is_admin = $this->login->userIsAdmin;
 
-		// Set cookie only if they are enable or user is Admin
+		// Set cookie only if they are enabled or user is Admin
 		if ($set_cookie === true or $is_admin === true) {
 			setcookie ($name, $value, $date, '/', $this->domain, $this->secure, true);
 		}

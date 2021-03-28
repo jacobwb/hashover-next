@@ -668,7 +668,7 @@ class WriteComments extends Secrets
 		// Add name of commenter or configurable default name to data
 		$data['name'] = $name;
 
-		// Add domain name to data
+		// Add website/domain name to data
 		$data['domain'] = $this->setup->website;
 
 		// Add plain text comment to data
