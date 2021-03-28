@@ -338,9 +338,39 @@ class Settings extends SensitiveSettings
 	// Checks if connection is on HTTPS/SSL
 	public function isHTTPS ()
 	{
-		// The connection is HTTPS if server says so
-		if (!empty ($_SERVER['HTTPS']) and $_SERVER['HTTPS'] !== 'off') {
-			return true;
+		// Request headers that use an INI-style format (on/1, off/0/empty)
+		$ini_style = array (
+			'HTTPS',
+			'HTTP_X_FORWARDED_SSL',
+			'HTTP_FRONT_END_HTTPS'
+		);
+
+		// Request headers that store an actual protocol (http/https)
+		$protocols = array (
+			'HTTP_X_FORWARDED_PROTO',
+			'HTTP_X_FORWARDED_PROTOCOL'
+		);
+
+		// Run through INI-style headers
+		foreach ($ini_style as $key) {
+			// Attempt to get HTTPS header
+			$https = Misc::getArrayItem ($_SERVER, $key);
+
+			// The connection is HTTPS if server says so
+			if (strtolower ($https) === 'on' or $https === '1') {
+				return true;
+			}
+		}
+
+		// Run through protocol headers
+		foreach ($protocols as $key) {
+			// Attempt to get protocol header
+			$proto = Misc::getArrayItem ($_SERVER, $key);
+
+			// The connection is HTTPS if client requested HTTPS
+			if (strtolower ($proto) === 'https') {
+				return true;
+			}
 		}
 
 		// Assume connection is HTTPS on standard SSL port
