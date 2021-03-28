@@ -662,6 +662,15 @@ class WriteComments extends Secrets
 		// E-mail hash for Gravatar or empty for default avatar
 		$hash = Misc::getArrayItem ($this->data, 'email_hash') ?: '';
 
+		// Check if we don't have a specific website name
+		if ($this->setup->website === 'all') {
+			// If so, use current domain name without www.
+			$domain = str_replace ('www.', '', $this->setup->domain);
+		} else {
+			// If not, use multisite website name as domain name
+			$domain = $this->setup->website;
+		}
+
 		// Add avatar to data
 		$data['avatar'] = $this->avatars->getGravatar ($hash, true, 128);
 
@@ -669,7 +678,7 @@ class WriteComments extends Secrets
 		$data['name'] = $name;
 
 		// Add website/domain name to data
-		$data['domain'] = $this->setup->website;
+		$data['domain'] = $domain;
 
 		// Add plain text comment to data
 		$data['text-comment'] = $this->indentWordwrap ($this->data['body']);
@@ -692,7 +701,7 @@ class WriteComments extends Secrets
 		$data['title'] = $this->setup->pageTitle;
 
 		// Add message about what website is sending the e-mail to data
-		$data['sent-by'] = sprintf ($this->locale->text['sent-by'], $this->setup->website);
+		$data['sent-by'] = sprintf ($this->locale->text['sent-by'], $domain);
 
 		// Attempt to read reply comment
 		$reply = $this->thread->data->read ($this->formData->replyTo);
@@ -721,7 +730,7 @@ class WriteComments extends Secrets
 		$text_body = $this->templater->parseTheme ('email-notification.txt', $data);
 
 		// Set subject to "New Comment - <domain here>"
-		$this->mail->subject ($new_comment . ' - ' . $this->setup->website);
+		$this->mail->subject ($new_comment . ' - ' . $domain);
 
 		// Set plain text version of the message
 		$this->mail->text ($text_body);
