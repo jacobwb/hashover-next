@@ -24,6 +24,9 @@ try {
 	// View setup
 	require (realpath ('../view-setup.php'));
 
+	// Ensure cookies are enabled
+	$hashover->setup->setsCookies = true;
+
 	// Check if the user submitted login information
 	if (!empty ($_POST['name']) and !empty ($_POST['password'])) {
 		// If so, attempt to log them in
