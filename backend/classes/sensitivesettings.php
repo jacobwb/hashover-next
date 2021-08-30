@@ -57,7 +57,7 @@ class SensitiveSettings extends SafeSettings
 	public $enabledApi		= array ('all');		// An array of enabled API. 'all' = fully-enabled, empty array = fully disabled
 	public $latestMax		= 10;				// Maximum number of comments to save as latest comments
 	public $unlinksFiles		= false;			// Whether user deleted files are actually unlinked from the filesystem
-	public $localMetadata		= false;			// Whether metadata should be collected while running on a local server
+	public $localMetadata		= true;				// Whether metadata should be collected while running on a local server
 
 	// Whether multiple website support is enabled
 	public $supportsMultisites = false;
