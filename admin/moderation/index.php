@@ -87,7 +87,9 @@ try {
 	$threads_body = new HTMLTag ('tbody');
 
 	// Add table head if multiple website support is enabled
-	if ($hashover->setup->supportsMultisites === true) {
+	if ($hashover->setup->supportsMultisites !== true) {
+		add_table_head ($threads_table, $hashover->locale->text['threads']);
+	} else {
 		add_table_head ($threads_table, $website);
 	}
 
@@ -123,6 +125,13 @@ try {
 
 		// And row div to table body
 		add_table_row ($threads_body, $div);
+	}
+
+	// Display message about there being no threads if thread count is zero
+	if (count ($threads) === 0) {
+		add_table_row ($threads_body, new HTMLTag ('div', array (
+			'innerHTML' => $hashover->locale->text['no-threads']
+		)));
 	}
 
 	// Add table body to table
