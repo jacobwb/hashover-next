@@ -85,8 +85,8 @@ $locale = array (
 	'sort-by-discussion'	=> 'Tartışma göre',
 	'sort-by-popularity'	=> 'Popülariteye göre',
 	'sort-by-name'		=> 'Yorum yapana göre',
-	'sort-threads'		=> 'Ipler',
-	'thread'		=> '%s\'a cevaben',
+	'threads'		=> 'Ipler',
+	'in-reply-to'		=> '%s\'a cevaben',
 	'thread-tip'		=> 'Konunun başına dön',
 	'comments'		=> 'Yorum',
 	'replies'		=> 'Cevap',
@@ -169,6 +169,7 @@ $locale = array (
 
 	'settings-sub'		=> 'Değişik ayarları değiştir',
 	'moderation-sub'	=> 'Yorumları yayınla, düzenle, onayla ve sil',
+	'no-threads'		=> 'No threads found. Create one by using HashOver on one of your web pages and posting a comment.',
 
 	'general'		=> 'Genel',
 	'e-mail'		=> 'E-mail',

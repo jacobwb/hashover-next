@@ -85,8 +85,8 @@ $locale = array (
 	'sort-by-discussion'	=> '토의 순',
 	'sort-by-popularity'	=> '인기도순',
 	'sort-by-name'		=> '작성자순',
-	'sort-threads'		=> '글타래',
-	'thread'		=> '%s 에 대한 답글',
+	'threads'		=> '글타래',
+	'in-reply-to'		=> '%s 에 대한 답글',
 	'thread-tip'		=> '맨 처음으로',
 	'comments'		=> '댓글',
 	'replies'		=> '답글',
@@ -169,6 +169,7 @@ $locale = array (
 
 	'settings-sub'		=> '다양한 설정 변경',
 	'moderation-sub'	=> '의견 게시, 수정, 승인 및 삭제',
+	'no-threads'		=> 'No threads found. Create one by using HashOver on one of your web pages and posting a comment.',
 
 	'general'		=> '일반',
 	'e-mail'		=> '이메일',

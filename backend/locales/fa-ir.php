@@ -85,8 +85,8 @@ $locale = array (
 	'sort-by-discussion'	=> 'گفتگوها',
 	'sort-by-popularity'	=> 'معروفیت',
 	'sort-by-name'		=> 'دیدگاه دهنده',
-	'sort-threads'		=> 'دیدگاه‌ها',
-	'thread'		=> 'در پاسخ به %s',
+	'threads'		=> 'دیدگاه‌ها',
+	'in-reply-to'		=> 'در پاسخ به %s',
 	'thread-tip'		=> 'برو به اولین دیدگاه',
 	'comments'		=> 'دیدگاه‌ها',
 	'replies'		=> 'پاسخ‌ها',
@@ -169,6 +169,7 @@ $locale = array (
 
 	'settings-sub'		=> 'تغییر تنظیمات مختلف',
 	'moderation-sub'	=> 'ارسال، ویرایش، تایید و حذف نظرات',
+	'no-threads'		=> 'No threads found. Create one by using HashOver on one of your web pages and posting a comment.',
 
 	'general'		=> 'عمومی',
 	'e-mail'		=> 'پست الکترونیک',

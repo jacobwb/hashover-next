@@ -86,7 +86,7 @@ function ui_array (Setup $setup, Locale $locale)
 					'by-replies'	=> $locale->text['sort-by-replies'],
 					'by-name'	=> $locale->text['sort-by-name'],
 
-					'sort-threads' => array (
+					'threads' => array (
 						'threaded-descending'	=> $locale->text['sort-descending'],
 						'threaded-by-date'	=> $locale->text['sort-by-date'],
 						'threaded-by-likes'	=> $locale->text['sort-by-likes'],

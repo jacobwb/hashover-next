@@ -715,7 +715,7 @@ class WriteComments extends Secrets
 			$data['reply-name'] = $reply_name;
 
 			// Add "In reply to" locale string to data
-			$data['in-reply-to'] = sprintf ($this->locale->text['thread'], $reply_name);
+			$data['in-reply-to'] = sprintf ($this->locale->text['in-reply-to'], $reply_name);
 
 			// Add indented body of recipient's comment to data
 			$data['text-reply'] = $this->indentWordwrap ($reply['body']);

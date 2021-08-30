@@ -94,8 +94,8 @@ $locale = array (
 	'sort-by-discussion'	=> 'Pagal diskusijas',
 	'sort-by-popularity'	=> 'Pagal populiarumą',
 	'sort-by-name'		=> 'Pagal komentuotoją',
-	'sort-threads'		=> 'Temas',
-	'thread'		=> 'Į viršų',
+	'threads'		=> 'Temas',
+	'in-reply-to'		=> 'Į viršų',
 	'thread-tip'		=> 'Į viršų',
 	'comments'		=> 'Komentarai',
 	'replies'		=> 'Atsakymai',
@@ -178,6 +178,7 @@ $locale = array (
 
 	'settings-sub'		=> 'Keisti įvairius nustatymus',
 	'moderation-sub'	=> 'Skelbti, redaguoti, patvirtinti ir ištrinti komentarus',
+	'no-threads'		=> 'No threads found. Create one by using HashOver on one of your web pages and posting a comment.',
 
 	'general'		=> 'Bendra informacija',
 	'e-mail'		=> 'El. Paštas',

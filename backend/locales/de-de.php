@@ -85,8 +85,8 @@ $locale = array (
 	'sort-by-discussion'	=> 'Nach Diskussionen',
 	'sort-by-popularity'	=> 'Nach Popularität',
 	'sort-by-name'		=> 'Nach Kommentator',
-	'sort-threads'		=> 'Threads',
-	'thread'		=> 'Als Antwort auf %s',
+	'threads'		=> 'Threads',
+	'in-reply-to'		=> 'Als Antwort auf %s',
 	'thread-tip'		=> 'Spring zum Anfang des Threads',
 	'comments'		=> 'Kommentare',
 	'replies'		=> 'Antworten',
@@ -169,6 +169,7 @@ $locale = array (
 
 	'settings-sub'		=> 'Verschiedene Einstellungen ändern',
 	'moderation-sub'	=> 'Kommentare posten, bearbeiten, genehmigen und löschen',
+	'no-threads'		=> 'No threads found. Create one by using HashOver on one of your web pages and posting a comment.',
 
 	'general'		=> 'Allgemeines',
 	'e-mail'		=> 'Email',

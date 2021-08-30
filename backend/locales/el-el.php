@@ -85,8 +85,8 @@ $locale = array (
 	'sort-by-discussion'	=> 'Κατά συζήτηση',
 	'sort-by-popularity'	=> 'Κατά δημοφιλία',
 	'sort-by-name'		=> 'Κατά σχολιαστή',
-	'sort-threads'		=> 'Νήματα',
-	'thread'		=> 'Ως απάντηση σε %s',
+	'threads'		=> 'Νήματα',
+	'in-reply-to'		=> 'Ως απάντηση σε %s',
 	'thread-tip'		=> 'Μεταφορά στην αρχή του νήματος',
 	'comments'		=> 'Σχόλια',
 	'replies'		=> 'Απαντήσεις',
@@ -169,6 +169,7 @@ $locale = array (
 
 	'settings-sub'		=> 'Αλλάξτε διάφορες ρυθμίσεις',
 	'moderation-sub'	=> 'Αποστολή, επεξεργασία, έγκριση και διαγραφή σχολίων',
+	'no-threads'		=> 'No threads found. Create one by using HashOver on one of your web pages and posting a comment.',
 
 	'general'		=> 'Γενικός',
 	'e-mail'		=> 'ΗΛΕΚΤΡΟΝΙΚΗ ΔΙΕΥΘΥΝΣΗ',

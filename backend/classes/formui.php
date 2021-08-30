@@ -1062,7 +1062,7 @@ class FormUI
 
 				// Create option group for threaded sort options
 				$threaded_optgroup = new HTMLTag ('optgroup', array (
-					'label' => $this->locale->text['sort-threads']
+					'label' => $this->locale->text['threads']
 				));
 
 				// Array of select tag threaded sort options

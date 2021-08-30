@@ -85,8 +85,8 @@ $locale = array (
 	'sort-by-discussion'	=> '議論することによって',
 	'sort-by-popularity'	=> '人気順',
 	'sort-by-name'		=> '評価順',
-	'sort-threads'		=> 'ツリー形式',
-	'thread'		=> '%sへの返信',
+	'threads'		=> 'ツリー形式',
+	'in-reply-to'		=> '%sへの返信',
 	'thread-tip'		=> 'スレッドの先頭にジャンプ',
 	'comments'		=> 'コメント',
 	'replies'		=> '回答',
@@ -169,6 +169,7 @@ $locale = array (
 
 	'settings-sub'		=> 'さまざまな設定を変更する',
 	'moderation-sub'	=> 'コメントの投稿、編集、承認、削除',
+	'no-threads'		=> 'No threads found. Create one by using HashOver on one of your web pages and posting a comment.',
 
 	'general'		=> '一般的な',
 	'e-mail'		=> 'メール',

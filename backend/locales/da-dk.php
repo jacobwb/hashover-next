@@ -85,8 +85,8 @@ $locale = array (
 	'sort-by-discussion'	=> 'Efter diskussion',
 	'sort-by-popularity'	=> 'Efter popularitet',
 	'sort-by-name'		=> 'Efter navn',
-	'sort-threads'		=> 'Tråde',
-	'thread'		=> 'I svar til %s',
+	'threads'		=> 'Tråde',
+	'in-reply-to'		=> 'I svar til %s',
 	'thread-tip'		=> 'Hop til toppen af tråden',
 	'comments'		=> 'Kommentarer',
 	'replies'		=> 'Svar',
@@ -169,6 +169,7 @@ $locale = array (
 
 	'settings-sub'		=> 'Skift forskellige indstillinger',
 	'moderation-sub'	=> 'Indlæg, redigere, godkende og slet kommentarer',
+	'no-threads'		=> 'No threads found. Create one by using HashOver on one of your web pages and posting a comment.',
 
 	'general'		=> 'Generel',
 	'e-mail'		=> 'E-mail',

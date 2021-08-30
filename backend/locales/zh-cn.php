@@ -85,8 +85,8 @@ $locale = array (
 	'sort-by-discussion'	=> '讨论模式',
 	'sort-by-popularity'	=> '人气模式',
 	'sort-by-name'		=> '评论者模式',
-	'sort-threads'		=> '更多模式',
-	'thread'		=> '回复%s',
+	'threads'		=> '更多模式',
+	'in-reply-to'		=> '回复%s',
 	'thread-tip'		=> '返回顶部',
 	'comments'		=> '条评论',
 	'replies'		=> '条回复',
@@ -169,6 +169,7 @@ $locale = array (
 
 	'settings-sub'		=> '更改各种设置',
 	'moderation-sub'	=> '发布，编辑，批准和删除评论',
+	'no-threads'		=> 'No threads found. Create one by using HashOver on one of your web pages and posting a comment.',
 
 	'general'		=> '一般',
 	'e-mail'		=> '电子邮件',

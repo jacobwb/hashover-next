@@ -85,8 +85,8 @@ $locale = array (
 	'sort-by-discussion'	=> 'După discuții',
 	'sort-by-popularity'	=> 'După popularitate',
 	'sort-by-name'		=> 'După utilizator',
-	'sort-threads'		=> 'Teme',
-	'thread'		=> 'Ca răspuns la %s',
+	'threads'		=> 'Teme',
+	'in-reply-to'		=> 'Ca răspuns la %s',
 	'thread-tip'		=> 'Spre începutul temei',
 	'comments'		=> 'Comentarii',
 	'replies'		=> 'Răspunsuri',
@@ -169,6 +169,7 @@ $locale = array (
 
 	'settings-sub'		=> 'Schimbarea diferitelor setări',
 	'moderation-sub'	=> 'Postați, editați, aprobați și ștergeți comentariile',
+	'no-threads'		=> 'No threads found. Create one by using HashOver on one of your web pages and posting a comment.',
 
 	'general'		=> 'General',
 	'e-mail'		=> 'E-mail',

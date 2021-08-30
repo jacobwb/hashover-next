@@ -108,7 +108,7 @@ class CommentsUI extends FormUI
 	public function parentThreadLink ($href = '{href}', $parent = '{parent}', $permalink = '{permalink}', $name = '{name}')
 	{
 		// Get locale string
-		$thread_locale = $this->locale->text['thread'];
+		$thread_locale = $this->locale->text['in-reply-to'];
 
 		// Inject OP's name into the locale
 		$inner_html = sprintf ($thread_locale, $name);
