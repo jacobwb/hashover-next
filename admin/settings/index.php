@@ -141,6 +141,18 @@ function ui_array (Setup $setup, Locale $locale)
 		),
 
 		'e-mail' => array (
+			'sends-notifications' => array (
+				'type' => 'select',
+				'value' => $setup->sendsNotifications,
+
+				'options' => array (
+					'to-everyone' => 'Everyone, admin and users',
+					'to-users' => 'Users only, when they reply to each other',
+					'no-admin' => 'Admin only',
+					'to-nobody' => 'Nobody'
+				)
+			),
+
 			'mail-type' => array (
 				'type' => 'select',
 				'value' => $setup->mailType,

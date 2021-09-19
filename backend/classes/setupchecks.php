@@ -60,20 +60,23 @@ class SetupChecks extends Secrets
 			));
 		}
 
-		// Throw exception if notification e-mail address is set to the default
-		if ($this->notificationEmail === 'example@example.com') {
-			throw new \Exception (sprintf (
-				'You must use an e-mail address other than "example@example.com" for `$notificationEmail` in %s',
-				$setup->getBackendPath ('classes/secrets.php')
-			));
-		}
+		// Check if notification emails are enabled
+		if ($setup->sendsNotifications !== 'to-nobody') {
+			// If so, throw exception if notification e-mail address is set to the default
+			if ($this->notificationEmail === 'example@example.com') {
+				throw new \Exception (sprintf (
+					'You must use an e-mail address other than "example@example.com" for `$notificationEmail` in %s',
+					$setup->getBackendPath ('classes/secrets.php')
+				));
+			}
 
-		// Throw exception if noreply e-mail address is set to the default
-		if ($this->noreplyEmail === 'noreply@example.com') {
-			throw new \Exception (sprintf (
-				'You must use an e-mail address other than "noreply@example.com" for `$noreplyEmail` in %s',
-				$setup->getBackendPath ('classes/secrets.php')
-			));
+			// Throw exception if noreply e-mail address is set to the default
+			if ($this->noreplyEmail === 'noreply@example.com') {
+				throw new \Exception (sprintf (
+					'You must use an e-mail address other than "noreply@example.com" for `$noreplyEmail` in %s',
+					$setup->getBackendPath ('classes/secrets.php')
+				));
+			}
 		}
 
 		// Check if the database is set to an SQL other than SQLite

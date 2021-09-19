@@ -748,7 +748,7 @@ class WriteComments extends Secrets
 		}
 
 		// Only send admin notification if it's not admin posting
-		if ($this->email !== $this->notificationEmail) {
+		if ($this->setup->sendsNotifications !== 'to-users' and $this->email !== $this->notificationEmail) {
 			// Set e-mail to be sent to admin
 			$this->mail->to ($this->notificationEmail);
 
@@ -757,6 +757,11 @@ class WriteComments extends Secrets
 
 			// And actually send the message
 			$this->mail->send ();
+		}
+
+		// Do nothing else if we're only sending notification emails to admin
+		if ($this->setup->sendsNotifications === 'to-admin') {
+			return;
 		}
 
 		// Do nothing else if reply comment failed to read
@@ -807,8 +812,10 @@ class WriteComments extends Secrets
 			// If so, add it to latest comments metadata
 			$this->thread->data->addLatestComment ($comment_file);
 
-			// Send notification e-mails
-			$this->sendNotifications ($comment_file);
+			// Send notification e-mails if enabled
+			if ($this->setup->sendsNotifications !== 'to-nobody') {
+				$this->sendNotifications ($comment_file);
+			}
 
 			// Set/update user login cookie
 			if ($this->setup->usesAutoLogin !== false) {

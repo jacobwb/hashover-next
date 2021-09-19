@@ -45,6 +45,9 @@ class SafeSettings
 	public $popularityLimit		= 2;				// Number of comments allowed to become popular
 	public $usesMarkdown		= true;				// Whether comments will be parsed for Markdown
 
+	// E-mail settings
+	public $sendsNotifications	= 'to-everyone';
+
 	// Date and Time settings
 	public $serverTimezone		= 'auto';			// Server timezone
 	public $usesUserTimezone	= true;				// Whether comment dates should use the user's timezone (JavaScript-mode)
