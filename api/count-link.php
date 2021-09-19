@@ -72,7 +72,7 @@ try {
 
 	// Register HashOver ready state detection method
 	$javascript->registerFile ('onready.js', array (
-		'include' => !isset ($_GET['nodefault'])
+		'include' => $setup->getRequest ('auto', 'yes') === 'yes'
 	));
 
 	// Change back to count link frontend directory
@@ -80,7 +80,7 @@ try {
 
 	// Register automatic instantiation code
 	$javascript->registerFile ('instantiate.js', array (
-		'include' => !isset ($_GET['nodefault'])
+		'include' => $setup->getRequest ('auto', 'yes') === 'yes'
 	));
 
 	// JavaScript build process output
