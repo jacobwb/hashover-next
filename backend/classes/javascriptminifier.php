@@ -1,6 +1,6 @@
 <?php namespace HashOver;
 
-// Copyright (C) 2015-2019 Jacob Barkdull
+// Copyright (C) 2015-2021 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify
@@ -107,7 +107,7 @@ class JavaScriptMinifier
 
 		// Copyright notice
 		$copyright = implode (PHP_EOL, array (
-			'// Copyright (C) 2010-2019 Jacob Barkdull',
+			'// Copyright (C) 2010-2021 Jacob Barkdull',
 			'// Under the terms of the GNU Affero General Public License.',
 			'// This program source code has been minified.',
 			'//',

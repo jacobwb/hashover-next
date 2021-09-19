@@ -1,7 +1,7 @@
 // @licstart  The following is the entire license notice for the
 //  JavaScript code in this page.
 //
-// Copyright (C) 2010-2019 Jacob Barkdull
+// Copyright (C) 2010-2021 Jacob Barkdull
 // This file is part of HashOver.
 //
 // HashOver is free software: you can redistribute it and/or modify

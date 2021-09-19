@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2016-2019 Jacob Barkdull
+// Copyright (C) 2016-2021 Jacob Barkdull
 // This file is part of HashOver.
 //
 // I, Jacob Barkdull, hereby release this work into the public domain.
