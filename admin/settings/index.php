@@ -180,7 +180,6 @@ function ui_array (Setup $setup, Locale $locale)
 
 			'cookie-expiration' => array (
 				'type' => 'text',
-				'documentation'=> 'https://www.php.net/manual/en/datetime.formats.relative.php',
 				'value' => $setup->cookieExpiration
 			),
 
@@ -331,7 +330,6 @@ function ui_array (Setup $setup, Locale $locale)
 
 		'date-time' => array (
 			'date-pattern' => array (
-				'documentation' => 'http://userguide.icu-project.org/formatparse/datetime',
 				'type' => 'text',
 				'value' => $setup->datePattern
 			),
@@ -342,7 +340,6 @@ function ui_array (Setup $setup, Locale $locale)
 			),
 
 			'server-timezone' => array (
-				'documentation' => 'https://php.net/manual/en/timezones.php',
 				'type' => 'text',
 				'value' => $setup->serverTimezone
 			),
