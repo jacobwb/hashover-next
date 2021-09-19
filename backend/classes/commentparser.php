@@ -143,6 +143,7 @@ class CommentParser
 		// Otherwise, inject time into today locale string
 		$date = sprintf ($this->todayLocale, $time);
 
+		// And return today locale string
 		return $date;
 	}
 

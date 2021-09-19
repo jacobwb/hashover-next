@@ -118,7 +118,6 @@ class CommentsUI extends FormUI
 
 		// Create hyperlink element
 		$thread_link->appendAttributes (array (
-			'rel' => 'nofollow',
 			'href' => '#' . $parent,
 			'id' => $this->prefix ('thread-link-' . $permalink),
 			'class' => 'hashover-thread-link',

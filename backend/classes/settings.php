@@ -263,6 +263,7 @@ class Settings extends SensitiveSettings
 			}
 		}
 
+		// And return type juggled values
 		return $data;
 	}
 

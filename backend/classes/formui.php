@@ -746,6 +746,7 @@ class FormUI
 			'class' => 'hashover-required-fields'
 		));
 
+		// Fake "required fields" to create
 		$fake_fields = array (
 			'summary' => 'text',
 			'age' => 'hidden',
