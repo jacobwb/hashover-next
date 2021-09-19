@@ -12,7 +12,7 @@ HashOver.prototype.postComment = function (form, button, type, permalink, callba
 	}, 250);
 
 	// Post by sending an AJAX request if enabled
-	if (this.postRequest) {
+	if (this.setup['uses-ajax'] !== false) {
 		return this.postRequest.apply (this, arguments);
 	}
 

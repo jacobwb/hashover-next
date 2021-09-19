@@ -36,20 +36,14 @@ HashOver.instantiator = function (id, options, instance)
 			return;
 		}
 
-		// Set the backend information
-		if (HashOver.backendReady !== true) {
-			// Locales from backend
-			HashOver.prototype.locale = json.locale;
+		// Locales from backend
+		hashover.locale = json.locale;
 
-			// Setup information from backend
-			HashOver.prototype.setup = json.setup;
+		// Setup information from backend
+		hashover.setup = json.setup;
 
-			// Templatify UI HTML from backend
-			HashOver.prototype.ui = hashover.strings.templatify (json.ui);
-
-			// Mark backend as ready
-			HashOver.backendReady = true;
-		}
+		// Templatify UI HTML from backend
+		hashover.ui = hashover.strings.templatify (json.ui);
 
 		// Thread information from backend
 		hashover.instance = json.instance;
@@ -67,6 +61,9 @@ HashOver.instantiator = function (id, options, instance)
 				json.statistics['script-memory']
 			]
 		));
+
+		// Mark backend as ready
+		HashOver.backendReady = true;
 
 		// Initiate HashOver
 		hashover.init (id);

@@ -104,9 +104,7 @@ try {
 	$javascript->registerFile ('permalinks.js');
 
 	// Register markdown methods
-	$javascript->registerFile ('markdown.js', array (
-		'include' => $setup->usesMarkdown
-	));
+	$javascript->registerFile ('markdown.js');
 
 	// Register search and replace methods
 	$javascript->registerFile ('strings.js');
@@ -119,25 +117,19 @@ try {
 
 	// Register embedded image method
 	$javascript->registerFile ('embedimage.js', array (
-		'include' => $setup->allowsImages,
-
 		'dependencies' => array (
 			'openembeddedimage.js'
 		)
 	));
 
 	// Register theme stylesheet appender method
-	$javascript->registerFile ('appendcss.js', array (
-		'include' => $setup->appendsCss
-	));
+	$javascript->registerFile ('appendcss.js');
 
 	// Change back to latest frontend directory
 	$javascript->changeDirectory ('api/frontends/latest');
 
 	// Register Like/Dislike methods
-	$javascript->registerFile ('addratings.js', array (
-		'include' => ($setup->allowsLikes or $setup->allowsDislikes)
-	));
+	$javascript->registerFile ('addratings.js');
 
 	// Register control event handler attacher method
 	$javascript->registerFile ('addcontrols.js');

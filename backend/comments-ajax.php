@@ -74,95 +74,94 @@ try {
 		$hashover->collapseComments ();
 	}
 
-	// Check if we're preparing HashOver
-	if ($hashover->setup->getRequest ('prepare') !== false) {
-		// If so, add locales to data
-		$data['locale'] = array (
-			'cancel'		=> $hashover->locale->text['cancel'],
-			'dislike-comment'	=> $hashover->locale->text['dislike-comment'],
-			'disliked-comment'	=> $hashover->locale->text['disliked-comment'],
-			'disliked'		=> $hashover->locale->text['disliked'],
-			'dislike'		=> $hashover->locale->text['dislike'],
-			'dislikes'		=> $hashover->locale->text['dislikes'],
-			'external-image-tip'	=> $hashover->locale->text['external-image-tip'],
-			'field-needed'		=> $hashover->locale->text['field-needed'],
-			'like-comment'		=> $hashover->locale->text['like-comment'],
-			'liked-comment'		=> $hashover->locale->text['liked-comment'],
-			'liked'			=> $hashover->locale->text['liked'],
-			'like'			=> $hashover->locale->text['like'],
-			'likes'			=> $hashover->locale->text['likes'],
-			'today'			=> $hashover->locale->text['date-today'],
-			'unlike'		=> $hashover->locale->text['unlike'],
-			'commenter-tip'		=> $hashover->locale->text['commenter-tip'],
-			'subscribed-tip'	=> $hashover->locale->text['subscribed-tip'],
-			'unsubscribed-tip'	=> $hashover->locale->text['unsubscribed-tip'],
-			'replies'		=> $hashover->locale->text['replies'],
-			'reply'			=> $hashover->locale->text['reply'],
-			'no-email-warning'	=> $hashover->locale->text['no-email-warning'],
-			'invalid-email'		=> $hashover->locale->text['invalid-email'],
-			'reply-needed'		=> $hashover->locale->text['reply-needed'],
-			'comment-needed'	=> $hashover->locale->text['comment-needed'],
-			'delete-comment'	=> $hashover->locale->text['delete-comment'],
-			'loading'		=> $hashover->locale->text['loading'],
-			'click-to-close'	=> $hashover->locale->text['click-to-close'],
-			'email'			=> $hashover->locale->text['email'],
-			'name'			=> $hashover->locale->text['name'],
-			'password'		=> $hashover->locale->text['password'],
-			'website'		=> $hashover->locale->text['website']
-		);
+	// Add locales to data
+	$data['locale'] = array (
+		'cancel'		=> $hashover->locale->text['cancel'],
+		'dislike-comment'	=> $hashover->locale->text['dislike-comment'],
+		'disliked-comment'	=> $hashover->locale->text['disliked-comment'],
+		'disliked'		=> $hashover->locale->text['disliked'],
+		'dislike'		=> $hashover->locale->text['dislike'],
+		'dislikes'		=> $hashover->locale->text['dislikes'],
+		'external-image-tip'	=> $hashover->locale->text['external-image-tip'],
+		'field-needed'		=> $hashover->locale->text['field-needed'],
+		'like-comment'		=> $hashover->locale->text['like-comment'],
+		'liked-comment'		=> $hashover->locale->text['liked-comment'],
+		'liked'			=> $hashover->locale->text['liked'],
+		'like'			=> $hashover->locale->text['like'],
+		'likes'			=> $hashover->locale->text['likes'],
+		'today'			=> $hashover->locale->text['date-today'],
+		'unlike'		=> $hashover->locale->text['unlike'],
+		'commenter-tip'		=> $hashover->locale->text['commenter-tip'],
+		'subscribed-tip'	=> $hashover->locale->text['subscribed-tip'],
+		'unsubscribed-tip'	=> $hashover->locale->text['unsubscribed-tip'],
+		'replies'		=> $hashover->locale->text['replies'],
+		'reply'			=> $hashover->locale->text['reply'],
+		'no-email-warning'	=> $hashover->locale->text['no-email-warning'],
+		'invalid-email'		=> $hashover->locale->text['invalid-email'],
+		'reply-needed'		=> $hashover->locale->text['reply-needed'],
+		'comment-needed'	=> $hashover->locale->text['comment-needed'],
+		'delete-comment'	=> $hashover->locale->text['delete-comment'],
+		'loading'		=> $hashover->locale->text['loading'],
+		'click-to-close'	=> $hashover->locale->text['click-to-close'],
+		'email'			=> $hashover->locale->text['email'],
+		'name'			=> $hashover->locale->text['name'],
+		'password'		=> $hashover->locale->text['password'],
+		'website'		=> $hashover->locale->text['website']
+	);
 
-		// Add setup information to data
-		$data['setup'] = array (
-			'allows-dislikes'	=> $hashover->setup->allowsDislikes,
-			'allows-images'		=> $hashover->setup->allowsImages,
-			'allows-likes'		=> $hashover->setup->allowsLikes,
-			'allows-login'		=> $hashover->setup->allowsLogin,
-			'collapse-limit'	=> $hashover->setup->collapseLimit,
-			'collapses-comments'	=> $hashover->setup->collapsesComments,
-			'collapses-interface'	=> $hashover->setup->collapsesInterface,
-			'default-name'		=> $hashover->setup->defaultName,
-			'default-sorting'	=> $hashover->setup->defaultSorting,
-			'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
-			'form-fields'		=> $hashover->setup->formFields,
-			'http-backend'		=> $hashover->setup->httpBackend,
-			'http-root'		=> $hashover->setup->httpRoot,
-			'image-extensions'	=> $hashover->setup->imageTypes,
-			'image-format'		=> $hashover->setup->imageFormat,
-			'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
-			'rss-api'		=> $hashover->setup->getHttpPath ('api/rss.php'),
-			'server-eol'		=> PHP_EOL,
-			'stream-depth'		=> $hashover->setup->streamDepth,
-			'stream-mode'		=> ($hashover->setup->replyMode === 'stream'),
-			'theme-css'		=> $hashover->setup->getThemePath ('comments.css'),
-			'user-is-admin'		=> $hashover->login->userIsAdmin,
-			'user-is-logged-in'	=> $hashover->login->userIsLoggedIn,
-			'uses-ajax'		=> $hashover->setup->usesAjax,
-			'uses-auto-login'	=> $hashover->setup->usesAutoLogin,
-			'uses-cancel-buttons'	=> $hashover->setup->usesCancelButtons,
-			'uses-markdown'		=> $hashover->setup->usesMarkdown
-		);
+	// Add setup information to data
+	$data['setup'] = array (
+		'allows-dislikes'	=> $hashover->setup->allowsDislikes,
+		'allows-images'		=> $hashover->setup->allowsImages,
+		'allows-likes'		=> $hashover->setup->allowsLikes,
+		'allows-login'		=> $hashover->setup->allowsLogin,
+		'appends-css'		=> $hashover->setup->appendsCss,
+		'appends-rss'		=> $hashover->setup->appendsRss,
+		'collapse-limit'	=> $hashover->setup->collapseLimit,
+		'collapses-comments'	=> $hashover->setup->collapsesComments,
+		'collapses-interface'	=> $hashover->setup->collapsesInterface,
+		'default-name'		=> $hashover->setup->defaultName,
+		'default-sorting'	=> $hashover->setup->defaultSorting,
+		'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
+		'form-fields'		=> $hashover->setup->formFields,
+		'http-backend'		=> $hashover->setup->httpBackend,
+		'http-root'		=> $hashover->setup->httpRoot,
+		'image-extensions'	=> $hashover->setup->imageTypes,
+		'image-format'		=> $hashover->setup->imageFormat,
+		'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
+		'rss-api'		=> $hashover->setup->getHttpPath ('api/rss.php'),
+		'server-eol'		=> PHP_EOL,
+		'stream-depth'		=> $hashover->setup->streamDepth,
+		'stream-mode'		=> ($hashover->setup->replyMode === 'stream'),
+		'theme-css'		=> $hashover->setup->getThemePath ('comments.css'),
+		'user-is-admin'		=> $hashover->login->userIsAdmin,
+		'user-is-logged-in'	=> $hashover->login->userIsLoggedIn,
+		'uses-ajax'		=> $hashover->setup->usesAjax,
+		'uses-auto-login'	=> $hashover->setup->usesAutoLogin,
+		'uses-cancel-buttons'	=> $hashover->setup->usesCancelButtons,
+		'uses-markdown'		=> $hashover->setup->usesMarkdown
+	);
 
-		// And add UI HTML to data
-		$data['ui'] = array (
-			'comment-wrapper'	=> $hashover->ui->commentWrapper (),
-			'date-link'		=> $hashover->ui->dateLink (),
-			'dislike-count'		=> $hashover->ui->likeCount ('dislikes'),
-			'dislike-link'		=> $hashover->ui->likeLink ('dislike'),
-			'edit-form'		=> $hashover->ui->editForm (),
-			'edit-link'		=> $hashover->ui->formLink ('{href}', 'edit'),
-			'ip-span'		=> $hashover->ui->ipWrapper (),
-			'like-count'		=> $hashover->ui->likeCount ('likes'),
-			'like-link'		=> $hashover->ui->likeLink ('like'),
-			'name-link'		=> $hashover->ui->nameElement ('a'),
-			'name-span'		=> $hashover->ui->nameElement ('span'),
-			'name-wrapper'		=> $hashover->ui->nameWrapper (),
-			'parent-link'		=> $hashover->ui->parentThreadLink (),
-			'reply-form'		=> $hashover->ui->replyForm (),
-			'reply-link'		=> $hashover->ui->formLink ('{href}', 'reply'),
-			'theme'			=> $hashover->templater->parseTheme ('comments.html'),
-			'user-avatar'		=> $hashover->ui->userAvatar ()
-		);
-	}
+	// And add UI HTML to data
+	$data['ui'] = array (
+		'comment-wrapper'	=> $hashover->ui->commentWrapper (),
+		'date-link'		=> $hashover->ui->dateLink (),
+		'dislike-count'		=> $hashover->ui->likeCount ('dislikes'),
+		'dislike-link'		=> $hashover->ui->likeLink ('dislike'),
+		'edit-form'		=> $hashover->ui->editForm (),
+		'edit-link'		=> $hashover->ui->formLink ('{href}', 'edit'),
+		'ip-span'		=> $hashover->ui->ipWrapper (),
+		'like-count'		=> $hashover->ui->likeCount ('likes'),
+		'like-link'		=> $hashover->ui->likeLink ('like'),
+		'name-link'		=> $hashover->ui->nameElement ('a'),
+		'name-span'		=> $hashover->ui->nameElement ('span'),
+		'name-wrapper'		=> $hashover->ui->nameWrapper (),
+		'parent-link'		=> $hashover->ui->parentThreadLink (),
+		'reply-form'		=> $hashover->ui->replyForm (),
+		'reply-link'		=> $hashover->ui->formLink ('{href}', 'reply'),
+		'theme'			=> $hashover->templater->parseTheme ('comments.html'),
+		'user-avatar'		=> $hashover->ui->userAvatar ()
+	);
 
 	// HashOver instance information
 	$data['instance'] = array (

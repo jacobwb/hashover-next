@@ -37,6 +37,8 @@ class Settings extends SensitiveSettings
 	public $themePath;
 	public $formFields;
 
+	public $cfgQueries = array ();
+
 	public function __construct ()
 	{
 		// Set encoding
@@ -268,25 +270,31 @@ class Settings extends SensitiveSettings
 	}
 
 	// Override default settings by with cfg URL queries
-	public function loadFrontendSettings ()
+	public function loadFrontendSettings (array $cfg = null)
 	{
-		// Attempt to get user settings from GET data
-		if (!empty ($_GET['cfg'])) {
-			$settings = $_GET['cfg'];
-		}
+		// Check if no settings were passed directly
+		if ($cfg === null) {
+			// If so, attempt to get user settings from GET data
+			if (!empty ($_GET['cfg'])) {
+				$cfg = $_GET['cfg'];
+			}
 
-		// Attempt to get user settings from POST data
-		if (!empty ($_POST['cfg'])) {
-			$settings = $_POST['cfg'];
+			// Attempt to get user settings from POST data
+			if (!empty ($_POST['cfg'])) {
+				$cfg = $_POST['cfg'];
+			}
 		}
 
 		// Check if cfg queries is an array
-		if (!empty ($settings) and is_array ($settings)) {
+		if (!empty ($cfg) and is_array ($cfg)) {
 			// If so, type juggle cfg queries
-			$settings = $this->juggleStringArray ($settings);
+			$settings = $this->juggleStringArray ($cfg);
 
 			// Only override settings safe to expose to the frontend
 			$this->overrideSettings ($settings, 'SafeSettings');
+
+			// And store original settings string array as property
+			$this->cfgQueries = $cfg;
 		}
 	}
 

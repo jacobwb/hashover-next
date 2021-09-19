@@ -107,22 +107,16 @@ try {
 	$javascript->registerFile ('permalinks.js');
 
 	// Register Like/Dislike methods
-	$javascript->registerFile ('addratings.js', array (
-		'include' => ($setup->allowsLikes or $setup->allowsDislikes)
-	));
+	$javascript->registerFile ('addratings.js');
 
 	// Register optional method handler method
 	$javascript->registerFile ('optionalmethod.js');
 
 	// Register markdown methods
-	$javascript->registerFile ('markdown.js', array (
-		'include' => $setup->usesMarkdown
-	));
+	$javascript->registerFile ('markdown.js');
 
 	// Register embedded image method
 	$javascript->registerFile ('embedimage.js', array (
-		'include' => $setup->allowsImages,
-
 		'dependencies' => array (
 			'openembeddedimage.js'
 		)
@@ -150,8 +144,6 @@ try {
 
 	// Register append comments method
 	$javascript->registerFile ('appendcomments.js', array (
-		'include' => $setup->usesAjax,
-
 		'dependencies' => array (
 			'htmlchildren.js'
 		)
@@ -168,8 +160,6 @@ try {
 
 	// Register AJAX post comment event handler method
 	$javascript->registerFile ('ajaxpost.js', array (
-		'include' => $setup->usesAjax,
-
 		'dependencies' => array (
 			'addcomments.js',
 			'htmlchildren.js'
@@ -178,17 +168,13 @@ try {
 
 	// Register AJAX edit comment event handler method
 	$javascript->registerFile ('ajaxedit.js', array (
-		'include' => $setup->usesAjax,
-
 		'dependencies' => array (
 			'htmlchildren.js'
 		)
 	));
 
 	// Register AJAX comment post request method
-	$javascript->registerFile ('postrequest.js', array (
-		'include' => $setup->usesAjax
-	));
+	$javascript->registerFile ('postrequest.js');
 
 	// Register comment post method
 	$javascript->registerFile ('postcomment.js');
@@ -216,8 +202,6 @@ try {
 
 	// Register like/dislike comment method
 	$javascript->registerFile ('likecomment.js', array (
-		'include' => ($setup->allowsLikes or $setup->allowsDislikes),
-
 		'dependencies' => array (
 			'mouseoverchanger.js'
 		)
@@ -227,19 +211,13 @@ try {
 	$javascript->registerFile ('addcontrols.js');
 
 	// Register theme stylesheet appender method
-	$javascript->registerFile ('appendcss.js', array (
-		'include' => $setup->appendsCss
-	));
+	$javascript->registerFile ('appendcss.js');
 
 	// Register comments RSS feed appender method
-	$javascript->registerFile ('appendrss.js', array (
-		'include' => $setup->appendsRss
-	));
+	$javascript->registerFile ('appendrss.js');
 
 	// Register show interface method
 	$javascript->registerFile ('showinterfacelink.js', array (
-		'include' => $setup->collapsesInterface,
-
 		'dependencies' => array (
 			'showinterface.js'
 		)
@@ -247,8 +225,6 @@ try {
 
 	// Register show comments method
 	$javascript->registerFile ('showmorelink.js', array (
-		'include' => $setup->collapsesComments,
-
 		'dependencies' => array (
 			'showmorecomments.js',
 			'hidemorelink.js'

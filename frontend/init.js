@@ -94,7 +94,9 @@ HashOver.prototype.init = function (id)
 	}
 
 	// Append theme CSS if enabled
-	this.optionalMethod ('appendCSS', [ id ]);
+	if (this.setup['appends-css'] !== false) {
+		this.appendCSS (id);
+	}
 
 	// Put number of comments into "hashover-comment-count" identified HTML element
 	if (this.instance['total-count'] !== 0) {
@@ -103,7 +105,9 @@ HashOver.prototype.init = function (id)
 		});
 
 		// Append RSS feed if enabled
-		this.optionalMethod ('appendRSS');
+		if (this.setup['appends-rss'] !== false) {
+			this.appendRSS ();
+		}
 	}
 
 	// Check if we can insert HTML adjacently
@@ -146,10 +150,14 @@ HashOver.prototype.init = function (id)
 	this.htmlTime = this.parseAll (comments, sortSection, this.setup['collapses-comments']);
 
 	// Create show interface hyperlink if enabled
-	this.optionalMethod ('showInterfaceLink');
+	if (this.setup['collapses-interface'] === true) {
+		this.showInterfaceLink ();
+	}
 
 	// Create show more comments hyperlink if enabled
-	this.optionalMethod ('showMoreLink');
+	if (this.setup['collapses-comments'] !== false) {
+		this.showMoreLink ();
+	}
 
 	// Attach click event to formatting revealer hyperlink
 	this.formattingOnclick ('main');

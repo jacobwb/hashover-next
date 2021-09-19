@@ -11,7 +11,9 @@ HashOverLatest.prototype.init = function (id)
 	var mainElement = this.getMainElement (id);
 
 	// Append theme CSS if enabled
-	this.optionalMethod ('appendCSS', [ id ]);
+	if (this.setup['appends-css'] !== false) {
+		this.appendCSS (id);
+	}
 
 	// Add main HashOver element to this HashOver instance
 	this.instance['main-element'] = mainElement;

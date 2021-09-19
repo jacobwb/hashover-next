@@ -475,6 +475,19 @@ class FormUI
 			// Add remote access input element to form element
 			$form->appendChild ($remote_access_input);
 		}
+
+		// Check if config queries are present
+		if (!empty ($this->setup->cfgQueries)) {
+			// If so, run through config queries
+			foreach ($this->setup->cfgQueries as $key => $value) {
+				// Add hidden input to form for each config query
+				$form->appendChild (new HTMLTag ('input', array (
+					'type' => 'hidden',
+					'name' => sprintf ('cfg[%s]', $key),
+					'value' => $value
+				)));
+			}
+		}
 	}
 
 	// Creates "Formatting" link to open the allowed HTML/markdown panel

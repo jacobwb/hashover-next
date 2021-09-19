@@ -7,21 +7,8 @@ HashOverConstructor.prototype.getBackendQueries = function (options, instance, a
 	// URL query data object
 	var data = {};
 
-	// Options passed to loader constructor
-	var loaderOptions = HashOver.loaderOptions;
-
 	// URL queries array
 	var queries = [];
-
-	// Check for carryover options from loader constructor
-	if (loaderOptions && loaderOptions.constructor === Object) {
-		// If present, merge them into given options
-		for (var key in loaderOptions) {
-			if (options[key] === undefined) {
-				options[key] = loaderOptions[key];
-			}
-		}
-	}
 
 	// Add instance number to data
 	data.instance = instance;
@@ -68,15 +55,10 @@ HashOverConstructor.prototype.getBackendQueries = function (options, instance, a
 	// Add loader settings object to request if they exist
 	if (options.settings && options.settings.constructor === Object) {
 		// Get cfg URL queries array
-		var cfgQueries = HashOverConstructor.cfgQueries (loaderOptions.settings);
+		var cfgQueries = HashOverConstructor.cfgQueries (options.settings);
 
 		// And merge cfg URL queries with existing queries
 		queries = queries.concat (cfgQueries);
-	}
-
-	// Set request backend information for the first instance
-	if (HashOver.backendReady !== true) {
-		queries.push ('prepare=true');
 	}
 
 	// And return queries

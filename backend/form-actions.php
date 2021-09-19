@@ -75,6 +75,9 @@ try {
 	// Throw exception if requested by remote server
 	$hashover->setup->refererCheck ();
 
+	// Load user settings
+	$hashover->setup->loadFrontendSettings ();
+
 	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');
 

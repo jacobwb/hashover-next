@@ -235,16 +235,12 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 
 		// Add like link and count to template if likes are enabled
 		if (this.setup['allows-likes'] !== false) {
-			this.optionalMethod ('addRatings', [
-				comment, template, 'like', commentKey
-			]);
+			this.addRatings (comment, template, 'like', commentKey);
 		}
 
 		// Add dislike link and count to template if dislikes are enabled
 		if (this.setup['allows-dislikes'] !== false) {
-			this.optionalMethod ('addRatings', [
-				comment, template, 'dislike', commentKey
-			]);
+			this.addRatings (comment, template, 'dislike', commentKey);
 		}
 
 		// Add name HTML to template
@@ -310,12 +306,12 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 		// Replace [img] tags with placeholders if embedded images are enabled
 		if (hashover.setup['allows-images'] !== false) {
 			body = body.replace (this.rx.imageTags, function (m, link, url) {
-				return hashover.optionalMethod ('embedImage', arguments);
+				return hashover.embedImage.apply (hashover, arguments);
 			});
 		}
 
 		// Parse markdown in comment if enabled
-		if (this.parseMarkdown !== undefined) {
+		if (this.setup['uses-markdown'] !== false) {
 			body = this.parseMarkdown (body);
 		}
 

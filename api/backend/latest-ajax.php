@@ -81,6 +81,7 @@ try {
 	// Add setup information to data
 	$data['setup'] = array (
 		'allows-images'		=> $hashover->setup->allowsImages,
+		'appends-css'		=> $hashover->setup->appendsCss,
 		'default-name'		=> $hashover->setup->defaultName,
 		'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
 		'image-extensions'	=> $hashover->setup->imageTypes,
