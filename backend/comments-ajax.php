@@ -113,67 +113,67 @@ try {
 
 		// Add setup information to data
 		$data['setup'] = array (
-			'server-eol'		=> PHP_EOL,
-			'collapse-limit'	=> $hashover->setup->collapseLimit,
-			'default-sorting'	=> $hashover->setup->defaultSorting,
-			'default-name'		=> $hashover->setup->defaultName,
-			'user-is-logged-in'	=> $hashover->login->userIsLoggedIn,
-			'user-is-admin'		=> $hashover->login->userIsAdmin,
-			'http-root'		=> $hashover->setup->httpRoot,
-			'http-backend'		=> $hashover->setup->httpBackend,
 			'allows-dislikes'	=> $hashover->setup->allowsDislikes,
-			'allows-likes'		=> $hashover->setup->allowsLikes,
-			'image-extensions'	=> $hashover->setup->imageTypes,
-			'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
-			'stream-mode'		=> ($hashover->setup->replyMode === 'stream'),
-			'stream-depth'		=> $hashover->setup->streamDepth,
-			'theme-css'		=> $hashover->setup->getThemePath ('comments.css'),
-			'rss-api'		=> $hashover->setup->getHttpPath ('api/rss.php'),
-			'image-format'		=> $hashover->setup->imageFormat,
-			'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
-			'collapses-interface'	=> $hashover->setup->collapsesInterface,
-			'collapses-comments'	=> $hashover->setup->collapsesComments,
 			'allows-images'		=> $hashover->setup->allowsImages,
-			'uses-markdown'		=> $hashover->setup->usesMarkdown,
-			'uses-cancel-buttons'	=> $hashover->setup->usesCancelButtons,
-			'uses-auto-login'	=> $hashover->setup->usesAutoLogin,
-			'uses-ajax'		=> $hashover->setup->usesAjax,
+			'allows-likes'		=> $hashover->setup->allowsLikes,
 			'allows-login'		=> $hashover->setup->allowsLogin,
-			'form-fields'		=> $hashover->setup->formFields
+			'collapse-limit'	=> $hashover->setup->collapseLimit,
+			'collapses-comments'	=> $hashover->setup->collapsesComments,
+			'collapses-interface'	=> $hashover->setup->collapsesInterface,
+			'default-name'		=> $hashover->setup->defaultName,
+			'default-sorting'	=> $hashover->setup->defaultSorting,
+			'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
+			'form-fields'		=> $hashover->setup->formFields,
+			'http-backend'		=> $hashover->setup->httpBackend,
+			'http-root'		=> $hashover->setup->httpRoot,
+			'image-extensions'	=> $hashover->setup->imageTypes,
+			'image-format'		=> $hashover->setup->imageFormat,
+			'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
+			'rss-api'		=> $hashover->setup->getHttpPath ('api/rss.php'),
+			'server-eol'		=> PHP_EOL,
+			'stream-depth'		=> $hashover->setup->streamDepth,
+			'stream-mode'		=> ($hashover->setup->replyMode === 'stream'),
+			'theme-css'		=> $hashover->setup->getThemePath ('comments.css'),
+			'user-is-admin'		=> $hashover->login->userIsAdmin,
+			'user-is-logged-in'	=> $hashover->login->userIsLoggedIn,
+			'uses-ajax'		=> $hashover->setup->usesAjax,
+			'uses-auto-login'	=> $hashover->setup->usesAutoLogin,
+			'uses-cancel-buttons'	=> $hashover->setup->usesCancelButtons,
+			'uses-markdown'		=> $hashover->setup->usesMarkdown
 		);
 
 		// And add UI HTML to data
 		$data['ui'] = array (
-			'user-avatar'		=> $hashover->ui->userAvatar (),
+			'comment-wrapper'	=> $hashover->ui->commentWrapper (),
+			'date-link'		=> $hashover->ui->dateLink (),
+			'dislike-count'		=> $hashover->ui->likeCount ('dislikes'),
+			'dislike-link'		=> $hashover->ui->likeLink ('dislike'),
+			'edit-form'		=> $hashover->ui->editForm (),
+			'edit-link'		=> $hashover->ui->formLink ('{href}', 'edit'),
+			'ip-span'		=> $hashover->ui->ipWrapper (),
+			'like-count'		=> $hashover->ui->likeCount ('likes'),
+			'like-link'		=> $hashover->ui->likeLink ('like'),
 			'name-link'		=> $hashover->ui->nameElement ('a'),
 			'name-span'		=> $hashover->ui->nameElement ('span'),
-			'ip-span'		=> $hashover->ui->ipWrapper (),
-			'parent-link'		=> $hashover->ui->parentThreadLink (),
-			'edit-link'		=> $hashover->ui->formLink ('{href}', 'edit'),
-			'reply-link'		=> $hashover->ui->formLink ('{href}', 'reply'),
-			'like-link'		=> $hashover->ui->likeLink ('like'),
-			'dislike-link'		=> $hashover->ui->likeLink ('dislike'),
-			'like-count'		=> $hashover->ui->likeCount ('likes'),
-			'dislike-count'		=> $hashover->ui->likeCount ('dislikes'),
 			'name-wrapper'		=> $hashover->ui->nameWrapper (),
-			'date-link'		=> $hashover->ui->dateLink (),
-			'comment-wrapper'	=> $hashover->ui->commentWrapper (),
-			'theme'			=> $hashover->templater->parseTheme ('comments.html'),
+			'parent-link'		=> $hashover->ui->parentThreadLink (),
 			'reply-form'		=> $hashover->ui->replyForm (),
-			'edit-form'		=> $hashover->ui->editForm ()
+			'reply-link'		=> $hashover->ui->formLink ('{href}', 'reply'),
+			'theme'			=> $hashover->templater->parseTheme ('comments.html'),
+			'user-avatar'		=> $hashover->ui->userAvatar ()
 		);
 	}
 
 	// HashOver instance information
 	$data['instance'] = array (
-		'primary-count'		=> $hashover->thread->primaryCount - 1,
-		'total-count'		=> $hashover->thread->totalCount - 1,
-		'page-url'		=> $hashover->setup->pageURL,
-		'page-title'		=> $hashover->setup->pageTitle,
-		'thread-name'		=> $hashover->setup->threadName,
+		'comments'		=> $hashover->comments,
 		'file-path'		=> $hashover->setup->filePath,
 		'initial-html'		=> $hashover->ui->initialHTML (false),
-		'comments'		=> $hashover->comments
+		'page-title'		=> $hashover->setup->pageTitle,
+		'page-url'		=> $hashover->setup->pageURL,
+		'primary-count'		=> $hashover->thread->primaryCount - 1,
+		'thread-name'		=> $hashover->setup->threadName,
+		'total-count'		=> $hashover->thread->totalCount - 1
 	);
 
 	// Count according to `$showsReplyCount` setting

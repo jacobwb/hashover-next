@@ -60,49 +60,49 @@ try {
 
 	// Add locales to data
 	$data['locale'] = array (
+		'click-to-close'	=> $hashover->locale->text['click-to-close'],
+		'commenter-tip'		=> $hashover->locale->text['commenter-tip'],
 		'dislike'		=> $hashover->locale->text['dislike'],
 		'dislikes'		=> $hashover->locale->text['dislikes'],
 		'external-image-tip'	=> $hashover->locale->text['external-image-tip'],
 		'like'			=> $hashover->locale->text['like'],
 		'likes'			=> $hashover->locale->text['likes'],
-		'today'			=> $hashover->locale->text['date-today'],
-		'commenter-tip'		=> $hashover->locale->text['commenter-tip'],
-		'subscribed-tip'	=> $hashover->locale->text['subscribed-tip'],
-		'unsubscribed-tip'	=> $hashover->locale->text['unsubscribed-tip'],
+		'loading'		=> $hashover->locale->text['loading'],
 		'replies'		=> $hashover->locale->text['replies'],
 		'reply'			=> $hashover->locale->text['reply'],
-		'loading'		=> $hashover->locale->text['loading'],
-		'click-to-close'	=> $hashover->locale->text['click-to-close']
+		'subscribed-tip'	=> $hashover->locale->text['subscribed-tip'],
+		'today'			=> $hashover->locale->text['date-today'],
+		'unsubscribed-tip'	=> $hashover->locale->text['unsubscribed-tip']
 	);
 
 	// Add setup information to data
 	$data['setup'] = array (
-		'server-eol'		=> PHP_EOL,
-		'default-name'		=> $hashover->setup->defaultName,
-		'user-is-logged-in'	=> $hashover->login->userIsLoggedIn,
-		'image-extensions'	=> $hashover->setup->imageTypes,
-		'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
-		'theme-css'		=> $hashover->setup->getThemePath ('latest.css'),
-		'image-format'		=> $hashover->setup->imageFormat,
-		'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
 		'allows-images'		=> $hashover->setup->allowsImages,
+		'default-name'		=> $hashover->setup->defaultName,
+		'device-type'		=> ($hashover->setup->isMobile === true) ? 'mobile' : 'desktop',
+		'image-extensions'	=> $hashover->setup->imageTypes,
+		'image-format'		=> $hashover->setup->imageFormat,
+		'image-placeholder'	=> $hashover->setup->getImagePath ('place-holder'),
+		'server-eol'		=> PHP_EOL,
+		'theme-css'		=> $hashover->setup->getThemePath ('latest.css'),
+		'user-is-logged-in'	=> $hashover->login->userIsLoggedIn,
 		'uses-markdown'		=> $hashover->setup->usesMarkdown
 	);
 
 	// Add UI HTML to data
 	$data['ui'] = array (
-		'user-avatar'		=> $hashover->ui->userAvatar (),
+		'comment-wrapper'	=> $hashover->ui->commentWrapper (),
+		'date-link'		=> $hashover->ui->dateLink (),
+		'dislike-count'		=> $hashover->ui->likeCount ('dislikes'),
+		'ip-span'		=> $hashover->ui->ipWrapper (),
+		'like-count'		=> $hashover->ui->likeCount ('likes'),
 		'name-link'		=> $hashover->ui->nameElement ('a'),
 		'name-span'		=> $hashover->ui->nameElement ('span'),
-		'ip-span'		=> $hashover->ui->ipWrapper (),
-		'thread-link'		=> $hashover->ui->threadLink (),
-		'reply-link'		=> $hashover->ui->formLink ('{href}', 'reply'),
-		'like-count'		=> $hashover->ui->likeCount ('likes'),
-		'dislike-count'		=> $hashover->ui->likeCount ('dislikes'),
 		'name-wrapper'		=> $hashover->ui->nameWrapper (),
-		'date-link'		=> $hashover->ui->dateLink (),
+		'reply-link'		=> $hashover->ui->formLink ('{href}', 'reply'),
 		'theme'			=> $hashover->templater->parseTheme ('latest.html'),
-		'comment-wrapper'	=> $hashover->ui->commentWrapper ()
+		'thread-link'		=> $hashover->ui->threadLink (),
+		'user-avatar'		=> $hashover->ui->userAvatar ()
 	);
 
 	// Attempt to get comment thread from GET/POST data

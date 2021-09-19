@@ -26,7 +26,7 @@
 function HashOver (id, options, instance)
 {
 	// Reference to this object
-	var hashover = this;
+	var object = this;
 
 	// Arguments to this method
 	var args = arguments;
@@ -34,7 +34,7 @@ function HashOver (id, options, instance)
 	// Check if the frontend is ready
 	if (HashOver.frontendReady === true) {
 		// If so, create comment thread
-		this.createThread.apply (this, arguments);
+		this.createThread.apply (this, args);
 
 		// And do nothing else
 		return;
@@ -44,25 +44,35 @@ function HashOver (id, options, instance)
 	if (HashOver.frontendReady === 'loading') {
 		// If so, loop until frontend is loaded
 		setTimeout (function () {
-			hashover.constructor.apply (hashover, args);
+			object.constructor.apply (object, args);
 		}, 10);
 
 		// And do nothing else
 		return;
 	}
 
-	// Otherwise, create frontend script
+	// Otherwise, set frontend as loading
+	HashOver.frontendReady = 'loading';
+
+	// Create and add frontend script to page
+	HashOver.createScript (options);
+
+	// And try to instantiate again
+	object.constructor.apply (object, args);
+};
+
+// Creates and adds HashOver frontend script to page (loader-constructor.js)
+HashOver.createScript = function (options)
+{
+	// Create frontend script
 	var frontend = document.createElement ('script');
 
 	// Frontend script path
-	var path = HashOver.rootPath + '/comments.php';
+	var path = HashOver.rootPath + '/comments.php?nodefault';
 
 	// Some elements around this script
 	var parent = HashOver.script.parentNode;
 	var sibling = HashOver.script.nextSibling;
-
-	// Store this instance as constructor property
-	HashOver.loaderInstance = this;
 
 	// Check if the options are an object
 	if (options && options.constructor === Object) {
@@ -72,11 +82,8 @@ function HashOver (id, options, instance)
 			var cfgQueries = HashOver.cfgQueries (options.settings);
 
 			// And add cfg queries to frontend script path
-			path += '?' + cfgQueries.join ('&');
+			path += '&' + cfgQueries.join ('&');
 		}
-
-		// And store the options
-		HashOver.loaderOptions = options;
 	}
 
 	// Set HashOver script attributes
@@ -85,9 +92,6 @@ function HashOver (id, options, instance)
 
 	// Add script to page
 	parent.insertBefore (frontend, sibling);
-
-	// And set frontend as loading
-	HashOver.frontendReady = 'loading';
 };
 
 // Set frontend as not ready (loader-constructor.js)
