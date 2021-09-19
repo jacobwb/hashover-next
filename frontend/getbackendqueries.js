@@ -1,5 +1,5 @@
 // Get supported HashOver backend queries from options (getbackendqueries.js)
-HashOver.getBackendQueries = function (options, instance)
+HashOver.getBackendQueries = function (options, instance, auto)
 {
 	// Ensure options is an object
 	options = options || {};
@@ -26,17 +26,35 @@ HashOver.getBackendQueries = function (options, instance)
 	// Add instance number to data
 	data.instance = instance;
 
-	// Use URL and title options if available
-	data.url = options.url || this.getURL (options.canonical);
-	data.title = options.title || this.getTitle ();
+	// Check if a URL was given
+	if (options.url && typeof (options.url) === 'string') {
+		// If so, use it as-is
+		data.url = options.url;
+	} else {
+		// If not, automatically detect page URL if told to
+		if (auto !== false) {
+			data.url = HashOverConstructor.getURL (options.canonical);
+		}
+	}
+
+	// Check if a title was given
+	if (options.title && typeof (options.title) === 'string') {
+		// If so, use it as-is
+		data.title = options.title;
+	} else {
+		// If not, automatically detect page title if told to
+		if (auto !== false) {
+			data.title = HashOverConstructor.getTitle ();
+		}
+	}
 
 	// Add website to request if told to
-	if (typeof (options.website) === 'string') {
+	if (options.website && typeof (options.website) === 'string') {
 		data.website = options.website;
 	}
 
 	// Add thread to request if told to
-	if (typeof (options.thread) === 'string') {
+	if (options.thread && typeof (options.thread) === 'string') {
 		data.thread = options.thread;
 	}
 
@@ -52,7 +70,7 @@ HashOver.getBackendQueries = function (options, instance)
 		// Get cfg URL queries array
 		var cfgQueries = HashOver.cfgQueries (loaderOptions.settings);
 
-		// And add cfg queries
+		// And merge cfg URL queries with existing queries
 		queries = queries.concat (cfgQueries);
 	}
 
@@ -61,5 +79,6 @@ HashOver.getBackendQueries = function (options, instance)
 		queries.push ('prepare=true');
 	}
 
+	// And return queries
 	return queries;
 };
