@@ -1,6 +1,9 @@
 // Callback to close the embedded image (openembeddedimage.js)
 HashOverConstructor.prototype.closeEmbeddedImage = function (image)
 {
+	// Reference to this object
+	var hashover = this;
+
 	// Set image load event handler
 	image.onload = function ()
 	{
