@@ -1,5 +1,5 @@
 // Get supported HashOver backend queries from options (getbackendqueries.js)
-HashOver.getBackendQueries = function (options, instance, auto)
+HashOverConstructor.prototype.getBackendQueries = function (options, instance, auto)
 {
 	// Ensure options is an object
 	options = options || {};
@@ -68,7 +68,7 @@ HashOver.getBackendQueries = function (options, instance, auto)
 	// Add loader settings object to request if they exist
 	if (options.settings && options.settings.constructor === Object) {
 		// Get cfg URL queries array
-		var cfgQueries = HashOver.cfgQueries (loaderOptions.settings);
+		var cfgQueries = HashOverConstructor.cfgQueries (loaderOptions.settings);
 
 		// And merge cfg URL queries with existing queries
 		queries = queries.concat (cfgQueries);

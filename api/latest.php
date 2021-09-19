@@ -51,6 +51,15 @@ try {
 	// Register HashOver script tag getter method
 	$javascript->registerFile ('script.js');
 
+	// Register page URL getter method
+	$javascript->registerFile ('geturl.js');
+
+	// Register page title getter method
+	$javascript->registerFile ('gettitle.js');
+
+	// Register frontend settings URL queries converter method
+	$javascript->registerFile ('cfgqueries.js');
+
 	// Register client time getter method
 	$javascript->registerFile ('getclienttime.js');
 
@@ -78,6 +87,9 @@ try {
 
 	// Register error message handler method
 	$javascript->registerFile ('displayerror.js');
+
+	// Register backend URL queries getter method
+	$javascript->registerFile ('getbackendqueries.js');
 
 	// Register AJAX-related methods
 	$javascript->registerFile ('ajax.js');

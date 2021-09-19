@@ -51,6 +51,9 @@ try {
 		$hashover->setup->setWebsite ('request');
 	}
 
+	// Load user settings
+	$hashover->setup->loadFrontendSettings ();
+
 	// Initiate and finalize comment processing
 	$hashover->initiate ();
 	$hashover->finalize ();

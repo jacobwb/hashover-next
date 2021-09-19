@@ -68,7 +68,7 @@ HashOver.createScript = function (options)
 	var frontend = document.createElement ('script');
 
 	// Frontend script path
-	var path = HashOver.rootPath + '/comments.php?nodefault';
+	var path = HashOver.rootPath + '/comments.php?auto=no';
 
 	// Some elements around this script
 	var parent = HashOver.script.parentNode;

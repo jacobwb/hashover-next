@@ -14,7 +14,7 @@ HashOver.instantiator = function (id, options, instance)
 	var requestPath = HashOver.backendPath + '/comments-ajax.php';
 
 	// Get backend queries
-	var backendQueries = HashOver.getBackendQueries (options, instance);
+	var backendQueries = this.getBackendQueries (options, instance);
 
 	// Add current client time to queries
 	var queries = backendQueries.concat ([

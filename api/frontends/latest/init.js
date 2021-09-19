@@ -1,5 +1,5 @@
 // HashOver latest comments UI initialization process (init.js)
-HashOverLatest.prototype.init = function ()
+HashOverLatest.prototype.init = function (id)
 {
 	// Shorthand
 	var comments = this.instance.comments.primary;
@@ -8,10 +8,10 @@ HashOverLatest.prototype.init = function ()
 	var html = '';
 
 	// Get the main HashOver element
-	var mainElement = this.getMainElement ('hashover-latest');
+	var mainElement = this.getMainElement (id);
 
 	// Append theme CSS if enabled
-	this.optionalMethod ('appendCSS', [ 'hashover-latest' ]);
+	this.optionalMethod ('appendCSS', [ id ]);
 
 	// Add main HashOver element to this HashOver instance
 	this.instance['main-element'] = mainElement;

@@ -23,42 +23,40 @@
 "use strict";
 
 // Latest comments API frontend constructor (constructor.js)
-function HashOverLatest (options)
+function HashOverLatest (id, options, instance)
 {
 	// Reference to this HashOver object
 	var hashover = this;
 
-	// Get current date and time
-	var datetime = new Date ();
+	// Check if we are instantiating a specific instance
+	var specific = this.rx.integer.test (instance);
 
-	// Start queries with current client time
-	var queries = [
-		'time=' + HashOverLatest.getClientTime ()
-	];
-
-	// Check if options is an object
-	if (options && options.constructor === Object) {
-		// If so, add website to queries if present
-		if (options.url !== undefined) {
-			queries.push ('url=' + encodeURIComponent (options.url));
-		}
-
-		// Add website to queries if present
-		if (options.website !== undefined) {
-			queries.push ('website=' + encodeURIComponent (options.website));
-		}
-
-		// And add thread to queries if present
-		if (options.thread !== undefined) {
-			queries.push ('thread=' + encodeURIComponent (options.thread));
-		}
-	}
+	// Use given instance or instance count
+	var instance = specific ? instance : HashOverLatest.instanceCount;
 
 	// Backend request path
 	var requestPath = HashOverLatest.backendPath + '/latest-ajax.php';
 
+	// Get backend queries
+	var backendQueries = this.getBackendQueries (options, instance, false);
+
+	// Add current client time to queries
+	var queries = backendQueries.concat ([
+		'time=' + HashOverLatest.getClientTime ()
+	]);
+
+	// Set instance number
+	this.instanceNumber = instance;
+
+	// Store options and backend queries
+	this.options = options;
+	this.queries = backendQueries;
+
 	// Handle backend request
 	this.ajax ('POST', requestPath, queries, function (json) {
+		// Given element ID or default
+		var id = id || hashover.prefix ('latest');
+
 		// Handle error messages
 		if (json.message !== undefined) {
 			hashover.displayError (json, 'hashover-latest');
@@ -81,9 +79,20 @@ function HashOverLatest (options)
 		hashover.statistics = json.statistics;
 
 		// Initiate HashOver latest comments
-		hashover.init ();
+		hashover.init (id);
 	}, true);
+
+	// And increment instance count where appropriate
+	if (specific === false) {
+		HashOverLatest.instanceCount++;
+	}
 };
+
+// Indicator that backend information has been received (constructor.js)
+HashOverLatest.backendReady = false;
+
+// Initial HashOver instance count (constructor.js)
+HashOverLatest.instanceCount = 1;
 
 // Constructor to add shared methods to (constructor.js)
 var HashOverConstructor = HashOverLatest;
