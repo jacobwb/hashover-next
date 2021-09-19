@@ -513,15 +513,40 @@
 				</td>
 				<td valign="top">
 					<p>
-						This setting controls how the dates of when comments were posted
-						are formatted. This format is in the
+						This setting controls how comment post dates are formatted when
+						the Intl extension is installed. This format is in the
 						<a href="http://userguide.icu-project.org/formatparse/datetime">ICU datetime format</a>,
 						by default the format outputs a date like "January 1, 2020".
-						The dates are localized based on the locale code in the
-						<code>language</code> setting.
+						The dates are localized automatically based on the locale code
+						in the <code>language</code> setting.
 					</p>
 					<p>
 						This setting is <code>MMMM d, YYYY</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="date-format">
+				<td valign="top">
+					<code>date-format</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how comment post dates are formatted.
+						This format is in the
+						<a href="https://www.php.net/manual/en/datetime.format.php">PHP DateTime format</a>,
+						by default the format outputs a date like "January 1, 2020".
+					</p>
+					<p>
+						This setting is <code>F j, Y</code> by default.
 					</p>
 				</td>
 			</tr>
@@ -1475,6 +1500,37 @@
 					</p>
 				</td>
 			</tr>
+			<tr id="sends-notifications">
+				<td valign="top">
+					<code>sends-notifications</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls whether HashOver will send notification
+						emails and to whom. Setting this to <code>to-admin</code> will
+						cause HashOver to only send notification emails to the
+						configured notification email address, setting this to
+						<code>to-users</code> will cause HashOver to only send
+						notification emails to users when they reply to each other,
+						setting this to <code>to-everyone</code> will cause HashOver
+						to send notification emails to both admin and users, setting
+						this to <code>to-nobody</code> will cause HashOver to not send
+						notification emails at all.
+					</p>
+					<p>
+						This setting is <code>to-everyone</code> by default.
+					</p>
+				</td>
+			</tr>
 			<tr id="server-timezone">
 				<td valign="top">
 					<code>server-timezone</code>
@@ -1798,12 +1854,38 @@
 				</td>
 				<td valign="top">
 					<p>
-						This setting controls how the times of when comments were posted
-						are formatted. The time format is in the
+						This setting controls how comment post times are formatted when the Intl
+						extension is installed. This format is in the
 						<a href="http://userguide.icu-project.org/formatparse/datetime">ICU datetime format</a>,
 						by default the format outputs a 12-hour time like "12:00 PM". You can use
 						<code>HH:mm</code> for 24-hour time. The time is localized automatically
 						based on the locale code in the <code>language</code> setting.
+					</p>
+					<p>
+						This setting is <code>h:mm a</code> by default.
+					</p>
+				</td>
+			</tr>
+			<tr id="time-format">
+				<td valign="top">
+					<code>time-format</code>
+				</td>
+				<td valign="top">
+					<code>string</code>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">✔</span>
+				</td>
+				<td valign="top" align="center">
+					<span class="emoji">❌</span>
+				</td>
+				<td valign="top">
+					<p>
+						This setting controls how comment post times are formatted.
+						This format is in the
+						<a href="https://www.php.net/manual/en/datetime.format.php">PHP DateTime format</a>,
+						by default the format outputs a 12-hour time like "12:00 PM". You can use
+						<code>H:i</code> for 24-hour time.
 					</p>
 					<p>
 						This setting is <code>h:mm a</code> by default.
@@ -2017,7 +2099,8 @@
 						dates to use a short format, like "1 day ago". Setting this to
 						<code>false</code> will cause comment post dates to use the full
 						format, as configured in the <code>date-pattern</code> and
-						<code>time-pattern</code> settings.
+						<code>time-pattern</code> or <code>date-format</code> and
+						<code>time-format</code> settings.
 					</p>
 					<p>
 						This setting is <code>true</code> by default.

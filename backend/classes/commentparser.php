@@ -78,11 +78,14 @@ class CommentParser
 		// Short date when a comment was posted today
 		$this->todayLocale = $this->locale->text['date-today'];
 
-		// Get date formatter for comment post date
-		$this->date = $this->getDateFormatter ($setup->datePattern);
+		// Check if we have Intl extentsion
+		if ($setup->hasIntl === true) {
+			// If so, get date formatter for comment post date
+			$this->date = $this->getDateFormatter ($setup->datePattern);
 
-		// Get date formatter for comment post time
-		$this->time = $this->getDateFormatter ($setup->timePattern);
+			// And get date formatter for comment post time
+			$this->time = $this->getDateFormatter ($setup->timePattern);
+		}
 	}
 
 	// Get date and time formatter
@@ -267,11 +270,20 @@ class CommentParser
 		// Get micro time of comment post date
 		$timestamp = $post_date->getTimestamp ();
 
-		// Get localized full comment post date
-		$full_date = $this->date->format ($timestamp);
+		// Check if we have Intl extentsion
+		if ($this->setup->hasIntl === true) {
+			// If so, get localized full comment post date
+			$full_date = $this->date->format ($timestamp);
 
-		// Get localized full comment post time
-		$post_time = $this->time->format ($timestamp);
+			// And get localized full comment post time
+			$post_time = $this->time->format ($timestamp);
+		} else {
+			// If not, get default full comment post date
+			$full_date = $post_date->format ($this->setup->dateFormat);
+
+			// And get default full comment post time
+			$post_time = $post_date->format ($this->setup->timeFormat);
+		}
 
 		// Check if short dates are enabled
 		if ($this->setup->usesShortDates === true) {

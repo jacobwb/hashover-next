@@ -331,12 +331,26 @@ function ui_array (Setup $setup, Locale $locale)
 		'date-time' => array (
 			'date-pattern' => array (
 				'type' => 'text',
-				'value' => $setup->datePattern
+				'value' => $setup->datePattern,
+				'show' => $setup->hasIntl
 			),
 
 			'time-pattern' => array (
 				'type' => 'text',
-				'value' => $setup->timePattern
+				'value' => $setup->timePattern,
+				'show' => $setup->hasIntl
+			),
+
+			'date-format' => array (
+				'type' => 'text',
+				'value' => $setup->dateFormat,
+				'show' => !$setup->hasIntl
+			),
+
+			'time-format' => array (
+				'type' => 'text',
+				'value' => $setup->timeFormat,
+				'show' => !$setup->hasIntl
 			),
 
 			'server-timezone' => array (
@@ -735,9 +749,12 @@ try {
 			'class' => 'settings'
 		));
 
-		// Append each settings category items to div
+		// Run through settings
 		foreach ($settings as $name => $setting) {
-			$items->appendChild (create_paragraph ($hashover, $name, $setting));
+			// Append each settings category items to div if they are to be shown
+			if (!isset ($setting['show']) or $setting['show'] === true) {
+				$items->appendChild (create_paragraph ($hashover, $name, $setting));
+			}
 		}
 
 		// Append settings items element to div

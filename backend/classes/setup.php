@@ -19,6 +19,7 @@
 
 class Setup extends Settings
 {
+	public $hasIntl;
 	public $scheme;
 	public $absolutePath;
 	public $commentsPath;
@@ -39,7 +40,7 @@ class Setup extends Settings
 
 	// Required extensions to check for
 	protected $extensions = array (
-		'date', 'dom', 'json', 'mbstring', 'openssl', 'pcre', 'intl'
+		'date', 'dom', 'json', 'mbstring', 'openssl', 'pcre'
 	);
 
 	// Characters to convert to dashes in thread names
@@ -66,6 +67,9 @@ class Setup extends Settings
 
 		// Check for required extensions
 		$this->extensionsLoaded ($this->extensions);
+
+		// Intl extension presence indicator
+		$this->hasIntl = extension_loaded ('intl');
 
 		// Get connection scheme
 		$this->scheme = $this->isHTTPS () ? 'https' : 'http';

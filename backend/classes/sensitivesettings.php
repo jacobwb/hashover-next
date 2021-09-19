@@ -43,9 +43,13 @@ class SensitiveSettings extends SafeSettings
 	public $usesAutoLogin		= true;				// Whether a user's first comment automatically logs them in
 	public $imageFormat		= 'png';			// Format for icons and other images (use 'svg' for HDPI)
 
-	// Date and Time settings
+	// Date and Time settings (Intl)
 	public $datePattern		= 'MMMM d, YYYY';		// Date format pattern (see: http://userguide.icu-project.org/formatparse/datetime)
 	public $timePattern		= 'h:mm a';			// Time format pattern, use 'HH:mm' for 24-hour time
+
+	// Date and Time settings (DateTime)
+	public $dateFormat		= 'F j, Y';			// Date format pattern (see: https://www.php.net/manual/en/datetime.format.php)
+	public $timeFormat		= 'g:i A';			// Time format pattern, use 'H:i' for 24-hour time
 
 	// Technical settings
 	public $loginMethod		= 'DefaultLogin';		// Login method class for handling user login information
