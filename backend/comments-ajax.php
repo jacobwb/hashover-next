@@ -147,6 +147,7 @@ try {
 			'user-avatar'		=> $hashover->ui->userAvatar (),
 			'name-link'		=> $hashover->ui->nameElement ('a'),
 			'name-span'		=> $hashover->ui->nameElement ('span'),
+			'ip-span'		=> $hashover->ui->ipWrapper (),
 			'parent-link'		=> $hashover->ui->parentThreadLink (),
 			'edit-link'		=> $hashover->ui->formLink ('{href}', 'edit'),
 			'reply-link'		=> $hashover->ui->formLink ('{href}', 'reply'),

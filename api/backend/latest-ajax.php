@@ -94,6 +94,7 @@ try {
 		'user-avatar'		=> $hashover->ui->userAvatar (),
 		'name-link'		=> $hashover->ui->nameElement ('a'),
 		'name-span'		=> $hashover->ui->nameElement ('span'),
+		'ip-span'		=> $hashover->ui->ipWrapper (),
 		'thread-link'		=> $hashover->ui->threadLink (),
 		'reply-link'		=> $hashover->ui->formLink ('{href}', 'reply'),
 		'like-count'		=> $hashover->ui->likeCount ('likes'),

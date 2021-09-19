@@ -356,6 +356,11 @@ class PHPMode
 			// Add name HTML to template
 			$template['name'] = $this->ui->nameWrapper ($name_class, $name_link);
 
+			// Add IP address HTML to template
+			if (!empty ($comment['ipaddr'])) {
+				$template['ipaddr'] = $this->ui->ipWrapper ($comment['ipaddr']);
+			}
+
 			// Append status text to date
 			if (!empty ($comment['status-text'])) {
 				$comment['date'] .= ' (' . $comment['status-text'] . ')';

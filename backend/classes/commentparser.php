@@ -184,6 +184,13 @@ class CommentParser
 			$output['name'] = $comment['name'];
 		}
 
+		// Add IP address to output if user is admin
+		if ($this->login->userIsAdmin === true) {
+			if (!empty ($comment['ipaddr'])) {
+				$output['ipaddr'] = $comment['ipaddr'];
+			}
+		}
+
 		// Check if icons are enabled
 		if ($this->setup->iconMode !== 'none') {
 			// If so, check if icons are images

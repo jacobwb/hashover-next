@@ -81,6 +81,17 @@ class CommentsUI extends FormUI
 		return $name_link->asHTML ();
 	}
 
+	// Creates wrapper element for IP address element
+	public function ipWrapper ($ip = '{ipaddr}')
+	{
+		$ip_wrapper = new HTMLTag ('span', array (
+			'class' => 'hashover-ip',
+			'innerHTML' => $ip
+		), false);
+
+		return $ip_wrapper->asHTML ();
+	}
+
 	// Creates hyperlink with URL queries to link reference
 	protected function queryLink ($href = false, array $queries = array ())
 	{

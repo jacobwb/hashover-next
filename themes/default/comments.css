@@ -59,13 +59,18 @@ conditions, unless such conditions are required by law.
 
 .hashover .hashover-title,
 .hashover .hashover-count,
-.hashover .hashover-comment-name {
+.hashover .hashover-comment-name,
+.hashover .hashover-ip {
 	display: inline-block;
 	font-size: 18px;
 }
 
 .hashover .hashover-reply .hashover-comment-name {
 	font-weight: bold;
+	font-size: 14px;
+}
+
+.hashover .hashover-reply .hashover-ip {
 	font-size: 14px;
 }
 
@@ -863,7 +868,8 @@ conditions, unless such conditions are required by law.
 	border-color: #606060;
 }
 
-.hashover .hashover-comment-name {
+.hashover .hashover-comment-name,
+.hashover .hashover-ip {
 	vertical-align: middle;
 }
 
@@ -871,6 +877,18 @@ conditions, unless such conditions are required by law.
 	content: "@";
 	color: #00268F;
 	cursor: default;
+}
+
+.hashover .hashover-ip {
+	margin-left: 0.25em;
+}
+
+.hashover .hashover-ip:before {
+	content: "(";
+}
+
+.hashover .hashover-ip:after {
+	content: ")";
 }
 
 .hashover .hashover-comment .hashover-title {

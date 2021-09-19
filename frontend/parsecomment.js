@@ -255,6 +255,15 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 			}
 		);
 
+		// Add IP address HTML to template
+		if (comment.ipaddr !== undefined) {
+			template['ipaddr'] = this.strings.parseTemplate (
+				this.ui['ip-span'], {
+					ipaddr: comment.ipaddr
+				}
+			);
+		}
+
 		// Append status text to date
 		if (comment['status-text'] !== undefined) {
 			commentDate += ' (' + comment['status-text'] + ')';
