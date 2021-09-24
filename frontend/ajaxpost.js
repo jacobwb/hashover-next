@@ -53,5 +53,10 @@ HashOver.prototype.AJAXPost = function (json, permalink, type)
 
 	// Update comment count
 	this.getElement('count').textContent = json.count;
+
+	// Show comment count wrapper
+	this.getElement('count-wrapper').style.display = '';
+
+	// Increment counts
 	this.incrementCounts (type);
 };
