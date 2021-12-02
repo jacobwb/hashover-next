@@ -82,7 +82,9 @@ class PHPMode
 				'action' => $this->setup->getBackendPath ('form-actions.php')
 			));
 
-			$form->innerHTML ($this->ui->replyForm ($permalink, $this->setup->pageURL, $this->setup->threadName, $this->setup->pageTitle, $file));
+			$subscribed = ($this->setup->subscribesUser === true);
+
+			$form->innerHTML ($this->ui->replyForm ($permalink, $this->setup->pageURL, $this->setup->threadName, $this->setup->pageTitle, $file, $subscribed));
 
 			return $form->asHTML ();
 		}
