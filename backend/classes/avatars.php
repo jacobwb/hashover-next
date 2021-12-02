@@ -45,10 +45,9 @@ class Avatars
 
 		// Use HTTPS if this file is requested with HTTPS
 		$http = ($is_https ? 'https' : 'http') . '://';
-		$subdomain = $is_https ? 'secure' : 'www';
 
 		// Construct Gravatar icon URL
-		$this->gravatar = $http . $subdomain . '.gravatar.com/avatar/';
+		$this->gravatar = $http . 'www.gravatar.com/avatar/';
 
 		// Icon setup
 		$this->iconSetup ($setup->iconSize);
