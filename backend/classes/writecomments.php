@@ -752,8 +752,11 @@ class WriteComments extends Secrets
 			// Set e-mail to be sent to admin
 			$this->mail->to ($this->notificationEmail);
 
-			// Set e-mail as coming from the posting user
-			$this->mail->from ($this->email);
+			// Set e-mail as coming from the noreply mailer
+			$this->mail->from ($this->noreplyEmail);
+
+			// Set reply-to as coming from the posting user
+			$this->mail->replyTo ($this->email);
 
 			// And actually send the message
 			$this->mail->send ();
@@ -787,13 +790,12 @@ class WriteComments extends Secrets
 			// If so, set message to be sent to reply comment e-mail
 			$this->mail->to ($reply_email);
 
-			// Check if users are allowed to reply by email
+			// Set e-mail as coming from the noreply mailer
+			$this->mail->from ($this->noreplyEmail);
+
+			// Check if users are allowed to the posting user by email
 			if ($this->setup->allowsUserReplies === true) {
-				// If so, set e-mail as coming from posting user
-				$this->mail->from ($this->email);
-			} else {
-				// If not, set e-mail as coming from noreply e-mail
-				$this->mail->from ($this->noreplyEmail);
+				$this->mail->replyTo ($this->email);
 			}
 
 			// And actually send the message
