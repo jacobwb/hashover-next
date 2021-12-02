@@ -257,8 +257,10 @@ class FormUI
 			}
 
 			// Create avatar image element
-			$avatar = new HTMLTag ('div', array (
-				'style' => 'background-image: url(\'' . $avatar_src . '\');'
+			$avatar = new HTMLTag ('img', array (
+				'src' => $avatar_src,
+				'alt' => '',
+				'referrerpolicy' => 'no-referrer'
 			), false);
 		} else {
 			// Avatars set to count
