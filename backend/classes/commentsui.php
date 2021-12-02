@@ -263,7 +263,9 @@ class CommentsUI extends FormUI
 					'src' => $src,
 					'referrerpolicy' => 'no-referrer',
 					'loading' => 'lazy',
-					'alt' => ''
+					'alt' => '',
+					'height' => $this->setup->iconSize,
+					'width' => $this->setup->iconSize
 				), false);
 			} else {
 				// Avatars set to count
