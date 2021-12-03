@@ -838,7 +838,7 @@ class FormUI
 		));
 
 		// Add checkbox label element to main form buttons wrapper element
-		if ($this->setup->emailField !== 'off') {
+		if ($this->setup->emailField !== 'off' && in_array($this->setup->sendsNotifications, ['to-everyone', 'to-users'])) {
 			if ($this->login->userIsLoggedIn === false or !empty ($this->login->email)) {
 				$subscribed = ($this->setup->subscribesUser === true);
 				$subscribe_label = $this->subscribeLabel ('', 'main', $subscribed);
