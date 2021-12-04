@@ -92,6 +92,8 @@ class Setup extends Settings
 			$this->website = 'all';
 		}
 
+		header('Vary: User-Agent', false);
+
 		// Check if we have a user agent
 		if (!empty ($_SERVER['HTTP_USER_AGENT'])) {
 			// If so, get user agent
@@ -238,6 +240,8 @@ class Setup extends Settings
 	// Checks remote request against allowed domains setting
 	public function refererCheck ()
 	{
+		header('Vary: Referer', false);
+
 		// Return true if no referer is set
 		if (empty ($_SERVER['HTTP_REFERER'])) {
 			return true;

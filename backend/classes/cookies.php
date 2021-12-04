@@ -117,6 +117,8 @@ class Cookies
 		// Add pseudo-namespacing prefix to cookie name
 		$name = 'hashover-' . $name;
 
+		header('Vary: Cookie', false);
+
 		// Check if cookie exists
 		if (!empty ($_COOKIE[$name])) {
 			// If so, store as value for cleaner code
