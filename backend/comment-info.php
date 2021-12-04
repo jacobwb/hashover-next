@@ -32,6 +32,9 @@ function get_json_response ($hashover)
 	// Initial JSON data
 	$data = array ();
 
+	// Set threadName from GET data
+	$hashover->setup->setThreadName ();
+
 	// Get comment from POST/GET data
 	$key = $hashover->setup->getRequest ('comment', null);
 
