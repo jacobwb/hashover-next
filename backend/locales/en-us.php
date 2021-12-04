@@ -132,6 +132,10 @@ $locale = array (
 	'enabled'		=> 'Enabled',
 	'disabled'		=> 'Disabled',
 
+	'email-greeting'	=> 'Hi!',
+	'email-explainer'	=> '“%s” has posted a new comment on a discussion you’re following:',
+	'email-call-to-action'	=> 'Jump back into the discussion at:',
+
 	'source-code-sub'	=> 'HashOver server-side source code viewer',
 	'type'			=> 'Type',
 	'path'			=> 'Path',
