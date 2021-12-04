@@ -656,8 +656,8 @@ class WriteComments extends Secrets
 		// Get comment permalink
 		$permalink = $this->filePermalink ($file);
 
-		// "New Comment" locale string
-		$new_comment = $this->locale->text['new-comment'];
+		// "New comment on “<thread title>”" locale string
+		$new_comment = sprintf ($this->locale->text['new-comment'], $this->setup->pageTitle)
 
 		// E-mail hash for Gravatar or empty for default avatar
 		$hash = Misc::getArrayItem ($this->data, 'email_hash') ?: '';
@@ -729,8 +729,8 @@ class WriteComments extends Secrets
 		// Get and parse plain text e-mail notification
 		$text_body = $this->templater->parseTheme ('email-notification.txt', $data);
 
-		// Set subject to "New Comment - <domain here>"
-		$this->mail->subject ($new_comment . ' - ' . $domain);
+		// Set subject to "New comment on “<thread title>”"
+		$this->mail->subject ($new_comment);
 
 		// Set plain text version of the message
 		$this->mail->text ($text_body);
