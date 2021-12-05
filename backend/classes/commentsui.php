@@ -20,11 +20,13 @@
 class CommentsUI extends FormUI
 {
 	// Creates a wrapper element for each comment
-	public function commentWrapper ($permalink = '{permalink}')
+	public function commentWrapper ($permalink = '{permalink}', $status = '{status}')
 	{
+		$status_class = (! empty($status)) ? " hashover-status-${status}" : '';
+
 		$comment_wrapper = new HTMLTag ('div', array (
 			'id' => $this->prefix ($permalink),
-			'class' => 'hashover-comment'
+			'class' => 'hashover-comment' . $status_class
 		), false);
 
 		if ($this->mode !== 'php') {

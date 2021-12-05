@@ -429,6 +429,11 @@ HashOverConstructor.prototype.parseComment = function (comment, parent, collapse
 		}
 	}
 
+	// Append status class
+	if (comment['status']) {
+		classes += ` hashover-status-${comment['status']}`;
+	}
+
 	// Wrap comment HTML
 	var wrapper = this.strings.parseTemplate (
 		this.ui['comment-wrapper'], {
