@@ -7,17 +7,17 @@ HashOverCountLink.prototype.getCommentCount = function (link, settings)
 	// Get backend queries
 	var queries = ['url=' + encodeURIComponent (link.href)];
 
-	// Backend request path
-	var requestPath = HashOverCountLink.backendPath + '/count-link-ajax.php';
-
 	// Get cfg URL queries array
 	var cfgQueries = HashOverCountLink.cfgQueries (settings);
 
 	// And add cfg queries
 	queries = queries.concat (cfgQueries);
 
+	// Backend request path
+	var requestPath = HashOverCountLink.backendPath + '/count-link-ajax.php?' + queries.sort ().join ('&');
+
 	// Handle backend request
-	this.ajax ('POST', requestPath, queries, function (json) {
+	this.ajax ('GET', requestPath, null, function (json) {
 		if (json['link-text'] !== undefined) {
 			link.textContent = json['link-text'];
 		}
