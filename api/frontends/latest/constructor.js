@@ -42,7 +42,7 @@ function HashOverLatest (id, options, instance)
 
 	// Add current client time to queries
 	var queries = backendQueries.concat ([
-		'time=' + HashOverLatest.getClientTime ()
+		'tz=' + HashOverLatest.getClientTimeZone ()
 	]);
 
 	// Set instance number

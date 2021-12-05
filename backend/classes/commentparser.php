@@ -26,12 +26,10 @@ class CommentParser
 	protected $locale;
 	protected $avatars;
 
-	protected $timeModify;
 	protected $currentDate;
 	protected $shortDateLocales;
 	protected $todayLocale;
-	protected $date;
-	protected $time;
+	protected $timeZoneAdjust;
 
 	public function __construct (Setup $setup)
 	{
@@ -44,29 +42,18 @@ class CommentParser
 		$this->locale = new Locale ($setup);
 		$this->avatars = new Avatars ($setup);
 
-		// Get current time
-		$current_time = new \DateTime ();
+		// Get the client time zone offset
+		if ($this->setup->usesUserTimezone === true) {
+			$this->timeZoneAdjust = $setup->getRequest ('tz');
+		}
 
-		// Get 24-hour time from client
-		$client_time = new \DateTime ($setup->getRequest ('time'));
+		// Fallback to server time zone
+		if (empty($this->timeZoneAdjust)) {
+			$this->timeZoneAdjust = $this->setup->serverTimezone;
+		}
 
-		// Server-side hours and minutes as integers
-		$current_hours = (int)($current_time->format ('H'));
-		$current_mins = (int)($current_time->format ('i'));
-
-		// Client hours and minutes as integers
-		$client_hours = (int)($client_time->format ('H'));
-		$client_mins = (int)($client_time->format ('i'));
-
-		// Hours and minutes to adjust posting time by
-		$this->timeModify = sprintf (
-			'%+d hours %+d minutes',
-			$client_hours - $current_hours,
-			$client_mins - $current_mins
-		);
-
-		// Get current date without time
-		$this->currentDate = new \DateTime (date ('Y-m-d'));
+		// Get current date in client time zone
+		$this->currentDate = (new \DateTime ('now', new \DateTimeZone($this->timeZoneAdjust)))->format('Y-m-d');
 
 		// Known short date interval locales
 		$this->shortDateLocales = array (
@@ -114,8 +101,8 @@ class CommentParser
 	// Get short form date and time
 	protected function getDateTime (\DateTime $dt, $time)
 	{
-		// Remove time from datetime
-		$datetime = new \DateTime ($dt->format ('Y-m-d'));
+		// Get date as client date without time
+		$datetime = (new \DateTime ($dt, $this->timeZoneAdjust))->format ('Y-m-d');
 
 		// Get difference between today's date and timeless date
 		$interval = $datetime->diff ($this->currentDate);
@@ -164,7 +151,7 @@ class CommentParser
 
 		// Adjust post date to client timezone if enabled
 		if ($this->setup->usesUserTimezone === true) {
-			$post_date->modify ($this->timeModify);
+			$post_date->setTimezone($this->timeZoneAdjust);
 		}
 
 		// Generate permalink
