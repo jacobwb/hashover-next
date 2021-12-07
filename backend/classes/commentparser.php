@@ -43,17 +43,17 @@ class CommentParser
 		$this->avatars = new Avatars ($setup);
 
 		// Get the client time zone offset
-		if ($this->setup->usesUserTimezone === true) {
-			$this->timeZoneAdjust = $setup->getRequest ('tz');
+		if ($this->setup->usesUserTimezone === true && !empty ($this->getRequest ('tz'))) {
+			$this->timeZoneAdjust = (new \DateTimeZone ($setup->getRequest ('tz'));
 		}
 
 		// Fallback to server time zone
 		if (empty($this->timeZoneAdjust)) {
-			$this->timeZoneAdjust = $this->setup->serverTimezone;
+			$this->timeZoneAdjust = (new \DateTimeZone ($this->setup->serverTimezone);
 		}
 
 		// Get current date in client time zone
-		$this->currentDate = (new \DateTime ('now', new \DateTimeZone($this->timeZoneAdjust)))->format('Y-m-d');
+		$this->currentDate = (new \DateTime ('now', $this->timeZoneAdjust)->format('Y-m-d');
 
 		// Known short date interval locales
 		$this->shortDateLocales = array (
@@ -105,7 +105,7 @@ class CommentParser
 		$datetime = (new \DateTime ($dt, $this->timeZoneAdjust))->format ('Y-m-d');
 
 		// Get difference between today's date and timeless date
-		$interval = $datetime->diff ($this->currentDate);
+		$interval = (new \DateTime ($datetime)->diff ((new \DateTime ($this->currentDate));
 
 		// Attempt to get a day, month, or year interval
 		foreach ($this->shortDateLocales as $i => $key) {
@@ -151,7 +151,7 @@ class CommentParser
 
 		// Adjust post date to client timezone if enabled
 		if ($this->setup->usesUserTimezone === true) {
-			$post_date->setTimezone($this->timeZoneAdjust);
+			$post_date->setTimezone ($this->timeZoneAdjust);
 		}
 
 		// Generate permalink
