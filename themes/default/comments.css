@@ -701,15 +701,6 @@ conditions, unless such conditions are required by law.
 	font-size: 18px;
 	line-height: 45px;
 	color: #808080;
-	background-position: center center;
-	background-attachment: scroll;
-	background-repeat: no-repeat;
-
-	-o-background-size: 100% 100%;
-	-webkit-background-size: 100% 100%;
-	-moz-background-size: 100% 100%;
-	background-size: 100% 100%;
-
 	-o-box-sizing: content-box;
 	-webkit-box-sizing: content-box;
 	-moz-box-sizing: content-box;
