@@ -40,15 +40,6 @@ class Avatars
 		// Whether icon is vector based on setting
 		$this->isVector = ($setup->imageFormat === 'svg');
 
-		// Get HTTPS status
-		$is_https = $setup->isHTTPS ();
-
-		// Use HTTPS if this file is requested with HTTPS
-		$http = ($is_https ? 'https' : 'http') . '://';
-
-		// Construct Gravatar icon URL
-		$this->gravatar = $http . 'www.gravatar.com/avatar/';
-
 		// Icon setup
 		$this->iconSetup ($setup->iconSize);
 	}
@@ -132,7 +123,7 @@ class Avatars
 		}
 
 		// Gravatar URL
-		$gravatar  = $this->gravatar . $hash . '.png?r=pg';
+		$gravatar  = 'https://www.gravatar.com/avatar/' . $hash . '?r=pg';
 		$gravatar .= '&amp;s=' . urlencode ($this->iconSize);
 		$gravatar .= '&amp;d=' . urlencode ($this->fallback);
 
