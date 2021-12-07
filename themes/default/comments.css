@@ -269,6 +269,12 @@ conditions, unless such conditions are required by law.
 	padding: 0px 3px 0px 3px;
 }
 
+.hashover .hashover-comment {
+	contain: content;
+	contain-intrinsic-size: 0 170px;
+	content-visibility: auto;
+}
+
 .hashover .hashover-comment,
 .hashover .hashover-reply-form,
 .hashover .hashover-comment .hashover-avatar,
