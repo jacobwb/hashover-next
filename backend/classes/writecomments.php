@@ -27,7 +27,7 @@ class WriteComments extends Secrets
 	protected $login;
 	protected $cookies;
 	protected $crypto;
-	protected $avatar;
+	protected $avatars;
 	protected $templater;
 	protected $mail;
 
@@ -417,7 +417,7 @@ class WriteComments extends Secrets
 		$url_regex = '/((http|https|ftp):\/\/[a-z0-9-@:;%_\+.~#?&\/=]+)/i';
 
 		// Extract URLs from comment
-		$clean_code = preg_replace_callback ($url_regex, 'self::urlExtractor', $clean_code);
+		$clean_code = preg_replace_callback ($url_regex, [$this, 'urlExtractor'], $clean_code);
 
 		// Escape all HTML tags excluding allowed tags
 		$clean_code = $this->htmlSelectiveEscape ($clean_code);
@@ -429,8 +429,8 @@ class WriteComments extends Secrets
 		$clean_code = $this->tagCloser (array ('code'), $clean_code);
 
 		// Escape HTML inside of <code> tags and markdown code blocks
-		$clean_code = preg_replace_callback ('/(<code>)(.*?)(<\/code>)/is', 'self::codeEscaper', $clean_code);
-		$clean_code = preg_replace_callback ('/(```)(.*?)(```)/is', 'self::codeEscaper', $clean_code);
+		$clean_code = preg_replace_callback ('/(<code>)(.*?)(<\/code>)/is', [$this, 'codeEscaper'], $clean_code);
+		$clean_code = preg_replace_callback ('/(```)(.*?)(```)/is', [$this, 'codeEscaper'], $clean_code);
 
 		// Close remaining tags
 		$clean_code = $this->tagCloser ($this->closeTags, $clean_code);
