@@ -57,7 +57,7 @@ class FormUI
 		$failedField = $this->cookies->getValue ('failed-on');
 
 		// Set the field to emphasize after a failed post
-		if ($failedField !== null) {
+		if ($failedField !== '') {
 			$this->emphasizedField = $failedField;
 		}
 
@@ -365,7 +365,7 @@ class FormUI
 			}
 
 			// If the comment was a reply, have the textarea use the reply textarea locale
-			if ($this->cookies->getValue ('replied') !== null) {
+			if ($this->cookies->getValue ('replied') !== '') {
 				$reply_form_placeholder = $this->locale->text['reply-form'];
 				$textarea->createAttribute ('placeholder', $reply_form_placeholder);
 			}
@@ -626,8 +626,8 @@ class FormUI
 		));
 
 		// Check if message cookie is set
-		if ($this->cookies->getValue ('message') !== null
-		    or $this->cookies->getValue ('error') !== null)
+		if ($this->cookies->getValue ('message') !== ''
+		    or $this->cookies->getValue ('error') !== '')
 		{
 			// If so, set the message element to open in PHP mode
 			if ($this->mode === 'php') {
@@ -638,7 +638,7 @@ class FormUI
 			}
 
 			// Check if the message is a normal message
-			if ($this->cookies->getValue ('message') !== null) {
+			if ($this->cookies->getValue ('message') !== '') {
 				// If so, get an XSS safe version of the message
 				$message = Misc::makeXSSsafe ($this->cookies->getValue ('message'));
 			} else {
@@ -812,7 +812,7 @@ class FormUI
 		$this->pageInfoFields ($main_form, $this->setup->pageURL, $this->setup->threadName, $this->setup->pageTitle);
 
 		// Check if comment is a failed reply
-		if ($this->cookies->getValue ('replied') !== null) {
+		if ($this->cookies->getValue ('replied') !== '') {
 			// If so, get the comment being replied to
 			$replied = $this->cookies->getValue ('replied');
 

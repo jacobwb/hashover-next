@@ -33,9 +33,9 @@ class Setup extends Settings
 	public $urlQueries;
 	public $threadQueries;
 	public $threadPath;
-	public $threadName;
-	public $pageURL;
-	public $pageTitle;
+	public $threadName = '';
+	public $pageURL = '';
+	public $pageTitle = '';
 	public $instanceNumber = 1;
 
 	// Required extensions to check for

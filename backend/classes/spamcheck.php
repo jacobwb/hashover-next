@@ -21,6 +21,7 @@ class SpamCheck
 {
 	protected $blocklist;
 	protected $database;
+	protected $ip;
 
 	public $error;
 

@@ -355,7 +355,7 @@ class HashOver
 
 		// Sort popular comments
 		usort ($this->popularList, function ($a, $b) {
-			return ($b['popularity'] > $a['popularity']);
+			return $b['popularity'] <=> $a['popularity'];
 		});
 
 		// Calculate how many popular comments will be shown

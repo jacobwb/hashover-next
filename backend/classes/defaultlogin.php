@@ -25,11 +25,11 @@ class DefaultLogin
 	protected $crypto;
 
 	public $enabled = true;
-	public $name;
-	public $password;
-	public $loginHash;
-	public $email;
-	public $website;
+	public $name = '';
+	public $password = '';
+	public $loginHash = '';
+	public $email = '';
+	public $website = '';
 
 	public function __construct (Setup $setup, Cookies $cookies, Locale $locale)
 	{

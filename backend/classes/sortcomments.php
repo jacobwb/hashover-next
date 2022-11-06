@@ -107,6 +107,7 @@ class SortComments
 		// Calculate the sum based on the give callback
 		$sum += $callback ($comment);
 
+		// And return sum
 		return $sum;
 	}
 
@@ -125,13 +126,13 @@ class SortComments
 		$name_a = mb_strtolower ($name_a);
 		$name_b = mb_strtolower ($name_b);
 
-		// Return 1 or -1 based on lexicographical difference
+		// Sort by lexicographical difference if names differ
 		if ($name_a !== $name_b) {
-			return ($name_a > $name_b) ? 1 : -1;
+			return $name_a <=> $name_b;
 		}
 
-		// Sort by permalink when the names are the same
-		return ($a['permalink'] > $b['permalink']);
+		// Otherwise, sort by permalink
+		return $a['permalink'] <=> $b['permalink'];
 	}
 
 	// Sort any given comments

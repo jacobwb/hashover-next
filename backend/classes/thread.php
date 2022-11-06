@@ -190,7 +190,7 @@ class Thread
 	}
 
 	// Read comments
-	public function read ($end = null)
+	public function read ($end = -1)
 	{
 		// Initial data to return
 		$comments = array ();
@@ -201,7 +201,7 @@ class Thread
 		// Run through each comment
 		foreach ($this->commentList as $i => $key) {
 			// Stop at end point
-			if ($end !== null and $added_count >= $end) {
+			if ($end !== -1 and $added_count >= $end) {
 				break;
 			}
 

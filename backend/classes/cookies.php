@@ -134,15 +134,15 @@ class Cookies
 			return $value;
 		}
 
-		// If not, return null
-		return null;
+		// If not, return nothing
+		return '';
 	}
 
 	// Expire a cookie
 	public function expireCookie ($cookie)
 	{
 		// Set its expiration date to 1 if it exists
-		if ($this->getValue ($cookie) !== null) {
+		if ($this->getValue ($cookie) !== '') {
 			$this->set ($cookie, '', 1);
 		}
 	}

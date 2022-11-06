@@ -64,7 +64,7 @@ function liker ($action, $like_hash, &$hashover, &$comment)
 	$like_cookie = $hashover->cookies->getValue ($like_hash);
 
 	// Check that a like/dislike cookie is not already set
-	if ($like_cookie === null) {
+	if ($like_cookie === '') {
 		// If so, set the cookie and increase the like/dislike count
 		set_like ($hashover, $like_hash, $set, $comment[$key]);
 	} else {
@@ -159,6 +159,7 @@ function get_json_response ($hashover)
 		$data['error'] = 'Failed to save comment file!';
 	}
 
+	// And return JSON data
 	return $data;
 }
 

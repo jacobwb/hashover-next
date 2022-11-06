@@ -183,17 +183,17 @@ class PHPMode
 			if (!empty ($comment['replies'])) {
 				$reply = $this->findByPermalink ($permalink, $comment['replies']);
 
-				if ($reply !== null) {
+				if ($reply !== '') {
 					return $reply;
 				}
 			}
 		}
 
-		// Otherwise return null
-		return null;
+		// Otherwise, return nothing
+		return '';
 	}
 
-	public function parseComment (array $comment, $parent = null, $popular = false)
+	public function parseComment (array $comment, $parent = '', $popular = false)
 	{
 		$permalink = $comment['permalink'];
 		$first_instance = 'hashover-' . $permalink;
@@ -226,7 +226,7 @@ class PHPMode
 			$parent = $this->getParentPermalink ($permalink);
 
 			// Get parent comment by its permalink if it exists
-			if ($parent !== null) {
+			if ($parent !== '') {
 				$parent = $this->findByPermalink ($parent, $this->comments['primary']);
 			}
 
@@ -234,7 +234,7 @@ class PHPMode
 			$permatext = str_replace ('-pop', '', $permatext);
 		} else {
 			// Append class to indicate comment is a reply when appropriate
-			if ($parent !== null) {
+			if ($parent !== '') {
 				$comment_wrapper->appendAttribute ('class', 'hashover-reply');
 			}
 		}
@@ -276,7 +276,7 @@ class PHPMode
 			}
 
 			// Check if comment has a parent
-			if ($parent !== null) {
+			if ($parent !== '') {
 				// If so, create the parent thread permalink
 				$parent_thread = 'hashover-' . $parent['permalink'];
 

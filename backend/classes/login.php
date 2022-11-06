@@ -27,11 +27,11 @@ class Login extends Secrets
 	protected $loginMethod;
 	protected $fieldNeeded;
 
-	public $name;
-	public $password;
-	public $loginHash;
-	public $email;
-	public $website;
+	public $name = '';
+	public $password = '';
+	public $loginHash = '';
+	public $email = '';
+	public $website = '';
 	public $userIsLoggedIn = false;
 	public $userIsAdmin = false;
 
@@ -81,7 +81,7 @@ class Login extends Secrets
 		}
 
 		// Check if login hash is not set
-		if ($this->loginHash === null) {
+		if ($this->loginHash === '') {
 			// If so, generate a random password
 			$random_password = bin2hex (openssl_random_pseudo_bytes (16));
 
