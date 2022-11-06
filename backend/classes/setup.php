@@ -62,11 +62,11 @@ class Setup extends Settings
 
 	public function __construct ()
 	{
+		// Check for required extensions, before calling parent
+		$this->extensionsLoaded ($this->extensions);
+
 		// Construct parent class
 		parent::__construct ();
-
-		// Check for required extensions
-		$this->extensionsLoaded ($this->extensions);
 
 		// Intl extension presence indicator
 		$this->hasIntl = extension_loaded ('intl');
