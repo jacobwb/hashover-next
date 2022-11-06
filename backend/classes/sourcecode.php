@@ -376,6 +376,10 @@ class SourceCode
 		),
 		array (
 			'type' => 'Script',
+			'path' => 'backend/locales/sv-se.php'
+		),
+		array (
+			'type' => 'Script',
 			'path' => 'backend/locales/tr-tr.php'
 		),
 		array (

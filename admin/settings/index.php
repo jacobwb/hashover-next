@@ -64,6 +64,7 @@ function ui_array (Setup $setup, Locale $locale)
 					'ru-ru' => 'Russian',
 					'zh-cn' => 'Simplified Chinese',
 					'es-es' => 'Spanish',
+					'sv-se' => 'Swedish',
 					'tr-tr' => 'Turkish'
 				)
 			),
