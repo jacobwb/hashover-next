@@ -149,7 +149,7 @@ function ui_array (Setup $setup, Locale $locale)
 				'options' => array (
 					'to-everyone' => 'Everyone, admin and users',
 					'to-users' => 'Users only, when they reply to each other',
-					'no-admin' => 'Admin only',
+					'to-admin' => 'Admin only',
 					'to-nobody' => 'Nobody'
 				)
 			),
