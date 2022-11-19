@@ -173,6 +173,9 @@ try {
 	// Set page URL from POST/GET data
 	$hashover->setup->setPageURL ('request');
 
+	// Set thread name from POST/GET data
+	$hashover->setup->setThreadName ('request');
+
 	// Initiate comment processing
 	$hashover->initiate ();
 
