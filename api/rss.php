@@ -110,13 +110,16 @@ function parse_comments (&$metadata, &$comment, &$rss, &$xml, &$hashover)
 	// Add item description element to item element
 	$item->appendChild ($item_description);
 
-	// Create item avatar element
-	$item_avatar = $xml->createElement ('avatar');
-	$item_avatar_value = $xml->createTextNode ($comment['avatar']);
-	$item_avatar->appendChild ($item_avatar_value);
+	// Check if avatars are enabled
+	if (!empty ($comment['avatar'])) {
+		// Create item avatar element
+		$item_avatar = $xml->createElement ('avatar');
+		$item_avatar_value = $xml->createTextNode ($comment['avatar']);
+		$item_avatar->appendChild ($item_avatar_value);
 
-	// Add item avatar element to item element
-	$item->appendChild ($item_avatar);
+		// Add item avatar element to item element
+		$item->appendChild ($item_avatar);
+	}
 
 	// Check if likes are enabled
 	if (!empty ($comment['likes'])) {
