@@ -259,8 +259,13 @@ class CommentsUI extends FormUI
 
 			if ($this->setup->iconMode !== 'count') {
 				// Create avatar image element
-				$comments_avatar = new HTMLTag ('div', array (
-					'style' => 'background-image: url(\'' . $src . '\');'
+				$comments_avatar = new HTMLTag ('img', array (
+					'src' => $src,
+					'referrerpolicy' => 'no-referrer',
+					'loading' => 'lazy',
+					'alt' => '',
+					'height' => $this->setup->iconSize,
+					'width' => $this->setup->iconSize
 				), false);
 			} else {
 				// Avatars set to count
