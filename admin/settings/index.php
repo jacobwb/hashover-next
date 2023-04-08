@@ -297,7 +297,8 @@ function ui_array (Setup $setup, Locale $locale)
 
 				'options' => array (
 					'top' => 'Top',
-					'bottom' => 'Bottom'
+					'bottom' => 'Bottom',
+					'disabled' => 'Disabled'
 				)
 			),
 

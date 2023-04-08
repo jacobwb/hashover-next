@@ -918,7 +918,7 @@ class FormUI
 		$form_section->appendChild ($main_form);
 
 		// Check if form position setting set to 'top'
-		if ($this->setup->formPosition !== 'bottom') {
+		if ($this->setup->formPosition === 'top') {
 			// Add primary form wrapper to HashOver element
 			$hashover_element->appendChild ($form_section);
 		}
