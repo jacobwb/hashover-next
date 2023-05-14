@@ -649,6 +649,15 @@ conditions, unless such conditions are required by law.
 	/*background-color: #FFE5F0;*/
 }
 
+.hashover .hashover-comment.hashover-status-pending > .hashover-header {
+	/* Light red (pink-ish) */
+	background-color: #FFE5F0;
+
+	/* Sriped light red (pink-ish) and light blue */
+	background-image: linear-gradient(45deg, #FFE5F0 25%, #E5F0FF 25%, #E5F0FF 50%, #FFE5F0 50%, #FFE5F0 75%, #E5F0FF 75%, #     E5F0FF 100%);
+	background-size: 50px 50px;
+}
+
 .hashover .hashover-avatar-image *,
 .hashover .hashover-avatar *,
 .hashover .hashover-reply .hashover-header,

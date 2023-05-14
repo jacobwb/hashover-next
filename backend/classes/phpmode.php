@@ -217,8 +217,11 @@ class PHPMode
 		$permatext = explode ('r', $permatext);
 		$permatext = array_pop ($permatext);
 
+		// Post moderation status
+		$status = isset ($comment['status']) ? $comment['status'] : null;
+
 		// Wrapper element for each comment
-		$comment_wrapper = $this->ui->commentWrapper ($permalink);
+		$comment_wrapper = $this->ui->commentWrapper ($permalink, $comment['status']);
 
 		// Check if this comment is a popular comment
 		if ($popular === true) {
