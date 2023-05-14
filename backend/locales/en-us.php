@@ -124,13 +124,17 @@ $locale = array (
 	'hashover-comments'	=> 'HashOver Comments',
 	'rss-feed'		=> 'RSS Feed',
 	'source-code'		=> 'Source Code',
-	'new-comment'		=> 'New Comment',
+	'new-comment'		=> 'New comment on “%s”',
 	'from'			=> 'From %s',
 	'comment'		=> 'Comment',
 	'page'			=> 'Page',
 	'sent-by'		=> 'This e-mail was sent by %s via HashOver.',
 	'enabled'		=> 'Enabled',
 	'disabled'		=> 'Disabled',
+
+	'email-greeting'	=> 'Hi!',
+	'email-explainer'	=> '“%s” has posted a new comment on a discussion you’re following:',
+	'email-call-to-action'	=> 'Jump back into the discussion at:',
 
 	'source-code-sub'	=> 'HashOver server-side source code viewer',
 	'type'			=> 'Type',

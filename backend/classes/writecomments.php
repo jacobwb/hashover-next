@@ -656,8 +656,17 @@ class WriteComments extends Secrets
 		// Get comment permalink
 		$permalink = $this->filePermalink ($file);
 
-		// "New Comment" locale string
-		$new_comment = $this->locale->text['new-comment'];
+		// "New comment on “<thread title>”" locale string
+		$new_comment = sprintf ($this->locale->text['new-comment'], $this->setup->pageTitle)
+
+		// "Hi" locale string
+		$email_greeting = $this->locale->text['email-greeting'];
+
+		// "“<poster name>” has posted a new comment on a discussion you’re following:" locale string
+		$email_explainer = sprintf ($this->locale->text['email-explainer'], $name);
+
+		// "Jump back into the discussion at:" (link) locale string
+		$email_call_to_action = $this->locale->text['email-call-to-action'];
 
 		// E-mail hash for Gravatar or empty for default avatar
 		$hash = Misc::getArrayItem ($this->data, 'email_hash') ?: '';
@@ -690,6 +699,11 @@ class WriteComments extends Secrets
 		$data['comment'] = $this->locale->text['comment'];
 		$data['page'] = $this->locale->text['page'];
 		$data['new-comment'] = $new_comment;
+
+		// Add email template strings to data
+		$data['email-greeting'] = $email_greeting;
+		$data['email-explainer'] = $email_explainer;
+		$data['email-call-to-action'] = $email_call_to_action;
 
 		// Add comment permalink to data
 		$data['permalink'] = $this->setup->pageURL . '#' . $permalink;
@@ -729,8 +743,8 @@ class WriteComments extends Secrets
 		// Get and parse plain text e-mail notification
 		$text_body = $this->templater->parseTheme ('email-notification.txt', $data);
 
-		// Set subject to "New Comment - <domain here>"
-		$this->mail->subject ($new_comment . ' - ' . $domain);
+		// Set subject to "New comment on “<thread title>”"
+		$this->mail->subject ($new_comment);
 
 		// Set plain text version of the message
 		$this->mail->text ($text_body);

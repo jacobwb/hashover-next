@@ -1,4 +1,6 @@
-{from}
+{email-greeting}
+
+{email-explainer}
 
 {text-comment}
 
@@ -6,12 +8,9 @@
 
 {text-reply}
 
-----
 
-{comment}: {permalink}
+{email-call-to-action}
+{permalink}
 
-{page}: {url}
-
-----
-
+-- 
 {sent-by}
