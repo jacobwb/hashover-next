@@ -16,9 +16,9 @@ HashOver.instantiator = function (id, options, instance)
 	// Get backend queries
 	var backendQueries = this.getBackendQueries (options, instance);
 
-	// Add current client time to queries
+	// Add current client time zone to queries
 	var queries = backendQueries.concat ([
-		'time=' + HashOver.getClientTime ()
+		'tz=' + HashOver.getClientTimeZone ()
 	]);
 
 	// Set instance number

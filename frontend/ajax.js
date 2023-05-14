@@ -93,7 +93,12 @@ HashOverConstructor.prototype.ajax = function (method, path, data, callback, asy
 		xhr.withCredentials = true;
 
 		// Send XHR request
-		xhr.send (data.join ('&'));
+		if (['POST', 'PUT'].includes (method.toUpperCase ())) {
+			xhr.send (data.join ('&'));
+		}
+		else {
+			xhr.send ();
+		}
 
 		// And do nothing else
 		return;

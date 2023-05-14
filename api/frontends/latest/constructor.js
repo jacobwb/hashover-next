@@ -34,15 +34,12 @@ function HashOverLatest (id, options, instance)
 	// Use given instance or instance count
 	var instance = specific ? instance : HashOverLatest.instanceCount;
 
-	// Backend request path
-	var requestPath = HashOverLatest.backendPath + '/latest-ajax.php';
-
 	// Get backend queries
 	var backendQueries = this.getBackendQueries (options, instance, false);
 
 	// Add current client time to queries
 	var queries = backendQueries.concat ([
-		'time=' + HashOverLatest.getClientTime ()
+		'tz=' + HashOverLatest.getClientTimeZone ()
 	]);
 
 	// Set instance number
@@ -52,8 +49,11 @@ function HashOverLatest (id, options, instance)
 	this.options = options;
 	this.queries = backendQueries;
 
+	// Backend request path
+	var requestPath = HashOverLatest.backendPath + '/latest-ajax.php?' + queries.sort ().join ('&');
+
 	// Handle backend request
-	this.ajax ('POST', requestPath, queries, function (json) {
+	this.ajax ('GET', requestPath, null, function (json) {
 		// Given element ID or default
 		var id = id || hashover.prefix ('latest');
 

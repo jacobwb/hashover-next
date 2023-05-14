@@ -14,8 +14,8 @@ HashOver.prototype.loadAllComments = function (element, callback)
 
 	// Set URL queries
 	var queries = this.queries.concat ([
-		// Add current client time
-		'time=' + HashOver.getClientTime (),
+		// Add current client time zone
+		'tz=' + HashOver.getClientTimeZone (),
 
 		// Add AJAX indicator
 		'ajax=yes'

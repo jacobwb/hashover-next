@@ -92,8 +92,17 @@ class Setup extends Settings
 			$this->website = 'all';
 		}
 
+		header('Vary: User-Agent, Sec-CH-UA-Mobile', false);
+
+ 		// Check if we have a mobile client hint header
+		if (!empty( $_SERVER['HTTP_SEC_CH_UA_MOBILE'])) {
+			if ($_SERVER['HTTP_SEC_CH_UA_MOBILE'] == '?1') {
+				$this->isMobile = true;
+			}
+		}
+
 		// Check if we have a user agent
-		if (!empty ($_SERVER['HTTP_USER_AGENT'])) {
+		else if (!empty ($_SERVER['HTTP_USER_AGENT'])) {
 			// If so, get user agent
 			$agent = $_SERVER['HTTP_USER_AGENT'];
 
@@ -238,6 +247,8 @@ class Setup extends Settings
 	// Checks remote request against allowed domains setting
 	public function refererCheck ()
 	{
+		header('Vary: Referer', false);
+
 		// Return true if no referer is set
 		if (empty ($_SERVER['HTTP_REFERER'])) {
 			return true;

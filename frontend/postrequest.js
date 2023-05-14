@@ -88,8 +88,8 @@ HashOver.prototype.postRequest = function (form, button, type, permalink, callba
 
 	// Add final queries
 	queries = queries.concat ([
-		// Add current client time
-		'time=' + HashOver.getClientTime (),
+		// Add current client time zone
+		'tz=' + HashOver.getClientTimeZone (),
 
 		// Add AJAX indicator
 		'ajax=yes'

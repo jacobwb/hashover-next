@@ -20,6 +20,11 @@
 // Setup HashOver for JavaScript
 require ('backend/javascript-setup.php');
 
+// Mostly static asset (unless settings are changed); suitable for client-
+// side caching. 30 min and 1 day - 30 min. Override it on your webserver.
+header('Cache-Control: max-age=1800, stale-while-revalidate=84600', true);
+header('Pragma: ', true);
+
 try {
 	// Instantiate general setup class
 	$setup = new Setup ('javascript');

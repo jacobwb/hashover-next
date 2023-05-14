@@ -29,6 +29,12 @@ if (isset ($_GET['jsonp'])) {
 	require ('backend/json-setup.php');
 }
 
+// Frequently changing resource, but clients are fine with one-minute freshness.
+// Intermediary servers get 2–60 second freshness depending on demand.
+// Override it on your webserver.
+header('Cache-Control: max-age=2, stale-while-revalidate=58, stale-if-error=300', true);
+header('Pragma: ', true;
+
 try {
 	// Instantiate HashOver class
 	$hashover = new \HashOver ('json');
